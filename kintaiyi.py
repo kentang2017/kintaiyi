@@ -208,6 +208,15 @@ class Taiyi():
             wancheong = ("0", "寅", "卯", "辰", "巽", "巽", "巳", "午", "未", "坤", "申", "酉",
                     "戌", "乾", "亥", "子", "丑", "艮", "艮",)[skyeyes]
         return [{skyeyes:"天目"}, {wancheong:"文昌"}, skyeyes]
+    #始擊
+    def shiji(self, pan):
+        jigod = list(self.jigod(pan).keys())[0]
+        wancheong = list(self.skyeyes(pan)[1].keys())[0]
+        new_jigod = new_list(taiyi_symbols, jigod) 
+        hede = new_jigod.index("艮")
+        move_n = new_jigod.index(jigod) - hede
+        new_wancheong = new_list(taiyi_symbols, wancheong) 
+        return new_jigod[move_n]
     #主大將、主參將
     def home_generals(self, pan):
         wancheong = self.accnumZhi(pan, 18)[0]
@@ -250,5 +259,5 @@ class Taiyi():
         new_gonglist = {**self.taiyi_god(pan)[0], **self.jigod(pan)}
         return {**{"排盤":taiyi_symbols}, **{"門排盤": new_gonglist}}
     
-print(Taiyi(2023,6,27,14).home_generals("年"))
+print(Taiyi(2023,6,27,14).shiji("日"))
 #print(YearPan(2020))
