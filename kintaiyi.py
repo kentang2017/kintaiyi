@@ -26,15 +26,25 @@ class Taiyi:
         self.hour = hour
         self.ymc = [11,12,1,2,3,4,5,6,7,8,9,10]
         self.rmc = list(range(1,32))
-        #太歲
-        self.taishui = self.gangzhi()[0][1]
-        self.yangji = list("寅丑子亥戌酉申未午巳辰卯")
-        self.yingji = list("申未午巳辰卯寅丑子亥戌酉")
-        #合神
-        self.hegod = dict(zip(list("子寅卯辰巳午丑亥戌酉申未"),list("丑亥戌酉申未子寅卯辰巳午"))).get(self.taishui)
-        #
+       
+        #陰陽遁定制
         self.yang_sixteen = list("申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤")
         self.ying_sixteen = list("寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮")
+        self.yangji = list("寅丑子亥戌酉申未午巳辰卯")
+        self.yingji = list("申未午巳辰卯寅丑子亥戌酉")
+        self.findplace = {"陽":self.yang_sixteen, "陰":self.ying_sixteen}.get(self.kook()[0])
+        self.findplace_num = dict(zip(self.findplace, range(1,19)))
+        self.findji = {"陽":self.yangji, "陰":self.yingji}.get(self.kook()[0])
+        #太乙
+        self.taiyi = (self.taiyiyear + self.year ) % 24)
+        #太歲
+        self.taishui = self.gangzhi()[0][1]
+        #合神
+        self.hegod = dict(zip(list("子寅卯辰巳午丑亥戌酉申未"),list("丑亥戌酉申未子寅卯辰巳午"))).get(self.taishui)
+        #文昌
+        self.wancheong = dict(zip(range(1,19), self.findplace)).get( (self.taiyiyear + self.year) % 18)
+        #計神
+        self.jigod = dict(zip(Zhi, self.findji )).get(self.taishui)
         
         
     def find_jieqi(self):
