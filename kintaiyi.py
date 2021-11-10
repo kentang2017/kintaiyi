@@ -7,6 +7,7 @@ Created on Sun Nov  7 11:58:46 2021
 
 from config import *
 import sxtwl, re, math, itertools, datetime
+import numpy as geek 
 
 #%% 主程式
 class Taiyi:
@@ -133,14 +134,14 @@ class Taiyi:
                         (self.taiyiyear + self.year) * 12 - 10 + self.month + self.dzdistance() + 1,
                         ((self.taiyiyear + self.year) * 12 - 10 + self.month + self.dzdistance()+ 1) * 12 + math.ceil(self.hour / 2 ) + 1
                         ]))
-    #文昌
-    def wancheong(self):
-        wancheong_loc = (self.taiyiyear + self.year) % 18
-        yingyang = {"陽":list("申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤"), "陰":list("寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮")}
-        return dict(zip(range(1,19),yingyang.get(self.kook()[0]))).get(wancheong_loc)
-
-
-
+  
+    def thaiyi(self):
+        arr = geek.arange(10) 
+        repetitions = 3
+        arrangement = geek.repeat(arr, repetitions) 
+        arrangement_r = list(reversed(arrangement))
+        yy_dict = {"陽": dict(zip(range(1,73), list(itertools.chain.from_iterable([list(arrangement)[3:15]+ list(arrangement)[18:]] * 3)))),  "陰": dict(zip(range(1,73), list(itertools.chain.from_iterable([list(arrangement_r)[3:15]+ list(arrangement_r)[18:]] * 3))))}
+        return yy_dict.get(self.kook()[0]).get(int(self.kook().replace("陰遁", "").replace("陽遁", "")))
     
 if __name__ == '__main__':
     print(Taiyi(2021,11,8,23).wancheong())
