@@ -29,6 +29,7 @@ class Taiyi:
         self.rmc = list(range(1,32))
         #十六神
         self.sixtengod = dict(zip(list("子丑艮寅卯巽辰巳午未坤申酉戌乾亥"), re.findall("..","地主陽德和德呂申高叢太陽大炅大神大威天道大武武德太簇陰主陰德大義")))
+       
         #陰陽遁定制
         self.yang_sixteen = list("申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤")
         self.ying_sixteen = list("寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮")
@@ -39,6 +40,12 @@ class Taiyi:
         self.findji = {"陽":self.yangji, "陰":self.yingji}.get(self.kook()[0])
         #太乙
         self.taiyi = (self.taiyiyear + self.year ) % 24)
+        
+        #天目
+        self.skyeyes_dict = {"陽" : list("未坤申酉戌乾乾亥子丑艮寅卯巽辰巳午未坤坤申酉戌乾乾亥子丑艮寅卯巽辰巳午未坤坤申酉戌乾乾亥子丑艮寅卯巽辰巳午未坤坤申酉戌乾乾亥子丑艮寅卯巽辰巳午未"),
+        "陰":list("寅卯巽巽辰巳午未坤申酉戌乾亥子丑艮艮寅卯巽巽辰巳午未坤申酉戌乾亥子丑艮艮寅卯巽巽辰巳午未坤申酉戌乾亥子丑艮艮寅卯巽巽辰巳午未坤申酉戌乾亥子丑艮艮")}
+        self.skyeyes = dict(zip(range(1,73), self.skyeyes_dict.get(self.kook()[0])).get(int(self.kook().replace("陰遁", "").replace("陽遁", "").replace("局", "")))
+        
         #太歲
         self.taishui = self.gangzhi()[0][1]
         #合神
@@ -47,6 +54,7 @@ class Taiyi:
         self.wancheong = dict(zip(range(1,19), self.findplace)).get( (self.taiyiyear + self.year) % 18)
         #計神
         self.jigod = dict(zip(Zhi, self.findji )).get(self.taishui)
+        
         
         
     def find_jieqi(self):
@@ -142,7 +150,7 @@ class Taiyi:
         arrangement = geek.repeat(arr, repetitions) 
         arrangement_r = list(reversed(arrangement))
         yy_dict = {"陽": dict(zip(range(1,73), list(itertools.chain.from_iterable([list(arrangement)[3:15]+ list(arrangement)[18:]] * 3)))),  "陰": dict(zip(range(1,73), list(itertools.chain.from_iterable([list(arrangement_r)[3:15]+ list(arrangement_r)[18:]] * 3))))}
-        return yy_dict.get(self.kook()[0]).get(int(self.kook().replace("陰遁", "").replace("陽遁", "")))
+        return yy_dict.get(self.kook()[0]).get(int(self.kook().replace("陰遁", "").replace("陽遁", "").replace("局", "")))
     
 if __name__ == '__main__':
     print(Taiyi(2021,11,8,23).wancheong())
