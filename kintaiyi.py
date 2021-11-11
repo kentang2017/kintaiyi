@@ -28,7 +28,7 @@ class Taiyi:
         self.ymc = [11,12,1,2,3,4,5,6,7,8,9,10]
         self.rmc = list(range(1,32))
         #十六神
-        self.sixtengod = dict(zip(Zhi, re.findall("..","地主陽德和德呂申高叢太陽大炅大神大威天道大武武德太簇陰主陰德大義")))
+        self.sixtengod = dict(zip(list("子丑艮寅卯巽辰巳午未坤申酉戌乾亥"), re.findall("..","地主陽德和德呂申高叢太陽大炅大神大威天道大武武德太簇陰主陰德大義")))
         #陰陽遁定制
         self.yang_sixteen = list("申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤")
         self.ying_sixteen = list("寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮")
