@@ -335,6 +335,7 @@ class Taiyi:
 
     def pan(self):
         return {
+                "干支": self.gangzhi(),
                 "農曆":self.lunar_date_d(),
                 "紀元":self.jiyuan(),
                 "時局":self.kook(),
