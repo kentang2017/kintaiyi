@@ -1,4 +1,4 @@
-﻿# **Python 大六壬 Kintaiyi 堅太乙 堅太乙時計**
+﻿# **Python 太乙神數 Kintaiyi 堅太乙 堅太乙時計**
 [![Python](https://img.shields.io/pypi/pyversions/kintaiyi)](https://pypi.org/project/kintaiyi/)
 [![PIP](https://img.shields.io/pypi/v/kintaiyi)](https://pypi.org/project/kintaiyi/)
 [![Downloads](https://img.shields.io/pypi/dm/kintaiyi)](https://pypi.org/project/kintaiyi/)
