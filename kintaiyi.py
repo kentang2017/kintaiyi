@@ -61,8 +61,7 @@ class Taiyi:
         self.hegod = dict(zip(list("子寅卯辰巳午丑亥戌酉申未"),list("丑亥戌酉申未子寅卯辰巳午"))).get(self.taishui)
         #計神
         self.jigod = dict(zip(Zhi, self.findji )).get(self.taishui)
-        #五福
-        self.wufu =  int(((self.accHour +250) % 225) / 45)
+        
         
        
     def new_list(self, olist, o):
@@ -292,6 +291,23 @@ class Taiyi:
         elif se_jc !=1 and ty_jc !=1 and se_jc1 !=1 :
             return sum(se_order[: se_order.index(ty)])
     
+    def cal_des(self, num):
+        t = []
+        if num > 10 and num % 10 > 5:
+            t.append("三才足數")
+        if num < 10:
+            t.append("無天")
+        if num % 10 < 5:
+            t.append("無地")
+        if num % 10 == 0:
+            t.append("無人")
+        numdict = {1: "雜陰", 2: "純陰", 3: "純陽", 4: "雜陽", 6: "純陰", 7: "雜陰", 8: "雜陽", 9: "純陽",
+                   11: "陰中重陽", 12: "下和", 13: "雜重陽", 14: "上和", 16: "下和", 17: "陰中重陽", 18: "上和", 19: "雜重陽",
+                   22: "純陰", 23: "次和", 24: "雜重陰", 26: "純陰", 27: "下和", 28: "雜重陰", 29: "次和", 31: "雜重陽",
+                   32: "次和", 33: "純陽", 34: "下和", 37: "雜重陽", 38: "下和", 39: "純陽"}
+        t.append(numdict.get(num, None))
+        return [i for i in t if i is not None]
+    
     def set_general(self):
         return self.set_cal()  % 10
     
@@ -299,7 +315,10 @@ class Taiyi:
         return self.set_general() *3 % 10
     
     def sixteen_gong(self):
-        dict1 = [{self.skyeyes:"文昌"},{self.taishui:"太歲"},{self.hegod:"合神"},{"始擊":self.sf()},{self.se():"定目"}]
+        dict1 = [{self.skyeyes:"文昌"},{self.taishui:"太歲"},{self.hegod:"合神"},{"始擊":self.sf()},
+                 {self.se():"定目"}, {self.kingbase():"君基"}, {self.officerbase():"臣基"}, {self.pplbase():"民基"},
+                 {self.fgd():"四神"},{self.skyyi():"天乙"},{self.earthyi():"地乙"},{self.zhifu():"直符"},
+                 {self.flyfu():"飛符"},{self.kingfu():"帝符"},{self.taijun():"太尊"}, {self.wufu():"五福"} ]
         res = {"子":"", "丑":"", "艮":"","寅":"", "卯":"", "辰":"", "巽":"","巳":"", "午":"", "未":"", "申":"", "坤":"", "酉":"", "戌":"", "乾":"", "亥":""}
         for dict in dict1:
             for list in dict:
@@ -316,7 +335,11 @@ class Taiyi:
         return res 
 
     def nine_gong(self):
-        dict1 = [{self.home_general():"主將"},{self.home_vgen():"主參"},{self.away_general():"客將"},{self.away_vgen():"客參"},{self.set_general():"定將"},{self.set_vgen():"定參"},{self.ty():"太乙"}]
+        dict1 = [{self.home_general():"主將"},{self.home_vgen():"主參"},{self.away_general():"客將"},
+                 {self.away_vgen():"客參"},{self.set_general():"定將"},{self.set_vgen():"定參"},
+                 {self.ty():"太乙"}, {self.threewind():"三風"},  {self.fivewind():"五風"},
+                 {self.eightwind():"八風"},  {self.flybird():"飛鳥"},{self.bigyo():"大游"},
+                 {self.smyo():"小游"},]
         res = {8:"", 3:"", 4:"", 9:"", 2:"", 7:"", 6:"", 1:""}
         for dict in dict1:
             for list in dict:
@@ -344,7 +367,7 @@ class Taiyi:
     #民基
     def pplbase(self):
         pb = (self.accHour +250) % 360 % 12
-        return dict(zip(range(1,13), self.new_list(Zhi, "午"))).get(int(pb))
+        return dict(zip(range(1,13), self.new_list(Zhi, "戌"))).get(int(pb))
 
     #大游
     def bigyo(self):
@@ -422,12 +445,19 @@ class Taiyi:
     #五風
     def fivewind(self):
         f = int(self.accHour) % 29
+        if f > 10:
+            f = f - 9
         return  dict(zip(range(1,10), [1,3,5,7,9,2,4,6,8])).get(int(f))
     
     #八風
     def eightwind(self):
         f = int(self.accHour) % 9
         return  dict(zip(range(1,9), [2,3,5,6,7,8,9,1])).get(int(f))
+    
+    #五福
+    def wufu(self):
+        f = int(self.accHour + 250) % 225 / 45 
+        return dict(zip(range(1,6), list("乾艮巽坤中"))).get(int(f))
     
     def pan(self):
         return {
@@ -442,35 +472,13 @@ class Taiyi:
                 "計神":self.jigod,
                 "始擊":self.sf(),
                 "定目":self.se(),
-                "主算":self.home_cal(),
-                "客算":self.away_cal(),
-                "定算":self.set_cal(),
-                "主大":self.home_general(),
-                "主參":self.home_vgen(),
-                "客大":self.away_general(),
-                "客參":self.away_vgen(),
-                "定大":self.set_general(),
-                "定參":self.set_vgen(),
-                "五福":self.wufu, 
-                "君基":self.kingbase(),
-                "臣基":self.officerbase(),
-                "民基":self.pplbase(),
-                "大游":self.bigyo(),
-                "小游":self.smyo(),
-                "四神":self.fgd(),
-                "天乙":self.skyyi(),
-                "地乙":self.earthyi(),
-                "太尊":self.taijun(),
-                "飛鳥":self.flybird(),
-                "五行":self.wuxing(),
-                "三風":self.threewind(),
-                "直符":self.zhifu(),
-                "飛符":self.flyfu(),
-                "帝符":self.kingfu(),
+                "主算":[self.home_cal(), self.cal_des(self.home_cal())],
+                "客算":[self.away_cal(), self.cal_des(self.away_cal())],
+                "定算":[self.set_cal(), self.cal_des(self.set_cal())],
                 "九宮":self.nine_gong(), 
-                "十六宮":self.sixteen_gong()
+                "十六宮":self.sixteen_gong(),
                 }
 
 
 if __name__ == '__main__':
-    print(Taiyi(1996,11,14,8).pan())
+    print(Taiyi(2021,11,14,20).pan())
