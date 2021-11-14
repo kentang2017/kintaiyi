@@ -14,6 +14,6 @@
 ```
 ## 3. 起課方式 Quickstart
 ```python
-	from kinliuren import kintaiyi
-	
+	from kintaiyi import kintaiyi
+	kintaiyi.Taiyi(2021,11,14,20).pan()
 ```
