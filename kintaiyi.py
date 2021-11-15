@@ -226,8 +226,10 @@ class Taiyi:
             return sum(wc_order[: wc_order.index(ty)])+1
         elif wc_jc !=1 and ty_jc ==1 and wc_jc1 ==1 :
             return sum(wc_order[: wc_order.index(ty)])
-        elif wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 :
+        elif wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and ty != wc_num:
             return sum(wc_order[: wc_order.index(ty)])
+        elif wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and ty == wc_num:
+            return ty
         
     def home_general(self):
         return self.home_cal()  % 10
@@ -257,8 +259,10 @@ class Taiyi:
             return sum(sf_order[: sf_order.index(ty)])
         elif sf_jc !=1 and ty_jc ==1 and sf_jc1 ==1 :
             return sum(sf_order[: sf_order.index(ty)])
-        elif sf_jc !=1 and ty_jc !=1 and sf_jc1 !=1 :
+        elif sf_jc !=1 and ty_jc !=1 and sf_jc1 !=1 and sf_num != ty:
             return sum(sf_order[: sf_order.index(ty)])
+        elif sf_jc !=1 and ty_jc !=1 and sf_jc1 !=1 and sf_num == ty:
+            return ty
     
     def away_general(self):
         return self.away_cal()  % 10
@@ -283,13 +287,17 @@ class Taiyi:
         elif se_jc !=1 and ty_jc != 1 and se_jc1 ==1:
             return sum(se_order[: se_order.index(ty)])
         elif se_jc != 1 and ty_jc ==1 and se_jc1 !=1:
-            return sum(se_order[: se_order.index(ty)]) 
+            return sum(se_order[: se_order.index(ty)])
         elif se_jc ==1 and ty_jc ==1 and se_jc1 !=1 :
             return sum(se_order[: se_order.index(ty)])
         elif se_jc !=1 and ty_jc ==1 and se_jc1 ==1 :
             return sum(se_order[: se_order.index(ty)])
         elif se_jc !=1 and ty_jc !=1 and se_jc1 !=1 :
             return sum(se_order[: se_order.index(ty)])
+        elif se_jc !=1 and ty_jc !=1 and se_jc1 !=1 and se_num != ty:
+            return sum(sf_order[: sf_order.index(ty)])
+        elif se_jc !=1 and ty_jc !=1 and se_jc1 !=1 and se_num == ty:
+            return ty
     
     def cal_des(self, num):
         t = []
@@ -481,4 +489,4 @@ class Taiyi:
 
 
 if __name__ == '__main__':
-    print(Taiyi(2021,11,14,20).pan())
+    print(Taiyi(2021,11,15,12).pan())
