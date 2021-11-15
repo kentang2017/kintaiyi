@@ -17,6 +17,7 @@
 ## 2. 安裝套件 Installation
 ```python
 	pip install kintaiyi
+	pip install sxtwl == 1.0
 ```
 ## 3. 起課方式 Quickstart
 ```python
