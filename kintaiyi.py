@@ -232,15 +232,15 @@ class Taiyi:
             return ty
         
     def home_general(self):
-		home_g = self.home_cal()  % 10
-		if home_g == 0:
-			home_g = 5
+        home_g = self.home_cal()  % 10
+        if home_g == 0:
+            home_g = 5
         return home_g
     
     def home_vgen(self):
-		home_vg = self.home_general() *3 % 10
-		if home_vg ==0:
-			home_vg = 5
+        home_vg = self.home_general() *3 % 10
+        if home_vg ==0:
+            home_vg = 5
         return home_vg
         
     def away_cal(self):
@@ -271,15 +271,15 @@ class Taiyi:
             return ty
     
     def away_general(self):
-		away_g = self.away_cal()  % 10
-		if away_g == 0:
-			away_g = 5
+        away_g = self.away_cal()  % 10
+        if away_g == 0:
+            away_g = 5
         return away_g
     
     def away_vgen(self):
-		away_vg = self.away_general() *3 % 10
-		if away_vg == 0:
-			away_vg = 5 
+        away_vg = self.away_general() *3 % 10
+        if away_vg == 0:
+            away_vg = 5
         return away_vg
         
     def set_cal(self):
@@ -329,23 +329,23 @@ class Taiyi:
         return [i for i in t if i is not None]
     
     def set_general(self):
-	    set_g = self.set_cal()  % 10
-		if set_g == 0:
-			set_g = 5
+        set_g = self.set_cal()  % 10
+        if set_g == 0:
+            set_g = 5
         return set_g
     
     def set_vgen(self):
-		set_vg =  self.set_general() *3 % 10
-		if set_vg == 0:
-			set_vg = 5
+        set_vg =  self.set_general() *3 % 10
+        if set_vg == 0:
+            set_vg = 5
         return set_vg
     
     def sixteen_gong(self):
-        dict1 = [{self.skyeyes:"文昌"},{self.taishui:"太歲"},{self.hegod:"合神"},{"始擊":self.sf()},
+        dict1 = [{self.skyeyes:"文昌"},{self.taishui:"太歲"},{self.hegod:"合神"},{self.sf():"始擊"},
                  {self.se():"定目"}, {self.kingbase():"君基"}, {self.officerbase():"臣基"}, {self.pplbase():"民基"},
                  {self.fgd():"四神"},{self.skyyi():"天乙"},{self.earthyi():"地乙"},{self.zhifu():"直符"},
                  {self.flyfu():"飛符"},{self.kingfu():"帝符"},{self.taijun():"太尊"}, {self.wufu():"五福"} ]
-        res = {"子":"", "丑":"", "艮":"","寅":"", "卯":"", "辰":"", "巽":"","巳":"", "午":"", "未":"", "申":"", "坤":"", "酉":"", "戌":"", "乾":"", "亥":""}
+        res = {"子":"", "丑":"", "艮":"","寅":"", "卯":"", "辰":"", "巽":"","巳":"", "午":"", "未":"", "申":"", "坤":"", "酉":"", "戌":"", "乾":"", "亥":"", "中":""}
         for dict in dict1:
             for list in dict:
                 if list in res:
@@ -366,7 +366,7 @@ class Taiyi:
                  {self.ty():"太乙"}, {self.threewind():"三風"},  {self.fivewind():"五風"},
                  {self.eightwind():"八風"},  {self.flybird():"飛鳥"},{self.bigyo():"大游"},
                  {self.smyo():"小游"},]
-        res = {8:"", 3:"", 4:"", 9:"", 2:"", 7:"", 6:"", 1:""}
+        res = {8:"", 3:"", 4:"", 9:"",5:"", 2:"", 7:"", 6:"", 1:""}
         for dict in dict1:
             for list in dict:
                 if list in res:
@@ -384,24 +384,25 @@ class Taiyi:
     #君基
     def kingbase(self):
         kb = (self.accHour +250) % 360  / 30
-		kb_v = dict(zip(range(1,13), self.new_list(Zhi, "午"))).get(int(kb))
-		if kb_v == 0:
-			kb_v = "中"
+        kb_v = dict(zip(range(1,13), self.new_list(Zhi, "午"))).get(int(kb))
+        if kb_v == 0 or kb_v ==None:
+            kb_v = "中"
         return kb_v
     
     #臣基
     def officerbase(self):
         ob = (self.accHour +250) % 360  % 36 / 3
-		ob_v =  dict(zip(range(1,13), self.new_list(Zhi, "午"))).get(int(ob))
-		if ob_v == 0:
-			ob_v = "中"
+        ob_v =  dict(zip(range(1,13), self.new_list(Zhi, "午"))).get(int(ob))
+        if ob_v == 0 or ob_v ==None:
+            ob_v = "中"
         return ob_v
+    
     #民基
     def pplbase(self):
         pb = (self.accHour +250) % 360 % 12
-		pb_v = dict(zip(range(1,13), self.new_list(Zhi, "戌"))).get(int(pb))
-		if pb_v == 0:
-			pb_v = "中"
+        pb_v = dict(zip(range(1,13), self.new_list(Zhi, "戌"))).get(int(pb))
+        if pb_v == 0 or pb_v ==None:
+            pb_v = "中"
         return  pb_v
 
     #大游
@@ -411,7 +412,10 @@ class Taiyi:
             by = by
         elif by > 36:
             by = by / 36
-        return dict(zip([7,8,9,1,2,3,4,6],range(1,9))).get(int(by))
+        byv = dict(zip([7,8,9,1,2,3,4,6],range(1,9))).get(int(by))
+        if byv == 0 or byv ==None:
+            byv = 5
+        return byv
 
     #小游
     def smyo(self):
@@ -422,89 +426,92 @@ class Taiyi:
             sy = sy % 24
             if sy > 3:
                 sy = sy % 3
-        return dict(zip([1,2,3,4,6,7,8,9],range(1,9))).get(int(sy))
+        syv = dict(zip([1,2,3,4,6,7,8,9],range(1,9))).get(int(sy))
+        if syv == 0 or syv == None:
+            syv = 5
+        return syv
     
     #四神
     def fgd(self):
         f = self.accHour % 360 % 36 / 3 
-		fv = dict(zip(range(1,13), self.new_list(Zhi, "亥"))).get(int(f))
-		if fv == 0:
-			fv = "中"
+        fv = dict(zip(range(1,13), self.new_list(Zhi, "亥"))).get(int(f))
+        if fv == 0 or fv == None:
+            fv = "中"
         return fv
     
     #天乙
     def skyyi(self):
         f = self.accHour % 360 % 36 / 3 
-		fv = dict(zip(range(1,13), self.new_list(Zhi, "酉"))).get(int(f))
-		if fv == 0:
-			fv = "中"
+        fv = dict(zip(range(1,13), self.new_list(Zhi, "酉"))).get(int(f))
+        if fv == 0 or fv == None:
+            fv = "中"
         return fv
 
     #地乙
     def earthyi(self):
-        f = self.accHour % 360 % 36 / 3 
-		fv = dict(zip(range(1,13), self.new_list(Zhi, "巳"))).get(int(f))
-		if fv == 0:
-			fv = "中"
+        f = self.accHour % 360 % 36 / 3
+        fv = dict(zip(range(1,13), self.new_list(Zhi, "巳"))).get(int(f))
+        if fv == 0 or fv == None:
+            fv = "中"
         return fv
 
     #直符
     def zhifu(self):
-        f = self.accHour % 360 % 36 / 3 
-		fv = dict(zip(range(1,14), ["中"]+self.new_list(Zhi, "酉"))).get(int(f))
-		if fv == 0:
-			fv = "中"
+        f = self.accHour % 360 % 36 / 3
+        fv = dict(zip(range(1,14), ["中"]+self.new_list(Zhi, "酉"))).get(int(f))
+        if fv == 0 or fv == None:
+            fv = "中"
         return fv
     
     #飛符
     def flyfu(self):
-        f = self.accHour % 360 % 36 / 3 
-		fv = dict(zip(range(1,13), self.new_list(Zhi, "辰"))).get(int(f))
-		if fv == 0:
-			fv = "中"
+        f = self.accHour % 360 % 36 / 3
+        fv = dict(zip(range(1,13), self.new_list(Zhi, "辰"))).get(int(f))
+        if fv == 0 or fv == None:
+            fv = "中"
         return fv
     
     #帝符
     def kingfu(self):
         f = self.accHour  %20
         if f > 16:
-            f = f - 16 
-		fv = dict(zip(range(1,17), self.new_list(self.gong1, "戌"))).get(int(f))
-		elif f == 0:
-			fv = "中"
-		return fv
+            f = f - 16
+        fv = dict(zip(range(1,17), self.new_list(self.gong1, "戌"))).get(int(f))
+        if fv == 0 or fv== None:
+            fv = "中"
+        return fv
         
     #太尊
     def taijun(self):
         f = self.accHour  % 4
-		fv = dict(zip(range(1,5), list("子午卯酉"))).get(int(f))
-		if fv == 0:
-			fv = "中"
+        fv = dict(zip(range(1,5), list("子午卯酉"))).get(int(f))
+        if fv == 0  or fv == None:
+            fv = "中"
         return fv
 
     #飛鳥
     def flybird(self):
         f = self.accHour  % 9
-		fv = dict(zip(range(1,10), [1,8,3,4,9,2,7,6])).get(int(f))
-        if fv == 0:
-			fv = 5
+        fv = dict(zip(range(1,10), [1,8,3,4,9,2,7,6])).get(int(f))
+        if fv == 0 or fv ==None:
+            fv = 5
         return fv
     
     #五行
     def wuxing(self):
         f = int(self.accHour) // 5
         f = f % 5
-		fv =  dict(zip(range(1,10), [1,3,5,7,9,2,4,6,8])).get(int(f))
-        if fv == 0:
-			fv = 5
+        fv =  dict(zip(range(1,10), [1,3,5,7,9,2,4,6,8])).get(int(f))
+        if fv == 0 or fv ==None:
+            fv = 5
         return fv
     
     #三風
     def threewind(self):
         f = int(self.accHour) % 9
-		fv = dict(zip(range(1,9), [7,2,6,1,5,9,4,8])).get(int(f))
-		if fv == 0:
-			fv = 5
+        fv = dict(zip(range(1,9), [7,2,6,1,5,9,4,8])).get(int(f))
+        if fv == 0 or fv == None:
+            fv = 5
         return fv
     
     #五風
@@ -512,25 +519,25 @@ class Taiyi:
         f = int(self.accHour) % 29
         if f > 10:
             f = f - 9
-		fv = dict(zip(range(1,10), [1,3,5,7,9,2,4,6,8])).get(int(f))
-		if fv == 0:
-			fv = 5
+        fv = dict(zip(range(1,10), [1,3,5,7,9,2,4,6,8])).get(int(f))
+        if fv == 0 or fv == None:
+            fv = 5
         return fv
     
     #八風
     def eightwind(self):
         f = int(self.accHour) % 9
-		fv = dict(zip(range(1,9), [2,3,5,6,7,8,9,1])).get(int(f))
-		if fv == 0:
-			fv = 5
+        fv = dict(zip(range(1,9), [2,3,5,6,7,8,9,1])).get(int(f))
+        if fv == 0 or fv == None:
+            fv = 5
         return fv
     
     #五福
     def wufu(self):
         f = int(self.accHour + 250) % 225 / 45 
-		fv = dict(zip(range(1,6), list("乾艮巽坤中"))).get(int(f))
-        if fv == 0:
-			fv = 5
+        fv = dict(zip(range(1,6), list("乾艮巽坤中"))).get(int(f))
+        if fv == 0 or fv ==None:
+            fv = 5
         return fv
     
     def pan(self):
@@ -555,4 +562,4 @@ class Taiyi:
 
 
 if __name__ == '__main__':
-    print(Taiyi(2021,11,15,12).pan())
+    print(Taiyi(2021,11,16,10).pan())
