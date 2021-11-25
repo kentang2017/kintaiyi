@@ -5,7 +5,7 @@ Created on Sun Nov  7 11:58:46 2021
 @author: kentang
 """
 
-from kintaiyi.config import *
+from config import *
 import sxtwl, re, math, itertools, datetime
 import numpy as np
 
@@ -41,6 +41,7 @@ class Taiyi:
         #陰陽遁定制
         self.gong = dict(zip(list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥"), range(1,17)))
         self.gong1 = list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥")
+        self.gong2 = dict(zip(list("亥子丑艮寅卯辰巽巳午未坤申酉戌乾"), [8,8,3,3,4,4,9,9,2,2,7,7,6,6,1,1]))
         self.yang_sixteen = list("申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤")
         self.ying_sixteen = list("寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮")
         self.yangji = list("寅丑子亥戌酉申未午巳辰卯")
@@ -160,6 +161,23 @@ class Taiyi:
                         ((self.taiyiyear + self.year) * 12 - 10 + self.month + self.dzdistance()+ 1) * 12 + math.ceil(self.hour / 2 ) + 1
                         ]))
     def gakook(self):
+        ty = self.ty()
+        wc = self.gong2.get(self.skyeyes)
+        sf = self.gong2.get(self.sf())
+        hg = self.gong2.get(self.home_general())
+        ag = self.gong2.get(self.away_general())
+        hvg = self.gong2.get(self.home_vgen())
+        avg = self.gong2.get(self.away_vgen())
+        sg = self.gong2.get(self.set_general())
+        svg = self.gong2.get(self.set_vgen())
+        if ty == wc:
+            gk = self.skyeyes + "掩太乙"
+        elif ty == sf:
+            gk = self.sf() + "掩太乙"
+        elif self.num.index(ty) - self.num.index(wc) == 1 or -1 or 7 or -7:
+            gk = self.skyeyes + "迫太乙"
+        elif self.num.index(ty) - self.num.index(sf) == 1 or -1 or 7 or -7:
+            gk = self.sf() + "提挾太乙"
         #掩 : 太乙 文昌 同宮 / 始擊 太乙 同宮
         #迫 : 文昌在太乙左右
         #關 : 主客四將同宮
@@ -358,7 +376,10 @@ class Taiyi:
                         res[list] = dict[list]
                     except TypeError:
                         pass
-        return res 
+        rres = str(res.values())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
+        rrres = [re.findall("..", i) for i in rres]
+        r = str(res.keys())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
+        return {r[i]:rrres[i] for i in range(0,16)}
 
     def nine_gong(self):
         dict1 = [{self.home_general():"主將"},{self.home_vgen():"主參"},{self.away_general():"客將"},
@@ -559,7 +580,120 @@ class Taiyi:
                 "九宮":self.nine_gong(), 
                 "十六宮":self.sixteen_gong(),
                 }
+    
+    
+    def html(self):
+        text = '''<html><body><table border="0" cellpadding="1" cellspacing="1" style="width:500px">
+    	<tbody>
+    		<tr>
+    			<td colspan="5">
+    			<p><span style="font-size:large"><strong>'''+str(self.year)+"年"+str(self.month)+"月"+str(self.day)+"日"+str(self.hour)+"時"+'''<br />
+    			干支: '''+self.gangzhi()[0]+"  "+self.gangzhi()[1]+"  "+self.gangzhi()[2]+"  "+self.gangzhi()[3]+'''&nbsp;</strong></span></p>
+    			<p><span style="font-size:large"><strong>'''+self.jiyuan()+"  "+self.kook()+'''<br />
+    			主算:'''+str(self.home_cal())+"".join(self.cal_des(self.home_cal()))+'''<br />
+    			客算:'''+str(self.away_cal())+"".join(self.cal_des(self.away_cal()))+'''<br />
+    			定算:'''+str(self.set_cal())+"".join(self.cal_des(self.set_cal()))+'''</strong></span></p>
+    			</td>
+    		</tr>
+    		<tr>
+    			<td><span style="font-size:large"><strong>巽</strong></span>
+    			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("巽")])+'''</tbody>
+    			</table>
+    			</td>
+    			<td><span style="font-size:large"><strong>巳</strong></span>
+    			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("巳")])+'''</tbody>
+    			</table>
+    			</td>
+    			<td><span style="font-size:large"><strong>午</strong></span>
+    			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("午")])+'''</tbody>
+    			</table>
+    			</td>
+    			<td><span style="font-size:large"><strong>未&nbsp;</strong></span>
+    			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("未")])+'''</tbody>
+    			</table>
+    			</td>
+    			<td><span style="font-size:large"><strong>坤</strong></span>
+    			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("坤")])+'''</tbody>
+    			</table>
+    			</td>
+    		</tr>
+    		<tr>
+    			<td><span style="font-size:large"><strong>辰</strong></span>
+    			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("辰")])+'''</tbody>
+    			</table>
+    			</td>
+    			<td colspan="3" rowspan="3">&nbsp;</td>
+    			<td><span style="font-size:large"><strong>申</strong></span>
+    			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("申")])+'''</tbody>
+    			</table>
+    			</td>
+    		</tr>
+    		<tr>
+    			<td><span style="font-size:large"><strong>卯</strong></span>
+    			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("卯")])+'''</tbody>
+    			</table>
+    			</td>
+    			<td><span style="font-size:large"><strong>酉</strong></span>
+    			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("酉")])+'''</tbody>
+    			</table>
+    			</td>
+    		</tr>
+    		<tr>
+    			<td><span style="font-size:large"><strong>寅</strong></span>
+    			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("寅")])+'''</tbody>
+    			</table>
+    			</td>
+    			<td><span style="font-size:large"><strong>戌</strong></span>
+    			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("戌")])+'''</tbody>
+    			</table>
+    			</td>
+    		</tr>
+    		<tr>
+    			<td><span style="font-size:large"><strong>艮</strong></span>
+    			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("艮")])+'''</tbody>
+    			</table>
+    			</td>
+    			<td><span style="font-size:large"><strong>丑</strong></span>
+    				<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("丑")])+'''</tbody>
+    			</table>
+    			</td>
+    			<td><span style="font-size:large"><strong>子</strong></span>
+    			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("子")])+'''</tbody>
+    			</table>
+    			</td>
+    			<td><span style="font-size:large"><strong>亥</strong></span>
+    			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("亥")])+'''</tbody>
+    			</table>
+    			</td>
+    			<td><span style="font-size:large"><strong>乾</strong></span>
+    			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("乾")])+'''</tbody>
+    			</table>
+    			</td>
+    		</tr>
+    	</tbody>
+    </table>
+    
+    <p>&nbsp;</p></body></html>
+
+         ''' 
+        return text
 
 
 if __name__ == '__main__':
-    print(Taiyi(2021,11,16,10).pan())
+    print(Taiyi(2021,11,21,15).html())
