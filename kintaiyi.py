@@ -325,7 +325,7 @@ class Taiyi:
         elif se_jc !=1 and ty_jc !=1 and se_jc1 !=1 :
             return sum(se_order[: se_order.index(ty)])
         elif se_jc !=1 and ty_jc !=1 and se_jc1 !=1 and se_num != ty:
-            return sum(se_order[: sf_order.index(ty)])
+            return sum(se_order[: se_order.index(ty)])
         elif se_jc !=1 and ty_jc !=1 and se_jc1 !=1 and se_num == ty:
             return ty
     
