@@ -221,11 +221,22 @@ def twentyfourjieqi(year):
     day = getTheYearAllSolarTermsList(year)
     month = [ele for ele in [i for i in range(1,13)] for b in range(2)]
     new_date_list = []
-    for i in range(0,23):
+    for i in range(0,24):
         new_date = str(year)+"/"+str(month[i])+"/"+str(day[i])   
         date_format = datetime.strptime(new_date , "%Y/%m/%d").date()
         new_date_list.append(date_format)
     return dict(zip(new_date_list,solarTermsNameList))
+
+def twentyfourjieqir(year):
+    day = getTheYearAllSolarTermsList(year)
+    month = [ele for ele in [i for i in range(1,13)] for b in range(2)]
+    new_date_list = []
+    for i in range(0,24):
+        new_date = str(year)+"/"+str(month[i])+"/"+str(day[i])   
+        date_format = datetime.strptime(new_date , "%Y/%m/%d").date()
+        new_date_list.append(date_format)
+    return dict(zip(solarTermsNameList, new_date_list))
+
 # 两个List合并对应元素相加或者相减，a[i]+b[i]:tpye=1 a[i]-b[i]:tpye=-1
 def abListMerge(a, b=encryptionVectorList, type=1):
     c = []
@@ -253,3 +264,4 @@ def find_shier_luck(gan):
     yang = dict(zip(Gan[0::2], [dict(zip(y, twelve_luck)) for y in [new_list(Zhi, i) for i in list("亥寅寅巳申")]]))
     ying = dict(zip(Gan[1::2], [dict(zip(y, twelve_luck_i)) for y in [new_list(Zhi, i) for i in list("亥寅寅巳申")]]))
     return {**yang, **ying}.get(gan)
+

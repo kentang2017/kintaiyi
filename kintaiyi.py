@@ -62,6 +62,8 @@ class Taiyi:
         self.hegod = dict(zip(list("子寅卯辰巳午丑亥戌酉申未"),list("丑亥戌酉申未子寅卯辰巳午"))).get(self.taishui)
         #計神
         self.jigod = dict(zip(Zhi, self.findji )).get(self.taishui)
+        #八門
+        self.ed = list("開休生傷杜景死驚")
         
         
        
@@ -83,27 +85,23 @@ class Taiyi:
     
     #干支
     def gangzhi(self):
-        lunar = sxtwl.Lunar()
-        cdate = lunar.getDayBySolar(self.year, self.month, self.day)
-        yy_mm_dd = Gan[cdate.Lyear2.tg]+Zhi[cdate.Lyear2.dz],  Gan[cdate.Lmonth2.tg]+Zhi[cdate.Lmonth2.dz],  Gan[cdate.Lday2.tg]+Zhi[cdate.Lday2.dz]
-        timegz = lunar.getShiGz(cdate.Lday2.tg, self.hour)
-        new_hh = Gan[timegz.tg]+Zhi[timegz.dz]
-        return yy_mm_dd[0], yy_mm_dd[1],  yy_mm_dd[2], new_hh
+        cdate = sxtwl.fromSolar(self.year, self.month, self.day)
+        yTG = Gan[cdate.getYearGZ().tg] + Zhi[cdate.getYearGZ().dz]
+        mTG = Gan[cdate.getMonthGZ().tg] + Zhi[cdate.getMonthGZ().dz]
+        dTG  = Gan[cdate.getDayGZ().tg] + Zhi[cdate.getDayGZ().dz]
+        hTG = Gan[cdate.getHourGZ(self.hour).tg] + Zhi[cdate.getHourGZ(self.hour).dz]
+        return [yTG, mTG, dTG, hTG]
     
     def lunar_date_d(self):
-        lunar = sxtwl.Lunar()
-        day = lunar.getDayBySolar(self.year, self.month, self.day)
-        return {"月": self.ymc[day.Lmc], "日":self.rmc[day.Ldi]}
+        day = sxtwl.fromSolar(self.year, self.month, self.day)
+        return {"月": day.getLunarMonth(), "日":day.getLunarDay()}
     
     def dzdistance(self):
-        lunar = sxtwl.Lunar()
-        day = lunar.getDayBySolar(int(self.year), int(self.month), int(self.day) ).cur_dz
-        return day
+        return [twentyfourjieqir(self.year).get("冬至") - datetime.datetime.strptime(str(self.year)+"-"+str(self.month)+"-"+str(self.day), '%Y-%m-%d').date()][0].days
+   
     
     def xzdistance(self):
-        lunar = sxtwl.Lunar()
-        day = lunar.getDayBySolar(int(self.year), int(self.month), int(self.day) ).cur_xz
-        return day
+        return [twentyfourjieqir(self.year).get("夏至") - datetime.datetime.strptime(str(self.year)+"-"+str(self.month)+"-"+str(self.day), '%Y-%m-%d').date()][0].days
         
     def kook(self):
         dz = self.dzdistance()
@@ -325,7 +323,7 @@ class Taiyi:
         elif se_jc !=1 and ty_jc !=1 and se_jc1 !=1 :
             return sum(se_order[: se_order.index(ty)])
         elif se_jc !=1 and ty_jc !=1 and se_jc1 !=1 and se_num != ty:
-            return sum(se_order[: se_order.index(ty)])
+            return sum(sf_order[: sf_order.index(ty)])
         elif se_jc !=1 and ty_jc !=1 and se_jc1 !=1 and se_num == ty:
             return ty
     
@@ -561,6 +559,28 @@ class Taiyi:
             fv = 5
         return fv
     
+    #八門
+    def eight_door(self):
+        acc = self.accHour % 120
+        if acc == 0:
+            acc = 120
+        eightdoor_zhishi = acc // 30
+        if eightdoor_zhishi % 30 != 0:
+           eightdoor_zhishi = eightdoor_zhishi + 1
+        if self.kook()[0] == "陽":
+            fdoor = [1,8,3,6]
+        elif self.kook()[0] == "陰":
+            fdoor = [9,2,7,4]
+        ty_gong = self.ty()
+
+
+      
+
+        #leading = dict(zip(range(1,5), four_door)).get(eightdoor_zhishi)
+        #new_leading = self.new_list(self.num, int(leading))
+        #return dict(zip(new_leading, self.ed))
+        return self.new_list(self.num, fdoor[eightdoor_zhishi]), eightdoor_zhishi
+    
     def pan(self):
         return {
                 "干支":self.gangzhi(),
@@ -696,4 +716,4 @@ class Taiyi:
 
 
 if __name__ == '__main__':
-    print(Taiyi(2021,11,21,15).html())
+    print(Taiyi(2022,3,8,0).pan())
