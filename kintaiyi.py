@@ -5,7 +5,7 @@ Created on Sun Nov  7 11:58:46 2021
 @author: kentang
 """
 
-from config import *
+from kintaiyi.config import *
 import sxtwl, re, math, itertools, datetime
 import numpy as np
 
@@ -97,12 +97,11 @@ class Taiyi:
         return {"月": day.getLunarMonth(), "日":day.getLunarDay()}
     
     def dzdistance(self):
-        return [twentyfourjieqir(self.year).get("冬至") - datetime.datetime.strptime(str(self.year)+"-"+str(self.month)+"-"+str(self.day), '%Y-%m-%d').date()][0].days
-   
+        return [find_jq_date(self.year, self.month, self.day, self.hour, "冬至") -  datetime.datetime(self.year,self.month, self.day, self.hour, 0,0)][0].days                                                                                  
     
     def xzdistance(self):
-        return [twentyfourjieqir(self.year).get("夏至") - datetime.datetime.strptime(str(self.year)+"-"+str(self.month)+"-"+str(self.day), '%Y-%m-%d').date()][0].days
-        
+        return [find_jq_date(self.year, self.month, self.day, self.hour, "夏至") -  datetime.datetime(self.year,self.month, self.day, self.hour, 0,0)][0].days           
+            
     def kook(self):
         dz = self.dzdistance()
         xz = self.xzdistance()
@@ -572,10 +571,6 @@ class Taiyi:
         elif self.kook()[0] == "陰":
             fdoor = [9,2,7,4]
         ty_gong = self.ty()
-
-
-      
-
         #leading = dict(zip(range(1,5), four_door)).get(eightdoor_zhishi)
         #new_leading = self.new_list(self.num, int(leading))
         #return dict(zip(new_leading, self.ed))
