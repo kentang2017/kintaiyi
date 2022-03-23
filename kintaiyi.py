@@ -5,7 +5,7 @@ Created on Sun Nov  7 11:58:46 2021
 @author: kentang
 """
 
-from kintaiyi.config import *
+from config import *
 import sxtwl, re, math, itertools, datetime
 import numpy as np
 
@@ -711,4 +711,4 @@ class Taiyi:
 
 
 if __name__ == '__main__':
-    print(Taiyi(2022,3,8,0).pan())
+    print(Taiyi(2022,3,8,0).html())
