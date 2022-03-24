@@ -5,7 +5,7 @@ Created on Sun Nov  7 11:58:46 2021
 @author: kentang
 """
 
-from config import *
+from kintaiyi.config import *
 import sxtwl, re, math, itertools, datetime
 import numpy as np
 
@@ -85,11 +85,15 @@ class Taiyi:
     
     #干支
     def gangzhi(self):
-        cdate = sxtwl.fromSolar(self.year, self.month, self.day)
+        if self.hour == 23:
+            d = datetime.datetime.strptime(str(self.year)+"-"+str(self.month)+"-"+str(self.day)+"-"+str(self.hour)+":00:00", "%Y-%m-%d-%H:%M:%S") + datetime.timedelta(hours=1)
+        else:
+            d = datetime.datetime.strptime(str(self.year)+"-"+str(self.month)+"-"+str(self.day)+"-"+str(self.hour)+":00:00", "%Y-%m-%d-%H:%M:%S") 
+        cdate = sxtwl.fromSolar(d.year, d.month, d.day)
         yTG = Gan[cdate.getYearGZ().tg] + Zhi[cdate.getYearGZ().dz]
         mTG = Gan[cdate.getMonthGZ().tg] + Zhi[cdate.getMonthGZ().dz]
         dTG  = Gan[cdate.getDayGZ().tg] + Zhi[cdate.getDayGZ().dz]
-        hTG = Gan[cdate.getHourGZ(self.hour).tg] + Zhi[cdate.getHourGZ(self.hour).dz]
+        hTG = Gan[cdate.getHourGZ(d.hour).tg] + Zhi[cdate.getHourGZ(d.hour).dz]
         return [yTG, mTG, dTG, hTG]
     
     def lunar_date_d(self):

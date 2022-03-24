@@ -95,8 +95,6 @@ def jq(year, month, day, hour):
     else:
         return bf[0]
 
-
-
 Gan = list("甲乙丙丁戊己庚辛壬癸")
 Zhi = list("子丑寅卯辰巳午未申酉戌亥")
 
