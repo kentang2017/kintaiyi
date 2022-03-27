@@ -5,8 +5,7 @@ Created on Sun Nov  7 11:58:46 2021
 @author: kentang
 """
 
-from kintaiyi.config import *
-import sxtwl, re, math, itertools, datetime
+import sxtwl, re, math, itertools, datetime, time, ephem
 import numpy as np
 
 #%% 主程式
@@ -25,19 +24,20 @@ class Taiyi:
         self.month = month
         self.day = day
         self.hour = hour
-        self.dz_date = datetime.datetime.strptime(str(self.year)+"/"+str(self.month)+"/"+str(self.day) , '%Y/%m/%d') - datetime.timedelta(days=self.dzdistance())
-        self.accHour = int(int((29277 + self.dz_date.year) * 365.2425) * 12) + ((self.dzdistance()-1) * 12) + dict(zip(Zhi,range(1,13))).get(self.gangzhi()[3][1])
+        #干支
+        self.Gan = '甲乙丙丁戊己庚辛壬癸'
+        self.Zhi = '子丑寅卯辰巳午未申酉戌亥'
+        #節氣
+        self.jieqi = re.findall('..', '春分清明穀雨立夏小滿芒種夏至小暑大暑立秋處暑白露秋分寒露霜降立冬小雪大雪冬至小寒大寒立春雨水驚蟄')
         self.ymc = [11,12,1,2,3,4,5,6,7,8,9,10]
         self.num = [8,3,4,9,2,7,6,1]
         self.rmc = list(range(1,32))
         #十六神
         self.sixtengod = dict(zip(list("子丑艮寅卯巽辰巳午未坤申酉戌乾亥"), re.findall("..","地主陽德和德呂申高叢太陽大炅大神大威天道大武武德太簇陰主陰德大義")))
-        
         #間辰
         self.jc = list("丑寅辰巳未申戌亥")
         self.jc1 = list("巽艮坤乾")
         self.tyjc = [1,3,7,9]
-        
         #陰陽遁定制
         self.gong = dict(zip(list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥"), range(1,17)))
         self.gong1 = list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥")
@@ -50,22 +50,24 @@ class Taiyi:
         self.findplace = {"陽":self.yang_sixteen, "陰":self.ying_sixteen}.get(self.kook()[0])
         self.findplace_num = dict(zip(self.findplace, range(1,19)))
         self.findji = {"陽":self.yangji, "陰":self.yingji}.get(self.kook()[0])
-  
         #文昌
         self.skyeyes_dict = {"陽" : list("未坤申酉戌乾乾亥子丑艮寅卯巽辰巳午未坤坤申酉戌乾乾亥子丑艮寅卯巽辰巳午未坤坤申酉戌乾乾亥子丑艮寅卯巽辰巳午未坤坤申酉戌乾乾亥子丑艮寅卯巽辰巳午未"),
         "陰":list("寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮")}
         self.skyeyes = dict(zip(range(1,73),self.skyeyes_dict.get(self.kook()[0]))).get(int(self.kook().replace("陰遁", "").replace("陽遁", "").replace("局", "")))
-    
         #太歲
         self.taishui = self.gangzhi()[3][1]
         #合神
         self.hegod = dict(zip(list("子寅卯辰巳午丑亥戌酉申未"),list("丑亥戌酉申未子寅卯辰巳午"))).get(self.taishui)
         #計神
-        self.jigod = dict(zip(Zhi, self.findji )).get(self.taishui)
+        self.jigod = dict(zip(self.Zhi, self.findji )).get(self.taishui)
         #八門
         self.ed = list("開休生傷杜景死驚")
-        
-        
+        self.dz_date = datetime.datetime.strptime(str(self.year)+"/"+str(self.month)+"/"+str(self.day) , '%Y/%m/%d') - datetime.timedelta(days=self.dzdistance())
+        self.accHour = int(int((29277 + self.dz_date.year) * 365.2425) * 12) + ((self.dzdistance()-1) * 12) + dict(zip(self.Zhi,range(1,13))).get(self.gangzhi()[3][1])
+       
+    def jiazi(self):
+        jiazi = [self.Gan[x % len(self.Gan)] + self.Zhi[x % len(self.Zhi)] for x in range(60)]
+        return jiazi
        
     def new_list(self, olist, o):
         zhihead_code = olist.index(o)
@@ -74,15 +76,6 @@ class Taiyi:
             res1.append( olist[zhihead_code % len(olist)])
             zhihead_code = zhihead_code + 1
         return res1
-        
-    def find_jieqi(self):
-        jieqi_list = twentyfourjieqi(self.year)
-        s_date = list(jieqi_list.keys())
-        date = datetime.strptime(str(self.year)+"-"+str(self.month)+"-"+str(self.day), '%Y-%m-%d').date()
-        closest = sorted(s_date, key=lambda d: abs( date  - d))[0]
-        test = {True:jieqi_list.get(s_date[s_date.index(closest) - 1]), False:jieqi_list.get(closest)}
-        return test.get(closest>date)
-    
     #干支
     def gangzhi(self):
         if self.hour == 23:
@@ -90,21 +83,91 @@ class Taiyi:
         else:
             d = datetime.datetime.strptime(str(self.year)+"-"+str(self.month)+"-"+str(self.day)+"-"+str(self.hour)+":00:00", "%Y-%m-%d-%H:%M:%S") 
         cdate = sxtwl.fromSolar(d.year, d.month, d.day)
-        yTG = Gan[cdate.getYearGZ().tg] + Zhi[cdate.getYearGZ().dz]
-        mTG = Gan[cdate.getMonthGZ().tg] + Zhi[cdate.getMonthGZ().dz]
-        dTG  = Gan[cdate.getDayGZ().tg] + Zhi[cdate.getDayGZ().dz]
-        hTG = Gan[cdate.getHourGZ(d.hour).tg] + Zhi[cdate.getHourGZ(d.hour).dz]
+        yTG = self.Gan[cdate.getYearGZ().tg] + self.Zhi[cdate.getYearGZ().dz]
+        mTG = self.Gan[cdate.getMonthGZ().tg] + self.Zhi[cdate.getMonthGZ().dz]
+        dTG  = self.Gan[cdate.getDayGZ().tg] + self.Zhi[cdate.getDayGZ().dz]
+        hTG = self.Gan[cdate.getHourGZ(d.hour).tg] + self.Zhi[cdate.getHourGZ(d.hour).dz]
         return [yTG, mTG, dTG, hTG]
+    #節氣
+    def ecliptic_lon(self, jd_utc):
+        s = ephem.Sun(jd_utc)
+        equ = ephem.Equatorial(s.ra,s.dec,epoch=jd_utc)
+        e= ephem.Ecliptic(equ)
+        return e.lon
+    
+    def sta(self, jd):
+        e=self.ecliptic_lon(jd)
+        n=int(e*180.0/math.pi/15)
+        return n
+    
+    def iteration(self, jd):
+        s1=self.sta(jd)
+        s0=s1
+        dt=1.0
+        while True:
+            jd+=dt
+            s=self.sta(jd)
+            if s0!=s:
+                s0=s
+                dt=-dt/2
+            if abs(dt)<0.0000001 and s!=s1:
+                break
+        return jd
+    
+    def fjqs(self, year, month, day, hour):
+        jd = ephem.Date( str(year)+"/"+str(month).zfill(2)+"/"+str(day).zfill(2)+" "+str(hour).zfill(2)+":00:00.00")
+        ct = datetime.datetime.strptime(str(year)+"-"+str(month)+"-"+str(day)+"-"+str(hour)+":00:00", "%Y-%m-%d-%H:%M:%S")
+        e=self.ecliptic_lon(jd)
+        n=int(e*180.0/math.pi/15)+1
+        c = []
+        for i in range(1):
+            if n>=24:
+                n-=24
+            jd = self.iteration(jd)
+            d = ephem.Date(jd+1/3).tuple()
+            b = [self.jieqi[n], datetime.datetime.strptime(str(d[0])+"-"+str(d[1])+"-"+str(d[2])+"-"+str(d[3])+":00:00", "%Y-%m-%d-%H:%M:%S")]
+            c.append(b)
+        return c[0]
+    
+    def jq(self, year, month, day, hour):
+        jd= ephem.Date( str(year)+"/"+str(month).zfill(2)+"/"+str(day).zfill(2)+" "+str(hour).zfill(2)+":00:00.00")
+        ct = datetime.datetime.strptime(str(year)+"-"+str(month)+"-"+str(day)+"-"+str(hour)+":00:00", "%Y-%m-%d-%H:%M:%S")
+        p = ct - datetime.timedelta(days=7)
+        pp = ct - datetime.timedelta(days=21)
+        bf = self.fjqs(p.year, p.month, p.day, p.hour)
+        bbf = self.fjqs(pp.year, pp.month, pp.day, pp.hour)
+        t1 = bf[1]
+        t2 = bbf[1]
+        if ct < t1:
+            return bbf[0]
+        else:
+            return bf[0]
+
+    def find_jq_date(self, year, month, day, hour, jq):
+        jd=ephem.Date( str(year)+"/"+str(month).zfill(2)+"/"+str(day).zfill(2)+" "+str(hour).zfill(2)+":00:00.00")
+        e=self.ecliptic_lon(jd)
+        n=int(e*180.0/math.pi/15)+1
+        dzlist = []
+        for i in range(24):
+            if n>=24:
+                n-=24
+            jd=self.iteration(jd)
+            d=ephem.Date(jd+1/3).tuple()
+            d1=ephem.Date(jd+1/3)
+            b = {self.jieqi[n]: datetime.datetime(d[0], d[1], d[2],d[3], d[4], int(d[5]))}
+            n+=1
+            dzlist.append(b)
+        return list(dzlist[[list(i.keys())[0] for i in dzlist].index(jq)].values())[0]
     
     def lunar_date_d(self):
         day = sxtwl.fromSolar(self.year, self.month, self.day)
         return {"月": day.getLunarMonth(), "日":day.getLunarDay()}
     
     def dzdistance(self):
-        return [find_jq_date(self.year, self.month, self.day, self.hour, "冬至") -  datetime.datetime(self.year,self.month, self.day, self.hour, 0,0)][0].days                                                                                  
+        return [self.find_jq_date(self.year, self.month, self.day, self.hour, "冬至") -  datetime.datetime(self.year,self.month, self.day, self.hour, 0,0)][0].days                                                                                  
     
     def xzdistance(self):
-        return [find_jq_date(self.year, self.month, self.day, self.hour, "夏至") -  datetime.datetime(self.year,self.month, self.day, self.hour, 0,0)][0].days           
+        return [self.find_jq_date(self.year, self.month, self.day, self.hour, "夏至") -  datetime.datetime(self.year,self.month, self.day, self.hour, 0,0)][0].days           
             
     def kook(self):
         dz = self.dzdistance()
@@ -122,13 +185,13 @@ class Taiyi:
             kook = 1
             return dun + str(kook) + "局"
         elif self.hour == 23 and dz_kook + (dz * 12) % 72 != 60:
-            kook = dz_kook + (dz * 12) % 72 + dict(zip(Zhi,range(1,13))).get(self.gangzhi()[3][1])
+            kook = dz_kook + (dz * 12) % 72 + dict(zip(self.Zhi,range(1,13))).get(self.gangzhi()[3][1])
             dunkook = kook-60
             if dunkook < 0:
                 dunkook = kook + 12
             return dun + str(dunkook) + "局"
         elif self.hour != 23:
-            kook = dz_kook + (dz * 12) % 72 + dict(zip(Zhi,range(1,13))).get(self.gangzhi()[3][1])
+            kook = dz_kook + (dz * 12) % 72 + dict(zip(self.Zhi,range(1,13))).get(self.gangzhi()[3][1])
             if kook > 72:
                 kook = kook - 72
             return dun + str(kook) + "局"
@@ -139,7 +202,7 @@ class Taiyi:
             find_ji_num = 1
         else:
             find_ji_num = int(round((accnum % self.circle) / self.yuan, 0))
-        fiveyuen_d = dict(zip(range(1,6), [jiazi()[i] for i in [0,12,24,36,48]]))
+        fiveyuen_d = dict(zip(range(1,6), [self.jiazi()[i] for i in [0,12,24,36,48]]))
         jiyuan = fiveyuen_d.get(find_ji_num) 
         return jiyuan
     
@@ -221,8 +284,7 @@ class Taiyi:
         start1 = len(start[:start.index(ts)+1])
         start2 = self.new_list(self.gong1, wc)[start1-1]
         return  start2
-    
-       
+
     def home_cal(self):
         num = self.num
         lnum = [8, 8, 3,  3, 4,4, 9, 9, 2, 2, 7, 7, 6, 6, 1, 1]
@@ -406,7 +468,7 @@ class Taiyi:
     #君基
     def kingbase(self):
         kb = (self.accHour +250) % 360  / 30
-        kb_v = dict(zip(range(1,13), self.new_list(Zhi, "午"))).get(int(kb))
+        kb_v = dict(zip(range(1,13), self.new_list(self.Zhi, "午"))).get(int(kb))
         if kb_v == 0 or kb_v ==None:
             kb_v = "中"
         return kb_v
@@ -414,19 +476,17 @@ class Taiyi:
     #臣基
     def officerbase(self):
         ob = (self.accHour +250) % 360  % 36 / 3
-        ob_v =  dict(zip(range(1,13), self.new_list(Zhi, "午"))).get(int(ob))
+        ob_v =  dict(zip(range(1,13), self.new_list(self.Zhi, "午"))).get(int(ob))
         if ob_v == 0 or ob_v ==None:
             ob_v = "中"
         return ob_v
-    
     #民基
     def pplbase(self):
         pb = (self.accHour +250) % 360 % 12
-        pb_v = dict(zip(range(1,13), self.new_list(Zhi, "戌"))).get(int(pb))
+        pb_v = dict(zip(range(1,13), self.new_list(self.Zhi, "戌"))).get(int(pb))
         if pb_v == 0 or pb_v ==None:
             pb_v = "中"
         return  pb_v
-
     #大游
     def bigyo(self):
         by = int((self.accHour +34) % 388)
@@ -438,7 +498,6 @@ class Taiyi:
         if byv == 0 or byv ==None:
             byv = 5
         return byv
-
     #小游
     def smyo(self):
         sy = int(self.accHour  % 360)
@@ -452,47 +511,41 @@ class Taiyi:
         if syv == 0 or syv == None:
             syv = 5
         return syv
-    
     #四神
     def fgd(self):
         f = self.accHour % 360 % 36 / 3 
-        fv = dict(zip(range(1,13), self.new_list(Zhi, "亥"))).get(int(f))
+        fv = dict(zip(range(1,13), self.new_list(self.Zhi, "亥"))).get(int(f))
         if fv == 0 or fv == None:
             fv = "中"
         return fv
-    
     #天乙
     def skyyi(self):
         f = self.accHour % 360 % 36 / 3 
-        fv = dict(zip(range(1,13), self.new_list(Zhi, "酉"))).get(int(f))
+        fv = dict(zip(range(1,13), self.new_list(self.Zhi, "酉"))).get(int(f))
         if fv == 0 or fv == None:
             fv = "中"
         return fv
-
     #地乙
     def earthyi(self):
         f = self.accHour % 360 % 36 / 3
-        fv = dict(zip(range(1,13), self.new_list(Zhi, "巳"))).get(int(f))
+        fv = dict(zip(range(1,13), self.new_list(self.Zhi, "巳"))).get(int(f))
         if fv == 0 or fv == None:
             fv = "中"
         return fv
-
     #直符
     def zhifu(self):
         f = self.accHour % 360 % 36 / 3
-        fv = dict(zip(range(1,14), ["中"]+self.new_list(Zhi, "酉"))).get(int(f))
+        fv = dict(zip(range(1,14), ["中"]+self.new_list(self.Zhi, "酉"))).get(int(f))
         if fv == 0 or fv == None:
             fv = "中"
         return fv
-    
     #飛符
     def flyfu(self):
         f = self.accHour % 360 % 36 / 3
-        fv = dict(zip(range(1,13), self.new_list(Zhi, "辰"))).get(int(f))
+        fv = dict(zip(range(1,13), self.new_list(self.Zhi, "辰"))).get(int(f))
         if fv == 0 or fv == None:
             fv = "中"
         return fv
-    
     #帝符
     def kingfu(self):
         f = self.accHour  %20
@@ -502,7 +555,6 @@ class Taiyi:
         if fv == 0 or fv== None:
             fv = "中"
         return fv
-        
     #太尊
     def taijun(self):
         f = self.accHour  % 4
@@ -510,7 +562,6 @@ class Taiyi:
         if fv == 0  or fv == None:
             fv = "中"
         return fv
-
     #飛鳥
     def flybird(self):
         f = self.accHour  % 9
@@ -518,7 +569,6 @@ class Taiyi:
         if fv == 0 or fv ==None:
             fv = 5
         return fv
-    
     #五行
     def wuxing(self):
         f = int(self.accHour) // 5
@@ -527,7 +577,6 @@ class Taiyi:
         if fv == 0 or fv ==None:
             fv = 5
         return fv
-    
     #三風
     def threewind(self):
         f = int(self.accHour) % 9
@@ -535,7 +584,6 @@ class Taiyi:
         if fv == 0 or fv == None:
             fv = 5
         return fv
-    
     #五風
     def fivewind(self):
         f = int(self.accHour) % 29
@@ -545,7 +593,6 @@ class Taiyi:
         if fv == 0 or fv == None:
             fv = 5
         return fv
-    
     #八風
     def eightwind(self):
         f = int(self.accHour) % 9
@@ -553,7 +600,6 @@ class Taiyi:
         if fv == 0 or fv == None:
             fv = 5
         return fv
-    
     #五福
     def wufu(self):
         f = int(self.accHour + 250) % 225 / 45 
@@ -561,7 +607,6 @@ class Taiyi:
         if fv == 0 or fv ==None:
             fv = 5
         return fv
-    
     #八門
     def eight_door(self):
         acc = self.accHour % 120
@@ -575,9 +620,6 @@ class Taiyi:
         elif self.kook()[0] == "陰":
             fdoor = [9,2,7,4]
         ty_gong = self.ty()
-        #leading = dict(zip(range(1,5), four_door)).get(eightdoor_zhishi)
-        #new_leading = self.new_list(self.num, int(leading))
-        #return dict(zip(new_leading, self.ed))
         return self.new_list(self.num, fdoor[eightdoor_zhishi]), eightdoor_zhishi
     
     def pan(self):
@@ -599,7 +641,6 @@ class Taiyi:
                 "九宮":self.nine_gong(), 
                 "十六宮":self.sixteen_gong(),
                 }
-    
     
     def html(self):
         text = '''<html><body><table border="0" cellpadding="1" cellspacing="1" style="width:500px">
@@ -715,4 +756,7 @@ class Taiyi:
 
 
 if __name__ == '__main__':
-    print(Taiyi(2022,3,8,0).html())
+    tic = time.perf_counter()
+    print(Taiyi(2015,7,20,10).pan())
+    toc = time.perf_counter()
+    print(f"{toc - tic:0.4f} seconds")
