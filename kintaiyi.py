@@ -642,8 +642,8 @@ class Taiyi():
                 "十六宮":self.sixteen_gong(ji),
                 }
     
-    def html(self, ji):
-        text = '''<html><body><table border="0" cellpadding="1" cellspacing="1" style="width:500px">
+   def html(self, ji):
+       text = '''<html><body><table border="0" cellpadding="1" cellspacing="1" style="width:500px">
     	<tbody>
     		<tr>
     			<td colspan="5">
@@ -658,91 +658,91 @@ class Taiyi():
     		<tr>
     			<td><span style="font-size:large"><strong>巽</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("巽")])+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("巽")])+'''</tbody>
     			</table>
     			</td>
     			<td><span style="font-size:large"><strong>巳</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("巳")])+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("巳")])+'''</tbody>
     			</table>
     			</td>
     			<td><span style="font-size:large"><strong>午</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("午")])+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("午")])+'''</tbody>
     			</table>
     			</td>
     			<td><span style="font-size:large"><strong>未&nbsp;</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("未")])+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("未")])+'''</tbody>
     			</table>
     			</td>
     			<td><span style="font-size:large"><strong>坤</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("坤")])+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("坤")])+'''</tbody>
     			</table>
     			</td>
     		</tr>
     		<tr>
     			<td><span style="font-size:large"><strong>辰</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("辰")])+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("辰")])+'''</tbody>
     			</table>
     			</td>
     			<td colspan="3" rowspan="3">&nbsp;</td>
     			<td><span style="font-size:large"><strong>申</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("申")])+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("申")])+'''</tbody>
     			</table>
     			</td>
     		</tr>
     		<tr>
     			<td><span style="font-size:large"><strong>卯</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("卯")])+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("卯")])+'''</tbody>
     			</table>
     			</td>
     			<td><span style="font-size:large"><strong>酉</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("酉")])+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("酉")])+'''</tbody>
     			</table>
     			</td>
     		</tr>
     		<tr>
     			<td><span style="font-size:large"><strong>寅</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("寅")])+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("寅")])+'''</tbody>
     			</table>
     			</td>
     			<td><span style="font-size:large"><strong>戌</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("戌")])+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("戌")])+'''</tbody>
     			</table>
     			</td>
     		</tr>
     		<tr>
     			<td><span style="font-size:large"><strong>艮</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("艮")])+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("艮")])+'''</tbody>
     			</table>
     			</td>
     			<td><span style="font-size:large"><strong>丑</strong></span>
     				<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("丑")])+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("丑")])+'''</tbody>
     			</table>
     			</td>
     			<td><span style="font-size:large"><strong>子</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("子")])+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("子")])+'''</tbody>
     			</table>
     			</td>
     			<td><span style="font-size:large"><strong>亥</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("亥")])+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("亥")])+'''</tbody>
     			</table>
     			</td>
     			<td><span style="font-size:large"><strong>乾</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan().get("十六宮").get("乾")])+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("乾")])+'''</tbody>
     			</table>
     			</td>
     		</tr>
