@@ -642,17 +642,17 @@ class Taiyi():
                 "十六宮":self.sixteen_gong(ji),
                 }
     
-    def html(self):
+    def html(self, ji):
         text = '''<html><body><table border="0" cellpadding="1" cellspacing="1" style="width:500px">
     	<tbody>
     		<tr>
     			<td colspan="5">
     			<p><span style="font-size:large"><strong>'''+str(self.year)+"年"+str(self.month)+"月"+str(self.day)+"日"+str(self.hour)+"時"+'''<br />
     			干支: '''+self.gangzhi()[0]+"  "+self.gangzhi()[1]+"  "+self.gangzhi()[2]+"  "+self.gangzhi()[3]+'''&nbsp;</strong></span></p>
-    			<p><span style="font-size:large"><strong>'''+self.jiyuan()+"  "+self.kook()+'''<br />
-    			主算:'''+str(self.home_cal())+"".join(self.cal_des(self.home_cal()))+'''<br />
-    			客算:'''+str(self.away_cal())+"".join(self.cal_des(self.away_cal()))+'''<br />
-    			定算:'''+str(self.set_cal())+"".join(self.cal_des(self.set_cal()))+'''</strong></span></p>
+    			<p><span style="font-size:large"><strong>'''+self.jiyuan(ji)+"  "+self.kook(ji)+'''<br />
+    			主算:'''+str(self.home_cal(ji))+"".join(self.cal_des(self.home_cal(ji)))+'''<br />
+    			客算:'''+str(self.away_cal(ji))+"".join(self.cal_des(self.away_cal(ji)))+'''<br />
+    			定算:'''+str(self.set_cal(ji))+"".join(self.cal_des(self.set_cal(ji)))+'''</strong></span></p>
     			</td>
     		</tr>
     		<tr>
@@ -753,6 +753,7 @@ class Taiyi():
 
          ''' 
         return text
+
 
 
 if __name__ == '__main__':
