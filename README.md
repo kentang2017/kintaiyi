@@ -1,4 +1,4 @@
-﻿# **Python 太乙神數 Kintaiyi 堅太乙 堅太乙時計**
+﻿# **Python 太乙神數 Kintaiyi 堅太乙 堅太乙 年計 月計 日計 時計**
 [![Python](https://img.shields.io/pypi/pyversions/kintaiyi)](https://pypi.org/project/kintaiyi/)
 [![PIP](https://img.shields.io/pypi/v/kintaiyi)](https://pypi.org/project/kintaiyi/)
 [![Downloads](https://img.shields.io/pypi/dm/kintaiyi)](https://pypi.org/project/kintaiyi/)
@@ -19,12 +19,12 @@ Taiyishenshu, one of the Ancient Chinese Divinations, along with Qimendunjia and
 ## 2. 安裝套件 Installation
 ```python
 	pip install kintaiyi
-	pip install sxtwl == 1.0, numpy
+	pip install --upgrade sxtwl, numpy
 ```
 ## 3. 起課方式 Quickstart
 ```python
 	from kintaiyi import kintaiyi
-	kintaiyi.Taiyi(2021,11,14,20).pan()
+	kintaiyi.Taiyi(2021,11,14,20).pan(0) # 0 為年計；1 為月計；2 為日計：3 為時計
 ```
 ## 3. 太乙古籍
 
