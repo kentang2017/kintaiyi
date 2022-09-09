@@ -213,6 +213,8 @@ class Taiyi():
             find_ji_num = 1
         else:
             find_ji_num = round((accnum % self.circle) / self.epoch, 0)
+        if find_ji_num == 0:
+            find_ji_num = 1
         cnum = list("一二三四五六七八九十")
         return "第"+dict(zip(range(1,8), cnum[0:7])).get(find_ji_num)+"紀"
     
