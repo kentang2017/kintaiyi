@@ -202,6 +202,8 @@ class Taiyi():
         else:
             find_ji_num = int(round((accnum % self.circle) / self.yuan, 0))
         fiveyuen_d = dict(zip(range(1,6), jiazi()[0::12]))
+        if find_ji_num == 0:
+            find_ji_num = 1
         jiyuan = fiveyuen_d.get(find_ji_num) 
         return jiyuan
     
