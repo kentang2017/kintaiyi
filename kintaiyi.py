@@ -78,8 +78,8 @@ class Taiyi():
         king = data[4::7]
         king_realname = data[5::7]
         preiodname = data[6::7]
-        idx = y.index(closest(y, self.lunar_date_d().get("年")))
-        year = self.lunar_date_d().get("年") - y[idx-1] + 1 
+        idx = y.index(closest(y, self.year))
+        year = self.year - y[idx-1]+1
         cyear = num2cn(year)+ "年"
         return  period[idx-1]+king[idx-1]+king_realname[idx-1] +" "+ preiodname[idx-1]+cyear
 
@@ -169,7 +169,7 @@ class Taiyi():
     
     def lunar_date_d(self):
         day = sxtwl.fromSolar(self.year, self.month, self.day)
-        return {"年":day.getLunarYear(),  "月": day.getLunarMonth(), "日":day.getLunarDay()}
+        return {"月": day.getLunarMonth(), "日":day.getLunarDay()}
     
     def dzdistance(self):
         return [self.find_jq_date(self.year, self.month, self.day, self.hour, "冬至") -  datetime.datetime(self.year,self.month, self.day, self.hour, 0,0)][0].days                                                                                  
@@ -783,7 +783,7 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Taiyi(1775,1,31,0,14).pan(3))
+    print(Taiyi(1901,8,28,0,14).pan(3))
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
     
