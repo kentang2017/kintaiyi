@@ -63,11 +63,11 @@ class Taiyi():
         self.hegod = dict(zip(list("子寅卯辰巳午丑亥戌酉申未"),list("丑亥戌酉申未子寅卯辰巳午"))).get(self.taishui)
         #八門
         self.ed = list("開休生傷杜景死驚")
-        self.dz_date = datetime.datetime.strptime(str(self.year)+"/"+str(self.month)+"/"+str(self.day) , '%Y/%m/%d') - datetime.timedelta(days=self.dzdistance())
+        self.dz_date = datetime.datetime.strptime(str(self.year).zfill(4)+"/"+str(self.month)+"/"+str(self.day) , '%Y/%m/%d') - datetime.timedelta(days=self.dzdistance())
 
     def skyeyes(self, ji):
-        findplace = {"陽":self.yang_sixteen, "陰":self.ying_sixteen}.get(self.kook(ji)[0])
-        findplace_num = dict(zip(findplace, range(1,19)))    
+        #findplace = {"陽":self.yang_sixteen, "陰":self.ying_sixteen}.get(self.kook(ji)[0])
+        #findplace_num = dict(zip(findplace, range(1,19)))    
         return dict(zip(range(1,73),self.skyeyes_dict.get(self.kook(ji)[0]))).get(int(self.kook(ji).replace("陰遁", "").replace("陽遁", "").replace("局", "")))
 
     #計神
@@ -86,15 +86,17 @@ class Taiyi():
     #干支
     def gangzhi(self):
         if self.hour == 23:
-            d = datetime.datetime.strptime(str(self.year)+"-"+str(self.month)+"-"+str(self.day)+"-"+str(self.hour)+":00:00", "%Y-%m-%d-%H:%M:%S") + datetime.timedelta(hours=1)
+            d = datetime.datetime.strptime(str(self.year).zfill(4)+"-"+str(self.month)+"-"+str(self.day)+"-"+str(self.hour)+":00:00", "%Y-%m-%d-%H:%M:%S") + datetime.timedelta(hours=1)
         else:
-            d = datetime.datetime.strptime(str(self.year)+"-"+str(self.month)+"-"+str(self.day)+"-"+str(self.hour)+":00:00", "%Y-%m-%d-%H:%M:%S") 
+            d = datetime.datetime.strptime(str(self.year).zfill(4)+"-"+str(self.month)+"-"+str(self.day)+"-"+str(self.hour)+":00:00", "%Y-%m-%d-%H:%M:%S") 
+        
         cdate = sxtwl.fromSolar(d.year, d.month, d.day)
         yTG = self.Gan[cdate.getYearGZ().tg] + self.Zhi[cdate.getYearGZ().dz]
         mTG = self.Gan[cdate.getMonthGZ().tg] + self.Zhi[cdate.getMonthGZ().dz]
         dTG  = self.Gan[cdate.getDayGZ().tg] + self.Zhi[cdate.getDayGZ().dz]
         hTG = self.Gan[cdate.getHourGZ(d.hour).tg] + self.Zhi[cdate.getHourGZ(d.hour).dz]
         return [yTG, mTG, dTG, hTG]
+    
     #節氣
     def ecliptic_lon(self, jd_utc):
         s = ephem.Sun(jd_utc)
@@ -119,7 +121,7 @@ class Taiyi():
     
     def fjqs(self, year, month, day, hour):
         jd = ephem.Date( str(year)+"/"+str(month).zfill(2)+"/"+str(day).zfill(2)+" "+str(hour).zfill(2)+":00:00.00")
-        ct = datetime.datetime.strptime(str(year)+"-"+str(month)+"-"+str(day)+"-"+str(hour)+":00:00", "%Y-%m-%d-%H:%M:%S")
+        #ct = datetime.datetime.strptime(str(year)+"-"+str(month)+"-"+str(day)+"-"+str(hour)+":00:00", "%Y-%m-%d-%H:%M:%S")
         n=int(self.ecliptic_lon(jd)*180.0/math.pi/15)+1
         c = []
         for i in range(1):
@@ -141,7 +143,7 @@ class Taiyi():
                 n-=24
             jd=self.iteration(jd)
             d=ephem.Date(jd+1/3).tuple()
-            d1=ephem.Date(jd+1/3)
+            #d1=ephem.Date(jd+1/3)
             b = {self.jieqi[n]: datetime.datetime(d[0], d[1], d[2],d[3], d[4], int(d[5]))}
             n+=1
             dzlist.append(b)
@@ -180,11 +182,11 @@ class Taiyi():
             "%Y-%m-%d %H:%M:%S") - datetime.datetime.strptime("1900-06-19 00:00:00",
                                             "%Y-%m-%d %H:%M:%S")).days - 1 ) * 12 + (self.hour + 1 ) // 2 + 1
     def kook(self, ji):
-        dz = self.dzdistance()
+        #dz = self.dzdistance()
         xz = self.xzdistance()
-        dz_date = datetime.datetime.strptime(str(self.year)+"/"+str(self.month)+"/"+str(self.day) , '%Y/%m/%d') - datetime.timedelta(days=dz)
-        xz_date = datetime.datetime.strptime(str(self.year)+"/"+str(self.month)+"/"+str(self.day) , '%Y/%m/%d') - datetime.timedelta(days=xz)
-        current_date = datetime.datetime.strptime(str(self.year)+"/"+str(self.month)+"/"+str(self.day) , '%Y/%m/%d')
+        #dz_date = datetime.datetime.strptime(str(self.year)+"/"+str(self.month)+"/"+str(self.day) , '%Y/%m/%d') - datetime.timedelta(days=dz)
+        xz_date = datetime.datetime.strptime(str(self.year).zfill(4)+"/"+str(self.month)+"/"+str(self.day) , '%Y/%m/%d') - datetime.timedelta(days=xz)
+        current_date = datetime.datetime.strptime(str(self.year).zfill(4)+"/"+str(self.month)+"/"+str(self.day) , '%Y/%m/%d')
         if ji == 0 or ji == 1 or ji ==2:
             dun = "陽遁"
             return dun + str(self.accnum(ji)%72) + "局"
@@ -628,6 +630,7 @@ class Taiyi():
     def pan(self, ji):
         return {
                 "太乙計":{0:"年計", 1:"月計", 2:"日計", 3:"時計"}.get(ji), 
+                "公元日期":"{}年{}月{}日{}時".format(self.year, self.month, self.day, self.hour),
                 "干支":self.gangzhi(),
                 "農曆":self.lunar_date_d(),
                 "紀元":self.jiyuan(ji),
@@ -646,8 +649,8 @@ class Taiyi():
                 "十六宮":self.sixteen_gong(ji),
                 }
     
-   def html(self, ji):
-       text = '''<html><body><table border="0" cellpadding="1" cellspacing="1" style="width:500px">
+    def html(self, ji):
+        text = '''<html><body><table border="0" cellpadding="1" cellspacing="1" style="width:500px">
     	<tbody>
     		<tr>
     			<td colspan="5">
@@ -759,11 +762,9 @@ class Taiyi():
         return text
 
 
-
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Taiyi(2022,8,27,18,14).pan(3))
+    print(Taiyi(50,8,28,0,14).pan(3))
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
     
-#太乙有阴阳遁局，年、月、日用阳遁；时则采用阴遁、阳遁，冬至后阳遁局，夏至后用阴遁局。
