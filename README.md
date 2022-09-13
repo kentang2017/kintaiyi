@@ -19,7 +19,7 @@ Taiyishenshu, one of the Ancient Chinese Divinations, along with Qimendunjia and
 ## 2. 安裝套件 Installation
 ```python
 	pip install kintaiyi
-	pip install --upgrade sxtwl, numpy
+	pip install --upgrade sxtwl, numpy, ephem, pycnnum 
 ```
 ## 3. 起課方式 Quickstart
 ```python
