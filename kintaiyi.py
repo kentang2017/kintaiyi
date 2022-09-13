@@ -5,7 +5,8 @@ Created on Sat Aug 27 18:11:44 2022
 @author: kentang
 """
 
-import sxtwl, re, math, itertools, datetime, time, ephem
+import sxtwl, re, math, itertools, datetime, time, ephem, pickle, os
+from pycnnum import num2cn
 import numpy as np
 
 def jiazi():
@@ -16,6 +17,9 @@ def jiazi():
 
 class Taiyi():
     def __init__(self, year, month, day, hour, minute):
+        base = os.path.abspath(os.path.dirname(__file__))
+        path = os.path.join(base, 'history.pkl')
+        self.history = pickle.load(open(path, "rb"))
         self.year = year
         self.month = month
         self.day = day
@@ -64,6 +68,20 @@ class Taiyi():
         #八門
         self.ed = list("開休生傷杜景死驚")
         self.dz_date = datetime.datetime.strptime(str(self.year).zfill(4)+"/"+str(self.month)+"/"+str(self.day) , '%Y/%m/%d') - datetime.timedelta(days=self.dzdistance())
+
+    def kingyear(self):
+        def closest(lst, K): 
+            return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))] 
+        data = self.history.split(",")
+        y =  [int(i) for i in data[0::7]]
+        period = data[3::7]
+        king = data[4::7]
+        king_realname = data[5::7]
+        preiodname = data[6::7]
+        idx = y.index(closest(y, self.lunar_date_d().get("年")))
+        year = self.lunar_date_d().get("年") - y[idx-1] + 1 
+        cyear = num2cn(year)+ "年"
+        return  period[idx-1]+king[idx-1]+king_realname[idx-1] +" "+ preiodname[idx-1]+cyear
 
     def skyeyes(self, ji):
         #findplace = {"陽":self.yang_sixteen, "陰":self.ying_sixteen}.get(self.kook(ji)[0])
@@ -151,7 +169,7 @@ class Taiyi():
     
     def lunar_date_d(self):
         day = sxtwl.fromSolar(self.year, self.month, self.day)
-        return {"月": day.getLunarMonth(), "日":day.getLunarDay()}
+        return {"年":day.getLunarYear(),  "月": day.getLunarMonth(), "日":day.getLunarDay()}
     
     def dzdistance(self):
         return [self.find_jq_date(self.year, self.month, self.day, self.hour, "冬至") -  datetime.datetime(self.year,self.month, self.day, self.hour, 0,0)][0].days                                                                                  
@@ -633,6 +651,7 @@ class Taiyi():
                 "公元日期":"{}年{}月{}日{}時".format(self.year, self.month, self.day, self.hour),
                 "干支":self.gangzhi(),
                 "農曆":self.lunar_date_d(),
+                "年號":self.kingyear(),
                 "紀元":self.jiyuan(ji),
                 "時局":self.kook(ji),
                 "太乙":self.ty(ji),
@@ -764,7 +783,7 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Taiyi(50,8,28,0,14).pan(3))
+    print(Taiyi(1775,1,31,0,14).pan(3))
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
     
