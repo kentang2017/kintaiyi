@@ -5,8 +5,7 @@ Created on Sat Aug 27 18:11:44 2022
 @author: kentang
 """
 
-import sxtwl, re, math, itertools, datetime, time, ephem, pickle, os
-from pycnnum import num2cn
+import sxtwl, re, math, itertools, datetime, time, ephem, pickle, os, cn2an
 import numpy as np
 
 def jiazi():
@@ -73,26 +72,30 @@ class Taiyi():
         def closest(lst, K): 
             return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))] 
         data = self.history.split(",")
-        y =  [int(i) for i in data[0::7]]
+        y =  list(map(lambda x: int(x), data[0::7]))
         period = data[3::7]
         king = data[4::7]
         king_realname = data[5::7]
         preiodname = data[6::7]
         idx = y.index(closest(y, self.lunar_date_d().get("年")))
-        year = self.lunar_date_d().get("年") - y[idx-1] + 1 
-        cyear = num2cn(year)+ "年"
-        return  period[idx-1]+king[idx-1]+king_realname[idx-1] +" "+ preiodname[idx-1]+cyear
+        year = year = self.lunar_date_d().get("年")
+        if year < 1000:
+            year = year - y[idx] +1
+            pn = preiodname[idx]+ cn2an.an2cn(year)+ "年"
+            kn = king_realname[idx]
+        if year > 1000:
+            year = year - y[idx-1] +1
+            pn = preiodname[idx-1]+ cn2an.an2cn(year)+ "年"
+            kn = king_realname[idx-1]
+        return  period[idx-1]+king[idx-1]+kn +" "+ pn
 
-    def skyeyes(self, ji):
-        #findplace = {"陽":self.yang_sixteen, "陰":self.ying_sixteen}.get(self.kook(ji)[0])
-        #findplace_num = dict(zip(findplace, range(1,19)))    
+    def skyeyes(self, ji):   
         return dict(zip(range(1,73),self.skyeyes_dict.get(self.kook(ji)[0]))).get(int(self.kook(ji).replace("陰遁", "").replace("陽遁", "").replace("局", "")))
 
     #計神
     def jigod(self, ji):
         findji = {"陽":self.yangji, "陰":self.yingji}.get(self.kook(ji)[0])
         return dict(zip(self.Zhi, findji )).get(self.taishui)
-
 
     def new_list(self, olist, o):
         zhihead_code = olist.index(o)
@@ -106,8 +109,7 @@ class Taiyi():
         if self.hour == 23:
             d = datetime.datetime.strptime(str(self.year).zfill(4)+"-"+str(self.month)+"-"+str(self.day)+"-"+str(self.hour)+":00:00", "%Y-%m-%d-%H:%M:%S") + datetime.timedelta(hours=1)
         else:
-            d = datetime.datetime.strptime(str(self.year).zfill(4)+"-"+str(self.month)+"-"+str(self.day)+"-"+str(self.hour)+":00:00", "%Y-%m-%d-%H:%M:%S") 
-        
+            d = datetime.datetime.strptime(str(self.year).zfill(4)+"-"+str(self.month)+"-"+str(self.day)+"-"+str(self.hour)+":00:00", "%Y-%m-%d-%H:%M:%S")  
         cdate = sxtwl.fromSolar(d.year, d.month, d.day)
         yTG = self.Gan[cdate.getYearGZ().tg] + self.Zhi[cdate.getYearGZ().dz]
         mTG = self.Gan[cdate.getMonthGZ().tg] + self.Zhi[cdate.getMonthGZ().dz]
@@ -316,10 +318,11 @@ class Taiyi():
         lg = dict(zip(gong, lnum))
         wc_num = lg.get(wc)
         ty = self.ty(ji)
-        wc_jc =  [i == wc for i in self.jc].count(True)
-        ty_jc = [i == ty for i in self.tyjc].count(True)
-        wc_jc1 =  [i == wc for i in self.jc1].count(True)
+        wc_jc = list(map(lambda x: x == wc, self.jc)).count(True)
+        ty_jc = list(map(lambda x: x == ty, self.tyjc)).count(True)
+        wc_jc1  = list(map(lambda x: x == wc, self.jc1)).count(True)
         wc_order = self.new_list(num, wc_num)
+        
         if wc_jc == 1 and ty_jc != 1 and wc_jc1 !=1 :
             return sum(wc_order[: wc_order.index(ty)])+1
         elif wc_jc !=1 and ty_jc != 1 and wc_jc1 ==1:
@@ -355,9 +358,9 @@ class Taiyi():
         lg = dict(zip(gong, lnum))
         sf_num = lg.get(sf)
         ty = self.ty(ji)
-        sf_jc =  [i == sf for i in self.jc].count(True)
-        ty_jc = [i == ty for i in self.tyjc].count(True)
-        sf_jc1 =  [i == sf for i in self.jc1].count(True)
+        sf_jc = list(map(lambda x: x == sf, self.jc)).count(True)
+        ty_jc = list(map(lambda x: x == ty, self.tyjc)).count(True)
+        sf_jc1 = list(map(lambda x: x == sf, self.jc1)).count(True)
         sf_order = self.new_list(num, sf_num)
         if sf_jc == 1 and ty_jc != 1 and sf_jc1 !=1 :
             return sum(sf_order[: sf_order.index(ty)])+1
@@ -394,9 +397,9 @@ class Taiyi():
         lg = dict(zip(gong, lnum))
         se_num = lg.get(se)
         ty = self.ty(ji)
-        se_jc =  [i == se for i in self.jc].count(True)
-        ty_jc = [i == ty for i in self.tyjc].count(True)
-        se_jc1 =  [i == se for i in self.jc1].count(True)
+        se_jc = list(map(lambda x: x == se, self.jc)).count(True)
+        ty_jc = list(map(lambda x: x == ty, self.tyjc)).count(True)
+        se_jc1 = list(map(lambda x: x == se, self.jc1)).count(True)
         se_order = self.new_list(num, se_num)
         if se_jc == 1 and ty_jc != 1 and se_jc1 !=1 :
             return sum(se_order[: se_order.index(ty)])+1
@@ -432,6 +435,7 @@ class Taiyi():
         t.append(numdict.get(num, None))
         return [i for i in t if i is not None]
     
+    
     def set_general(self, ji):
         set_g = self.set_cal(ji)  % 10
         if set_g == 0:
@@ -466,6 +470,7 @@ class Taiyi():
         rrres = [re.findall("..", i) for i in rres]
         r = str(res.keys())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
         return {r[i]:rrres[i] for i in range(0,16)}
+
 
     def nine_gong(self, ji):
         dict1 = [{self.home_general(ji):"主將"},{self.home_vgen(ji):"主參"},{self.away_general(ji):"客將"},
@@ -783,7 +788,7 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Taiyi(1775,1,31,0,14).pan(3))
+    print(Taiyi(1903,5,31,0,14).pan(3))
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
     
