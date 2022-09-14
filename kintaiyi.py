@@ -79,15 +79,15 @@ class Taiyi():
         preiodname = data[6::7]
         idx = y.index(closest(y, self.lunar_date_d().get("年")))
         year = year = self.lunar_date_d().get("年")
-        if year < 1000:
+        if year < 1900:
             year = year - y[idx] +1
             pn = preiodname[idx]+ cn2an.an2cn(year)+ "年"
-            kn = king_realname[idx]
-        if year > 1000:
+            kn = period[idx]+king[idx]+king_realname[idx]
+        if year > 1900:
             year = year - y[idx-1] +1
             pn = preiodname[idx-1]+ cn2an.an2cn(year)+ "年"
-            kn = king_realname[idx-1]
-        return  period[idx-1]+king[idx-1]+kn +" "+ pn
+            kn = period[idx-1]+king[idx-1]+king_realname[idx-1]
+        return  kn +" "+ pn
 
     def skyeyes(self, ji):   
         return dict(zip(range(1,73),self.skyeyes_dict.get(self.kook(ji)[0]))).get(int(self.kook(ji).replace("陰遁", "").replace("陽遁", "").replace("局", "")))
@@ -788,7 +788,7 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Taiyi(1903,5,31,0,14).pan(3))
+    print(Taiyi(1800,5,31,0,14).pan(3))
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
     
