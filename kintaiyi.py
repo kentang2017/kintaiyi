@@ -52,11 +52,15 @@ class Taiyi():
             year = year - y[idx] +1
             pn = "{}{}年".format(preiodname[idx], an2cn(year))
             kn = "{}{}{}".format(period[idx], king[idx], king_realname[idx])
-        if year > 1900:
+        if year > 1900 and year <1949:
             year = year - y[idx-1] +1
             pn = "{}{}年".format(preiodname[idx-1], an2cn(year))
             kn = "{}{}{}".format(period[idx-1], king[idx-1], king_realname[idx-1])
-        return  "{} {}".format(kn, pn)
+        if year > 1949:
+            year = year - y[idx]
+            pn = "{}{}年".format(preiodname[idx], an2cn(year))
+            kn = "{}{}{}".format(period[idx], king[idx], king_realname[idx])
+        return  "{} {}".format(kn, pn), year
  
     def skyeyes(self, ji):   
         skyeyes_dict = {"陽" : list("未坤申酉戌乾乾亥子丑艮寅卯巽辰巳午未坤坤申酉戌乾乾亥子丑艮寅卯巽辰巳午未坤坤申酉戌乾乾亥子丑艮寅卯巽辰巳午未坤坤申酉戌乾乾亥子丑艮寅卯巽辰巳午未"),
@@ -714,6 +718,6 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Taiyi(2022,9,16,20,14).pan(3))
+    print(Taiyi(2022,9,16,20,14).kingyear())
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
