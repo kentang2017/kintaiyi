@@ -10,7 +10,6 @@ from math import pi
 from sxtwl import fromSolar
 from ephem import Sun, Date, Ecliptic, Equatorial, hour
 from cn2an import an2cn
-from datetime import datetime
 
 def jiazi():
     Gan, Zhi = '甲乙丙丁戊己庚辛壬癸','子丑寅卯辰巳午未申酉戌亥'
@@ -28,6 +27,8 @@ class Taiyi():
         self.jc = list("丑寅辰巳未申戌亥")
         self.jc1 = list("巽艮坤乾")
         self.tyjc = [1,3,7,9]
+        #十六神
+        self.sixteengod = dict(zip(re.findall("..", "地主陽德和德呂申高叢太陽大炅大神大威天道大武武德太簇陰主陰德大義"), "子丑艮寅卯辰巽巳午未坤申酉戌乾亥"))
         #陰陽遁定制
         self.gong = dict(zip(list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥"), range(1,17)))
         self.gong1 = list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥")
@@ -62,9 +63,17 @@ class Taiyi():
             kn = "{}{}{}".format(period[idx], king[idx], king_realname[idx])
         return  "{} {}".format(kn, pn)
  
+    def skyeyes_des(self, ji):
+        yy = self.kook(ji).get("文")[0]
+        k = self.kook(ji).get("數")
+        dd = {"陽":",,辰迫,,,,,辰迫,囚,辰迫,囚,辰迫,,,勝,辰迫,囚,囚,客挾,,,,,,,,,,,,,,,,,,,客挾,囚,辰迫,客挾,客挾,囚,,宮迫,,主挾，宮迫,辰迫,,,,主挾，辰迫,宮迫,宮迫,,,,,客挾,,,,,,主挾,,,,,,,".split(","),
+              "陰":",辰迫,,,,,,辰迫,囚,辰迫,囚,辰迫,,,,辰迫,囚,囚,,關客,,關客,,,宮迫,,,,,,,,,,,,辰迫,囚,,,,,囚,辰迫,宮迫,,宮迫,辰迫,,,,辰擊,宮迫,辰迫,,,,,,,,,,,,,客目掩,,,,,".split(",")}
+        return dict(zip(range(1,73), dd.get(yy))).get(k)
+    
     def skyeyes(self, ji):   
-        skyeyes_dict = {"陽" : list("未坤申酉戌乾乾亥子丑艮寅卯巽辰巳午未坤坤申酉戌乾乾亥子丑艮寅卯巽辰巳午未坤坤申酉戌乾乾亥子丑艮寅卯巽辰巳午未坤坤申酉戌乾乾亥子丑艮寅卯巽辰巳午未"),
-        "陰":list("寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮")}
+        skyeyes_dict = {
+            "陽" : list("申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤"),
+            "陰" : list("寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮")}
         return dict(zip(range(1,73),skyeyes_dict.get(self.kook(ji).get("文")[0]))).get(int(self.kook(ji).get("數")))
     #計神
     def jigod(self, ji):
@@ -94,8 +103,7 @@ class Taiyi():
         cdate = fromSolar(dd[0], dd[1], dd[2])
         yTG,mTG,dTG,hTG = "{}{}".format(self.Gan[cdate.getYearGZ().tg], self.Zhi[cdate.getYearGZ().dz]), "{}{}".format(self.Gan[cdate.getMonthGZ().tg],self.Zhi[cdate.getMonthGZ().dz]), "{}{}".format(self.Gan[cdate.getDayGZ().tg], self.Zhi[cdate.getDayGZ().dz]), "{}{}".format(self.Gan[cdate.getHourGZ(dd[3]).tg], self.Zhi[cdate.getHourGZ(dd[3]).dz])
         return [yTG, mTG, dTG, hTG]
-
-    #節氣
+#%% #節氣
     def ecliptic_lon(self, jd_utc):
         return Ecliptic(Equatorial(Sun(jd_utc).ra,Sun(jd_utc).dec,epoch=jd_utc)).lon
     
@@ -137,7 +145,7 @@ class Taiyi():
     
     def xzdistance(self):
         return int(self.find_jq_date(self.year, self.month, self.day, self.hour, "夏至") -  Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))))
-            
+#%% 積年
     def accnum(self, ji):
         if ji == 0: #年計
             if self.year >= 0:
@@ -593,9 +601,9 @@ class Taiyi():
                 "農曆":self.lunar_date_d(),
                 "年號":self.kingyear(),
                 "紀元":self.jiyuan(ji),
-                "時局":self.kook(ji),
+                "局式":self.kook(ji),
                 "太乙":self.ty(ji),
-                "文昌":self.skyeyes(ji),
+                "文昌":[self.skyeyes(ji), self.skyeyes_des(ji)],
                 "太歲":self.taishui,
                 "合神":self.hegod,
                 "計神":self.jigod(ji),
@@ -722,6 +730,6 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Taiyi(2022,9,17,23,14).pan(2))
+    print(Taiyi(403,9,17,23,14).pan(0))
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
