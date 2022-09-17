@@ -32,9 +32,9 @@ class Taiyi():
         self.gong1 = list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥")
         #self.gong2 = dict(zip(list("亥子丑艮寅卯辰巽巳午未坤申酉戌乾"), [8,8,3,3,4,4,9,9,2,2,7,7,6,6,1,1]))
         #太歲
-        #self.taishui = self.gangzhi()[3][1]
+        self.taishui = self.gangzhi()[3][1]
         #合神
-        #self.hegod = dict(zip(list("子寅卯辰巳午丑亥戌酉申未"),list("丑亥戌酉申未子寅卯辰巳午"))).get(self.taishui)
+        self.hegod = dict(zip(list("子寅卯辰巳午丑亥戌酉申未"),list("丑亥戌酉申未子寅卯辰巳午"))).get(self.taishui)
 
     def kingyear(self):
         def closest(lst, K): 
@@ -719,7 +719,7 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Taiyi(-502,9,16,23,14).kook(1))
+    print(Taiyi(-502,9,16,23,14).pan(1))
     #print(Taiyi(-502,9,16,20,14).find_jq_date(-502,9,16,20,"白露"))
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
