@@ -33,10 +33,13 @@ class Taiyi():
         self.gong = dict(zip(list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥"), range(1,17)))
         self.gong1 = list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥")
         #self.gong2 = dict(zip(list("亥子丑艮寅卯辰巽巳午未坤申酉戌乾"), [8,8,3,3,4,4,9,9,2,2,7,7,6,6,1,1]))
-        #太歲
-        self.taishui = self.gangzhi()[3][1]
-        #合神
-        self.hegod = dict(zip(list("子寅卯辰巳午丑亥戌酉申未"),list("丑亥戌酉申未子寅卯辰巳午"))).get(self.taishui)
+    #合神
+    def jigod(self, ji):
+        return dict(zip(list("子寅卯辰巳午丑亥戌酉申未"),list("丑亥戌酉申未子寅卯辰巳午"))).get(self.taishui(ji))
+    #太歲
+    def taishui(self, ji):
+        gz =  self.gangzhi()
+        return {0: gz[0][1], 1:gz[1][1], 2:gz[2][1], 3:gz[3][1]}.get(ji)
 
     def kingyear(self):
         def closest(lst, K): 
@@ -75,10 +78,10 @@ class Taiyi():
             "陽" : list("申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤"),
             "陰" : list("寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮")}
         return dict(zip(range(1,73),skyeyes_dict.get(self.kook(ji).get("文")[0]))).get(int(self.kook(ji).get("數")))
-    #計神
-    def jigod(self, ji):
+    #合神
+    def hegod(self, ji):
         findji = {"陽":list("寅丑子亥戌酉申未午巳辰卯"), "陰":list("申未午巳辰卯寅丑子亥戌酉")}.get(self.kook(ji).get("文")[0])
-        return dict(zip(self.Zhi, findji )).get(self.taishui)
+        return dict(zip(self.Zhi, findji )).get(self.taishui(ji))
 
     def new_list(self, olist, o):
         a = olist.index(o)
@@ -248,7 +251,7 @@ class Taiyi():
         
     #定目
     def se(self, ji):
-        wc,hg,ts = self.skyeyes(ji),self.hegod,self.taishui
+        wc,hg,ts = self.skyeyes(ji),self.hegod(ji),self.taishui(ji)
         start = self.new_list(self.gong1, hg)
         start1 = len(start[:start.index(ts)+1])
         start2 = self.new_list(self.gong1, wc)[start1-1]
@@ -393,7 +396,7 @@ class Taiyi():
         return set_vg
     
     def sixteen_gong(self, ji):
-        dict1 = [{self.skyeyes(ji):"文昌"},{self.taishui:"太歲"},{self.hegod:"合神"},{self.sf(ji):"始擊"},
+        dict1 = [{self.skyeyes(ji):"文昌"},{self.taishui(ji):"太歲"},{self.hegod(ji):"合神"},{self.sf(ji):"始擊"},
                  {self.se(ji):"定目"}, {self.kingbase(ji):"君基"}, {self.officerbase(ji):"臣基"}, {self.pplbase(ji):"民基"},
                  {self.fgd(ji):"四神"},{self.skyyi(ji):"天乙"},{self.earthyi(ji):"地乙"},{self.zhifu(ji):"直符"},
                  {self.flyfu(ji):"飛符"},{self.kingfu(ji):"帝符"},{self.taijun(ji):"太尊"}, {self.wufu(ji):"五福"} ]
@@ -604,8 +607,8 @@ class Taiyi():
                 "局式":self.kook(ji),
                 "太乙":self.ty(ji),
                 "文昌":[self.skyeyes(ji), self.skyeyes_des(ji)],
-                "太歲":self.taishui,
-                "合神":self.hegod,
+                "太歲":self.taishui(ji),
+                "合神":self.hegod(ji),
                 "計神":self.jigod(ji),
                 "始擊":self.sf(ji),
                 "定目":self.se(ji),
@@ -730,6 +733,6 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Taiyi(403,9,17,23,14).pan(0))
+    print(Taiyi(-202,9,17,23,14).pan(0))
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
