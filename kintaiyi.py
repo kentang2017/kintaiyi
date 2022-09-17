@@ -4,17 +4,16 @@ Created on Sat Aug 27 18:11:44 2022
 @author: kentang
 """
 
-import re, itertools, datetime, time, pickle, os
+import re, itertools, time, pickle, os
 import numpy as np
 from math import pi
 from sxtwl import fromSolar
-from ephem import Sun, Date, Ecliptic, Equatorial
+from ephem import Sun, Date, Ecliptic, Equatorial, hour
 from cn2an import an2cn
 
 def jiazi():
     Gan, Zhi = '甲乙丙丁戊己庚辛壬癸','子丑寅卯辰巳午未申酉戌亥'
     return list(map(lambda x: "{}{}".format(Gan[x % len(Gan)],Zhi[x % len(Zhi)]), list(range(60))))
-        
 
 class Taiyi():
     def __init__(self, year, month, day, hour, minute):
@@ -33,9 +32,9 @@ class Taiyi():
         self.gong1 = list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥")
         #self.gong2 = dict(zip(list("亥子丑艮寅卯辰巽巳午未坤申酉戌乾"), [8,8,3,3,4,4,9,9,2,2,7,7,6,6,1,1]))
         #太歲
-        self.taishui = self.gangzhi()[3][1]
+        #self.taishui = self.gangzhi()[3][1]
         #合神
-        self.hegod = dict(zip(list("子寅卯辰巳午丑亥戌酉申未"),list("丑亥戌酉申未子寅卯辰巳午"))).get(self.taishui)
+        #self.hegod = dict(zip(list("子寅卯辰巳午丑亥戌酉申未"),list("丑亥戌酉申未子寅卯辰巳午"))).get(self.taishui)
 
     def kingyear(self):
         def closest(lst, K): 
@@ -60,7 +59,7 @@ class Taiyi():
             year = year - y[idx]
             pn = "{}{}年".format(preiodname[idx], an2cn(year))
             kn = "{}{}{}".format(period[idx], king[idx], king_realname[idx])
-        return  "{} {}".format(kn, pn), year
+        return  "{} {}".format(kn, pn)
  
     def skyeyes(self, ji):   
         skyeyes_dict = {"陽" : list("未坤申酉戌乾乾亥子丑艮寅卯巽辰巳午未坤坤申酉戌乾乾亥子丑艮寅卯巽辰巳午未坤坤申酉戌乾乾亥子丑艮寅卯巽辰巳午未坤坤申酉戌乾乾亥子丑艮寅卯巽辰巳午未"),
@@ -87,12 +86,14 @@ class Taiyi():
     #干支
     def gangzhi(self):
         if self.hour == 23:
-            d = datetime.datetime.strptime("{}-{}-{}-{}:00:00".format(str(self.year).zfill(4), str(self.month).zfill(2),str(self.day).zfill(2), str(self.hour).zfill(2)), "%Y-%m-%d-%H:%M:%S") + datetime.timedelta(hours=1)
+            d = Date(round((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) + 1 * hour), 3))
         else:
-            d = datetime.datetime.strptime("{}-{}-{}-{}:00:00".format(str(self.year).zfill(4), str(self.month).zfill(2),str(self.day).zfill(2), str(self.hour).zfill(2)), "%Y-%m-%d-%H:%M:%S")  
-        cdate = fromSolar(d.year, d.month, d.day)
-        yTG,mTG,dTG,hTG = "{}{}".format(self.Gan[cdate.getYearGZ().tg], self.Zhi[cdate.getYearGZ().dz]), "{}{}".format(self.Gan[cdate.getMonthGZ().tg],self.Zhi[cdate.getMonthGZ().dz]), "{}{}".format(self.Gan[cdate.getDayGZ().tg], self.Zhi[cdate.getDayGZ().dz]), "{}{}".format(self.Gan[cdate.getHourGZ(d.hour).tg], self.Zhi[cdate.getHourGZ(d.hour).dz])
+            d = Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2) ))
+        dd = list(d.tuple())
+        cdate = fromSolar(dd[0], dd[1], dd[2])
+        yTG,mTG,dTG,hTG = "{}{}".format(self.Gan[cdate.getYearGZ().tg], self.Zhi[cdate.getYearGZ().dz]), "{}{}".format(self.Gan[cdate.getMonthGZ().tg],self.Zhi[cdate.getMonthGZ().dz]), "{}{}".format(self.Gan[cdate.getDayGZ().tg], self.Zhi[cdate.getDayGZ().dz]), "{}{}".format(self.Gan[cdate.getHourGZ(dd[3]).tg], self.Zhi[cdate.getHourGZ(dd[3]).dz])
         return [yTG, mTG, dTG, hTG]
+
     #節氣
     def ecliptic_lon(self, jd_utc):
         return Ecliptic(Equatorial(Sun(jd_utc).ra,Sun(jd_utc).dec,epoch=jd_utc)).lon
@@ -124,7 +125,7 @@ class Taiyi():
                 n-=24
             jd=self.iteration(jd)
             d=Date(jd+1/3).tuple()
-            b = {self.jieqi[n]: datetime.datetime(d[0], d[1], d[2],d[3], d[4], int(d[5]))}
+            b = {self.jieqi[n]: Date("{}/{}/{} {}:{}:00.00".format(str(d[0]).zfill(4), str(d[1]).zfill(2), str(d[2]).zfill(2), str(d[3]).zfill(2) , str(d[4]).zfill(2)))}
             n+=1
             dzlist.append(b)
         return list(dzlist[list(map(lambda i:list(i.keys())[0], dzlist)).index(jq)].values())[0]
@@ -134,7 +135,7 @@ class Taiyi():
         return {"年":day.getLunarYear(),  "月": day.getLunarMonth(), "日":day.getLunarDay()}
     
     def xzdistance(self):
-        return [self.find_jq_date(self.year, self.month, self.day, self.hour, "夏至") -  datetime.datetime(self.year,self.month, self.day, self.hour, 0,0)][0].days           
+        return int(self.find_jq_date(self.year, self.month, self.day, self.hour, "夏至") -  Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))))
             
     def accnum(self, ji):
         if ji == 0: #年計
@@ -149,14 +150,14 @@ class Taiyi():
                 accyear = self.taiyiyear + self.year + 1 
             return accyear * 12 + 2 + self.lunar_date_d().get("月")
         elif ji == 2:#日計
-            return (datetime.datetime.strptime("{0:04}-{1:02d}-{2:02d} 00:00:00".format(self.year, self.month, self.day), "%Y-%m-%d %H:%M:%S") - datetime.datetime.strptime("1900-06-19 00:00:00","%Y-%m-%d %H:%M:%S")).days
+            return (datetime.strptime("{0:04}-{1:02d}-{2:02d} 00:00:00".format(self.year, self.month, self.day), "%Y-%m-%d %H:%M:%S") - datetime.strptime("1900-06-19 00:00:00","%Y-%m-%d %H:%M:%S")).days
         elif ji == 3: #時計
-            return ((datetime.datetime.strptime("{0:04}-{1:02d}-{2:02d} 00:00:00".format(self.year, self.month, self.day), "%Y-%m-%d %H:%M:%S") - datetime.datetime.strptime("1900-06-19 00:00:00","%Y-%m-%d %H:%M:%S")).days - 1 ) * 12 + (self.hour + 1 ) // 2 + 1
+            return ((datetime.strptime("{0:04}-{1:02d}-{2:02d} 00:00:00".format(self.year, self.month, self.day), "%Y-%m-%d %H:%M:%S") - datetime.strptime("1900-06-19 00:00:00","%Y-%m-%d %H:%M:%S")).days - 1 ) * 12 + (self.hour + 1 ) // 2 + 1
     
     def kook(self, ji):
         xz = self.xzdistance()
-        current_date = datetime.datetime.strptime("{}/{}/{}".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2)) , '%Y/%m/%d')
-        xz_date =  current_date - datetime.timedelta(days=xz)
+        current_date =  Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2)))
+        xz_date =  current_date - xz
         if ji == 0 or ji == 1 or ji ==2:
             dun = "陽遁"
         elif ji == 3:
@@ -718,6 +719,7 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Taiyi(2022,9,16,20,14).kingyear())
+    print(Taiyi(-502,9,16,23,14).kook(1))
+    #print(Taiyi(-502,9,16,20,14).find_jq_date(-502,9,16,20,"白露"))
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
