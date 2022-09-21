@@ -78,6 +78,7 @@ class Taiyi():
             "陽" : list("申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤"),
             "陰" : list("寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮")}
         return dict(zip(range(1,73),skyeyes_dict.get(self.kook(ji).get("文")[0]))).get(int(self.kook(ji).get("數")))
+            
     #合神
     def hegod(self, ji):
         findji = {"陽":list("寅丑子亥戌酉申未午巳辰卯"), "陰":list("申未午巳辰卯寅丑子亥戌酉")}.get(self.kook(ji).get("文")[0])
@@ -172,6 +173,9 @@ class Taiyi():
         xz = self.xzdistance()
         current_date =  Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2)))
         xz_date =  current_date - xz
+        k = self.accnum(ji)%72
+        if k == 0:
+            k = 72
         if ji == 0 or ji == 1 or ji ==2:
             dun = "陽遁"
         elif ji == 3:
@@ -179,7 +183,7 @@ class Taiyi():
                 dun = "陰遁"
             else:
                 dun = "陽遁"
-        return {"文":"{}{}局".format(dun, an2cn(self.accnum(ji)%72)), "數":self.accnum(ji)%72}
+        return {"文":"{}{}局".format(dun, an2cn(k)), "數":k}
     
     def getyuan(self, ji):
         accnum = self.accnum(ji)
@@ -394,6 +398,29 @@ class Taiyi():
         if set_vg == 0:
             set_vg = 5
         return set_vg
+    
+    def sixteen_gong1(self, ji):
+        dict1 = [{self.skyeyes(ji):"昌"},{self.hegod(ji):"合"},{self.sf(ji):"始"},
+                {self.se(ji):"目"}, {self.kingbase(ji):"君"}, {self.officerbase(ji):"臣"}, {self.pplbase(ji):"民"},
+                {self.fgd(ji):"四"},{self.skyyi(ji):"乙"},{self.earthyi(ji):"地"},{self.zhifu(ji):"符"},
+                {self.flyfu(ji):"飛"},{self.kingfu(ji):"帝"}, {self.wufu(ji):"福"},  {self.jigod(ji):"計"}]
+        res = {"子":"", "丑":"", "艮":"","寅":"", "卯":"", "辰":"", "巽":"","巳":"", "午":"", "未":"", "申":"", "坤":"", "酉":"", "戌":"", "乾":"", "亥":"", "中":""}
+        for dict in dict1:
+           for list in dict:
+               if list in res:
+                   try:
+                       res[list] += (dict[list])
+                   except TypeError:
+                       pass
+               else:
+                   try:
+                       res[list] = dict[list]
+                   except TypeError:
+                       pass
+        rres = str(res.values())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
+        rrres = [re.findall("..", i) for i in rres]
+        r = str(res.keys())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
+        return {r[i]:rrres[i] for i in range(0,16)}
     
     def sixteen_gong(self, ji):
         dict1 = [{self.skyeyes(ji):"文昌"},{self.taishui(ji):"太歲"},{self.hegod(ji):"合神"},{self.sf(ji):"始擊"},
@@ -626,7 +653,8 @@ class Taiyi():
     			<td colspan="5">
     			<p><span style="font-size:large"><strong>'''+str(self.year)+"年"+str(self.month)+"月"+str(self.day)+"日"+str(self.hour)+"時"+'''<br />
     			干支: '''+self.gangzhi()[0]+"  "+self.gangzhi()[1]+"  "+self.gangzhi()[2]+"  "+self.gangzhi()[3]+'''&nbsp;</strong></span></p>
-    			<p><span style="font-size:large"><strong>'''+self.jiyuan(ji)+"  "+self.kook(ji)+'''<br />
+                <p><span style="font-size:large"><strong>'''+self.kingyear()+'''<br />
+                <p><span style="font-size:large"><strong>'''+self.jiyuan(ji)+"  "+self.kook(ji).get("文")+'''<br />
     			主算:'''+str(self.home_cal(ji))+"".join(self.cal_des(self.home_cal(ji)))+'''<br />
     			客算:'''+str(self.away_cal(ji))+"".join(self.cal_des(self.away_cal(ji)))+'''<br />
     			定算:'''+str(self.set_cal(ji))+"".join(self.cal_des(self.set_cal(ji)))+'''</strong></span></p>
@@ -635,34 +663,34 @@ class Taiyi():
     		<tr>
     			<td><span style="font-size:large"><strong>巽</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(list(map(lambda i:'''<tr><td>'''+i+'''</td></tr>''', self.pan(ji).get("十六宮").get("巽"))))+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("巽")])+'''</tbody>
     			</table>
     			</td>
     			<td><span style="font-size:large"><strong>巳</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(list(map(lambda i:'''<tr><td>'''+i+'''</td></tr>''', self.pan(ji).get("十六宮").get("巳"))))+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("巳")])+'''</tbody>
     			</table>
     			</td>
     			<td><span style="font-size:large"><strong>午</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(list(map(lambda i:'''<tr><td>'''+i+'''</td></tr>''', self.pan(ji).get("十六宮").get("午"))))+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("午")])+'''</tbody>
     			</table>
     			</td>
     			<td><span style="font-size:large"><strong>未&nbsp;</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(list(map(lambda i:'''<tr><td>'''+i+'''</td></tr>''', self.pan(ji).get("十六宮").get("未"))))+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("未")])+'''</tbody>
     			</table>
     			</td>
     			<td><span style="font-size:large"><strong>坤</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(list(map(lambda i:'''<tr><td>'''+i+'''</td></tr>''', self.pan(ji).get("十六宮").get("坤"))))+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("坤")])+'''</tbody>
     			</table>
     			</td>
     		</tr>
     		<tr>
     			<td><span style="font-size:large"><strong>辰</strong></span>
     			<table border="0" cellpadding="1" cellspacing="1" style="width:100px">
-    				<tbody>'''+"".join(list(map(lambda i:'''<tr><td>'''+i+'''</td></tr>''', self.pan(ji).get("十六宮").get("辰"))))+'''</tbody>
+    				<tbody>'''+"".join(['''<tr><td>'''+i+'''</td></tr>''' for i in self.pan(ji).get("十六宮").get("辰")])+'''</tbody>
     			</table>
     			</td>
     			<td colspan="3" rowspan="3">&nbsp;</td>
@@ -725,14 +753,12 @@ class Taiyi():
     		</tr>
     	</tbody>
     </table>
-    
-    <p>&nbsp;</p></body></html>
-         ''' 
+    <p>&nbsp;</p></body></html>''' 
         return text
 
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Taiyi(2022,9,17,20,14).pan(3))
+    print(Taiyi(2022,9,22,0,0).pan(3) )
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
