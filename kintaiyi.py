@@ -287,7 +287,7 @@ class Taiyi():
         elif wc_jc ==1 and ty_jc ==1 and wc_jc1 !=1 :
             return sum(wc_order[: wc_order.index(ty)])+1
         elif wc_jc !=1 and ty_jc ==1 and wc_jc1 ==1 :
-            return sum(wc_order[: wc_order.index(ty)])
+            return sum(wc_order[: wc_order.index(ty)])+1
         elif wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and ty != wc_num:
             return sum(wc_order[: wc_order.index(ty)])
         elif wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and ty == wc_num:
@@ -324,9 +324,12 @@ class Taiyi():
         elif sf_jc != 1 and ty_jc ==1 and sf_jc1 !=1:
             return sum(sf_order[: sf_order.index(ty)]) 
         elif sf_jc ==1 and ty_jc ==1 and sf_jc1 !=1 :
-            return sum(sf_order[: sf_order.index(ty)])
+            return sum(sf_order[: sf_order.index(ty)])+1
         elif sf_jc !=1 and ty_jc ==1 and sf_jc1 ==1 :
-            return sum(sf_order[: sf_order.index(ty)])
+            if sum(sf_order[: sf_order.index(ty)]) == 0:
+                return ty
+            else:
+                return sum(sf_order[: sf_order.index(ty)])
         elif sf_jc !=1 and ty_jc !=1 and sf_jc1 !=1 and sf_num != ty:
             return sum(sf_order[: sf_order.index(ty)])
         elif sf_jc !=1 and ty_jc !=1 and sf_jc1 !=1 and sf_num == ty:
@@ -357,15 +360,21 @@ class Taiyi():
         se_jc1 = list(map(lambda x: x == se, self.jc1)).count(True)
         se_order = self.new_list(num, se_num)
         if se_jc == 1 and ty_jc != 1 and se_jc1 !=1 :
-            return sum(se_order[: se_order.index(ty)])+1
+            if sum(se_order[: se_order.index(ty)]) == 0:
+                return 1
+            else:
+                return sum(se_order[: se_order.index(ty)])+1
         elif se_jc !=1 and ty_jc != 1 and se_jc1 ==1:
             return sum(se_order[: se_order.index(ty)])
         elif se_jc != 1 and ty_jc ==1 and se_jc1 !=1:
             return sum(se_order[: se_order.index(ty)])
         elif se_jc ==1 and ty_jc ==1 and se_jc1 !=1 :
-            return sum(se_order[: se_order.index(ty)])
+            return sum(se_order[: se_order.index(ty)])+1
         elif se_jc !=1 and ty_jc ==1 and se_jc1 ==1 :
-            return sum(se_order[: se_order.index(ty)])
+            if sum(se_order[: se_order.index(ty)]) == 0:
+                return 1
+            else:
+                return sum(se_order[: se_order.index(ty)])
         elif se_jc !=1 and ty_jc !=1 and se_jc1 !=1 :
             return sum(se_order[: se_order.index(ty)])
         elif se_jc !=1 and ty_jc !=1 and se_jc1 !=1 and se_num != ty:
@@ -484,11 +493,7 @@ class Taiyi():
         return dict(zip(range(1,73), cycle(list("巳巳午午午未未未申申酉酉戌戌戌亥亥亥子子子丑丑寅寅寅卯卯卯辰辰辰巳")))).get(self.kook(ji).get("數"))
     #民基
     def pplbase(self, ji):
-        pb = (self.accnum(ji)  +250) % 360 % 12
-        pb_v = dict(zip(range(1,13), self.new_list(self.Zhi, "戌"))).get(int(pb))
-        if pb_v == 0 or pb_v ==None:
-            pb_v = "中"
-        return  pb_v
+        return dict(zip(range(1,73), cycle(self.new_list(self.Zhi,"申")))).get(self.kook(ji).get("數"))
     #大游
     def bigyo(self, ji):
         by = int((self.accnum(ji) +34) % 388)
@@ -750,6 +755,6 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Taiyi(1900,6,19,0,0).skyyi(0) )
+    print(Taiyi(1902,6,19,0,0).away_cal(0) )
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
