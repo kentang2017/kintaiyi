@@ -10,6 +10,7 @@ from math import pi
 from sxtwl import fromSolar
 from ephem import Sun, Date, Ecliptic, Equatorial, hour
 from cn2an import an2cn
+from itertools import cycle, repeat
 
 def jiazi():
     Gan, Zhi = '甲乙丙丁戊己庚辛壬癸','子丑寅卯辰巳午未申酉戌亥'
@@ -33,9 +34,10 @@ class Taiyi():
         self.gong = dict(zip(list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥"), range(1,17)))
         self.gong1 = list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥")
         #self.gong2 = dict(zip(list("亥子丑艮寅卯辰巽巳午未坤申酉戌乾"), [8,8,3,3,4,4,9,9,2,2,7,7,6,6,1,1]))
-    #合神
+    #計神
     def jigod(self, ji):
-        return dict(zip(list("子寅卯辰巳午丑亥戌酉申未"),list("丑亥戌酉申未子寅卯辰巳午"))).get(self.taishui(ji))
+        return dict(zip(self.Zhi, self.new_list(list(reversed(self.Zhi)), "寅"))).get(self.taishui(ji))
+        
     #太歲
     def taishui(self, ji):
         gz =  self.gangzhi()
@@ -56,7 +58,7 @@ class Taiyi():
             year = year - y[idx] +1
             pn = "{}{}年".format(preiodname[idx], an2cn(year))
             kn = "{}{}{}".format(period[idx], king[idx], king_realname[idx])
-        if year > 1900 and year <1949:
+        if year >= 1900 and year <1949:
             year = year - y[idx-1] +1
             pn = "{}{}年".format(preiodname[idx-1], an2cn(year))
             kn = "{}{}{}".format(period[idx-1], king[idx-1], king_realname[idx-1])
@@ -81,8 +83,9 @@ class Taiyi():
             
     #合神
     def hegod(self, ji):
-        findji = {"陽":list("寅丑子亥戌酉申未午巳辰卯"), "陰":list("申未午巳辰卯寅丑子亥戌酉")}.get(self.kook(ji).get("文")[0])
-        return dict(zip(self.Zhi, findji )).get(self.taishui(ji))
+        #findji = {"陽":list("寅丑子亥戌酉申未午巳辰卯"), "陰":list("申未午巳辰卯寅丑子亥戌酉")}.get(self.kook(ji).get("文")[0])
+        #return dict(zip(self.Zhi, findji )).get(self.taishui(ji))
+        return dict(zip(self.Zhi, self.new_list(list(reversed(self.Zhi)), "丑"))).get(self.taishui(ji))
 
     def new_list(self, olist, o):
         a = olist.index(o)
@@ -207,6 +210,8 @@ class Taiyi():
             if find_ji_num == 0:
                 find_ji_num = 1
             find_ji_num2 = int(accnum % 360 % 72 % 24 / 3)
+            if find_ji_num2 == 0:
+                find_ji_num2 = 1
             cnum = list("一二三四五六七八九十")
             return {"元":dict(zip(range(1,8), cnum[0:7])).get(find_ji_num), "紀":dict(zip(range(1,8), cnum[0:7])).get(find_ji_num2)}
         elif ji == 3:
@@ -476,11 +481,7 @@ class Taiyi():
     
     #臣基
     def officerbase(self, ji):
-        ob = (self.accnum(ji)  +250) % 360  % 36 / 3
-        ob_v =  dict(zip(range(1,13), self.new_list(self.Zhi, "午"))).get(int(ob))
-        if ob_v == 0 or ob_v ==None:
-            ob_v = "中"
-        return ob_v
+        return dict(zip(range(1,73), cycle(list("巳巳午午午未未未申申酉酉戌戌戌亥亥亥子子子丑丑寅寅寅卯卯卯辰辰辰巳")))).get(self.kook(ji).get("數"))
     #民基
     def pplbase(self, ji):
         pb = (self.accnum(ji)  +250) % 360 % 12
@@ -514,32 +515,16 @@ class Taiyi():
         return syv
     #四神
     def fgd(self, ji):
-        f = self.accnum(ji)  % 360 % 36 / 3 
-        fv = dict(zip(range(1,13), self.new_list(self.Zhi, "亥"))).get(int(f))
-        if fv == 0 or fv == None:
-            fv = "中"
-        return fv
+        return dict(zip(range(1,73), cycle(list("乾乾乾離離離艮艮艮震震震中中中兌兌兌坤坤坤坎坎坎巽巽巽巳巳巳申申申寅寅寅")))).get(self.kook(ji).get("數"))
     #天乙
     def skyyi(self, ji):
-        f = self.accnum(ji)  % 360 % 36 / 3 
-        fv = dict(zip(range(1,13), self.new_list(self.Zhi, "酉"))).get(int(f))
-        if fv == 0 or fv == None:
-            fv = "中"
-        return fv
+        return dict(zip(range(1,73), cycle(list("兌兌兌坤坤坤坎坎坎巽巽巽巳巳巳申申申寅寅寅乾乾乾離離離艮艮艮震震震中中中")))).get(self.kook(ji).get("數"))   
     #地乙
     def earthyi(self, ji):
-        f = self.accnum(ji)  % 360 % 36 / 3
-        fv = dict(zip(range(1,13), self.new_list(self.Zhi, "巳"))).get(int(f))
-        if fv == 0 or fv == None:
-            fv = "中"
-        return fv
+        return dict(zip(range(1,73), cycle(list("巽巽巽巳巳巳申申申寅寅寅乾乾乾離離離艮艮艮震震震中中中兌兌兌坤坤坤坎坎坎")))).get(self.kook(ji).get("數"))
     #直符
     def zhifu(self, ji):
-        f = self.accnum(ji)  % 360 % 36 / 3
-        fv = dict(zip(range(1,14), ["中"]+self.new_list(self.Zhi, "酉"))).get(int(f))
-        if fv == 0 or fv == None:
-            fv = "中"
-        return fv
+        return dict(zip(range(1,73), cycle(list("中中中兌兌兌坤坤坤坎坎坎巽巽巽巳巳巳申申申寅寅寅乾乾乾離離離艮艮艮震震震")))).get(self.kook(ji).get("數"))
     #飛符
     def flyfu(self, ji):
         f = self.accnum(ji) % 360 % 36 / 3
@@ -631,19 +616,25 @@ class Taiyi():
                 "農曆":self.lunar_date_d(),
                 "年號":self.kingyear(),
                 "紀元":self.jiyuan(ji),
+                "太歲":self.taishui(ji),
                 "局式":self.kook(ji),
                 "太乙":self.ty(ji),
                 "文昌":[self.skyeyes(ji), self.skyeyes_des(ji)],
-                "太歲":self.taishui(ji),
+                "主算":[self.home_cal(ji), self.cal_des(self.home_cal(ji))],
+                "客算":[self.away_cal(ji), self.cal_des(self.away_cal(ji))],
+                "定算":[self.set_cal(ji), self.cal_des(self.set_cal(ji))],
                 "合神":self.hegod(ji),
                 "計神":self.jigod(ji),
                 "始擊":self.sf(ji),
                 "定目":self.se(ji),
-                "主算":[self.home_cal(ji), self.cal_des(self.home_cal(ji))],
-                "客算":[self.away_cal(ji), self.cal_des(self.away_cal(ji))],
-                "定算":[self.set_cal(ji), self.cal_des(self.set_cal(ji))],
-                "九宮":self.nine_gong(ji), 
-                "十六宮":self.sixteen_gong(ji),
+                "四神":self.fgd(ji),
+                "直符":self.zhifu(ji),
+                "君基":self.kingbase(ji),
+                "臣基":self.officerbase(ji),
+                "民基":self.pplbase(ji),
+                
+                #"九宮":self.nine_gong(ji), 
+                #"十六宮":self.sixteen_gong(ji),
                 }
     
     def html(self, ji):
@@ -759,6 +750,6 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Taiyi(2022,9,22,0,0).pan(3) )
+    print(Taiyi(1900,6,19,0,0).skyyi(0) )
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
