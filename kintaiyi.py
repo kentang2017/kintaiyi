@@ -41,7 +41,7 @@ class Taiyi():
     #太歲
     def taishui(self, ji):
         gz =  self.gangzhi()
-        return {0: gz[0][1], 1:gz[1][1], 2:gz[2][1], 3:gz[3][1]}.get(ji)
+        return {0: gz[0][1], 1:gz[1][1], 2:gz[2][1], 3:gz[3][1], 4:gz[4][1]}.get(ji)
 
     def kingyear(self):
         def closest(lst, K): 
@@ -95,11 +95,23 @@ class Taiyi():
             a = a + 1
         return res1
     
+    def repeat_list(self, n, thelist):
+        return [repetition for i in thelist for repetition in repeat(i,n) ]
+    
     def multi_key_dict_get(self, d, k):
         for keys, v in d.items():
             if k in keys:
                 return v
         return None
+     #分干支
+    def minutes_jiazi_d(self):
+        t = []
+        for h in range(0,24):
+            for m in range(0,60):
+                b = str(h)+":"+str(m)
+                t.append(b)
+        minutelist = dict(zip(t, cycle(self.repeat_list(2, jiazi()))))
+        return minutelist
     #干支
     def gangzhi(self):
         if self.hour == 23:
@@ -109,7 +121,9 @@ class Taiyi():
         dd = list(d.tuple())
         cdate = fromSolar(dd[0], dd[1], dd[2])
         yTG,mTG,dTG,hTG = "{}{}".format(self.Gan[cdate.getYearGZ().tg], self.Zhi[cdate.getYearGZ().dz]), "{}{}".format(self.Gan[cdate.getMonthGZ().tg],self.Zhi[cdate.getMonthGZ().dz]), "{}{}".format(self.Gan[cdate.getDayGZ().tg], self.Zhi[cdate.getDayGZ().dz]), "{}{}".format(self.Gan[cdate.getHourGZ(dd[3]).tg], self.Zhi[cdate.getHourGZ(dd[3]).dz])
-        return [yTG, mTG, dTG, hTG]
+        gangzhi_minute = self.minutes_jiazi_d().get(str(self.hour)+":"+str(self.minute))
+        return [yTG, mTG, dTG, hTG, gangzhi_minute]
+
 #%% #節氣
     def ecliptic_lon(self, jd_utc):
         return Ecliptic(Equatorial(Sun(jd_utc).ra,Sun(jd_utc).dec,epoch=jd_utc)).lon
@@ -171,6 +185,10 @@ class Taiyi():
         elif ji == 3: #時計
             return int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00") - 1)) * 12 + (self.hour + 1 ) // 2 + 1 
             #return ((datetime.strptime("{0:04}-{1:02d}-{2:02d} 00:00:00".format(self.year, self.month, self.day), "%Y-%m-%d %H:%M:%S") - datetime.strptime("1900-06-19 00:00:00","%Y-%m-%d %H:%M:%S")).days - 1 ) * 12 + (self.hour + 1 ) // 2 + 1
+        elif ji == 4: #分計
+            return int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00") - 1)) * 120 + (self.minute + 1 ) // 2 + 1 
+            #return ((datetime.strptime("{0:04}-{1:02d}-{2:02d} 00:00:00".format(self.year, self.month, self.day), "%Y-%m-%d %H:%M:%S") - datetime.strptime("1900-06-19 00:00:00","%Y-%m-%d %H:%M:%S")).days - 1 ) * 12 + (self.hour + 1 ) // 2 + 1
+     
     
     def kook(self, ji):
         xz = self.xzdistance()
@@ -181,7 +199,7 @@ class Taiyi():
             k = 72
         if ji == 0 or ji == 1 or ji ==2:
             dun = "陽遁"
-        elif ji == 3:
+        elif ji == 3 or ji == 4:
             if current_date >= xz_date and self.month >= 6:
                 dun = "陰遁"
             else:
@@ -224,6 +242,17 @@ class Taiyi():
                         ('己丑', '己未', '庚寅', '庚申', '辛卯', '辛酉', '壬辰', '壬戌', '癸巳', '癸亥')], 
                                  list("一二三四五六")))
             return "第{}紀".format(self.multi_key_dict_get(epochdict, self.gangzhi()[2]))
+        elif ji == 4:
+            epochdict = dict(zip([
+                        ('甲子', '甲午', '乙丑', '乙未', '丙寅', '丙申', '丁卯', '丁酉', '戊辰', '戊戌'), 
+                        ('己巳', '己亥', '庚午', '庚子', '辛未', '辛丑', '壬申', '壬寅', '癸酉', '癸卯'),
+                        ('甲戌', '甲辰', '乙亥', '乙巳', '丙子', '丙午', '丁丑', '丁未', '戊寅', '戊申'),
+                        ('己卯', '己酉', '庚辰', '庚戌', '辛巳', '辛亥', '壬午', '壬子', '癸未', '癸丑'),
+                        ('甲申', '甲寅', '乙酉', '乙卯', '丙戌', '丙辰', '丁亥', '丁巳', '戊子', '戊午'),
+                        ('己丑', '己未', '庚寅', '庚申', '辛卯', '辛酉', '壬辰', '壬戌', '癸巳', '癸亥')], 
+                                 list("一二三四五六")))
+            return "第{}紀".format(self.multi_key_dict_get(epochdict, self.gangzhi()[3]))
+    
     
     def jiyuan(self, ji):
         if ji == 3:
@@ -234,9 +263,17 @@ class Taiyi():
                                   ('戊子', '戊午', '己丑', '己未', '庚寅', '庚申', '辛卯', '辛酉', '壬辰', '壬戌', '癸巳', '癸亥')], "甲子,丙子,戊子,庚子,壬子".split(",")))
             
             return "{}{}元".format(self.getepoch(ji), self.multi_key_dict_get(j, self.gangzhi()[2]))
+        elif ji == 4:
+            j = dict(zip([('甲子', '甲午', '乙丑', '乙未', '丙寅', '丙申', '丁卯', '丁酉', '戊辰', '戊戌', '己巳', '己亥'), 
+                                  ('庚午', '庚子', '辛未', '辛丑', '壬申', '壬寅', '癸酉', '癸卯', '甲戌', '甲辰', '乙亥', '乙巳'),
+                                  ('丙子', '丙午', '丁丑', '丁未', '戊寅', '戊申', '己卯', '己酉', '庚辰', '庚戌', '辛巳', '辛亥'),
+                                  ('壬午', '壬子', '癸未', '癸丑', '甲申', '甲寅', '乙酉', '乙卯', '丙戌', '丙辰', '丁亥', '丁巳'),
+                                  ('戊子', '戊午', '己丑', '己未', '庚寅', '庚申', '辛卯', '辛酉', '壬辰', '壬戌', '癸巳', '癸亥')], "甲子,丙子,戊子,庚子,壬子".split(",")))
+            
+            return "{}{}元".format(self.getepoch(ji), self.multi_key_dict_get(j, self.gangzhi()[3]))
         else:
             return "第{}紀第{}{}元".format(self.getepoch(ji).get("紀") ,self.getepoch(ji).get("元"), self.getyuan(ji))
-    
+        
     def ty(self, ji):
         arr = np.arange(10) 
         repetitions = 3
@@ -615,7 +652,7 @@ class Taiyi():
     
     def pan(self, ji):
         return {
-                "太乙計":{0:"年計", 1:"月計", 2:"日計", 3:"時計"}.get(ji), 
+                "太乙計":{0:"年計", 1:"月計", 2:"日計", 3:"時計", 4:"分計"}.get(ji), 
                 "公元日期":"{}年{}月{}日{}時".format(self.year, self.month, self.day, self.hour),
                 "干支":self.gangzhi(),
                 "農曆":self.lunar_date_d(),
