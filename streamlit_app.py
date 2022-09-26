@@ -30,16 +30,13 @@ with st.sidebar:
     h = int(pp[0])
     min = int(pp[1])
  
-ty = st.tabs([' 太乙 '])
-
-with ty:
-    st.header('太乙排盘')
-    option = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
-    num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option)
-    ttext = TaiYi(y,m,d,h,min).pan(num)
-    output5 = st.empty()
-    with st_capture(output5.code):
-        print("{} |\n{} |\n太乙{} - {}\n".format(ttext.get("公元日期"), ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文")))
-        #print(tys+"\n")
-    expander = st.expander("原始碼")
-    expander.write(str(ttext))
+st.header('太乙排盘')
+option = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
+num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option)
+ttext = TaiYi(y,m,d,h,min).pan(num)
+output5 = st.empty()
+with st_capture(output5.code):
+    print("{} |\n{} |\n太乙{} - {}\n".format(ttext.get("公元日期"), ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文")))
+    #print(tys+"\n")
+expander = st.expander("原始碼")
+expander.write(str(ttext))
