@@ -674,9 +674,8 @@ class Taiyi():
                 "君基":self.kingbase(ji),
                 "臣基":self.officerbase(ji),
                 "民基":self.pplbase(ji),
-                
-                #"九宮":self.nine_gong(ji), 
-                #"十六宮":self.sixteen_gong(ji),
+                "九宮":self.nine_gong(ji), 
+                "十六宮":self.sixteen_gong(ji),
                 }
     
     def html(self, ji):
