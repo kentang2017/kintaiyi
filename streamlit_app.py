@@ -1,7 +1,5 @@
 import streamlit as st
 import pendulum as pdlm
-import numpy as np
-import pandas as pd
 from contextlib import contextmanager, redirect_stdout
 from io import StringIO
 from time import sleep
