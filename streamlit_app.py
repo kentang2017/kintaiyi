@@ -36,17 +36,18 @@ with st.sidebar:
     #d = int(p[2])
     #h = int(pp[0])
     #min = int(pp[1])
-    if st.button('執行'):
-        ttext1 = Taiyi(int(inputy),int(inputm),int(inputd),input(inputh),input(inputf)).pan(num1)
-    else:
-        print("    ")
+   
     
- 
 st.header('太乙排盘')
+output5 = st.empty()
 #option = st.selectbox( '四計', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
 #num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option)
 #ttext = Taiyi(y,m,d,h,min).pan(num)
-output5 = st.empty()
+if st.button('執行'):
+    ttext1 = Taiyi(int(inputy),int(inputm),int(inputd),input(inputh),input(inputf)).pan(num1)
+else:
+    print("    ")
+
 with st_capture(output5.code):
     print("{} |\n{} |\n太乙{} - {}\n".format(ttext1.get("公元日期"), ttext1.get("年號"), ttext1.get("太乙計"),  ttext1.get("局式").get("文")))
     #print(tys+"\n")
