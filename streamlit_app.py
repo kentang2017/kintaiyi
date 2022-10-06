@@ -39,7 +39,7 @@ with st.sidebar:
     min = int(pp[1])
     if st.button('執行'):
         ttext1 = Taiyi(int(inputy),int(inputm),int(inputd),input(inputh),input(inputf)).pan(num1)
-     else:
+    else:
         print("    ")
     
  
