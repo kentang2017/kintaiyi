@@ -29,7 +29,7 @@ with st.sidebar:
     inputh = st.text_input('時', '')
     inputf = st.text_input('分', '')
     option1 = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
-    num1 = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option)
+    num1 = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option1)
     p = str(pp_date).split("-")
     pp = str(pp_time).split(":")
     y = int(p[0])
