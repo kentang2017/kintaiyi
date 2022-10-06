@@ -42,16 +42,15 @@ inputf = st.text_input('分', '')
 option1 = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
 num1 = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option1)
 
-#option = st.selectbox( '四計', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
-#num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option)
-#ttext = Taiyi(y,m,d,h,min).pan(num)
-if st.button('執行'):
-    ttext1 = Taiyi(int(inputy),int(inputm),int(inputd),input(inputh),input(inputf)).pan(num1)
-else:
-    print("    ")
+with st_capture(output.code):
+    if st.button('執行'):
+        ttext1 = Taiyi(int(inputy),int(inputm),int(inputd),input(inputh),input(inputf)).pan(num1)
+        print("{} |\n{} |\n太乙{} - {}\n".format(ttext1.get("公元日期"), ttext1.get("年號"), ttext1.get("太乙計"),  ttext1.get("局式").get("文")))
+        expander = st.expander("原始碼")
+        expander.write(str(ttext1))
+    else:
+        print("    ")
+            
+            
+            
 
-with st_capture(output5.code):
-    print("{} |\n{} |\n太乙{} - {}\n".format(ttext1.get("公元日期"), ttext1.get("年號"), ttext1.get("太乙計"),  ttext1.get("局式").get("文")))
-    #print(tys+"\n")
-expander = st.expander("原始碼")
-expander.write(str(ttext1))
