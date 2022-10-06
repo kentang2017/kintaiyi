@@ -19,17 +19,10 @@ def st_capture(output_func):
         yield
         
 st.set_page_config(layout="wide",page_title="太鳦太乙")
-with st.sidebar:
+
     #pp_date=st.date_input("日期",pdlm.now(tz='Asia/Shanghai').date())
     #pp_time=st.time_input("時間",pdlm.now(tz='Asia/Shanghai').time())
-    inputy = st.text_input('年', '')
-    inputm = st.text_input('月', '')
-    inputd = st.text_input('日', '')
-    inputh = st.text_input('時', '')
-    inputf = st.text_input('分', '')
-    option1 = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
-    num1 = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option1)
-
+  
     #p = str(pp_date).split("-")
     #pp = str(pp_time).split(":")
     #y = int(p[0])
@@ -41,7 +34,14 @@ with st.sidebar:
     
 st.header('太乙排盘')
 output5 = st.empty()
-ttext1 = []
+inputy = st.text_input('年', '')
+inputm = st.text_input('月', '')
+inputd = st.text_input('日', '')
+inputh = st.text_input('時', '')
+inputf = st.text_input('分', '')
+option1 = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
+num1 = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option1)
+
 #option = st.selectbox( '四計', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
 #num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option)
 #ttext = Taiyi(y,m,d,h,min).pan(num)
