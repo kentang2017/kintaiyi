@@ -44,7 +44,7 @@ with st.sidebar:
     
  
 st.header('太乙排盘')
-option = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
+option = st.selectbox( '四計', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
 num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option)
 ttext = Taiyi(y,m,d,h,min).pan(num)
 output5 = st.empty()
