@@ -37,8 +37,9 @@ with st_capture(output5.code):
         min = int(pp[1])
         ttext = Taiyi(y,m,d,h,min).pan(num)
         print("{} |\n{} |\n太乙{} - {}\n".format(ttext.get("公元日期"), ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文")))
+        expander = st.expander("原始碼")
+        expander.write(str(ttext))
     else:
         print("    ")
     #print(tys+"\n")
-expander = st.expander("原始碼")
-expander.write(str(ttext))
+
