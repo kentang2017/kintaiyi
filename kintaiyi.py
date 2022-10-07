@@ -57,6 +57,8 @@ class Taiyi():
         cyear =  an2cn(year)
         if cyear == 1:
             ccyear = "元"
+        else:
+            ccyear = cyear
         if year < 1900:
             year = year - y[idx] +1 
             pn = "{}{}年".format(preiodname[idx], ccyear)
