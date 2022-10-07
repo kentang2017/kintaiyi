@@ -45,7 +45,10 @@ num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計�
 ttext = Taiyi(y,m,d,h,min).pan(num)
 output5 = st.empty()
 with st_capture(output5.code):
-    print("{} |\n{} |\n太乙{} - {}\n".format(ttext.get("公元日期"), ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文")))
+    if st.button('執行'):
+        print("{} |\n{} |\n太乙{} - {}\n".format(ttext.get("公元日期"), ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文")))
+    else:
+        print("    ")
     #print(tys+"\n")
 expander = st.expander("原始碼")
 expander.write(str(ttext))
