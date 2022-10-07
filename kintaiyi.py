@@ -63,15 +63,17 @@ class Taiyi():
                 cyear = an2cn(year)
             pn = "{}{}年".format(preiodname[idx],cyear)
             kn = "{}{}{}".format(period[idx], king[idx], king_realname[idx])
-        if year >= 1900 and year <1949:
+            return  "{} {}".format(kn, pn)
+        elif year >= 1900 and year <1949:
             year = year - y[idx-1] +1
             pn = "{}{}年".format(preiodname[idx-1], an2cn(year))
             kn = "{}{}{}".format(period[idx-1], king[idx-1], king_realname[idx-1])
-        if year >= 1949:
+            return  "{} {}".format(kn, pn)
+        elif year >= 1949:
             year = year - y[idx]
             pn = "{}{}年".format(preiodname[idx], an2cn(year))
             kn = "{}{}{}".format(period[idx], king[idx], king_realname[idx])
-        return  "{} {}".format(kn, pn)
+            return  "{} {}".format(kn, pn)
  
     def skyeyes_des(self, ji):
         yy = self.kook(ji).get("文")[0]
