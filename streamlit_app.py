@@ -35,8 +35,10 @@ with st_capture(output5.code):
         d = int(p[2])
         h = int(pp[0])
         min = int(pp[1])
+        ty = Taiyi(y,m,d,h,min)
         ttext = Taiyi(y,m,d,h,min).pan(num)
         print("{} |\n{} |\n太乙{} - {}\n".format(ttext.get("公元日期"), ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文")))
+        print("積年數︰{}".format(ty.accnum(num)))
         expander = st.expander("原始碼")
         expander.write(str(ttext))
     else:
