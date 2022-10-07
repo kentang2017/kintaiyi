@@ -19,16 +19,7 @@ def st_capture(output_func):
         yield
         
 st.set_page_config(layout="wide",page_title="太鳦太乙")
-with st.sidebar:
-    pp_date=st.date_input("日期",pdlm.now(tz='Asia/Shanghai').date())
-    pp_time=st.time_input("時間",pdlm.now(tz='Asia/Shanghai').time())
-    p = str(pp_date).split("-")
-    pp = str(pp_time).split(":")
-    #y = int(p[0])
-    #m = int(p[1])
-    #d = int(p[2])
-    #h = int(pp[0])
-    #min = int(pp[1])
+
  
 st.header('太乙排盘')
 idate = st.text_input('輸入日期(如: 1997/8/8)', '')
