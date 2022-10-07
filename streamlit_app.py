@@ -20,23 +20,22 @@ def st_capture(output_func):
         
 st.set_page_config(layout="wide",page_title="太鳦太乙")
 
- 
 st.header('太乙排盘')
 idate = st.text_input('輸入日期(如: 1997/8/8)', '')
 itime = st.text_input('輸入時間(如: 18:30)', '')
-p = str(idate).split("/")
-pp = str(itime).split(":")
-y = int(p[0])
-m = int(p[1])
-d = int(p[2])
-h = int(pp[0])
-min = int(pp[1])
 option = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
 num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option)
 ttext = Taiyi(y,m,d,h,min).pan(num)
 output5 = st.empty()
 with st_capture(output5.code):
     if st.button('執行'):
+        p = str(idate).split("/")
+        pp = str(itime).split(":")
+        y = int(p[0])
+        m = int(p[1])
+        d = int(p[2])
+        h = int(pp[0])
+        min = int(pp[1])
         print("{} |\n{} |\n太乙{} - {}\n".format(ttext.get("公元日期"), ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文")))
     else:
         print("    ")
