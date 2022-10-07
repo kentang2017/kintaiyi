@@ -54,22 +54,18 @@ class Taiyi():
         preiodname = data[6::7]
         idx = y.index(closest(y, self.lunar_date_d().get("年")))
         year = year = self.lunar_date_d().get("年")
-        cyear =  an2cn(year)
-        if cyear == 1:
-            ccyear = "元"
-        else:
-            ccyear = cyear
+
         if year < 1900:
             year = year - y[idx] +1 
-            pn = "{}{}年".format(preiodname[idx], ccyear)
+            pn = "{}{}年".format(preiodname[idx], an2cn(year))
             kn = "{}{}{}".format(period[idx], king[idx], king_realname[idx])
         if year >= 1900 and year <1949:
             year = year - y[idx-1] +1
-            pn = "{}{}年".format(preiodname[idx-1], cyear)
+            pn = "{}{}年".format(preiodname[idx-1], an2cn(year))
             kn = "{}{}{}".format(period[idx-1], king[idx-1], king_realname[idx-1])
         if year > 1949:
             year = year - y[idx]
-            pn = "{}{}年".format(preiodname[idx], cyear)
+            pn = "{}{}年".format(preiodname[idx], an2cn(year))
             kn = "{}{}{}".format(period[idx], king[idx], king_realname[idx])
         return  "{} {}".format(kn, pn)
  
