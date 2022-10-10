@@ -10,6 +10,8 @@ from historytext import chistory
 from taiyimishu import taiyi_yingyang
 import base64
 import textwrap
+from PIL import Image
+
 
 def render_svg(svg):
     """Renders the given svg string."""
@@ -66,7 +68,8 @@ with st_capture(output5.code):
             cys = "".join([ch[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ch) / 25+1))])
         except TypeError:
             cys = ""
-        render_svg_example()
+        image = Image.open('sunrise.jpg')
+        st.image(image, caption='Sunrise by the mountains')
         print("{} |\n{} |\n{} |\n太乙{} - {} | 積年數︰{} | \n紀元︰{} | \n\n史事記載︰\n {} \n\n《太乙秘書》︰\n{}".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num), ttext.get("紀元"), cys, tys))
         expander = st.expander("原始碼")
         expander.write(str(ttext))
