@@ -43,7 +43,8 @@ with st_capture(output5.code):
         ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
         r = list(map(lambda x:[x, x+25]  ,list(range(0,300)[0::25])))
         tys = "".join([ts[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ts) / 25+1))])
-        print("{} |\n{} |\n太乙{} - {} | 積年數︰{} \n {}".format(ttext.get("公元日期"), ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num), tys))
+        
+        print("{} |\n{} |\n太乙{} - {} | 積年數︰{} \n\n《太乙秘書》︰{}".format(ttext.get("公元日期"), ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num), tys))
         expander = st.expander("原始碼")
         expander.write(str(ttext))
     else:
