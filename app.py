@@ -73,7 +73,7 @@ with st_capture(output5.code):
         else:
             yy = "yin"
       
-        try：
+        try:
             st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read())
         except IndexError:
             st.empty()
