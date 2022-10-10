@@ -31,7 +31,7 @@ output5 = st.empty()
 with st_capture(output5.code):
     if st.button('執行'):
         p = str(idate).split("/")
-        pp = str(itime).split(":")
+        pp = str(itime).replace("：",":").split(":")
         y = int(p[0])
         m = int(p[1])
         d = int(p[2])
