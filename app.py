@@ -41,6 +41,7 @@ with st_capture(output5.code):
         ttext = Taiyi(y,m,d,h,min).pan(num)
         kook = Taiyi(y,m,d,h,min).kook(num)
         ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
+        gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
         ch = chistory.get(y)
         r = list(map(lambda x:[x, x+25]  ,list(range(0,500)[0::25])))
         tys = "".join([ts[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ts) / 25+1))])
@@ -48,7 +49,7 @@ with st_capture(output5.code):
             cys = "".join([ch[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ch) / 25+1))])
         except TypeError:
             cys = ""
-        print("{}\n{}\n |\n{} |\n太乙{} - {} | 積年數︰{} \n\n史事記載︰\n {} \n\n《太乙秘書》︰\n{}".format(ttext.get("公元日期"), ttext.get("干支"), ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num), cys, tys))
+        print("{}\n{}\n |\n{} |\n太乙{} - {} | 積年數︰{} \n\n史事記載︰\n {} \n\n《太乙秘書》︰\n{}".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num), cys, tys))
         expander = st.expander("原始碼")
         expander.write(str(ttext))
     else:
