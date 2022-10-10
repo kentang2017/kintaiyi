@@ -42,7 +42,7 @@ with st_capture(output5.code):
         kook = Taiyi(y,m,d,h,min).kook(num)
         ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
         ch = chistory.get(y)
-        r = list(map(lambda x:[x, x+25]  ,list(range(0,300)[0::25])))
+        r = list(map(lambda x:[x, x+25]  ,list(range(0,500)[0::25])))
         tys = "".join([ts[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ts) / 25+1))])
         try:
             cys = "".join([ch[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ch) / 25+1))])
