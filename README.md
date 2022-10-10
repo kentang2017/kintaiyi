@@ -15,7 +15,7 @@
 
 因應現代都市人的需求，與時並進，就時計太乙的基礎上，下開分計太乙，至於果效，留待閣下驗證。
 
-https://kentang2017-kintaiyi-app-f2guvp.streamlitapp.com
+含史事對照的太鳦排盤 https://kentang2017-kintaiyi-app-f2guvp.streamlitapp.com
 
 Taiyishenshu, one of the Ancient Chinese Divinations, along with Qimendunjia and Dailiuren known as "three styles".
 
