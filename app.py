@@ -8,6 +8,15 @@ import streamlit.components.v1 as components
 from kintaiyi import Taiyi
 from historytext import chistory
 from taiyimishu import taiyi_yingyang
+import base64
+import requests
+
+def render_svg(svg):
+    """Renders the given svg string."""
+    b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
+    html = r'<img src="data:image/svg+xml;base64,%s"/>' % b64
+    st.write(html, unsafe_allow_html=True)
+
 
 @contextmanager
 def st_capture(output_func):
@@ -50,6 +59,10 @@ with st_capture(output5.code):
         except TypeError:
             cys = ""
         print("{} |\n{} |\n{} |\n太乙{} - {} | 積年數︰{} | \n紀元︰{} | \n\n史事記載︰\n {} \n\n《太乙秘書》︰\n{}".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num), ttext.get("紀元"), cys, tys))
+        url = "https://restcountries.eu/data/usa.svg"
+        r = requests.get(url) # Get the webpage
+        svg = r.content.decode() # Decoded response content with the svg string
+        render_svg(svg) # Render the svg string
         expander = st.expander("原始碼")
         expander.write(str(ttext))
     else:
