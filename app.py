@@ -8,7 +8,7 @@ import streamlit.components.v1 as components
 from kintaiyi import Taiyi
 from historytext import chistory
 from taiyimishu import taiyi_yingyang
-import cairosvg
+
 
 @contextmanager
 def st_capture(output_func):
@@ -51,9 +51,7 @@ with st_capture(output5.code):
         except TypeError:
             cys = ""
         print("{} |\n{} |\n{} |\n太乙{} - {} | 積年數︰{} | \n紀元︰{} | \n\n史事記載︰\n {} \n\n《太乙秘書》︰\n{}".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num), ttext.get("紀元"), cys, tys))
-        svg_url = "https://en.wikipedia.org/wiki/Scalable_Vector_Graphics#/media/File:SVG_Logo.svg"
-        my_png = cairosvg.svg2png(url=svg_url, output_width=426, output_height=240)
-        st.image(my_png)
+        
         expander = st.expander("原始碼")
         expander.write(str(ttext))
     else:
