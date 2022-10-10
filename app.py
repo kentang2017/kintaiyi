@@ -23,10 +23,6 @@ def render_svg_example():
             <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
         </svg>
     """
-    st.write('## Rendering an SVG in Streamlit')
-    st.write('### SVG Input')
-    st.code(textwrap.dedent(svg), 'svg')
-    st.write('### SVG Output')
     render_svg(svg)
 
 
