@@ -44,7 +44,10 @@ with st_capture(output5.code):
         ch = chistory.get(y)
         r = list(map(lambda x:[x, x+25]  ,list(range(0,300)[0::25])))
         tys = "".join([ts[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ts) / 25+1))])
-        cys = "".join([ch[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ch) / 25+1))])
+        try:
+            cys = "".join([ch[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ch) / 25+1))])
+        except TypeError:
+            cys = ""
         print("{} |\n{} |\n太乙{} - {} | 積年數︰{} \n\n《太乙秘書》︰{}\n\n{}".format(ttext.get("公元日期"), ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num), tys, cys))
         expander = st.expander("原始碼")
         expander.write(str(ttext))
