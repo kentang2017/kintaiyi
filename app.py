@@ -48,7 +48,7 @@ with st_capture(output5.code):
             cys = "".join([ch[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ch) / 25+1))])
         except TypeError:
             cys = ""
-        print("{} |\n{} |\n太乙{} - {} | 積年數︰{} \n\n史事記載︰\n {} \n\n《太乙秘書》︰\n{}".format(ttext.get("公元日期"), ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num), cys, tys))
+        print("{}\n{}\n |\n{} |\n太乙{} - {} | 積年數︰{} \n\n史事記載︰\n {} \n\n《太乙秘書》︰\n{}".format(ttext.get("公元日期"), ttext.get("干支"), ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num), cys, tys))
         expander = st.expander("原始碼")
         expander.write(str(ttext))
     else:
