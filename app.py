@@ -8,6 +8,26 @@ import streamlit.components.v1 as components
 from kintaiyi import Taiyi
 from historytext import chistory
 from taiyimishu import taiyi_yingyang
+import base64
+import textwrap
+
+def render_svg(svg):
+    """Renders the given svg string."""
+    b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
+    html = r'<img src="data:image/svg+xml;base64,%s"/>' % b64
+    st.write(html, unsafe_allow_html=True)
+
+def render_svg_example():
+    svg = """
+        <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">
+            <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
+        </svg>
+    """
+    st.write('## Rendering an SVG in Streamlit')
+    st.write('### SVG Input')
+    st.code(textwrap.dedent(svg), 'svg')
+    st.write('### SVG Output')
+    render_svg(svg)
 
 
 @contextmanager
@@ -51,9 +71,9 @@ with st_capture(output5.code):
         except TypeError:
             cys = ""
         print("{} |\n{} |\n{} |\n太乙{} - {} | 積年數︰{} | \n紀元︰{} | \n\n史事記載︰\n {} \n\n《太乙秘書》︰\n{}".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num), ttext.get("紀元"), cys, tys))
-        
         expander = st.expander("原始碼")
         expander.write(str(ttext))
+        render_svg_example()
     else:
         print("    ")
     #print(tys+"\n")
