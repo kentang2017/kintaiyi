@@ -6,6 +6,7 @@ from time import sleep
 import streamlit as st
 import streamlit.components.v1 as components
 from kintaiyi import Taiyi
+from historytext import chistory
 
 @contextmanager
 def st_capture(output_func):
