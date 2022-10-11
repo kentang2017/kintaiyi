@@ -74,7 +74,7 @@ with st_capture(output5.code):
             yy = "yin"
       
         try:
-            col1, col2, col3 = st.columns([0.2, 5, 0.2])
+            col1, col2, col3 = st.columns([5, 5, 0.2])
             col2.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
         except (FileNotFoundError,IndexError):
             st.empty()
