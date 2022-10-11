@@ -40,7 +40,6 @@ def st_capture(output_func):
         yield
         
 st.set_page_config(layout="wide",page_title="太鳦太乙")
-
 st.title('太鳦太乙排盘')
 idate = st.text_input('輸入日期(如: 1997/8/8)', '')
 itime = st.text_input('輸入時間(如: 18:30)', '')
