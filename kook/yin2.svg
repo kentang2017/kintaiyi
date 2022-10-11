@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   height="350pt"
+   height="320pt"
    version="1.1"
-   viewBox="0 0 279.99999 279.99999"
-   width="350pt"
+   viewBox="0 0 255.99999 255.99999"
+   width="320pt"
    id="svg801"
    sodipodi:docname="yin2.svg"
    inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
@@ -70,7 +70,7 @@
        transform="translate(2.5663371,-0.42772278)">
       <g
          id="g439"
-         transform="matrix(1.0524644,0,0,1.0599594,-1.63189,-0.949759)">
+         transform="matrix(0.98122955,0,0,0.99250513,2.5856991,0.20098554)">
         <circle
            style="fill:#ececec;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
            id="path241"
