@@ -74,7 +74,7 @@ with st_capture(output5.code):
             yy = "yin"
       
         try:
-            st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), width=600)
+            st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), output_format="auto")
         except (FileNotFoundError,IndexError):
             st.empty()
         print("{} |\n{} |\n{} |\n太乙{} - {} | 積年數︰{} | \n紀元︰{} | \n\n史事記載︰\n {} \n\n《太乙秘書》︰\n{}".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num), ttext.get("紀元"), cys, tys))
