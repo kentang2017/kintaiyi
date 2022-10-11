@@ -74,8 +74,13 @@ with st_capture(output5.code):
             yy = "yin"
       
         try:
-            col1, col2, col3 = st.columns([5, 5, 0.2])
-            col2.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
+            col1, col2, col3 = st.columns([0.2, 5, 0.2])
+            with col1:
+                st.write(' ')
+            with col2:
+                st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
+            with col3:
+                st.write(' ')
         except (FileNotFoundError,IndexError):
             st.empty()
         print("{} |\n{} |\n{} |\n太乙{} - {} | 積年數︰{} | \n紀元︰{} | \n\n史事記載︰\n {} \n\n《太乙秘書》︰\n{}".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num), ttext.get("紀元"), cys, tys))
