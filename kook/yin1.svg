@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   height="345.6pt"
+   height="260pt"
    version="1.1"
-   viewBox="0 0 460.8 345.6"
-   width="460.8pt"
+   viewBox="0 0 260.00001 260"
+   width="260pt"
    id="svg801"
-   sodipodi:docname="yin1.svg"
+   sodipodi:docname="yin.svg"
    inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -25,15 +25,20 @@
      inkscape:document-units="pt"
      showgrid="false"
      inkscape:snap-text-baseline="true"
-     inkscape:zoom="1.7534722"
-     inkscape:cx="262.05149"
-     inkscape:cy="230.11485"
-     inkscape:window-width="1052"
-     inkscape:window-height="1008"
-     inkscape:window-x="859"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="axes_1" />
+     inkscape:zoom="0.43836805"
+     inkscape:cx="136.87129"
+     inkscape:cy="95.809902"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="figure_1"
+     width="460.79999pt"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
   <metadata
      id="metadata407">
     <rdf:RDF>
@@ -57,10 +62,37 @@
        id="style409">*{stroke-linecap:butt;stroke-linejoin:round;}</style>
   </defs>
   <g
-     id="figure_1">
+     id="figure_1"
+     transform="translate(-72.964691,-47.719009)">
+    <circle
+       style="fill:#ececec;stroke-width:0.75"
+       id="path241"
+       cx="-177.71901"
+       cy="202.96469"
+       transform="rotate(-90)"
+       r="130" />
     <g
        id="axes_1"
        transform="translate(2.5663371,-0.42772278)">
+      <g
+         id="matplotlib.axis_1" />
+      <g
+         id="matplotlib.axis_2" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:30px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75"
+         x="340.01193"
+         y="110.73569"
+         id="text10054"><tspan
+           sodipodi:role="line"
+           id="tspan10052"
+           style="stroke-width:0.75"
+           x="340.01193"
+           y="110.73569" /></text>
+    </g>
+    <g
+       id="g887"
+       transform="translate(-34.037098,3.5758331)">
       <g
          id="patch_2"
          style="fill:#f9f9f9">
@@ -317,10 +349,6 @@
            style="fill:#e6e6e6;stroke:#ffffff;stroke-linejoin:miter"
            id="path509" />
       </g>
-      <g
-         id="matplotlib.axis_1" />
-      <g
-         id="matplotlib.axis_2" />
       <text
          xml:space="preserve"
          style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75"
@@ -621,7 +649,7 @@
            sodipodi:role="line"
            style="font-size:6px;stroke-width:0.749999"
            x="227.67119"
-           y="181.23401"
+           y="181.23398"
            id="tspan19700">大</tspan></text>
       <text
          xml:space="preserve"
@@ -637,7 +665,7 @@
            sodipodi:role="line"
            style="font-size:6px;stroke-width:0.749999"
            x="236.67119"
-           y="181.23401"
+           y="181.23398"
            id="tspan19700-8">參</tspan></text>
       <text
          xml:space="preserve"
@@ -653,7 +681,7 @@
            sodipodi:role="line"
            style="font-size:6px;stroke-width:0.749999"
            x="301.49963"
-           y="129.48755"
+           y="129.48752"
            id="tspan22548">擊</tspan></text>
       <text
          xml:space="preserve"
@@ -669,7 +697,7 @@
            sodipodi:role="line"
            style="font-size:6px;stroke-width:0.749999"
            x="311.56931"
-           y="129.27852"
+           y="129.27849"
            id="tspan23632">參</tspan></text>
       <text
          xml:space="preserve"
@@ -685,7 +713,7 @@
            sodipodi:role="line"
            style="font-size:6px;stroke-width:0.749999"
            x="315.7869"
-           y="162.04831"
+           y="162.04828"
            id="tspan24208">神</tspan></text>
       <text
          xml:space="preserve"
@@ -701,7 +729,7 @@
            sodipodi:role="line"
            style="font-size:6px;stroke-width:0.749999"
            x="178.49147"
-           y="107.85812"
+           y="107.85809"
            id="tspan25440">乙</tspan></text>
       <text
          xml:space="preserve"
@@ -717,7 +745,7 @@
            sodipodi:role="line"
            style="font-size:6px;stroke-width:0.749999"
            x="139.56216"
-           y="197.9453"
+           y="197.94527"
            id="tspan26334">昌</tspan></text>
       <text
          xml:space="preserve"
@@ -733,7 +761,7 @@
            sodipodi:role="line"
            style="font-size:6px;stroke-width:0.749999"
            x="151.96625"
-           y="233.26399"
+           y="233.26396"
            id="tspan26922">計</tspan></text>
       <text
          xml:space="preserve"
@@ -749,7 +777,7 @@
            sodipodi:role="line"
            style="font-size:6px;stroke-width:0.749999"
            x="181.57141"
-           y="257.02051"
+           y="257.02048"
            id="tspan27630">神</tspan></text>
       <text
          xml:space="preserve"
@@ -765,7 +793,7 @@
            sodipodi:role="line"
            style="font-size:6px;stroke-width:0.749999"
            x="187.26277"
-           y="107.39474"
+           y="107.39471"
            id="tspan24858">大</tspan></text>
       <text
          xml:space="preserve"
@@ -1097,17 +1125,6 @@
            style="font-size:10px;stroke-width:0.75"
            x="222.1158"
            y="129.56049">巳</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:30px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75"
-         x="340.01193"
-         y="110.73569"
-         id="text10054"><tspan
-           sodipodi:role="line"
-           id="tspan10052"
-           style="stroke-width:0.75"
-           x="340.01193"
-           y="110.73569" /></text>
     </g>
   </g>
 </svg>
