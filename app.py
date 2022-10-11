@@ -78,7 +78,7 @@ with st_capture(output5.code):
             st.markdown("《太乙秘書》︰")
             st.markdown(ts)
             st.markdown("史事記載︰")
-            st.markdown(cys)
+            st.markdown(ch)
         except (FileNotFoundError,IndexError):
             st.empty()
             st.markdown("《太乙秘書》︰")
