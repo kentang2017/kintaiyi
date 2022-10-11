@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   height="400pt"
+   height="388pt"
    version="1.1"
-   viewBox="0 0 400.00002 400"
-   width="400pt"
+   viewBox="0 0 388.00002 388"
+   width="388pt"
    id="svg801"
    sodipodi:docname="yin1.svg"
    inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
@@ -66,7 +66,7 @@
      transform="translate(-72.964691,-47.719009)">
     <g
        id="g1591"
-       transform="matrix(1,0,0,0.97642659,-27.510328,-17.477594)">
+       transform="matrix(0.96675533,0,0,0.92338642,-22.049228,-10.514946)">
       <ellipse
          style="fill:#ececec;stroke-width:1.1694"
          id="path241"
