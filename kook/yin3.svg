@@ -66,13 +66,11 @@
     <g
        id="axes_1"
        transform="translate(2.5663371,-0.42772278)">
-      <circle
-         style="fill:#ececec;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
+      <path
          id="path241"
-         cx="-171.61198"
-         cy="236.36572"
-         transform="rotate(-90)"
-         r="130" />
+         style="fill:#ececec;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round"
+         d="M 173.33398 0 A 173.33333 173.33333 0 0 0 0 173.33398 A 173.33333 173.33333 0 0 0 173.33398 346.66602 A 173.33333 173.33333 0 0 0 346.66602 173.33398 A 173.33333 173.33333 0 0 0 173.33398 0 z "
+         transform="matrix(0.75,0,0,0.75,106.36572,41.611984)" />
       <g
          id="g29148"
          sodipodi:insensitive="true">
@@ -210,8 +208,7 @@
       <g
          id="matplotlib.axis_2" />
       <g
-         id="g10292"
-         transform="translate(-0.63606644,-2.531192)">
+         id="g10292">
         <g
            id="patch_18"
            style="fill:#e6e6e6">
