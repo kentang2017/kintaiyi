@@ -75,7 +75,7 @@ with st_capture(output5.code):
       
         try:
             st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read())
-            st.text("《太乙秘書》︰")
+            st.markdown("《太乙秘書》︰")
             st.markdown(ts)
         except (FileNotFoundError,IndexError):
             st.empty()
