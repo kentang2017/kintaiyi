@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   height="345.6pt"
+   height="260pt"
    version="1.1"
-   viewBox="0 0 460.8 345.6"
-   width="460.8pt"
+   viewBox="0 0 260.00001 260"
+   width="260pt"
    id="svg801"
    sodipodi:docname="yin14.svg"
    inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
@@ -25,15 +25,20 @@
      inkscape:document-units="pt"
      showgrid="false"
      inkscape:snap-text-baseline="true"
-     inkscape:zoom="1.7534722"
-     inkscape:cx="257.48911"
-     inkscape:cy="275.73862"
+     inkscape:zoom="0.5"
+     inkscape:cx="-100"
+     inkscape:cy="217"
      inkscape:window-width="1052"
      inkscape:window-height="1008"
-     inkscape:window-x="859"
-     inkscape:window-y="0"
+     inkscape:window-x="733"
+     inkscape:window-y="96"
      inkscape:window-maximized="0"
-     inkscape:current-layer="axes_1" />
+     inkscape:current-layer="axes_1"
+     width="460.79999pt"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
   <metadata
      id="metadata407">
     <rdf:RDF>
@@ -57,10 +62,18 @@
        id="style409">*{stroke-linecap:butt;stroke-linejoin:round;}</style>
   </defs>
   <g
-     id="figure_1">
+     id="figure_1"
+     transform="translate(-108.50001,-43.999996)">
     <g
        id="axes_1"
        transform="translate(2.5663371,-0.42772278)">
+      <circle
+         style="fill:#ececec;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
+         id="path241"
+         cx="-174.42772"
+         cy="235.93367"
+         transform="rotate(-90)"
+         r="130" />
       <g
          id="g29148"
          sodipodi:insensitive="true">
@@ -625,7 +638,7 @@
            sodipodi:role="line"
            style="font-size:6px;stroke-width:0.749999"
            x="249.37128"
-           y="92.987984"
+           y="92.987946"
            id="tspan19700">大</tspan></text>
       <text
          xml:space="preserve"
@@ -641,7 +654,7 @@
            sodipodi:role="line"
            style="font-size:6px;stroke-width:0.749999"
            x="325.65781"
-           y="197.86702"
+           y="197.86699"
            id="tspan19700-8">參</tspan></text>
       <text
          xml:space="preserve"
@@ -657,7 +670,7 @@
            sodipodi:role="line"
            style="font-size:6px;stroke-width:0.749999"
            x="256.87128"
-           y="92.987984"
+           y="92.987946"
            id="tspan22548">擊</tspan></text>
       <text
          xml:space="preserve"
@@ -673,7 +686,7 @@
            sodipodi:role="line"
            style="font-size:6px;stroke-width:0.749999"
            x="285.50882"
-           y="256.63202"
+           y="256.63199"
            id="tspan23632">參</tspan></text>
       <text
          xml:space="preserve"
@@ -689,7 +702,7 @@
            sodipodi:role="line"
            style="font-size:6px;stroke-width:0.749999"
            x="282.43402"
-           y="105.26206"
+           y="105.26202"
            id="tspan24208">神</tspan></text>
       <text
          xml:space="preserve"
@@ -705,7 +718,7 @@
            sodipodi:role="line"
            style="font-size:6px;stroke-width:0.749999"
            x="143.0083"
-           y="162.79375"
+           y="162.79372"
            id="tspan25440">乙</tspan></text>
       <text
          xml:space="preserve"
@@ -721,7 +734,7 @@
            sodipodi:role="line"
            style="font-size:6px;stroke-width:0.749999"
            x="246.78505"
-           y="268.18054"
+           y="268.18051"
            id="tspan26334">昌</tspan></text>
       <text
          xml:space="preserve"
@@ -737,7 +750,7 @@
            sodipodi:role="line"
            style="font-size:6px;stroke-width:0.749999"
            x="215.98515"
-           y="267.29391"
+           y="267.29388"
            id="tspan26922">計</tspan></text>
       <text
          xml:space="preserve"
@@ -753,7 +766,7 @@
            sodipodi:role="line"
            style="font-size:6px;stroke-width:0.749999"
            x="208.48515"
-           y="267.29391"
+           y="267.29388"
            id="tspan27630">神</tspan></text>
       <text
          xml:space="preserve"
@@ -769,7 +782,7 @@
            sodipodi:role="line"
            style="font-size:6px;stroke-width:0.749999"
            x="309.19696"
-           y="131.42728"
+           y="131.42725"
            id="tspan24858">大</tspan></text>
       <text
          xml:space="preserve"
