@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   height="260pt"
+   height="320pt"
    version="1.1"
-   viewBox="0 0 260.00001 260"
-   width="260pt"
+   viewBox="0 0 320.00001 320"
+   width="320pt"
    id="svg801"
    sodipodi:docname="yin23.svg"
    inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
@@ -25,15 +25,16 @@
      inkscape:document-units="pt"
      showgrid="false"
      inkscape:snap-text-baseline="true"
-     inkscape:zoom="0.5"
-     inkscape:cx="111"
-     inkscape:cy="219"
-     inkscape:window-width="1052"
-     inkscape:window-height="1008"
-     inkscape:window-x="852"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="axes_1" />
+     inkscape:zoom="1.08"
+     inkscape:cx="112.03704"
+     inkscape:cy="218.51852"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="axes_1"
+     width="320pt" />
   <metadata
      id="metadata407">
     <rdf:RDF>
@@ -62,16 +63,20 @@
     <g
        id="axes_1"
        transform="translate(2.5663371,-0.42772278)">
+      <g
+         id="matplotlib.axis_1" />
+      <g
+         id="matplotlib.axis_2" />
       <circle
-         style="fill:#ececec;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
+         style="fill:#ececec;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
          id="path241"
-         cx="-172.92773"
-         cy="237.43365"
+         cx="-204.42773"
+         cy="268.93365"
          transform="rotate(-90)"
-         r="130" />
+         r="161.5" />
       <g
          id="g29148"
-         sodipodi:insensitive="true">
+         transform="matrix(1.2423077,0,0,1.2423077,-26.032001,-10.40172)">
         <g
            id="patch_2"
            style="fill:#f9f9f9">
@@ -203,7 +208,8 @@
       </g>
       <g
          id="patch_18"
-         style="fill:#e6e6e6">
+         style="fill:#e6e6e6"
+         transform="matrix(1.2423077,0,0,1.2423077,-26.032001,-10.40172)">
         <path
            d="m 310.67136,174.528 c 0,-4.88067 -0.47954,-9.74956 -1.43172,-14.53645 -0.95217,-4.78689 -2.37237,-9.46866 -4.24012,-13.97781 l -29.50265,12.22039 c 1.06729,2.57666 1.87883,5.25196 2.42293,7.98733 0.54409,2.73537 0.81812,5.51758 0.81812,8.30654 z"
            style="fill:#e6e6e6;stroke:#ffffff;stroke-linejoin:miter"
@@ -211,7 +217,8 @@
       </g>
       <g
          id="patch_19"
-         style="fill:#e6e6e6">
+         style="fill:#e6e6e6"
+         transform="matrix(1.2423077,0,0,1.2423077,-26.032001,-10.40172)">
         <path
            d="m 304.99952,146.01374 c -1.86775,-4.50916 -4.17403,-8.8239 -6.88559,-12.88203 -2.71155,-4.05813 -5.81529,-7.84004 -9.26644,-11.2912 l -22.58035,22.58035 c 1.97208,1.97209 3.74565,4.13318 5.29511,6.45211 1.54946,2.31894 2.86733,4.78451 3.93462,7.36116 z"
            style="fill:#e6e6e6;stroke:#ffffff;stroke-linejoin:miter"
@@ -219,7 +226,8 @@
       </g>
       <g
          id="patch_20"
-         style="fill:#e6e6e6">
+         style="fill:#e6e6e6"
+         transform="matrix(1.2423077,0,0,1.2423077,-26.032001,-10.40172)">
         <path
            d="m 288.84749,121.84051 c -3.45116,-3.45115 -7.23307,-6.55489 -11.2912,-9.26644 -4.05813,-2.71156 -8.37287,-5.01784 -12.88203,-6.88559 l -12.2204,29.50265 c 2.57666,1.06729 5.04223,2.38516 7.36116,3.93462 2.31894,1.54946 4.48003,3.32302 6.45212,5.29511 z"
            style="fill:#e6e6e6;stroke:#ffffff;stroke-linejoin:miter"
@@ -227,7 +235,8 @@
       </g>
       <g
          id="patch_21"
-         style="fill:#e6e6e6">
+         style="fill:#e6e6e6"
+         transform="matrix(1.2423077,0,0,1.2423077,-26.032001,-10.40172)">
         <path
            d="m 264.67426,105.68848 c -4.50915,-1.86775 -9.19093,-3.28795 -13.97782,-4.24012 -4.78689,-0.95218 -9.65577,-1.43172 -14.53644,-1.43172 v 31.93344 c 2.78895,0 5.57117,0.27402 8.30654,0.81812 2.73537,0.5441 5.41067,1.35564 7.98732,2.42293 z"
            style="fill:#e6e6e6;stroke:#ffffff;stroke-linejoin:miter"
@@ -235,7 +244,8 @@
       </g>
       <g
          id="patch_22"
-         style="fill:#e6e6e6">
+         style="fill:#e6e6e6"
+         transform="matrix(1.2423077,0,0,1.2423077,-26.032001,-10.40172)">
         <path
            d="m 236.16,100.01664 c -4.88067,0 -9.74956,0.47954 -14.53645,1.43172 -4.78689,0.95217 -9.46866,2.37237 -13.97781,4.24012 l 12.2204,29.50265 c 2.57665,-1.06729 5.25195,-1.87883 7.98732,-2.42293 2.73537,-0.5441 5.51758,-0.81812 8.30654,-0.81812 z"
            style="fill:#e6e6e6;stroke:#ffffff;stroke-linejoin:miter"
@@ -243,7 +253,8 @@
       </g>
       <g
          id="patch_23"
-         style="fill:#e6e6e6">
+         style="fill:#e6e6e6"
+         transform="matrix(1.2423077,0,0,1.2423077,-26.032001,-10.40172)">
         <path
            d="m 207.64574,105.68848 c -4.50916,1.86775 -8.8239,4.17403 -12.88203,6.88559 -4.05813,2.71155 -7.84004,5.81529 -11.2912,9.26644 l 22.58035,22.58035 c 1.97209,-1.97209 4.13318,-3.74565 6.45211,-5.29511 2.31894,-1.54946 4.78451,-2.86733 7.36117,-3.93462 z"
            style="fill:#e6e6e6;stroke:#ffffff;stroke-linejoin:miter"
@@ -251,7 +262,8 @@
       </g>
       <g
          id="patch_24"
-         style="fill:#e6e6e6">
+         style="fill:#e6e6e6"
+         transform="matrix(1.2423077,0,0,1.2423077,-26.032001,-10.40172)">
         <path
            d="m 183.47251,121.84051 c -3.45115,3.45116 -6.55489,7.23307 -9.26644,11.2912 -2.71156,4.05813 -5.01784,8.37287 -6.88559,12.88203 l 29.50265,12.22039 c 1.06729,-2.57665 2.38516,-5.04222 3.93462,-7.36116 1.54946,-2.31893 3.32302,-4.48002 5.29511,-6.45211 z"
            style="fill:#e6e6e6;stroke:#ffffff;stroke-linejoin:miter"
@@ -259,7 +271,8 @@
       </g>
       <g
          id="patch_25"
-         style="fill:#e6e6e6">
+         style="fill:#e6e6e6"
+         transform="matrix(1.2423077,0,0,1.2423077,-26.032001,-10.40172)">
         <path
            d="m 167.32048,146.01374 c -1.86775,4.50915 -3.28795,9.19092 -4.24013,13.97781 -0.95217,4.78689 -1.43171,9.65578 -1.43171,14.53645 h 31.93344 c 0,-2.78896 0.27403,-5.57117 0.81812,-8.30654 0.5441,-2.73537 1.35564,-5.41067 2.42293,-7.98733 z"
            style="fill:#e6e6e6;stroke:#ffffff;stroke-linejoin:miter"
@@ -267,7 +280,8 @@
       </g>
       <g
          id="patch_26"
-         style="fill:#e6e6e6">
+         style="fill:#e6e6e6"
+         transform="matrix(1.2423077,0,0,1.2423077,-26.032001,-10.40172)">
         <path
            d="m 161.64864,174.528 c 0,4.88067 0.47954,9.74955 1.43171,14.53644 0.95218,4.78689 2.37238,9.46867 4.24013,13.97782 l 29.50265,-12.2204 c -1.06729,-2.57665 -1.87883,-5.25195 -2.42293,-7.98732 -0.54409,-2.73537 -0.81812,-5.51759 -0.81812,-8.30654 z"
            style="fill:#e6e6e6;stroke:#ffffff;stroke-linejoin:miter"
@@ -275,7 +289,8 @@
       </g>
       <g
          id="patch_27"
-         style="fill:#e6e6e6">
+         style="fill:#e6e6e6"
+         transform="matrix(1.2423077,0,0,1.2423077,-26.032001,-10.40172)">
         <path
            d="m 167.32048,203.04226 c 1.86775,4.50915 4.17403,8.8239 6.88559,12.88203 2.71155,4.05813 5.81529,7.84004 9.26644,11.2912 l 22.58035,-22.58035 c -1.97209,-1.97209 -3.74565,-4.13318 -5.29511,-6.45212 -1.54946,-2.31893 -2.86733,-4.7845 -3.93462,-7.36116 z"
            style="fill:#e6e6e6;stroke:#ffffff;stroke-linejoin:miter"
@@ -283,7 +298,8 @@
       </g>
       <g
          id="patch_28"
-         style="fill:#e6e6e6">
+         style="fill:#e6e6e6"
+         transform="matrix(1.2423077,0,0,1.2423077,-26.032001,-10.40172)">
         <path
            d="m 183.47251,227.21549 c 3.45116,3.45115 7.23307,6.55489 11.2912,9.26644 4.05813,2.71156 8.37287,5.01784 12.88203,6.88559 l 12.2204,-29.50265 c -2.57666,-1.06729 -5.04223,-2.38516 -7.36117,-3.93462 -2.31893,-1.54946 -4.48002,-3.32303 -6.45211,-5.29511 z"
            style="fill:#e6e6e6;stroke:#ffffff;stroke-linejoin:miter"
@@ -291,7 +307,8 @@
       </g>
       <g
          id="patch_29"
-         style="fill:#e6e6e6">
+         style="fill:#e6e6e6"
+         transform="matrix(1.2423077,0,0,1.2423077,-26.032001,-10.40172)">
         <path
            d="m 207.64574,243.36752 c 4.50915,1.86775 9.19092,3.28795 13.97781,4.24012 4.78689,0.95218 9.65578,1.43172 14.53645,1.43172 v -31.93344 c -2.78896,0 -5.57117,-0.27403 -8.30654,-0.81812 -2.73537,-0.5441 -5.41067,-1.35564 -7.98732,-2.42293 z"
            style="fill:#e6e6e6;stroke:#ffffff;stroke-linejoin:miter"
@@ -299,7 +316,8 @@
       </g>
       <g
          id="patch_30"
-         style="fill:#e6e6e6">
+         style="fill:#e6e6e6"
+         transform="matrix(1.2423077,0,0,1.2423077,-26.032001,-10.40172)">
         <path
            d="m 236.16,249.03936 c 4.88067,0 9.74955,-0.47954 14.53644,-1.43172 4.78689,-0.95217 9.46867,-2.37237 13.97782,-4.24012 l -12.2204,-29.50265 c -2.57665,1.06729 -5.25195,1.87883 -7.98732,2.42293 -2.73537,0.54409 -5.51759,0.81812 -8.30654,0.81812 z"
            style="fill:#e6e6e6;stroke:#ffffff;stroke-linejoin:miter"
@@ -307,7 +325,8 @@
       </g>
       <g
          id="patch_31"
-         style="fill:#e6e6e6">
+         style="fill:#e6e6e6"
+         transform="matrix(1.2423077,0,0,1.2423077,-26.032001,-10.40172)">
         <path
            d="m 264.67426,243.36752 c 4.50916,-1.86775 8.8239,-4.17403 12.88203,-6.88559 4.05813,-2.71155 7.84004,-5.81529 11.2912,-9.26644 l -22.58035,-22.58035 c -1.97209,1.97208 -4.13318,3.74565 -6.45212,5.29511 -2.31893,1.54946 -4.7845,2.86733 -7.36116,3.93462 z"
            style="fill:#e6e6e6;stroke:#ffffff;stroke-linejoin:miter"
@@ -315,7 +334,8 @@
       </g>
       <g
          id="patch_32"
-         style="fill:#e6e6e6">
+         style="fill:#e6e6e6"
+         transform="matrix(1.2423077,0,0,1.2423077,-26.032001,-10.40172)">
         <path
            d="m 288.84749,227.21549 c 3.45115,-3.45116 6.55489,-7.23307 9.26644,-11.2912 2.71156,-4.05813 5.01784,-8.37288 6.88559,-12.88203 l -29.50265,-12.2204 c -1.06729,2.57666 -2.38516,5.04223 -3.93462,7.36116 -1.54946,2.31894 -3.32303,4.48003 -5.29511,6.45212 z"
            style="fill:#e6e6e6;stroke:#ffffff;stroke-linejoin:miter"
@@ -323,792 +343,789 @@
       </g>
       <g
          id="patch_33"
-         style="fill:#e6e6e6">
+         style="fill:#e6e6e6"
+         transform="matrix(1.2423077,0,0,1.2423077,-26.032001,-10.40172)">
         <path
            d="m 304.99952,203.04226 c 1.86775,-4.50915 3.28795,-9.19093 4.24012,-13.97782 0.95218,-4.78689 1.43172,-9.65577 1.43172,-14.53644 h -31.93344 c 0,2.78895 -0.27403,5.57117 -0.81812,8.30654 -0.5441,2.73537 -1.35564,5.41067 -2.42293,7.98732 z"
            style="fill:#e6e6e6;stroke:#ffffff;stroke-linejoin:miter"
            id="path509" />
       </g>
-      <g
-         id="matplotlib.axis_1" />
-      <g
-         id="matplotlib.axis_2" />
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75"
-         x="240.80792"
-         y="129.17227"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731"
+         x="273.12555"
+         y="150.06999"
          id="text3247"><tspan
            sodipodi:role="line"
            id="tspan3245"
-           style="font-size:10px;stroke-width:0.75"
-           x="240.80792"
-           y="129.17227">午</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="273.12555"
+           y="150.06999">午</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="259.7554"
-         y="137.68723"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="296.66412"
+         y="160.64818"
          id="text3247-9"><tspan
            sodipodi:role="line"
            id="tspan3245-4"
-           style="font-size:10px;stroke-width:0.75"
-           x="259.7554"
-           y="137.68723">未</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="296.66412"
+           y="160.64818">未</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="204.15143"
-         y="138.11496"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="227.58688"
+         y="161.17957"
          id="text3247-9-4"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1"
-           style="font-size:10px;stroke-width:0.75"
-           x="204.15143"
-           y="138.11496">巽</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="227.58688"
+           y="161.17957">巽</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="190.89203"
-         y="150.94664"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="211.11464"
+         y="177.12045"
          id="text3247-9-4-1"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4"
-           style="font-size:10px;stroke-width:0.75"
-           x="190.89203"
-           y="150.94664">辰</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="211.11464"
+           y="177.12045">辰</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="280.49698"
-         y="164.62784"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="322.43155"
+         y="194.11671"
          id="text3247-9-4-1-6"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3"
-           style="font-size:10px;stroke-width:0.75"
-           x="280.49698"
-           y="164.62784">申</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="322.43155"
+           y="194.11671">申</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="280.92471"
-         y="186.44168"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="322.96292"
+         y="221.21622"
          id="text3247-9-4-1-6-8"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5"
-           style="font-size:10px;stroke-width:0.75"
-           x="280.92471"
-           y="186.44168">酉</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="322.96292"
+           y="221.21622">酉</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="275.15344"
-         y="206.97832"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="315.79324"
+         y="246.72903"
          id="text3247-9-4-1-6-8-4"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1"
-           style="font-size:10px;stroke-width:0.75"
-           x="275.15344"
-           y="206.97832">戌</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="315.79324"
+           y="246.72903">戌</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="260.18311"
-         y="222.37633"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="297.19547"
+         y="265.85809"
          id="text3247-9-4-1-6-8-4-3"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3"
-           style="font-size:10px;stroke-width:0.75"
-           x="260.18311"
-           y="222.37633">乾</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="297.19547"
+           y="265.85809">乾</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="241.79105"
-         y="228.79219"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="274.34686"
+         y="273.82858"
          id="text3247-9-4-1-6-8-4-3-5"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8"
-           style="font-size:10px;stroke-width:0.75"
-           x="241.79105"
-           y="228.79219">亥</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="274.34686"
+           y="273.82858">亥</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="238.782"
-         y="242.92703"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="270.6087"
+         y="291.3884"
          id="text3247-9-4-1-6-8-4-3-5-8"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8"
-           style="font-size:10px;stroke-width:0.75"
-           x="238.782"
-           y="242.92703">大義</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="270.6087"
+           y="291.3884">大義</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="238.81282"
-         y="114.47836"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="270.647"
+         y="131.81563"
          id="text3247-9-4-1-6-8-4-3-5-8-3"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8"
-           style="font-size:10px;stroke-width:0.75"
-           x="238.81282"
-           y="114.47836">大威</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="270.647"
+           y="131.81563">大威</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="214.08173"
-         y="242.88203"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="239.92337"
+         y="291.33249"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88"
-           style="font-size:10px;stroke-width:0.75"
-           x="214.08173"
-           y="242.88203">地主</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="239.92337"
+           y="291.33249">地主</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="204.17322"
-         y="293.06747"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="227.61395"
+         y="353.67825"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0"
-           style="font-size:10px;stroke-width:0.749999"
-           x="204.17322"
-           y="293.06747">齊兗</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931729"
+           x="227.61395"
+           y="353.67825">齊兗</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="253.80093"
-         y="294.33878"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="289.26685"
+         y="355.2576"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1"
-           style="font-size:10px;stroke-width:0.749999"
-           x="253.80093"
-           y="294.33878">衞</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931729"
+           x="289.26685"
+           y="355.2576">衞</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="294.08322"
-         y="276.2644"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="339.30984"
+         y="332.80368"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8"
-           style="font-size:10px;stroke-width:0.749999"
-           x="294.08322"
-           y="276.2644">冀</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931729"
+           x="339.30984"
+           y="332.80368">冀</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="327.44562"
-         y="247.17926"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="380.75623"
+         y="296.67099"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8-8"
-           style="font-size:10px;stroke-width:0.749999"
-           x="327.44562"
-           y="247.17926">魯</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931729"
+           x="380.75623"
+           y="296.67099">魯</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="343.69907"
-         y="204.8347"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="400.948"
+         y="244.06601"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8-8-5"
-           style="font-size:10px;stroke-width:0.749999"
-           x="343.69907"
-           y="204.8347">趙雍</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931729"
+           x="400.948"
+           y="244.06601">趙雍</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="345.83768"
-         y="158.21292"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="403.6048"
+         y="186.14742"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8-8-5-1"
-           style="font-size:10px;stroke-width:0.749999"
-           x="345.83768"
-           y="158.21292">晉</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931729"
+           x="403.6048"
+           y="186.14742">晉</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="330.01193"
-         y="110.73569"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="382.44437"
+         y="128.66608"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8-8-5-1-1"
-           style="font-size:10px;stroke-width:0.749999"
-           x="330.01193"
-           y="110.73569">梁州</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931729"
+           x="382.44437"
+           y="128.66608">梁州</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="294.51096"
-         y="76.517876"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="339.84122"
+         y="84.657028"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8-8-5-1-1-6"
-           style="font-size:10px;stroke-width:0.749999"
-           x="294.51096"
-           y="76.517876">秦</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931729"
+           x="339.84122"
+           y="84.657028">秦</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="248.74461"
-         y="61.547577"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="282.98535"
+         y="66.059311"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8-8-5-1-1-6-0"
-           style="font-size:10px;stroke-width:0.749999"
-           x="248.74461"
-           y="61.547577">荊州</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931729"
+           x="282.98535"
+           y="66.059311">荊州</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="203.83369"
-         y="64.113914"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="227.19217"
+         y="69.24749"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8-8-5-1-1-6-0-5"
-           style="font-size:10px;stroke-width:0.749999"
-           x="203.83369"
-           y="64.113914">楚</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931729"
+           x="227.19217"
+           y="69.24749">楚</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="158.92284"
-         y="81.222824"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="171.39906"
+         y="90.502022"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8-8-5-1-1-6-0-5-5"
-           style="font-size:10px;stroke-width:0.749999"
-           x="158.92284"
-           y="81.222824">揚州</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931729"
+           x="171.39906"
+           y="90.502022">揚州</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="123.42184"
-         y="116.72382"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="127.2959"
+         y="134.60518"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8-8-5-1-1-6-0-5-5-0"
-           style="font-size:10px;stroke-width:0.749999"
-           x="123.42184"
-           y="116.72382">鄭州</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931729"
+           x="127.2959"
+           y="134.60518">鄭州</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="110.55451"
-         y="159.92381"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="111.31072"
+         y="188.27286"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8-8-5-1-1-6-0-5-5-0-0"
-           style="font-size:10px;stroke-width:0.749999"
-           x="110.55451"
-           y="159.92381">徐州</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931729"
+           x="111.31072"
+           y="188.27286">徐州</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="111.4456"
-         y="197.99113"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="112.41773"
+         y="235.56419"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8-8-5-1-1-6-0-5-5-0-0-9"
-           style="font-size:10px;stroke-width:0.749999"
-           x="111.4456"
-           y="197.99113">燕</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931729"
+           x="112.41773"
+           y="235.56419">燕</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:6px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="150.11378"
-         y="152.65848"
+         style="font-style:normal;font-weight:normal;font-size:7.45385px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="160.45551"
+         y="179.24709"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8-8-5-1-1-6-0-5-5-0-0-9-6"
-           style="font-size:6px;stroke-width:0.749999"
-           x="150.11378"
-           y="152.65848">主</tspan><tspan
+           style="font-size:7.45385px;stroke-width:0.931729"
+           x="160.45551"
+           y="179.24709">主</tspan><tspan
            sodipodi:role="line"
-           style="font-size:6px;stroke-width:0.749999"
-           x="150.11378"
-           y="160.72923"
+           style="font-size:7.45385px;stroke-width:0.931729"
+           x="160.45551"
+           y="189.27348"
            id="tspan19700">大</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:6px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="252.17374"
-         y="84.261299"
+         style="font-style:normal;font-weight:normal;font-size:7.45385px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="287.24536"
+         y="94.276741"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8-8-5-1-1-6-0-5-5-0-0-9-6-7"
-           style="font-size:6px;stroke-width:0.749999"
-           x="252.17374"
-           y="84.261299">主</tspan><tspan
+           style="font-size:7.45385px;stroke-width:0.931729"
+           x="287.24536"
+           y="94.276741">主</tspan><tspan
            sodipodi:role="line"
-           style="font-size:6px;stroke-width:0.749999"
-           x="252.17374"
-           y="92.332047"
+           style="font-size:7.45385px;stroke-width:0.931729"
+           x="287.24536"
+           y="104.30314"
            id="tspan19700-8">參</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:6px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="323.35336"
-         y="155.42976"
+         style="font-style:normal;font-weight:normal;font-size:7.45385px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="375.67236"
+         y="182.68987"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7"><tspan
            sodipodi:role="line"
-           style="font-size:6px;stroke-width:0.749999"
-           x="323.35336"
-           y="155.42976"
+           style="font-size:7.45385px;stroke-width:0.931729"
+           x="375.67236"
+           y="182.68987"
            id="tspan19700-8-5">始</tspan><tspan
            sodipodi:role="line"
-           style="font-size:6px;stroke-width:0.749999"
-           x="323.35336"
-           y="163.50052"
+           style="font-size:7.45385px;stroke-width:0.931729"
+           x="375.67236"
+           y="192.71628"
            id="tspan22548">擊</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:6px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="276.30389"
-         y="249.75154"
+         style="font-style:normal;font-weight:normal;font-size:7.45385px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="317.22244"
+         y="299.86655"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8"><tspan
            sodipodi:role="line"
-           style="font-size:6px;stroke-width:0.749999"
-           x="276.30389"
-           y="249.75154"
+           style="font-size:7.45385px;stroke-width:0.931729"
+           x="317.22244"
+           y="299.86655"
            id="tspan22548-7">客</tspan><tspan
            sodipodi:role="line"
-           style="font-size:6px;stroke-width:0.749999"
-           x="276.30389"
-           y="257.8223"
+           style="font-size:7.45385px;stroke-width:0.931729"
+           x="317.22244"
+           y="309.89294"
            id="tspan23632">參</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:6px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="311.57645"
-         y="222.58505"
+         style="font-style:normal;font-weight:normal;font-size:7.45385px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="361.04181"
+         y="266.1174"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8-6"><tspan
            sodipodi:role="line"
-           style="font-size:6px;stroke-width:0.749999"
-           x="311.57645"
-           y="222.58505"
+           style="font-size:7.45385px;stroke-width:0.931729"
+           x="361.04181"
+           y="266.1174"
            id="tspan23632-3">計</tspan><tspan
            sodipodi:role="line"
-           style="font-size:6px;stroke-width:0.749999"
-           x="311.57645"
-           y="230.65581"
+           style="font-size:7.45385px;stroke-width:0.931729"
+           x="361.04181"
+           y="276.1438"
            id="tspan24208">神</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:6px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="285.30389"
-         y="249.75154"
+         style="font-style:normal;font-weight:normal;font-size:7.45385px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="328.40323"
+         y="299.86655"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8-6-2"><tspan
            sodipodi:role="line"
-           style="font-size:6px;stroke-width:0.749999"
-           x="285.30389"
-           y="249.75154"
+           style="font-size:7.45385px;stroke-width:0.931729"
+           x="328.40323"
+           y="299.86655"
            id="tspan24208-4">太</tspan><tspan
            sodipodi:role="line"
-           style="font-size:6px;stroke-width:0.749999"
-           x="285.30389"
-           y="257.8223"
+           style="font-size:7.45385px;stroke-width:0.931729"
+           x="328.40323"
+           y="309.89294"
            id="tspan25440">乙</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:6px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="183.03899"
-         y="97.823959"
+         style="font-style:normal;font-weight:normal;font-size:7.45385px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="201.35873"
+         y="111.12574"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8-6-2-8"><tspan
            sodipodi:role="line"
-           style="font-size:6px;stroke-width:0.749999"
-           x="183.03899"
-           y="97.823959"
+           style="font-size:7.45385px;stroke-width:0.931729"
+           x="201.35873"
+           y="111.12574"
            id="tspan25440-6">文</tspan><tspan
            sodipodi:role="line"
-           style="font-size:6px;stroke-width:0.749999"
-           x="183.03899"
-           y="105.89471"
+           style="font-size:7.45385px;stroke-width:0.931729"
+           x="201.35873"
+           y="121.15213"
            id="tspan26334">昌</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:6px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="255.32199"
-         y="260.65237"
+         style="font-style:normal;font-weight:normal;font-size:7.45385px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="291.15646"
+         y="313.40872"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8-6-2-8-4"><tspan
            sodipodi:role="line"
-           style="font-size:6px;stroke-width:0.749999"
-           x="255.32199"
-           y="260.65237"
+           style="font-size:7.45385px;stroke-width:0.931729"
+           x="291.15646"
+           y="313.40872"
            id="tspan26334-3">定</tspan><tspan
            sodipodi:role="line"
-           style="font-size:6px;stroke-width:0.749999"
-           x="255.32199"
-           y="268.72311"
+           style="font-size:7.45385px;stroke-width:0.931729"
+           x="291.15646"
+           y="323.43512"
            id="tspan26922">計</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:6px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="142.61378"
-         y="152.65848"
+         style="font-style:normal;font-weight:normal;font-size:7.45385px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="151.1382"
+         y="179.24709"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8-6-2-8-4-4"><tspan
            sodipodi:role="line"
-           style="font-size:6px;stroke-width:0.749999"
-           x="142.61378"
-           y="152.65848"
+           style="font-size:7.45385px;stroke-width:0.931729"
+           x="151.1382"
+           y="179.24709"
            id="tspan26922-1">合</tspan><tspan
            sodipodi:role="line"
-           style="font-size:6px;stroke-width:0.749999"
-           x="142.61378"
-           y="160.72923"
+           style="font-size:7.45385px;stroke-width:0.931729"
+           x="151.1382"
+           y="189.27348"
            id="tspan27630">神</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:6px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="310.49796"
-         y="123.57333"
+         style="font-style:normal;font-weight:normal;font-size:7.45385px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="359.702"
+         y="143.11438"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8-6-2-1"><tspan
            sodipodi:role="line"
-           style="font-size:6px;stroke-width:0.749999"
-           x="310.49796"
-           y="123.57333"
+           style="font-size:7.45385px;stroke-width:0.931729"
+           x="359.702"
+           y="143.11438"
            id="tspan24208-4-7">客</tspan><tspan
            sodipodi:role="line"
-           style="font-size:6px;stroke-width:0.749999"
-           x="310.49796"
-           y="131.64409"
+           style="font-size:7.45385px;stroke-width:0.931729"
+           x="359.702"
+           y="153.14078"
            id="tspan24858">大</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="123.42184"
-         y="239.90797"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="127.2959"
+         y="287.63782"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-2"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8-8-5-1-1-6-0-5-5-0-0-9-4"
-           style="font-size:10px;stroke-width:0.749999"
-           x="123.42184"
-           y="239.90797">青州</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931729"
+           x="127.2959"
+           y="287.63782">青州</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-         x="155.50104"
-         y="271.13174"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931729;stroke-linecap:butt;stroke-linejoin:round"
+         x="167.14813"
+         y="326.42734"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-2-7"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8-8-5-1-1-6-0-5-5-0-0-9-4-0"
-           style="font-size:10px;stroke-width:0.749999"
-           x="155.50104"
-           y="271.13174">吳</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931729"
+           x="167.14813"
+           y="326.42734">吳</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="231.75836"
-         y="206.65558"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="261.88321"
+         y="246.32809"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-1"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-5"
-           style="font-size:10px;stroke-width:0.75"
-           x="231.75836"
-           y="206.65558">八</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="261.88321"
+           y="246.32809">八</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="252.06139"
-         y="197.01253"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="287.1058"
+         y="234.34846"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-1-5"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-5-8"
-           style="font-size:10px;stroke-width:0.75"
-           x="252.06139"
-           y="197.01253">一</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="287.1058"
+           y="234.34846">一</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="258.47723"
-         y="177.12045"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="295.07626"
+         y="209.63638"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-1-5-8"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-5-8-9"
-           style="font-size:10px;stroke-width:0.75"
-           x="258.47723"
-           y="177.12045">六</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="295.07626"
+           y="209.63638">六</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="204.15645"
-         y="177.54817"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="227.59312"
+         y="210.16774"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-1-5-8-2"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-5-8-9-4"
-           style="font-size:10px;stroke-width:0.75"
-           x="204.15645"
-           y="177.54817">四</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="227.59312"
+           y="210.16774">四</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="212.71089"
-         y="157.87292"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="238.22038"
+         y="185.72504"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-1-5-8-2-2"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-5-8-9-4-7"
-           style="font-size:10px;stroke-width:0.75"
-           x="212.71089"
-           y="157.87292">九</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="238.22038"
+           y="185.72504">九</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="232.38614"
-         y="152.31253"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="262.66309"
+         y="178.81731"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-1-5-8-2-2-3"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-5-8-9-4-7-6"
-           style="font-size:10px;stroke-width:0.75"
-           x="232.38614"
-           y="152.31253">二</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="262.66309"
+           y="178.81731">二</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="252.70593"
-         y="158.93927"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="287.90652"
+         y="187.04976"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-1-5-8-2-2-3-7"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-5-8-9-4-7-6-9"
-           style="font-size:10px;stroke-width:0.75"
-           x="252.70593"
-           y="158.93927">七</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="287.90652"
+           y="187.04976">七</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="211"
-         y="196.36798"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="236.09492"
+         y="233.54773"
          id="text3247-9-4-1-6-8-4-3-5-8-3-9-1-5-0"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-5-8-1"
-           style="font-size:10px;stroke-width:0.75"
-           x="211"
-           y="196.36798">三</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="236.09492"
+           y="233.54773">三</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="262.84213"
-         y="123.97511"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="300.49881"
+         y="143.61351"
          id="text3247-9-4-1-6-8-4-3-5-8-3-4"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-8"
-           style="font-size:10px;stroke-width:0.75"
-           x="262.84213"
-           y="123.97511">天道</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="300.49881"
+           y="143.61351">天道</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="281.86377"
-         y="141.9454"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="324.12952"
+         y="165.93814"
          id="text3247-9-4-1-6-8-4-3-5-8-3-4-8"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-8-5"
-           style="font-size:10px;stroke-width:0.75"
-           x="281.86377"
-           y="141.9454">大武</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="324.12952"
+           y="165.93814">大武</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="291.0759"
-         y="171.04243"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="335.57382"
+         y="202.08562"
          id="text3247-9-4-1-6-8-4-3-5-8-3-4-8-2"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-8-5-5"
-           style="font-size:10px;stroke-width:0.75"
-           x="291.0759"
-           y="171.04243">武德</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="335.57382"
+           y="202.08562">武德</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="287.44135"
-         y="195.2258"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="331.05859"
+         y="232.1288"
          id="text3247-9-4-1-6-8-4-3-5-8-3-4-8-2-8"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-8-5-5-1"
-           style="font-size:10px;stroke-width:0.75"
-           x="287.44135"
-           y="195.2258">太簇</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="331.05859"
+           y="232.1288">太簇</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="279.57645"
-         y="218.08505"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="321.28796"
+         y="260.52701"
          id="text3247-9-4-1-6-8-4-3-5-8-3-4-8-2-8-7"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-8-5-5-1-0"
-           style="font-size:10px;stroke-width:0.75"
-           x="279.57645"
-           y="218.08505">陰主</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="321.28796"
+           y="260.52701">陰主</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="262.95804"
-         y="234.78529"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="300.64279"
+         y="281.27386"
          id="text3247-9-4-1-6-8-4-3-5-8-3-4-8-2-8-7-9"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-8-5-5-1-0-4"
-           style="font-size:10px;stroke-width:0.75"
-           x="262.95804"
-           y="234.78529">陰德</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="300.64279"
+           y="281.27386">陰德</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="213.87631"
-         y="114.72064"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="239.66818"
+         y="132.11662"
          id="text3247-9-4-1-6-8-4-3-5-8-3-0"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-0"
-           style="font-size:10px;stroke-width:0.75"
-           x="213.87631"
-           y="114.72064">大神</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="239.66818"
+           y="132.11662">大神</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="189.81699"
-         y="124.21739"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="209.7791"
+         y="143.91451"
          id="text3247-9-4-1-6-8-4-3-5-8-3-4-82"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-8-58"
-           style="font-size:10px;stroke-width:0.75"
-           x="189.81699"
-           y="124.21739">大炅</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="209.7791"
+           y="143.91451">大炅</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="172.34534"
-         y="140.68768"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="188.07394"
+         y="164.37567"
          id="text3247-9-4-1-6-8-4-3-5-8-3-4-8-7"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-8-5-4"
-           style="font-size:10px;stroke-width:0.75"
-           x="172.34534"
-           y="140.68768">太陽</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="188.07394"
+           y="164.37567">太陽</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="164.65321"
-         y="172.78471"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="178.51796"
+         y="204.25006"
          id="text3247-9-4-1-6-8-4-3-5-8-3-4-8-2-2"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-8-5-5-4"
-           style="font-size:10px;stroke-width:0.75"
-           x="164.65321"
-           y="172.78471">高叢</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="178.51796"
+           y="204.25006">高叢</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="163.87776"
-         y="195.46808"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="177.55461"
+         y="232.42978"
          id="text3247-9-4-1-6-8-4-3-5-8-3-4-8-2-8-8"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-8-5-5-1-08"
-           style="font-size:10px;stroke-width:0.75"
-           x="163.87776"
-           y="195.46808">呂申</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="177.55461"
+           y="232.42978">呂申</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="172.92267"
-         y="213.82733"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="188.79117"
+         y="255.23763"
          id="text3247-9-4-1-6-8-4-3-5-8-3-4-8-2-8-7-5"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-8-5-5-1-0-0"
-           style="font-size:10px;stroke-width:0.75"
-           x="172.92267"
-           y="213.82733">和德</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="188.79117"
+           y="255.23763">和德</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="189.39108"
-         y="230.52757"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="209.25"
+         y="275.98447"
          id="text3247-9-4-1-6-8-4-3-5-8-3-4-8-2-8-7-9-7"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-8-8-8-5-5-1-0-4-0"
-           style="font-size:10px;stroke-width:0.75"
-           x="189.39108"
-           y="230.52757">陽德</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="209.25"
+           y="275.98447">陽德</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="221.68808"
-         y="228.36446"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="249.3728"
+         y="273.29721"
          id="text3247-9-4-1-6-8-4-3-5-1"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-9"
-           style="font-size:10px;stroke-width:0.75"
-           x="221.68808"
-           y="228.36446">子</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="249.3728"
+           y="273.29721">子</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="203.72371"
-         y="219.81"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="227.05553"
+         y="262.66992"
          id="text3247-9-4-1-6-8-4-3-5-1-6"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-9-2"
-           style="font-size:10px;stroke-width:0.75"
-           x="203.72371"
-           y="219.81">丑</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="227.05553"
+           y="262.66992">丑</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="189.8257"
-         y="204.40604"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="209.78993"
+         y="243.53348"
          id="text3247-9-4-1-6-8-4-3-5-1-6-5"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-9-2-2"
-           style="font-size:10px;stroke-width:0.75"
-           x="189.8257"
-           y="204.40604">艮</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="209.78993"
+           y="243.53348">艮</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="182.7653"
-         y="185.58624"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="201.01874"
+         y="220.1535"
          id="text3247-9-4-1-6-8-4-3-5-1-6-5-4"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-9-2-2-5"
-           style="font-size:10px;stroke-width:0.75"
-           x="182.7653"
-           y="185.58624">寅</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="201.01874"
+           y="220.1535">寅</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="183.62669"
-         y="165.48328"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="202.08885"
+         y="195.17943"
          id="text3247-9-4-1-6-8-4-3-5-1-6-5-4-4"><tspan
            sodipodi:role="line"
            id="tspan3245-4-1-4-3-5-1-3-8-9-2-2-5-9"
-           style="font-size:10px;stroke-width:0.75"
-           x="183.62669"
-           y="165.48328">卯</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="202.08885"
+           y="195.17943">卯</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="271.9425"
-         y="151.59119"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="311.80426"
+         y="177.92117"
          id="text3247-9-2"><tspan
            sodipodi:role="line"
            id="tspan3245-4-4"
-           style="font-size:10px;stroke-width:0.75"
-           x="271.9425"
-           y="151.59119">坤</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="311.80426"
+           y="177.92117">坤</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
-         x="222.1158"
-         y="129.56049"
+         style="font-style:normal;font-weight:normal;font-size:12.4231px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.931731;stroke-linecap:butt;stroke-linejoin:round"
+         x="249.90416"
+         y="150.55228"
          id="text3247-4"><tspan
            sodipodi:role="line"
            id="tspan3245-5"
-           style="font-size:10px;stroke-width:0.75"
-           x="222.1158"
-           y="129.56049">巳</tspan></text>
+           style="font-size:12.4231px;stroke-width:0.931731"
+           x="249.90416"
+           y="150.55228">巳</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-weight:normal;font-size:30px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75"
