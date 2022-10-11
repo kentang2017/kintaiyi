@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   height="520pt"
+   height="260pt"
    version="1.1"
-   viewBox="0 0 259.99999 259.99999"
-   width="520pt"
+   viewBox="0 0 260.00001 260"
+   width="260pt"
    id="svg801"
-   sodipodi:docname="yin1.svg"
+   sodipodi:docname="yin.svg"
    inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -26,22 +26,19 @@
      showgrid="false"
      inkscape:snap-text-baseline="true"
      inkscape:zoom="0.43836805"
-     inkscape:cx="-103.79406"
-     inkscape:cy="94.669308"
-     inkscape:window-width="1327"
-     inkscape:window-height="1040"
-     inkscape:window-x="176"
-     inkscape:window-y="224"
-     inkscape:window-maximized="0"
+     inkscape:cx="136.87129"
+     inkscape:cy="95.809902"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
      inkscape:current-layer="figure_1"
      width="460.79999pt"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0"
-     height="261pt"
-     viewbox-y="-400"
-     scale-x="0.5" />
+     fit-margin-bottom="0" />
   <metadata
      id="metadata407">
     <rdf:RDF>
