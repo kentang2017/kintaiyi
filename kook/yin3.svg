@@ -25,16 +25,15 @@
      inkscape:document-units="pt"
      showgrid="false"
      inkscape:snap-text-baseline="true"
-     inkscape:zoom="0.8767361"
-     inkscape:cx="-25.09307"
-     inkscape:cy="165.95644"
-     inkscape:window-width="1052"
-     inkscape:window-height="856"
-     inkscape:window-x="452"
-     inkscape:window-y="229"
-     inkscape:window-maximized="0"
+     inkscape:zoom="1.2398921"
+     inkscape:cx="-16.936958"
+     inkscape:cy="170.98262"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
      inkscape:current-layer="axes_1"
-     inkscape:lockguides="true"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
@@ -63,15 +62,15 @@
   </defs>
   <g
      id="figure_1"
-     transform="translate(-106.78088,-47.574001)">
+     transform="translate(-108.93206,-41.184261)">
     <g
        id="axes_1"
        transform="translate(2.5663371,-0.42772278)">
       <circle
          style="fill:#ececec;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
          id="path241"
-         cx="-178.00172"
-         cy="234.21454"
+         cx="-171.61198"
+         cy="236.36572"
          transform="rotate(-90)"
          r="130" />
       <g
@@ -211,8 +210,8 @@
       <g
          id="matplotlib.axis_2" />
       <g
-         id="g3242"
-         transform="translate(-2.7872505,3.858548)">
+         id="g10292"
+         transform="translate(-0.63606644,-2.531192)">
         <g
            id="patch_18"
            style="fill:#e6e6e6">
