@@ -10,7 +10,7 @@ from historytext import chistory
 from taiyimishu import taiyi_yingyang
 import base64
 import textwrap
-import datetime
+import datetime, pytz
 
 
 
@@ -93,11 +93,12 @@ with st_capture(output5.code):
             print("    ")
     with col2:
          if st.button('即時'):
-            y = datetime.datetime.now().year
-            m = datetime.datetime.now().month
-            d = datetime.datetime.now().day
-            h = datetime.datetime.now().hour
-            min = datetime.datetime.now().minute
+            now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
+            y = now.year
+            m = now.month
+            d = now.day
+            h = now.hour
+            min = now.minute
             ty = Taiyi(y,m,d,h,min)
             ttext = Taiyi(y,m,d,h,min).pan(num)
             kook = Taiyi(y,m,d,h,min).kook(num)
