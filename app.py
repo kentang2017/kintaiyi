@@ -50,7 +50,7 @@ output5 = st.empty()
 with st_capture(output5.code):
     col1, col2 = st.columns(2)
     with col1:
-        if st.button('執行'):
+        if st.button('手動'):
             p = str(idate).split("/")
             pp = str(itime).replace("：",":").split(":")
             y = int(p[0])
@@ -92,7 +92,7 @@ with st_capture(output5.code):
         else:
             print("    ")
     with col2:
-         if st.button('即時起盤'):
+         if st.button('即時'):
             y = datetime.datetime.now().year
             m = datetime.datetime.now().month
             d = datetime.datetime.now().day
