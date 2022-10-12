@@ -47,48 +47,89 @@ option = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' �
 num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option)
 output5 = st.empty()
 with st_capture(output5.code):
-    if st.button('執行'):
-        p = str(idate).split("/")
-        pp = str(itime).replace("：",":").split(":")
-        y = int(p[0])
-        m = int(p[1])
-        d = int(p[2])
-        h = int(pp[0])
-        min = int(pp[1])
-        ty = Taiyi(y,m,d,h,min)
-        ttext = Taiyi(y,m,d,h,min).pan(num)
-        kook = Taiyi(y,m,d,h,min).kook(num)
-        ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
-        gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
-        ch = chistory.get(y)
-        r = list(map(lambda x:[x, x+25]  ,list(range(0,3000)[0::25])))
-        tys = "".join([ts[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ts) / 25+1))])
-        #try:
-            #cys = "".join([ch[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ch) / 25+1))])
-        #except (TypeError,IndexError):
-            #cys = ""
-        if ttext.get("局式").get("文")[0] == "陽":
-            yy = "yang"
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button('執行'):
+            p = str(idate).split("/")
+            pp = str(itime).replace("：",":").split(":")
+            y = int(p[0])
+            m = int(p[1])
+            d = int(p[2])
+            h = int(pp[0])
+            min = int(pp[1])
+            ty = Taiyi(y,m,d,h,min)
+            ttext = Taiyi(y,m,d,h,min).pan(num)
+            kook = Taiyi(y,m,d,h,min).kook(num)
+            ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
+            gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
+            ch = chistory.get(y)
+            r = list(map(lambda x:[x, x+25]  ,list(range(0,3000)[0::25])))
+            tys = "".join([ts[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ts) / 25+1))])
+            #try:
+                #cys = "".join([ch[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ch) / 25+1))])
+            #except (TypeError,IndexError):
+                #cys = ""
+            if ttext.get("局式").get("文")[0] == "陽":
+                yy = "yang"
+            else:
+                yy = "yin"
+            try:
+                st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
+                st.title("《太乙秘書》︰")
+                st.markdown(ts)
+                st.title("史事記載︰")
+                st.markdown(ch)
+            except (FileNotFoundError,IndexError):
+                st.empty()
+                st.title("《太乙秘書》︰")
+                st.markdown(ts)
+                st.title("史事記載︰")
+                st.markdown(ch)
+            print("{} |\n{} |\n{} |\n太乙{} - {} | 積年數︰{} | \n紀元︰{} | \n\n".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num), ttext.get("紀元")))
+            expander = st.expander("原始碼")
+            expander.write(str(ttext))
         else:
-            yy = "yin"
-      
-        try:
-            st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
-            st.title("《太乙秘書》︰")
-            st.markdown(ts)
-            st.title("史事記載︰")
-            st.markdown(ch)
-        except (FileNotFoundError,IndexError):
-            st.empty()
-            st.title("《太乙秘書》︰")
-            st.markdown(ts)
-            st.title("史事記載︰")
-            st.markdown(ch)
-        print("{} |\n{} |\n{} |\n太乙{} - {} | 積年數︰{} | \n紀元︰{} | \n\n".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num), ttext.get("紀元")))
-        expander = st.expander("原始碼")
-        expander.write(str(ttext))
-    else:
-        print("    ")
+            print("    ")
+    with col2:
+         if st.button('當前'):
+            p = str(idate).split("/")
+            pp = str(itime).replace("：",":").split(":")
+            y = int(p[0])
+            m = int(p[1])
+            d = int(p[2])
+            h = int(pp[0])
+            min = int(pp[1])
+            ty = Taiyi(y,m,d,h,min)
+            ttext = Taiyi(y,m,d,h,min).pan(num)
+            kook = Taiyi(y,m,d,h,min).kook(num)
+            ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
+            gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
+            ch = chistory.get(y)
+            r = list(map(lambda x:[x, x+25]  ,list(range(0,3000)[0::25])))
+            tys = "".join([ts[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ts) / 25+1))])
+            #try:
+                #cys = "".join([ch[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ch) / 25+1))])
+            #except (TypeError,IndexError):
+                #cys = ""
+            if ttext.get("局式").get("文")[0] == "陽":
+                yy = "yang"
+            else:
+                yy = "yin"
+            try:
+                st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
+                st.title("《太乙秘書》︰")
+                st.markdown(ts)
+                st.title("史事記載︰")
+                st.markdown(ch)
+            except (FileNotFoundError,IndexError):
+                st.empty()
+                st.title("《太乙秘書》︰")
+                st.markdown(ts)
+                st.title("史事記載︰")
+                st.markdown(ch)
+            print("{} |\n{} |\n{} |\n太乙{} - {} | 積年數︰{} | \n紀元︰{} | \n\n".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num), ttext.get("紀元")))
+            expander = st.expander("原始碼")
+            expander.write(str(ttext))
     #print(tys+"\n")
 
 
