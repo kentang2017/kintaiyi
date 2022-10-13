@@ -693,7 +693,6 @@ class Taiyi():
                 "主算":[self.home_cal(ji), self.cal_des(self.home_cal(ji))],
                 "客算":[self.away_cal(ji), self.cal_des(self.away_cal(ji))],
                 "定算":[self.set_cal(ji), self.cal_des(self.set_cal(ji))],
-                "神煞":self.shensha(ji),
                 "合神":self.hegod(ji),
                 "計神":self.jigod(ji),
                 "始擊":self.sf(ji),
