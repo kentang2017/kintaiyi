@@ -396,21 +396,21 @@ class Taiyi():
     
     def shensha(self, ji):
         if ji == 3:
-            tz = "登明,河魁,從魁,傳送,小吉,勝光,太乙,天罡,太衝,功曹,大吉,神後".split(",")
-            Zhi = list('子丑寅卯辰巳午未申酉戌亥')
-            ztz = dict(zip(tz, list(reversed(Zhi))))
-            zm = {tuple(list("卯辰巳午未申")):"朝", tuple(list("酉戌亥子丑寅")):"暮"}
-            gzzm ={"甲":{"朝":"小吉", "暮":"大吉"}, 
-                     tuple(list("戊庚")): {"朝":"大吉", "暮":"小吉"},
-                    "己":{"朝":"神后", "暮":"傳送"}, "乙":{"朝":"傳送", "暮":"神后"}, 
-                    "丁":{"朝":"登明", "暮":"從魁"}, "丙":{"朝":"從魁", "暮":"登明"}, 
-                    "癸":{"朝":"太乙", "暮":"太衝"}, "壬":{"朝":"太衝", "暮":"太乙"}, 
-                    "辛":{"朝":"功曹", "暮":"勝光"}}
-            general = "天乙,螣蛇,朱雀,六合,勾陳,青龍,天空,白虎,太常,玄武,太陰,天后".split(",")
-            tianyi = ztz.get(self.multi_key_dict_get(gzzm, self.gangzhi()[2][0]).get( self.multi_key_dict_get(zm, self.gangzhi()[3][1]) ))
-            return dict(zip(self.new_list(self.Zhi,tianyi),general))
+           tz = "登明,河魁,從魁,傳送,小吉,勝光,太乙,天罡,太衝,功曹,大吉,神後".split(",")
+           Zhi = list('子丑寅卯辰巳午未申酉戌亥')
+           ztz = dict(zip(tz, list(reversed(Zhi))))
+           zm = {tuple(list("卯辰巳午未申")):"朝", tuple(list("酉戌亥子丑寅")):"暮"}
+           gzzm ={"甲":{"朝":"小吉", "暮":"大吉"}, 
+                    tuple(list("戊庚")): {"朝":"大吉", "暮":"小吉"},
+                   "己":{"朝":"神后", "暮":"傳送"}, "乙":{"朝":"傳送", "暮":"神后"}, 
+                   "丁":{"朝":"登明", "暮":"從魁"}, "丙":{"朝":"從魁", "暮":"登明"}, 
+                   "癸":{"朝":"太乙", "暮":"太衝"}, "壬":{"朝":"太衝", "暮":"太乙"}, 
+                   "辛":{"朝":"功曹", "暮":"勝光"}}
+           general = "天乙,螣蛇,朱雀,六合,勾陳,青龍,天空,白虎,太常,玄武,太陰,天后".split(",")
+           tianyi = ztz.get(self.multi_key_dict_get(gzzm, self.gangzhi()[2][0]).get( self.multi_key_dict_get(zm, self.gangzhi()[3][1]) ))
+           return dict(zip(self.new_list(self.Zhi,tianyi),general))
         else:
-            return "None"
+           return "None"
         
     def set_cal(self, ji):
         num = self.num
