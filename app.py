@@ -133,4 +133,7 @@ with st_capture(output5.code):
     #print(tys+"\n")
 
 
-            
+#import itertools
+#su = list('角亢氐房心尾箕斗牛女虛危室壁奎婁胃昴畢觜參井鬼柳星張翼軫')
+#numlist = [13,9,16,5,5,17,10,24,7,11,25,18,17,10,17,13,14,11,16,1,9,30,3,14,7,19,19,18]
+#list(itertools.chain.from_iterable([[su[i]]*numlist[i] for i in range(0,28)]))
