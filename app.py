@@ -80,7 +80,7 @@ with st_capture(output5.code):
                 st.markdown(ts)
                 st.title("史事記載︰")
                 st.markdown(ch)
-            except (FileNotFoundError,IndexError):
+            except (FileNotFoundError,IndexError, ValueError):
                 st.empty()
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
@@ -121,7 +121,7 @@ with st_capture(output5.code):
                 st.markdown(ts)
                 st.title("史事記載︰")
                 st.markdown(ch)
-            except (FileNotFoundError,IndexError):
+            except (FileNotFoundError,IndexError, ValueError):
                 st.empty()
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
