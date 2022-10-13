@@ -90,7 +90,7 @@ with st_capture(output5.code):
             expander = st.expander("原始碼")
             expander.write(str(ttext))
         else:
-            print("    ")
+            st.empty()
     with col2:
          if st.button('即時'):
             now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
@@ -130,6 +130,8 @@ with st_capture(output5.code):
             print("{} |\n{} |\n{} |\n太乙{} - {} | 積年數︰{} | \n紀元︰{} | \n\n".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num), ttext.get("紀元")))
             expander = st.expander("原始碼")
             expander.write(str(ttext))
+         else:
+            st.empty()
     #print(tys+"\n")
 
 
