@@ -410,7 +410,7 @@ class Taiyi():
             tianyi = ztz.get(self.multi_key_dict_get(gzzm, self.gangzhi()[2]).get( self.multi_key_dict_get(zm, self.gangzhi()[3]) ))
             return dict(zip(self.new_list(self.Zhi,tianyi),general))
         else:
-            return None
+            return "None"
         
     def set_cal(self, ji):
         num = self.num
