@@ -704,6 +704,18 @@ class Taiyi():
             fdoor = [9,2,7,4]
         #ty_gong = self.ty()
         return self.new_list(self.num, fdoor[eightdoor_zhishi]), eightdoor_zhishi
+   
+    def starhouse(self):
+        su = list('角亢氐房心尾箕斗牛女虛危室壁奎婁胃昴畢觜參井鬼柳星張翼軫')
+        numlist = [13,9,16,5,5,17,10,24,7,11,25,18,17,10,17,13,14,11,16,1,9,30,3,14,7,19,19,18]
+        alljq = self.jieqi
+        njq = self.new_list(alljq, "冬至")
+        gensulist =  list(itertools.chain.from_iterable([[su[i]]*numlist[i] for i in range(0,28)]))
+        jqsulist = [["斗", 9],["斗",24] ,["女", 8],["危",2],["室", 1],["壁",1] ,["奎", 4],["婁",2] ,["胃", 4],["昴",4] ,["畢", 8],["參",6] ,["井", 1],["井", 27],["柳",8] ,["張", 3],["翼",1] ,["翼", 16],["軫",13] ,["角", 9],["房", 1],["氐",2] ,["尾", 6],["箕",24]]
+        njq_list = dict(zip(njq, jqsulist))
+        currentjq = self.jq(self.year, self.month, self.day, self.hour)
+        distance_to_cjq = self.distancejq(currentjq)
+        return gensulist[gensulist.index(   njq_list.get(currentjq)[0]  )+  njq_list.get(currentjq)[1]  + distance_to_cjq]
     
     def pan(self, ji):
         return {
@@ -715,6 +727,7 @@ class Taiyi():
                 "紀元":self.jiyuan(ji),
                 "太歲":self.taishui(ji),
                 "局式":self.kook(ji),
+                "二十八宿值日":self.starhouse(),
                 "太乙":self.ty(ji),
                 "文昌":[self.skyeyes(ji), self.skyeyes_des(ji)],
                 "主算":[self.home_cal(ji), self.cal_des(self.home_cal(ji))],
