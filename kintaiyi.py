@@ -176,7 +176,19 @@ class Taiyi():
 
     def distancejq(self, jq):
         return int( Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - self.find_jq_date(self.year-1, self.month, self.day, self.hour, jq) )
-   
+      
+    def fjqs(self, year, month, day, hour):
+        jd = Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
+        n= int(self.ecliptic_lon(jd)*180.0/pi/15)+1
+        c = []
+        for i in range(1):
+            if n>=24:
+                n-=24
+            jd = self.iteration(jd)
+            d = Date(jd+1/3).tuple()
+            c.append([self.jieqi[n], Date("{}/{}/{} {}:{}:00.00".format(str(d[0]).zfill(4), str(d[1]).zfill(2), str(d[2]).zfill(2), str(d[3]).zfill(2) , str(d[4]).zfill(2)))])
+        return c[0]
+    
     def jq(self, year, month, day, hour):
         ct =  Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
         p = Date(round((ct - 7 ), 3)).tuple()
