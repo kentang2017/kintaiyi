@@ -177,6 +177,16 @@ class Taiyi():
     def distancejq(self, jq):
         return int( Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - self.find_jq_date(self.year-1, self.month, self.day, self.hour, jq) )
    
+    def jq(self, year, month, day, hour):
+        ct =  Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
+        p = Date(round((ct - 7 ), 3)).tuple()
+        pp = Date(round((ct - 21 ), 3)).tuple()
+        bf = self.fjqs(p[0], p[1], p[2], p[3])
+        bbf = self.fjqs(pp[0], pp[1], pp[2], pp[3])
+        if ct < bf[1]:
+            return bbf[0]
+        else:
+            return bf[0]
     
 #%% 積年
     def accnum(self, ji):
