@@ -173,6 +173,11 @@ class Taiyi():
     
     def xzdistance(self):
         return int(self.find_jq_date(self.year, self.month, self.day, self.hour, "夏至") -  Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))))
+
+    def distancejq(self, jq):
+        return int( Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - self.find_jq_date(self.year-1, self.month, self.day, self.hour, jq) )
+   
+    
 #%% 積年
     def accnum(self, ji):
         if ji == 0: #年計
