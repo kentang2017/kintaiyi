@@ -94,9 +94,9 @@ with st_capture(output5.code):
                         <body>
                         <div class='parent' >
                         <img class='image'  src='tykook/typan.svg'>
-                        <img class='image'  src='tykook/'''+yy+str(ttext.get("局式").get("數")
+                        <img class='image'  src='tykook/'''+yy+str(ttext.get("局式").get("數"))
                         +'''.svg></div></body></html>''',height=600)
-                #st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
+                st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
                 st.title("史事記載︰")
