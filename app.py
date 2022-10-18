@@ -75,26 +75,7 @@ with st_capture(output5.code):
             else:
                 yy = "yin"
             try:
-                components.html(
-                            '''
-                            <style>
-                              .parent {
-                                position: relative;
-                                top: 0;
-                                left: 0;
-                              }
-                              .image {
-                                position: absolute;
-                                top: 30px;
-                                left: 30px;
-
-                              }
-                        </style>
-                        <div class='parent' >
-                        <img class='image'  src='tykook/typan.svg'>
-                        <img class='image'  src='tykook/'''+yy+str(ttext.get("局式").get("數"))
-                        +'''.svg'></div>''',height=600)
-                #st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
+                st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
                 st.title("史事記載︰")
@@ -135,29 +116,8 @@ with st_capture(output5.code):
             else:
                 yy = "yin"
             try:
-                
-                html_string =  '''
-                             <html>
-                            <style>
-                              .parent {
-                                position: relative;
-                                top: 0;
-                                left: 0;
-                              }
-                              .image {
-                                position: absolute;
-                                top: 30px;
-                                left: 30px;
-
-                              }
-                        </style>
-                        <body>
-                        <div class='parent' >
-                        <img class='image'  src='tykook/typan.svg'>
-                        <img class='image'  src='tykook/'''+yy+str(ttext.get("局式").get("數"))+'''.svg></div></body></html>'''
-               
-                st.markdown(html_string, unsafe_allow_html=True)
-                st.image(open("tykook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
+        
+                st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
                 st.title("史事記載︰")
