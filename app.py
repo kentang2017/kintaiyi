@@ -135,8 +135,8 @@ with st_capture(output5.code):
             else:
                 yy = "yin"
             try:
-                components.html(
-                            '''
+                
+                html_string =   '''
                              <html>
                             <style>
                               .parent {
@@ -155,9 +155,8 @@ with st_capture(output5.code):
                         <div class='parent' >
                         <img class='image'  src='tykook/typan.svg'>
                         <img class='image'  src='tykook/'''+yy+str(ttext.get("局式").get("數"))
-                        +'''.svg></div></body></html>''',height=600)
-                
-                html_string = "<h3>this is an html string</h3>"
+                        +'''.svg></div></body></html>'''
+               
                 st.markdown(html_string, unsafe_allow_html=True)
                 #st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
                 st.title("《太乙秘書》︰")
