@@ -75,7 +75,7 @@ with st_capture(output5.code):
             else:
                 yy = "yin"
             try:
-                components.html(
+                a = components.html(
                             '''
                              <html>
                             <style>
