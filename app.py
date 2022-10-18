@@ -136,7 +136,7 @@ with st_capture(output5.code):
                 yy = "yin"
             try:
                 
-                html_string =   '''
+                html_string =  '''
                              <html>
                             <style>
                               .parent {
@@ -154,8 +154,7 @@ with st_capture(output5.code):
                         <body>
                         <div class='parent' >
                         <img class='image'  src='tykook/typan.svg'>
-                        <img class='image'  src='tykook/'''+yy+str(ttext.get("局式").get("數"))
-                        +'''.svg></div></body></html>'''
+                        <img class='image'  src='tykook/'''+yy+str(ttext.get("局式").get("數"))+'''.svg></div></body></html>'''
                
                 st.markdown(html_string, unsafe_allow_html=True)
                 #st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
