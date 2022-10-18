@@ -116,9 +116,8 @@ with st_capture(output5.code):
             else:
                 yy = "yin"
             try:
-                st.markdown('''<style> .parent {position: relative; top: 0;left: 0;} .image1 {
-                            position: relative; top: 0;left: 0; } .image2 { position: absolute;  top: 30px;
-                             left: 30px;} </style><div class="parent"><img class="image2"  src="kook/typan.svg"></div>''', unsafe_allow_html=True)
+               
+                st.markdown('''<img scr='kook/typang.svg'>''', unsafe_allow_html=True)
                 st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
