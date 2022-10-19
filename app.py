@@ -111,7 +111,7 @@ with st_capture(output5.code):
             else:
                 yy = "yin"
             try:
-                render_svg_example()
+                render_svg_example("<img src='tykook/typan.svg'>")
                 st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
