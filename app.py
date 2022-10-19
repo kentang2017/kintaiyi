@@ -20,13 +20,8 @@ def render_svg(svg):
     html = r'<img src="data:image/svg+xml;base64,%s"/>' % b64
     st.write(html, unsafe_allow_html=True)
 
-def render_svg_example():
-    svg = """
-        <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">
-            <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
-        </svg>
-    """
-    render_svg(svg)
+def render_svg_example(html):
+    render_svg(html)
 
 
 @contextmanager
