@@ -27,6 +27,7 @@ class Taiyi():
         self.Gan,self.Zhi = '甲乙丙丁戊己庚辛壬癸', '子丑寅卯辰巳午未申酉戌亥'
         #間辰
         self.jc = list("丑寅辰巳未申戌亥")
+        self.door = list("開休生傷杜景死驚")
         self.jc1 = list("巽艮坤乾")
         self.tyjc = [1,3,7,9]
         #十六神
@@ -699,18 +700,17 @@ class Taiyi():
         return fv
     #八門
     def eight_door(self, ji):
-        acc = self.accnum(ji) % 120
+        acc = self.accnum(ji) % 240
         if acc == 0:
             acc = 120
         eightdoor_zhishi = acc // 30
         if eightdoor_zhishi % 30 != 0:
            eightdoor_zhishi = eightdoor_zhishi + 1
-        if self.kook(ji).get("文")[0] == "陽":
-            fdoor = [1,8,3,6]
-        elif self.kook(ji).get("文")[0] == "陰":
-            fdoor = [9,2,7,4]
+        elif eightdoor_zhishi == 0:
+            eightdoor_zhishi = 1
+        
         #ty_gong = self.ty()
-        return self.new_list(self.num, fdoor[eightdoor_zhishi]), eightdoor_zhishi
+        return dict(zip(list(range(1,9)),self.door)).get(eightdoor_zhishi)
    
     def starhouse(self):
         su = list('角亢氐房心尾箕斗牛女虛危室壁奎婁胃昴畢觜參井鬼柳星張翼軫')
@@ -735,6 +735,7 @@ class Taiyi():
                 "太歲":self.taishui(ji),
                 "局式":self.kook(ji),
                 "二十八宿值日":self.starhouse(),
+                "八門值事":self.eight_door(ji),
                 "太乙":self.ty(ji),
                 "文昌":[self.skyeyes(ji), self.skyeyes_des(ji)],
                 "主算":[self.home_cal(ji), self.cal_des(self.home_cal(ji))],
@@ -867,6 +868,6 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Taiyi(1902,6,19,0,0).away_cal(0) )
+    print(Taiyi(2022,6,19,0,0).pan(1) )
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
