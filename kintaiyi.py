@@ -705,9 +705,9 @@ class Taiyi():
         eightdoor_zhishi = acc // 30
         if eightdoor_zhishi % 30 != 0:
            eightdoor_zhishi = eightdoor_zhishi + 1
-        if self.kook(ji)[0] == "陽":
+        if self.kook(ji).get("文")[0] == "陽":
             fdoor = [1,8,3,6]
-        elif self.kook(ji)[0] == "陰":
+        elif self.kook(ji).get("文")[0] == "陰":
             fdoor = [9,2,7,4]
         #ty_gong = self.ty()
         return self.new_list(self.num, fdoor[eightdoor_zhishi]), eightdoor_zhishi
