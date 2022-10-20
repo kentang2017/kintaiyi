@@ -114,7 +114,7 @@ class Taiyi():
         return None
     
     def Ganzhiwuxing(self, gangorzhi):
-        ganzhiwuxing = dict(zip(list(map(lambda x: tuple(x),"甲寅乙卯,丙巳丁午,壬亥癸子,庚申辛酉,未丑戊己未辰戌".split(","))), list("木火水金土")))
+        ganzhiwuxing = dict(zip(list(map(lambda x: tuple(x),"甲寅乙卯巽,丙巳丁午,壬亥癸子,庚申辛酉乾,未丑戊己未辰戌坤艮".split(","))), list("木火水金土")))
         return self.multi_key_dict_get(ganzhiwuxing, gangorzhi)
     
      #分干支
