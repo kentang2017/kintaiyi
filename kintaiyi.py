@@ -17,6 +17,10 @@ def jiazi():
     Gan, Zhi = '甲乙丙丁戊己庚辛壬癸','子丑寅卯辰巳午未申酉戌亥'
     return list(map(lambda x: "{}{}".format(Gan[x % len(Gan)],Zhi[x % len(Zhi)]), list(range(60))))
 
+def Ganzhiwuxing(gangorzhi):
+    ganzhiwuxing = dict(zip(list(map(lambda x: tuple(x),"甲寅乙卯,丙巳丁午,壬亥癸子,庚申辛酉,未丑戊己未辰戌".split(","))), list("木火水金土")))
+    return multi_key_dict_get(ganzhiwuxing, gangorzhi)
+
 class Taiyi():
     def __init__(self, year, month, day, hour, minute):
         self.year, self.month, self.day, self.hour, self.minute = year, month, day, hour, minute
@@ -737,7 +741,6 @@ class Taiyi():
                 "合神":self.hegod(ji),
                 "計神":self.jigod(ji),
                 "始擊":self.sf(ji),
-                
                 "定目":self.se(ji),
                 "四神":self.fgd(ji),
                 "直符":self.zhifu(ji),
@@ -746,6 +749,7 @@ class Taiyi():
                 "民基":self.pplbase(ji),
                 "九宮":self.nine_gong(ji), 
                 "十六宮":self.sixteen_gong(ji),
+                "十天干歲始擊落宮預測": Ganzhiwuxing(self.sf(ji)),
                 }
     
     def html(self, ji):
