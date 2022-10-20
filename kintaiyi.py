@@ -11,7 +11,7 @@ from sxtwl import fromSolar
 from ephem import Sun, Date, Ecliptic, Equatorial, hour
 from cn2an import an2cn
 from itertools import cycle, repeat
-from taiyidict import tengan_shiji
+from taiyidict import tengan_shiji, su_dist
 
 def jiazi():
     Gan, Zhi = '甲乙丙丁戊己庚辛壬癸','子丑寅卯辰巳午未申酉戌亥'
@@ -23,6 +23,7 @@ class Taiyi():
         self.taiyiyear  = 10153917
         self.jieqi = re.findall('..', '春分清明穀雨立夏小滿芒種夏至小暑大暑立秋處暑白露秋分寒露霜降立冬小雪大雪冬至小寒大寒立春雨水驚蟄')
         self.num =  [8,3,4,9,2,7,6,1]
+        self.su = list('角亢氐房心尾箕斗牛女虛危室壁奎婁胃昴畢觜參井鬼柳星張翼軫')
         #干支
         self.Gan,self.Zhi = '甲乙丙丁戊己庚辛壬癸', '子丑寅卯辰巳午未申酉戌亥'
         #間辰
@@ -580,6 +581,28 @@ class Taiyi():
                         pass
         return res 
     
+    #太歲禽星
+    def year_chin(self):
+        chin_28_stars_code = dict(zip(range(1,29), self.su))
+        if self.lunar_date_d().get("月") == "十二月" or self.lunar_date_d().get("月") == "十一月":
+             if self.jq() == "立春":
+                 get_year_chin_number = (int(self.year)+15) % 28 #求年禽之公式為西元年加15除28之餘數
+                 if get_year_chin_number == int(0):
+                     get_year_chin_number = int(28)
+                 year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
+             else:
+                 get_year_chin_number = (int(self.year-1)+15) % 28 #求年禽之公式為西元年加15除28之餘數
+                 if get_year_chin_number == int(0):
+                    get_year_chin_number = int(28)
+                 year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
+        elif self.lunar_date_d().get("月") != "十二月" or self.lunar_date_d().get("月") == "十一月":
+            get_year_chin_number = (int(self.year)+15) % 28 #求年禽之公式為西元年加15除28之餘數
+            if get_year_chin_number == int(0):
+                get_year_chin_number = int(28)
+            year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
+        return year_chin
+    
+    
     #君基
     def kingbase(self, ji):
         kb = (self.accnum(ji) +250) % 360  / 30
@@ -713,11 +736,10 @@ class Taiyi():
         return dict(zip(list(range(1,9)),self.door)).get(eightdoor_zhishi)
    
     def starhouse(self):
-        su = list('角亢氐房心尾箕斗牛女虛危室壁奎婁胃昴畢觜參井鬼柳星張翼軫')
         numlist = [13,9,16,5,5,17,10,24,7,11,25,18,17,10,17,13,14,11,16,1,9,30,3,14,7,19,19,18]
         alljq = self.jieqi
         njq = self.new_list(alljq, "冬至")
-        gensulist =  list(itertools.chain.from_iterable([[su[i]]*numlist[i] for i in range(0,28)]))
+        gensulist =  list(itertools.chain.from_iterable([[self.su[i]]*numlist[i] for i in range(0,28)]))
         jqsulist = [["斗", 9],["斗",24] ,["女", 8],["危",2],["室", 1],["壁",1] ,["奎", 4],["婁",2] ,["胃", 4],["昴",4] ,["畢", 8],["參",6] ,["井", 1],["井", 27],["柳",8] ,["張", 3],["翼",1] ,["翼", 16],["軫",13] ,["角", 9],["房", 1],["氐",2] ,["尾", 6],["箕",24]]
         njq_list = dict(zip(njq, jqsulist))
         currentjq = self.jq(self.year, self.month, self.day, self.hour)
@@ -735,6 +757,7 @@ class Taiyi():
                 "太歲":self.taishui(ji),
                 "局式":self.kook(ji),
                 "二十八宿值日":self.starhouse(),
+                "太歲值宿斷事": su_dist.get(self.year_chin()),
                 "八門值事":self.eight_door(ji),
                 "太乙":self.ty(ji),
                 "文昌":[self.skyeyes(ji), self.skyeyes_des(ji)],
@@ -868,6 +891,6 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Taiyi(2022,6,19,0,0).pan(1) )
+    print(Taiyi(2022,6,19,0,0).pan(3) )
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
