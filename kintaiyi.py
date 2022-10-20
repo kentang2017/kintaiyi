@@ -735,6 +735,7 @@ class Taiyi():
                 "太歲":self.taishui(ji),
                 "局式":self.kook(ji),
                 "二十八宿值日":self.starhouse(),
+                "八門值事":self.eight_door(ji),
                 "太乙":self.ty(ji),
                 "文昌":[self.skyeyes(ji), self.skyeyes_des(ji)],
                 "主算":[self.home_cal(ji), self.cal_des(self.home_cal(ji))],
