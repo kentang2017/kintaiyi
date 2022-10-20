@@ -17,10 +17,6 @@ def jiazi():
     Gan, Zhi = '甲乙丙丁戊己庚辛壬癸','子丑寅卯辰巳午未申酉戌亥'
     return list(map(lambda x: "{}{}".format(Gan[x % len(Gan)],Zhi[x % len(Zhi)]), list(range(60))))
 
-def Ganzhiwuxing(gangorzhi):
-    ganzhiwuxing = dict(zip(list(map(lambda x: tuple(x),"甲寅乙卯,丙巳丁午,壬亥癸子,庚申辛酉,未丑戊己未辰戌".split(","))), list("木火水金土")))
-    return multi_key_dict_get(ganzhiwuxing, gangorzhi)
-
 class Taiyi():
     def __init__(self, year, month, day, hour, minute):
         self.year, self.month, self.day, self.hour, self.minute = year, month, day, hour, minute
@@ -39,6 +35,10 @@ class Taiyi():
         self.gong = dict(zip(list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥"), range(1,17)))
         self.gong1 = list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥")
         #self.gong2 = dict(zip(list("亥子丑艮寅卯辰巽巳午未坤申酉戌乾"), [8,8,3,3,4,4,9,9,2,2,7,7,6,6,1,1]))
+    
+    def Ganzhiwuxing(self, gangorzhi):
+        ganzhiwuxing = dict(zip(list(map(lambda x: tuple(x),"甲寅乙卯,丙巳丁午,壬亥癸子,庚申辛酉,未丑戊己未辰戌".split(","))), list("木火水金土")))
+        return self.multi_key_dict_get(ganzhiwuxing, gangorzhi)
     #計神
     def jigod(self, ji):
         return dict(zip(self.Zhi, self.new_list(list(reversed(self.Zhi)), "寅"))).get(self.taishui(ji))
@@ -749,7 +749,7 @@ class Taiyi():
                 "民基":self.pplbase(ji),
                 "九宮":self.nine_gong(ji), 
                 "十六宮":self.sixteen_gong(ji),
-                "十天干歲始擊落宮預測": Ganzhiwuxing(self.sf(ji)),
+                "十天干歲始擊落宮預測": self.Ganzhiwuxing(self.sf(ji)),
                 }
     
     def html(self, ji):
