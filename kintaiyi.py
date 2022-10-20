@@ -11,6 +11,7 @@ from sxtwl import fromSolar
 from ephem import Sun, Date, Ecliptic, Equatorial, hour
 from cn2an import an2cn
 from itertools import cycle, repeat
+from taiyidict import tengan_shiji
 
 def jiazi():
     Gan, Zhi = '甲乙丙丁戊己庚辛壬癸','子丑寅卯辰巳午未申酉戌亥'
@@ -736,6 +737,7 @@ class Taiyi():
                 "合神":self.hegod(ji),
                 "計神":self.jigod(ji),
                 "始擊":self.sf(ji),
+                
                 "定目":self.se(ji),
                 "四神":self.fgd(ji),
                 "直符":self.zhifu(ji),
