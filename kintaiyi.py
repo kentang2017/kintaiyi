@@ -751,7 +751,7 @@ class Taiyi():
                 "民基":self.pplbase(ji),
                 "九宮":self.nine_gong(ji), 
                 "十六宮":self.sixteen_gong(ji),
-                "十天干歲始擊落宮預測": self.Ganzhiwuxing(self.sf(ji)),
+                "十天干歲始擊落宮預測": self.multi_key_dict_get (tengan_shiji, self.gangzhi()[0]).get(self.Ganzhiwuxing(self.sf(ji))),
                 }
     
     def html(self, ji):
