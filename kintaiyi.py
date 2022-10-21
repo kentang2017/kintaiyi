@@ -773,7 +773,7 @@ class Taiyi():
                 "二十八宿值日":self.starhouse(),
                 "太歲二十八宿":self.year_chin(),
                 "太歲值宿斷事": su_dist.get(self.year_chin()),
-                "始擊二十八宿":self.sf_num(ji),
+                #"始擊二十八宿":self.sf_num(ji),
                 #"始擊值宿斷事":su_dist.get(self.sf_num(ji)),
                 "八門值事":self.eight_door(ji),
                 "太乙":self.ty(ji),
