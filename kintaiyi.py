@@ -347,7 +347,7 @@ class Taiyi():
         if num == 0:
            num =28
         sf_rank = dict(zip(list(range(1,13)),self.Zhi)).get(num)
-        yc_num = dict(zip(list(range(1,29)),self.su)).get(self.year_chin())
+        yc_num = dict(zip(list(self.su,list(range(1,29)))).get(self.year_chin())
         return dict(zip(range(1,29),self.su)).get(sf_rank+yc_num)
 
     #定目
