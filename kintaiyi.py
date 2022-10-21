@@ -343,7 +343,7 @@ class Taiyi():
     
     def sf_num(self, ji):
         sf = self.sf(ji)
-        sf_z = dict(zip(self.Zhi, list(range(1,13)))).get(sf)
+        sf_z = dict(zip(self.gong, list(range(1,17)))).get(sf)
         sf_su = dict(zip(self.Zhi, list("虛斗尾房亢翼星鬼參昴婁室"))).get(sf) 
         sf_rank = dict(zip(self.su,list(range(1,29)))).get(sf_su)
         yc_num = dict(zip(self.su,list(range(1,29)))).get(self.year_chin())
