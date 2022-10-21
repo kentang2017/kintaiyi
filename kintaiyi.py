@@ -344,7 +344,7 @@ class Taiyi():
     def sf_num(self, ji):
         sf = self.sf(ji)
         sf_z = dict(zip(self.gong, list(range(1,17)))).get(sf)
-        sf_su = dict(zip(self.Zhi, list("虛斗尾房亢翼星鬼參昴婁室"))).get(sf) 
+        sf_su = dict(zip(list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥"), list("虛斗牛尾房亢角翼星鬼井參昴婁奎室"))).get(sf) 
         sf_rank = dict(zip(self.su,list(range(1,29)))).get(sf_su)
         yc_num = dict(zip(self.su,list(range(1,29)))).get(self.year_chin())
         total = yc_num + sf_z +1
@@ -773,8 +773,8 @@ class Taiyi():
                 "二十八宿值日":self.starhouse(),
                 "太歲二十八宿":self.year_chin(),
                 "太歲值宿斷事": su_dist.get(self.year_chin()),
-                #"始擊二十八宿":self.sf_num(ji),
-                #"始擊值宿斷事":su_dist.get(self.sf_num(ji)),
+                "始擊二十八宿":self.sf_num(ji),
+                "始擊值宿斷事":su_dist.get(self.sf_num(ji)),
                 "八門值事":self.eight_door(ji),
                 "太乙":self.ty(ji),
                 "文昌":[self.skyeyes(ji), self.skyeyes_des(ji)],
