@@ -340,7 +340,16 @@ class Taiyi():
             start1 = len(start[0:start.index("艮")+1])
             start2 = self.new_list(self.gong1, wc)[start1-1]
             return  start2
-        
+    
+    def sf_num(self, ji):
+        sf = self.sf(ji)
+        num = self.year % 28
+        if num == 0:
+           num =28
+        sf_rank = dict(zip(list(range(1,13)),self.Zhi)).get(num)
+        yc_num = dict(zip(list(range(1,13)),self.Zhi)).get(self.year_chin())
+        return dict(zip(range(1,29),self.su)).get(sf_rank+yc_num)
+
     #定目
     def se(self, ji):
         wc,hg,ts = self.skyeyes(ji),self.hegod(ji),self.taishui(ji)
@@ -757,7 +766,10 @@ class Taiyi():
                 "太歲":self.taishui(ji),
                 "局式":self.kook(ji),
                 "二十八宿值日":self.starhouse(),
+                "太歲二十八宿":self.year_chin(),
                 "太歲值宿斷事": su_dist.get(self.year_chin()),
+                "始擊二十八宿":self.sf_num(ji),
+                "始擊值宿斷事":su_dict.get(self.sf_num(ji)),
                 "八門值事":self.eight_door(ji),
                 "太乙":self.ty(ji),
                 "文昌":[self.skyeyes(ji), self.skyeyes_des(ji)],
