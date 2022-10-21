@@ -347,7 +347,7 @@ class Taiyi():
         sf_su = dict(zip(self.Zhi, list("虛斗尾房亢翼星鬼參昴婁室"))).get(sf) 
         sf_rank = dict(zip(self.su,list(range(1,29)))).get(sf_su)
         yc_num = dict(zip(self.su,list(range(1,29)))).get(self.year_chin())
-        return dict(zip(list(range(1,29)),self.su)).get(yc_num + sf_rank+ sf_z)
+        return dict(zip(list(range(1,29)),self.new_list(self.su, sf_su))).get(yc_num + sf_z)
         
 
     #定目
