@@ -343,10 +343,7 @@ class Taiyi():
     
     def sf_num(self, ji):
         sf = self.sf(ji)
-        num = self.year % 28
-        if num == 0:
-           num =28
-        sf_rank = dict(zip(list(range(1,13)),self.Zhi)).get(num)
+        sf_rank = dict(zip(list(range(1,13)),self.Zhi)).get(sf)
         yc_num = dict(zip(self.su,list(range(1,29)))).get(self.year_chin())
         return dict(zip(list(range(1,29)),self.su)).get(sf_rank + yc_num)
         
