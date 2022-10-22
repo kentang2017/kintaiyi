@@ -347,7 +347,7 @@ class Taiyi():
         sf_su = dict(zip(list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥"), list("虛斗牛尾房亢角翼星鬼井參昴婁奎室"))).get(sf) 
         sf_rank = dict(zip(self.su,list(range(1,29)))).get(sf_su)
         yc_num = dict(zip(self.su,list(range(1,29)))).get(self.year_chin())
-        total = yc_num + sf_z +1
+        total = yc_num + sf_z 
         if total > 28:
            a = dict(zip(list(range(1,29)),self.new_list(self.su, sf_su))).get(28)
            return self.new_list(self.su, a)[total - 28 -1]
