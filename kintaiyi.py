@@ -677,12 +677,16 @@ class Taiyi():
     #陽九
     def yangjiu(self):
         getyj = (self.year + 12607)%4560%456//10
-        return dict(zip(range(0,11),self.Zhi)).get(getyj), getyj
+        if getyj>12:
+          getyj = getyj %12
+        return dict(zip(range(0,11),self.Zhi)).get(getyj)
     
     #陽九
     def baliu(self):
-        getyj = (self.year + 12607)%4320%288//24
-        return dict(zip(range(0,11),self.new_list(self.Zhi, "寅"))).get(getyj)
+        getbl = (self.year + 12607)%4320%288//24
+        if getbl >12:
+          getbl = getbl %12
+        return dict(zip(range(0,11),self.new_list(self.Zhi, "寅"))).get(getbl)
     #帝符
     def kingfu(self, ji):
         f = self.accnum(ji)  %20
