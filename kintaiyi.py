@@ -674,6 +674,15 @@ class Taiyi():
         if fv == 0 or fv == None:
             fv = "中"
         return fv
+    #陽九
+    def yangjiu(self):
+        getyj = (self.year + 12607)%4560%456//10
+        return dict(zip(range(0,11),self.Zhi)).get(getyj)
+    
+    #陽九
+    def baliu(self):
+        getyj = (self.year + 12607)%4320%288//24
+        return dict(zip(range(0,11),self.new_list(self.Zhi, "寅"))).get(getyj)
     #帝符
     def kingfu(self, ji):
         f = self.accnum(ji)  %20
@@ -776,6 +785,8 @@ class Taiyi():
                 "始擊二十八宿":self.sf_num(ji),
                 "始擊值宿斷事":su_dist.get(self.sf_num(ji)),
                 "八門值事":self.eight_door(ji),
+                "陽九":self.yangjiu(),
+                "百六":self.baliu(),
                 "太乙":self.ty(ji),
                 "文昌":[self.skyeyes(ji), self.skyeyes_des(ji)],
                 "主算":[self.home_cal(ji), self.cal_des(self.home_cal(ji))],
