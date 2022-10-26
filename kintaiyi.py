@@ -674,6 +674,14 @@ class Taiyi():
         if fv == 0 or fv == None:
             fv = "中"
         return fv
+    
+    #推雷公入水
+    def leigong(self, ji):
+        ty = self.ty(ji)
+        ty_num = self.gong.get(dict(zip([1,2,3,4,6,7,8,9],list("乾午艮卯酉坤子巽"))).get(ty))
+        lg_total = ty_num + 4
+        return self.gong.get(lg_total)
+    
     #陽九
     def yangjiu(self):
         getyj = (self.year + 12607)%4560%456//10
@@ -789,6 +797,7 @@ class Taiyi():
                 "始擊二十八宿":self.sf_num(ji),
                 "始擊值宿斷事":su_dist.get(self.sf_num(ji)),
                 "八門值事":self.eight_door(ji),
+                "推雷公入水":self.leigong(ji),
                 "陽九":self.yangjiu(),
                 "百六":self.baliu(),
                 "太乙":self.ty(ji),
