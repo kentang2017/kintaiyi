@@ -688,7 +688,7 @@ class Taiyi():
     #推獅子反擲
     def lion(self):
         year = dict(zip(self.Zhi, range(1,13))).get(self.gangzhi()[0][1])
-        return self.new_list(self.gong1, self.gangzhi()[0][1])[4+1]
+        return self.new_list(self.gong1, self.gangzhi()[0][1])[4]
     
     #陽九
     def yangjiu(self):
