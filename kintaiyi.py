@@ -680,6 +680,8 @@ class Taiyi():
         ty = self.ty(ji)
         ty_num = self.gong.get(dict(zip([1,2,3,4,6,7,8,9],list("乾午艮卯酉坤子巽"))).get(ty))
         lg_total = ty_num + 4
+        if lg_total > 16:
+            lg_total = lg_total - 16
         return self.gong.get(lg_total)
     
     #陽九
