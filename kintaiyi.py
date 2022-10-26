@@ -692,9 +692,12 @@ class Taiyi():
     #推白雲捲空
     def cloud(self, ji):
         hg_num = self.home_general(ji)
-        hg = dict(zip([1,2,3,4,6,7,8,9],list("乾午艮卯酉坤子巽"))).get(hg_num)
-        return self.new_list(self.gong1, hg)[4]
-    
+        try:
+           hg = dict(zip([1,2,3,4,6,7,8,9],list("乾午艮卯酉坤子巽"))).get(hg_num)
+           return self.new_list(self.gong1, hg)[4]
+        except IndexError:
+           return "不適用"
+
     #陽九
     def yangjiu(self):
         getyj = (self.year + 12607)%4560%456//10
