@@ -689,6 +689,10 @@ class Taiyi():
     def lion(self):
         year = dict(zip(self.Zhi, range(1,13))).get(self.gangzhi()[0][1])
         return self.new_list(self.gong1, self.gangzhi()[0][1])[4]
+    #推白雲捲空
+    def cloud(self, ji):
+        hg = self.home_general(ji)
+        return self.new_list(self.gong1, hg)[4]
     
     #陽九
     def yangjiu(self):
@@ -808,6 +812,7 @@ class Taiyi():
                 "推雷公入水":self.leigong(ji),
                 "推臨津問道":self.lijin(),
                 "推獅子反擲":self.lion(),
+                "推白雲捲空":self.cloud(ji),
                 "陽九":self.yangjiu(),
                 "百六":self.baliu(),
                 "太乙":self.ty(ji),
