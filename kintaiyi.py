@@ -695,7 +695,7 @@ class Taiyi():
         try:
            hg = dict(zip([1,2,3,4,6,7,8,9],list("乾午艮卯酉坤子巽"))).get(hg_num)
            return self.new_list(self.gong1, hg)[4]
-        except IndexError:
+        except (IndexError,ValueError):
            return "不適用"
 
     #陽九
