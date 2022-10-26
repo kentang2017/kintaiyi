@@ -691,7 +691,8 @@ class Taiyi():
         return self.new_list(self.gong1, self.gangzhi()[0][1])[4]
     #推白雲捲空
     def cloud(self, ji):
-        hg = self.home_general(ji)
+        hg_num = self.home_general(ji)
+        hg = dict(zip([1,2,3,4,6,7,8,9],list("乾午艮卯酉坤子巽"))).get(hg_num)
         return self.new_list(self.gong1, hg)[4]
     
     #陽九
