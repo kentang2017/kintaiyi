@@ -683,7 +683,7 @@ class Taiyi():
         return dict(zip(range(1,17),new_order)).get(1+4)
     #推臨津問道
     def lijin(self):
-        year = dict(zip(self.Zhi, range(1,13)).get(self.gangzhi()[0][1])
+        year = dict(zip(self.Zhi, range(1,13))).get(self.gangzhi()[0][1])
         return self.new_list(self.gong1, "寅")[year]
     
     #陽九
