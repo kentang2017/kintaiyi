@@ -685,6 +685,10 @@ class Taiyi():
     def lijin(self):
         year = dict(zip(self.Zhi, range(1,13))).get(self.gangzhi()[0][1])
         return self.new_list(self.gong1, "寅")[year]
+    #推獅子反擲
+    def lion(self):
+        year = dict(zip(self.Zhi, range(1,13))).get(self.gangzhi()[0][1])
+        return self.new_list(self.gong1, year)[4+1]
     
     #陽九
     def yangjiu(self):
@@ -803,6 +807,7 @@ class Taiyi():
                 "八門值事":self.eight_door(ji),
                 "推雷公入水":self.leigong(ji),
                 "推臨津問道":self.lijin(),
+                "推獅子反擲":self.lion(),
                 "陽九":self.yangjiu(),
                 "百六":self.baliu(),
                 "太乙":self.ty(ji),
