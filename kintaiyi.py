@@ -679,11 +679,8 @@ class Taiyi():
     def leigong(self, ji):
         ty = self.ty(ji)
         find_ty = dict(zip([1,2,3,4,6,7,8,9],list("乾午艮卯酉坤子巽"))).get(ty)
-        ty_num = self.gong.get(find_ty)
-        lg_total = ty_num + 4
-        if lg_total > 16:
-            lg_total = lg_total - 16
-        return self.gong.get(lg_total), find_ty
+        new_order = self.new_list(self.gong1, find_ty)
+        return dict(zip(range(1,17),new_order)).get(1+4)
     
     #陽九
     def yangjiu(self):
