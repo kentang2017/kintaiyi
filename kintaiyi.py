@@ -692,11 +692,8 @@ class Taiyi():
     #推白雲捲空
     def cloud(self, ji):
         hg_num = self.home_general(ji)
-        try:
-           hg = dict(zip([1,2,3,4,6,7,8,9],list("乾午艮卯酉坤子巽"))).get(hg_num)
-           return self.new_list(list(reversed(self.gong1)), hg)[4]
-        except (IndexError,ValueError):
-           return "乾"
+        return self.new_list(list(reversed(self.gong1)), "寅")[1+ hg_num]
+
     #推猛虎相拒
     def tiger(self, ji):
         ty= self.ty(ji)
