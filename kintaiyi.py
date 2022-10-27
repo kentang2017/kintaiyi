@@ -710,7 +710,7 @@ class Taiyi():
     #推回軍無言
     def returnarmy(self,ji):
         ag_num = self.away_general(ji)
-        return self.new_list(self.gong1, "寅")[ag_num+1]
+        return self.new_list(self.gong1, "寅")[ag_num]
         
     #陽九
     def yangjiu(self):
