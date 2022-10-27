@@ -705,7 +705,7 @@ class Taiyi():
     #推白龍得云
     def dragon(self, ji):
         ty = self.ty(ji)
-        new_order = self.new_list(self.gong1, "寅")
+        new_order = self.new_list(list(reversed(self.gong1)), "寅")
         return new_order[ty]
     #推回軍無言
     def returnarmy(self,ji):
