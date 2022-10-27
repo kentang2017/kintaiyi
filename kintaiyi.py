@@ -700,8 +700,10 @@ class Taiyi():
     #推猛虎相拒
     def tiger(self, ji):
         ty= self.ty(ji)
-        new_order = self.new_list(self.gong1, "寅")
+        find_ty = dict(zip([1,2,3,4,6,7,8,9],list("乾午艮卯酉坤子巽"))).get(ty)
+        new_order = self.new_list(self.gong1, find_ty)
         return new_order[ty+1]
+    
     #陽九
     def yangjiu(self):
         getyj = (self.year + 12607)%4560%456//10
