@@ -692,7 +692,7 @@ class Taiyi():
     #推白雲捲空
     def cloud(self, ji):
         hg_num = self.home_general(ji)
-        return self.new_list(list(reversed(self.gong1)), "寅")[1+ hg_num]
+        return self.new_list(list(reversed(self.gong1)), "寅")[hg_num]
 
     #推猛虎相拒
     def tiger(self, ji):
