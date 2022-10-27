@@ -707,7 +707,11 @@ class Taiyi():
         ty = self.ty(ji)
         new_order = self.new_list(self.gong1, "寅")
         return new_order[ty]
-    
+    #推回軍無言
+    def returnarmy(self,ji):
+        ag_num = self.away_general(ji)
+        return self.new_list(self.gong1, "寅")[ag+1]
+        
     #陽九
     def yangjiu(self):
         getyj = (self.year + 12607)%4560%456//10
@@ -829,6 +833,7 @@ class Taiyi():
                 "推白雲捲空":self.cloud(ji),
                 "推猛虎相拒":self.tiger(ji),
                 "推白龍得雲":self.dragon(ji),
+                "推回軍無言":self.returnarmy(ji),
                 "陽九":self.yangjiu(),
                 "百六":self.baliu(),
                 "太乙":self.ty(ji),
