@@ -698,7 +698,7 @@ class Taiyi():
     def tiger(self, ji):
         ty= self.ty(ji)
         new_order = self.new_list(self.gong1, "寅")
-        return new_order[ty+1]
+        return new_order[ty]
     #推白龍得云
     def dragon(self, ji):
         ty = self.ty(ji)
