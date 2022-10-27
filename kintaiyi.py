@@ -694,7 +694,7 @@ class Taiyi():
         hg_num = self.home_general(ji)
         try:
            hg = dict(zip([1,2,3,4,6,7,8,9],list("乾午艮卯酉坤子巽"))).get(hg_num)
-           return self.new_list(self.gong1, hg)[4]
+           return self.new_list(list(reversed(self.gong1)), hg)[4]
         except (IndexError,ValueError):
            return "乾"
     #推猛虎相拒
