@@ -700,9 +700,13 @@ class Taiyi():
     #推猛虎相拒
     def tiger(self, ji):
         ty= self.ty(ji)
-        find_ty = dict(zip([1,2,3,4,6,7,8,9],list("乾午艮卯酉坤子巽"))).get(ty)
-        new_order = self.new_list(self.gong1, find_ty)
+        new_order = self.new_list(self.gong1, "寅")
         return new_order[ty+1]
+    #推白龍得云
+    def dragon(self, ji):
+        ty = self.ty(ji)
+        new_order = self.new_list(self.gong1, "寅")
+        return new_order[ty]
     
     #陽九
     def yangjiu(self):
@@ -824,6 +828,7 @@ class Taiyi():
                 "推獅子反擲":self.lion(),
                 "推白雲捲空":self.cloud(ji),
                 "推猛虎相拒":self.tiger(ji),
+                "推白龍得雲":self.dragon(ji),
                 "陽九":self.yangjiu(),
                 "百六":self.baliu(),
                 "太乙":self.ty(ji),
