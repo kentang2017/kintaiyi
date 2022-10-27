@@ -697,7 +697,11 @@ class Taiyi():
            return self.new_list(self.gong1, hg)[4]
         except (IndexError,ValueError):
            return "乾"
-
+    #推猛虎相拒
+    def tiger(self, ji):
+        ty= self.ty(ji)
+        new_order = self.new_list(self.gong1, "寅")
+        return new_order[ty+1]
     #陽九
     def yangjiu(self):
         getyj = (self.year + 12607)%4560%456//10
@@ -817,6 +821,7 @@ class Taiyi():
                 "推臨津問道":self.lijin(),
                 "推獅子反擲":self.lion(),
                 "推白雲捲空":self.cloud(ji),
+                "推猛虎相拒":self.tiger(ji),
                 "陽九":self.yangjiu(),
                 "百六":self.baliu(),
                 "太乙":self.ty(ji),
