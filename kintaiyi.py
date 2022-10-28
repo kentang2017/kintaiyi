@@ -814,7 +814,7 @@ class Taiyi():
     
     def pan(self, ji):
         return {
-                "太乙計":{0:"年計", 1:"月計", 2:"日計", 3:"時計", 4:"分計", 5:"太乙淘金歌年計"}.get(ji), 
+                "太乙計":{0:"年計", 1:"月計", 2:"日計", 3:"時計", 4:"分計", 5:"淘金歌年計"}.get(ji), 
                 "公元日期":"{}年{}月{}日{}時".format(self.year, self.month, self.day, self.hour),
                 "干支":self.gangzhi(),
                 "農曆":self.lunar_date_d(),
@@ -851,8 +851,8 @@ class Taiyi():
                 "始擊":self.sf(ji),
                 "定目":self.se(ji),
                 "君基":self.kingbase(ji),
-                "臣基 (輔相之象，所臨之邦出賢士直臣，任於王室，人民安，五谷登)":self.officerbase(ji),
-                "民基 (庶民之象，所臨之邦，其民富貴，五谷豐登，無兵革、疾疫之災)":self.pplbase(ji),
+                "臣基":self.officerbase(ji),
+                "民基":self.pplbase(ji),
                 "九宮":self.nine_gong(ji), 
                 "十六宮":self.sixteen_gong(ji),
                 "十天干歲始擊落宮預測": self.multi_key_dict_get (tengan_shiji, self.gangzhi()[0][0]).get(self.Ganzhiwuxing(self.sf(ji))),
