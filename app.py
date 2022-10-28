@@ -40,8 +40,8 @@ st.title('太鳦太乙排盘')
 
 idate = st.text_input('輸入日期(如: 1997/8/8)', '')
 itime = st.text_input('輸入時間(如: 18:30)', '')
-option = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
-num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option)
+option = st.selectbox( '起盤方式', ('太乙淘金年計',' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
+num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 ', '太乙淘金年計'],[0,1,2,3,4,5])).get(option)
 output5 = st.empty()
 with st_capture(output5.code):
     col1, col2 = st.columns(2)
