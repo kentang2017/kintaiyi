@@ -45,7 +45,7 @@ class Taiyi():
     #太歲
     def taishui(self, ji):
         gz =  self.gangzhi()
-        return {0: gz[0][1], 1:gz[1][1], 2:gz[2][1], 3:gz[3][1], 4:gz[4][1]}.get(ji)
+        return {0: gz[0][1], 1:gz[1][1], 2:gz[2][1], 3:gz[3][1], 4:gz[4][1], 5: gz[0][1],}.get(ji)
 
     def kingyear(self):
         def closest(lst, K): 
