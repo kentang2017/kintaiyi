@@ -814,7 +814,7 @@ class Taiyi():
     
     def pan(self, ji):
         return {
-                "太乙計":{0:"年計", 1:"月計", 2:"日計", 3:"時計", 4:"分計"}.get(ji), 
+                "太乙計":{0:"年計", 1:"月計", 2:"日計", 3:"時計", 4:"分計", 5:"太乙淘金歌年計"}.get(ji), 
                 "公元日期":"{}年{}月{}日{}時".format(self.year, self.month, self.day, self.hour),
                 "干支":self.gangzhi(),
                 "農曆":self.lunar_date_d(),
