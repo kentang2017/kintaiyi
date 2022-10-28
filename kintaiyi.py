@@ -270,7 +270,7 @@ class Taiyi():
     
     def getepoch(self, ji):
         accnum = self.accnum(ji)
-        if ji == 0 or ji == 1 or ji ==2:
+        if ji == 0 or ji == 5 or ji == 1 or ji ==2:
             if round(accnum % 360) == 1:
                 find_ji_num = 1
             else:
