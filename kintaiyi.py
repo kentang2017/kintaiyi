@@ -234,14 +234,18 @@ class Taiyi():
         elif ji == 4: #分計
             return int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00") - 1)) * 120 + (self.minute + 1 ) // 2 + 1 
             #return ((datetime.strptime("{0:04}-{1:02d}-{2:02d} 00:00:00".format(self.year, self.month, self.day), "%Y-%m-%d %H:%M:%S") - datetime.strptime("1900-06-19 00:00:00","%Y-%m-%d %H:%M:%S")).days - 1 ) * 12 + (self.hour + 1 ) // 2 + 1
-     
+        elif ji == 5: #太乙淘金歌年計
+             if self.year >= 0:
+                return self.taiyiyear + self.year + 276
+            elif self.year < 0:
+                return self.taiyiyear + self.year + 1 + 276
     
     def kook(self, ji):
         xz = self.xzdistance()
         current_date =  Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2)))
         xz_date =  current_date - xz
         k = self.accnum(ji)%72
-        if k == 0:
+        if k == 0 or k == 5:
             k = 72
         if ji == 0 or ji == 1 or ji ==2:
             dun = "陽遁"
