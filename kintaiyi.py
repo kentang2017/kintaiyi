@@ -245,9 +245,9 @@ class Taiyi():
         current_date =  Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2)))
         xz_date =  current_date - xz
         k = self.accnum(ji)%72
-        if k == 0 or k == 5:
+        if k == 0:
             k = 72
-        if ji == 0 or ji == 1 or ji ==2:
+        if ji == 0 or ji == 1 or ji ==5 or ji ==2:
             dun = "陽遁"
         elif ji == 3 or ji == 4:
             if current_date >= xz_date and self.month >= 6:
