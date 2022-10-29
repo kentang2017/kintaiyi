@@ -176,6 +176,20 @@ class Taiyi():
             dzlist.append(b)
         return list(dzlist[list(map(lambda i:list(i.keys())[0], dzlist)).index(jq)].values())[0]
     
+    def seasons_wangzhuai(self, jieqi):
+        jieqi = self.jieqi
+        wangzhuai = list("旺相胎沒死囚休廢")
+        wangzhuai_num = [3,4,9,2,7,6,1,8]
+        wangzhuai_jieqi = {('春分','清明','穀雨'):'春分',
+                            ('立夏','小滿','芒種'):'立夏',
+                            ('夏至','小暑','大暑'):'夏至',
+                            ('立秋','處暑','白露'):'立秋',
+                            ('秋分','寒露','霜降'):'秋分',
+                            ('立冬','小雪','大雪'):'立冬',
+                            ('冬至','小寒','大寒'):'冬至',
+                            ('立春','雨水','驚蟄'):'立春'}
+        return dict(zip(self.new_list(wangzhuai_num, dict(zip(jieqi[0::3],wangzhuai_num )).get(self.multi_key_dict_get(wangzhuai_jieqi, "霜降"))), wangzhuai))
+    
     def lunar_date_d(self):
         day = fromSolar(self.year, self.month, self.day)
         return {"年":day.getLunarYear(),  "月": day.getLunarMonth(), "日":day.getLunarDay()}
