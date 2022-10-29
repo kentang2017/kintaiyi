@@ -176,7 +176,7 @@ class Taiyi():
             dzlist.append(b)
         return list(dzlist[list(map(lambda i:list(i.keys())[0], dzlist)).index(jq)].values())[0]
     
-    def seasons_wangzhuai(self, jieqi):
+    def gong_wangzhuai(self, jieqi):
         jieqi = self.jieqi
         wangzhuai = list("旺相胎沒死囚休廢")
         wangzhuai_num = [3,4,9,2,7,6,1,8]
@@ -842,6 +842,7 @@ class Taiyi():
                 "始擊二十八宿":self.sf_num(ji),
                 "始擊值宿斷事":su_dist.get(self.sf_num(ji)),
                 "八門值事":self.eight_door(ji),
+                "八宮旺衰":self.gong_wangzhuai(self.jq(self.year, self.month, self.day, self.hour)),
                 "推雷公入水":self.leigong(ji),
                 "推臨津問道":self.lijin(),
                 "推獅子反擲":self.lion(),
