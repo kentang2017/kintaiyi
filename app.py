@@ -36,7 +36,6 @@ def st_capture(output_func):
         yield
         
 st.set_page_config(layout="wide",page_title="太鳦 - 太乙排盘")
-st.header('太鳦')
 pan,example,guji = st.tabs([' 排盤 ', ' 案例 ', ' 古籍 ' ])
 
 with pan:
