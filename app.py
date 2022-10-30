@@ -36,11 +36,11 @@ def st_capture(output_func):
         yield
         
 st.set_page_config(layout="wide",page_title="太鳦 - 太乙排盘")
-st.header('太乙排盘')
+st.header('太鳦')
 pan,example,guji = st.tabs([' 排盤 ', ' 案例 ', ' 古籍 ' ])
 
 with pan:
-    st.header('太乙排盘')
+    st.header('排盘')
     idate = st.text_input('輸入日期(如: 1997/8/8)', '')
     itime = st.text_input('輸入時間(如: 18:30)', '')
     option = st.selectbox( '起盤方式', ('太乙淘金年計',' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
@@ -142,7 +142,7 @@ with pan:
     #print(tys+"\n")
 
 with example:
-    st.header('太乙案例')
+    st.header('案例')
     
 with guji:
-    st.header('太乙古籍')
+    st.header('古籍')
