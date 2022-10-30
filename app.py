@@ -41,7 +41,7 @@ def st_capture(output_func):
         yield
         
 st.set_page_config(layout="wide",page_title="太鳦 - 太乙排盘")
-pan,example,guji = st.tabs([' 排盤 ', ' 案例 ', ' 古籍 ' ])
+pan,example,guji,update = st.tabs([' 排盤 ', ' 案例 ', ' 古籍 ',' 更新日誌 ' ])
 
 with pan:
     st.header('排盘')
@@ -154,3 +154,7 @@ with example:
 with guji:
     st.header('古籍')
     st.markdown(get_file_content_as_string("guji.md"))
+  
+with update:
+    st.header('更新日誌')
+    st.markdown(get_file_content_as_string("update.md"))
