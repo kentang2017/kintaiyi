@@ -11,6 +11,7 @@ from taiyimishu import taiyi_yingyang
 import base64
 import textwrap
 import datetime, pytz
+import os, urllib
 
 
 
@@ -23,7 +24,11 @@ def render_svg(svg):
 def render_svg_example(html):
     render_svg(html)
 
-
+def get_file_content_as_string(path):
+    url = 'https://raw.githubusercontent.com/streamlit/kintaiyi/master/' + path
+    response = urllib.request.urlopen(url)
+    return response.read().decode("utf-8")
+    
 @contextmanager
 def st_capture(output_func):
     with StringIO() as stdout, redirect_stdout(stdout):
