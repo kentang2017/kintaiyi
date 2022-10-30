@@ -150,4 +150,4 @@ with example:
     
 with guji:
     st.header('古籍')
-    st.markdown(get_file_content_as_string("README.md"))
+    st.markdown(get_file_content_as_string("guji.md"))
