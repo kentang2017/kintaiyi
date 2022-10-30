@@ -11,8 +11,13 @@ from taiyimishu import taiyi_yingyang
 import base64
 import textwrap
 import datetime, pytz
+import os, urllib
 
 
+def get_file_content_as_string(path):
+    url = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/master/' + path
+    response = urllib.request.urlopen(url)
+    return response.read().decode("utf-8")
 
 
 def render_svg(svg):
@@ -145,4 +150,4 @@ with example:
     
 with guji:
     st.header('古籍')
-    st.markdown("https://raw.githubusercontent.com/kentang2017/kintaiyi/master/README.md")
+    st.markdown(get_file_content_as_string("README.md"))
