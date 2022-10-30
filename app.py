@@ -25,7 +25,7 @@ def render_svg_example(html):
     render_svg(html)
 
 def get_file_content_as_string(path):
-    url = 'https://raw.githubusercontent.com/streamlit/kintaiyi/master/' + path
+    url = 'https://github.com/kentang2017/kintaiyi/blob/' + path
     response = urllib.request.urlopen(url)
     return response.read().decode("utf-8")
     
