@@ -150,6 +150,7 @@ with pan:
 
 with example:
     st.header('案例')
+    st.markdown(get_file_content_as_string("example.md"))
     
 with guji:
     st.header('古籍')
