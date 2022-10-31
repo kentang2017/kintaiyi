@@ -482,7 +482,7 @@ class Taiyi():
            tianyi = ztz.get(self.multi_key_dict_get(gzzm, self.gangzhi()[2][0]).get( self.multi_key_dict_get(zm, self.gangzhi()[3][1]) ))
            return dict(zip(self.new_list(self.Zhi,tianyi),general))
         else:
-           return "None"
+           return "太乙時計才顯示"
         
     def set_cal(self, ji):
         num = self.num
