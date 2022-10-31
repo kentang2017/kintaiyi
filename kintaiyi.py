@@ -866,6 +866,7 @@ class Taiyi():
                 "八門值事":self.eight_door(ji),
                 "八門分佈":self.geteightdoors(ji),
                 "八宮旺衰":self.gong_wangzhuai(self.jq(self.year, self.month, self.day, self.hour)),
+                "十二月將", self.shensha(ji),
                 "推三門具不具":self.threedoors(ji),
                 "推五將發不發":self.fivegenerals(ji),
                 "推多少以占勝負":self.suenwl(ji),
