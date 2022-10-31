@@ -693,6 +693,13 @@ class Taiyi():
             fv = "中"
         return fv
     
+    #八門分佈
+    def geteightdoors(self, ji):
+        ty = self.ty(ji)
+        new_ty_order = new_list([8,3,4,9,2,7,6,1], ty)
+        doors  = self.new_list(self.door, self.eight_door(ji))
+        return dict(zip(new_ty_order, doors))
+
     #推雷公入水
     def leigong(self, ji):
         ty = self.ty(ji)
@@ -853,7 +860,9 @@ class Taiyi():
                 "始擊二十八宿":self.sf_num(ji),
                 "始擊值宿斷事":su_dist.get(self.sf_num(ji)),
                 "八門值事":self.eight_door(ji),
+                "八門分佈":self.geteightdoors(ji),
                 "八宮旺衰":self.gong_wangzhuai(self.jq(self.year, self.month, self.day, self.hour)),
+                "推多少以占勝負":self.suenwl(ji),
                 "推雷公入水":self.leigong(ji),
                 "推臨津問道":self.lijin(),
                 "推獅子反擲":self.lion(),
@@ -861,7 +870,6 @@ class Taiyi():
                 "推猛虎相拒":self.tiger(ji),
                 "推白龍得雲":self.dragon(ji),
                 "推回軍無言":self.returnarmy(ji),
-                "推多少以占勝負":self.suenwl(ji),
                 "陽九":self.yangjiu(),
                 "百六":self.baliu(),
                 "太乙":self.ty(ji),
