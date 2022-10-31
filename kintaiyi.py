@@ -689,7 +689,7 @@ class Taiyi():
             fv = "中"
         return fv
     #推三門具不具
-    def threedoor(self, ji):
+    def threedoors(self, ji):
         ty = self.ty(ji)
         ed = self.geteightdoors(ji)
         door = ed.get(ty)
