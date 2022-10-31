@@ -479,8 +479,14 @@ class Taiyi():
                    "癸":{"朝":"太乙", "暮":"太衝"}, "壬":{"朝":"太衝", "暮":"太乙"}, 
                    "辛":{"朝":"功曹", "暮":"勝光"}}
            general = "天乙,螣蛇,朱雀,六合,勾陳,青龍,天空,白虎,太常,玄武,太陰,天后".split(",")
-           tianyi = ztz.get(self.multi_key_dict_get(gzzm, self.gangzhi()[2][0]).get( self.multi_key_dict_get(zm, self.gangzhi()[3][1]) ))
-           return dict(zip(self.new_list(self.Zhi,tianyi),general))
+           tiany = self.skyyi(ji)
+           kook = self.kook(ji).get("文")[0]
+           if kook == "陽":
+                return dict(zip(self.new_list(self.gong1, tiany) , general))
+           #tianyi = ztz.get(self.multi_key_dict_get(gzzm, self.gangzhi()[2][0]).get( self.multi_key_dict_get(zm, self.gangzhi()[3][1]) ))
+           else:
+                return dict(zip(self.new_list(list(reversed(self.gong1)), tiany) , general))
+           #return dict(zip(self.new_list(self.Zhi,tianyi),general))
         else:
            return "太乙時計才顯示"
         
