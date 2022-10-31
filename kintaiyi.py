@@ -726,7 +726,18 @@ class Taiyi():
     def returnarmy(self,ji):
         ag_num = self.away_general(ji)
         return self.new_list(self.gong1, "寅")[ag_num]
-        
+    
+    #推多少以占勝負  客以多筭臨少主人敗客以少筭臨多主人勝也
+    def suenwl(self, ji):
+        homecal = self.home_cal(ji)
+        awaycal = self.away_cal(ji)
+        if awaycal < homecal:
+            return "客以少筭臨多，主人勝也。"
+        elif awaycal > homecal:
+            return "客以多筭臨少，主人敗也。"
+        else:
+            return "主客旗鼓相當。"
+
     #陽九
     def yangjiu(self):
         getyj = (self.year + 12607)%4560%456//10
@@ -850,6 +861,7 @@ class Taiyi():
                 "推猛虎相拒":self.tiger(ji),
                 "推白龍得雲":self.dragon(ji),
                 "推回軍無言":self.returnarmy(ji),
+                "推多少以占勝負":self.suenwl(ji),
                 "陽九":self.yangjiu(),
                 "百六":self.baliu(),
                 "太乙":self.ty(ji),
