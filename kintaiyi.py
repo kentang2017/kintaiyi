@@ -371,8 +371,6 @@ class Taiyi():
            return self.new_list(self.su, a)[total - 28 -1]
         else:
            return dict(zip(list(range(1,29)),self.new_list(self.su, sf_su))).get(total)
-        
-
     #定目
     def se(self, ji):
         wc,hg,ts = self.skyeyes(ji),self.hegod(ji),self.taishui(ji)
@@ -690,13 +688,21 @@ class Taiyi():
         if fv == 0 or fv == None:
             fv = "中"
         return fv
-    #八門分佈
+    #推三門具不具
+    def threedoor(self, ji):
+        ty = self.ty(ji)
+        ed = self.geteightdoors(ji)
+        door = ed.get(ty)
+        if door in list("休生開"):
+            return "三門不具"
+        else:
+            return "三門具"
+    #推八門分佈
     def geteightdoors(self, ji):
         ty = self.ty(ji)
         new_ty_order = self.new_list([8,3,4,9,2,7,6,1], ty)
         doors  = self.new_list(self.door, self.eight_door(ji))
         return dict(zip(new_ty_order, doors))
-
     #推雷公入水
     def leigong(self, ji):
         ty = self.ty(ji)
@@ -854,6 +860,7 @@ class Taiyi():
                 "八門值事":self.eight_door(ji),
                 "八門分佈":self.geteightdoors(ji),
                 "八宮旺衰":self.gong_wangzhuai(self.jq(self.year, self.month, self.day, self.hour)),
+                "推三門具不具":self.threedoors(ji),
                 "推多少以占勝負":self.suenwl(ji),
                 "推雷公入水":self.leigong(ji),
                 "推臨津問道":self.lijin(),
