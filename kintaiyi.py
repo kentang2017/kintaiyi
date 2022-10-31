@@ -82,9 +82,15 @@ class Taiyi():
     def skyeyes_des(self, ji):
         yy = self.kook(ji).get("文")[0]
         k = self.kook(ji).get("數")
-        dd = {"陽":",,辰迫,,,,,辰迫,囚,辰迫,囚,辰迫,,,勝,辰迫,囚,囚,客挾,,,,,,,,,,,,,,,,,,,客挾,囚,辰迫,客挾,客挾,囚,,宮迫,,主挾，宮迫,辰迫,,,,主挾，辰迫,宮迫,宮迫,,,,,客挾,,,,,,主挾,,,,,,,".split(","),
+        dd = {"陽":",,辰迫,,,,,辰迫,囚,辰迫,囚,辰迫,,,,辰迫,囚,囚,客挾,,,,,,,,,,,,,,,,,,,客挾,囚,辰迫,客挾,客挾,囚,,宮迫,,主挾，宮迫,辰迫,,,,主挾，辰迫,宮迫,宮迫,,,,,客挾,,,,,,主挾,,,,,,,".split(","),
               "陰":",辰迫,,,,,,辰迫,囚,辰迫,囚,辰迫,,,,辰迫,囚,囚,,關客,,關客,,,宮迫,,,,,,,,,,,,辰迫,囚,,,,,囚,辰迫,宮迫,,宮迫,辰迫,,,,辰擊,宮迫,辰迫,,,,,,,,,,,,,客目掩,,,,,".split(",")}
         return dict(zip(range(1,73), dd.get(yy))).get(k)
+    
+    def fivegenerals(self, ji):
+        if self.skyeyes_des(ji)[1] == "":
+            return "五將發"
+        else:
+            return "五將不發"
     
     def skyeyes(self, ji):   
         skyeyes_dict = {
@@ -861,6 +867,7 @@ class Taiyi():
                 "八門分佈":self.geteightdoors(ji),
                 "八宮旺衰":self.gong_wangzhuai(self.jq(self.year, self.month, self.day, self.hour)),
                 "推三門具不具":self.threedoors(ji),
+                "推五將發不發":self.fivegenerals(ji),
                 "推多少以占勝負":self.suenwl(ji),
                 "推雷公入水":self.leigong(ji),
                 "推臨津問道":self.lijin(),
