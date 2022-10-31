@@ -634,7 +634,6 @@ class Taiyi():
             year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
         return year_chin
     
-    
     #君基
     def kingbase(self, ji):
         kb = (self.accnum(ji) +250) % 360  / 30
@@ -642,7 +641,6 @@ class Taiyi():
         if kb_v == 0 or kb_v ==None:
             kb_v = "中"
         return kb_v
-    
     #臣基
     def officerbase(self, ji):
         return dict(zip(range(1,73), cycle(list("巳巳午午午未未未申申酉酉戌戌戌亥亥亥子子子丑丑寅寅寅卯卯卯辰辰辰巳")))).get(self.kook(ji).get("數"))
@@ -692,11 +690,10 @@ class Taiyi():
         if fv == 0 or fv == None:
             fv = "中"
         return fv
-    
     #八門分佈
     def geteightdoors(self, ji):
         ty = self.ty(ji)
-        new_ty_order = new_list([8,3,4,9,2,7,6,1], ty)
+        new_ty_order = self.new_list([8,3,4,9,2,7,6,1], ty)
         doors  = self.new_list(self.door, self.eight_door(ji))
         return dict(zip(new_ty_order, doors))
 
@@ -718,7 +715,6 @@ class Taiyi():
     def cloud(self, ji):
         hg_num = self.home_general(ji)
         return self.new_list(list(reversed(self.gong1)), "寅")[hg_num]
-
     #推猛虎相拒
     def tiger(self, ji):
         ty= self.ty(ji)
@@ -733,7 +729,6 @@ class Taiyi():
     def returnarmy(self,ji):
         ag_num = self.away_general(ji)
         return self.new_list(self.gong1, "寅")[ag_num]
-    
     #推多少以占勝負  客以多筭臨少主人敗客以少筭臨多主人勝也
     def suenwl(self, ji):
         homecal = self.home_cal(ji)
@@ -744,14 +739,12 @@ class Taiyi():
             return "客以多筭臨少，主人敗也。"
         else:
             return "主客旗鼓相當。"
-
     #陽九
     def yangjiu(self):
         getyj = (self.year + 12607)%4560%456//10
         if getyj>12:
           getyj = getyj %12
         return dict(zip(range(0,11),self.Zhi)).get(getyj)
-    
     #陽九
     def baliu(self):
         getbl = (self.year + 12607)%4320%288//24
@@ -829,7 +822,6 @@ class Taiyi():
            eightdoor_zhishi = eightdoor_zhishi + 1
         elif eightdoor_zhishi == 0:
             eightdoor_zhishi = 1
-        
         #ty_gong = self.ty()
         return dict(zip(list(range(1,9)),self.door)).get(eightdoor_zhishi)
    
