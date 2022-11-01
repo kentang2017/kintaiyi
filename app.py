@@ -69,7 +69,7 @@ with pan:
                     gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
                     ch = chistory.get(y)
                     if ch == None:
-                       Ch = ""
+                       ch = ""
                     r = list(map(lambda x:[x, x+25]  ,list(range(0,3000)[0::25])))
                     tys = "".join([ts[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ts) / 25+1))])
                     #try:
