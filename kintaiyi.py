@@ -88,7 +88,7 @@ class Taiyi():
     #推五將發不發
     def fivegenerals(self, ji):
         hg = self.home_general(ji) 
-        if self.skyeyes_des(ji) == "":
+        if self.skyeyes_des(ji) == "" and hg != 5:
             return "五將發", hg
         elif hg == 5:
             return "主將不出中門而杜塞"
