@@ -834,12 +834,21 @@ class Taiyi():
         fb = self.flybird(ji)
         hg = self.home_general(ji)
         ag = self.away_general(ji)
+        hvg = self.home_vgen(ji)
+        avg = self.away_vgen(ji)
         ty = self.ty(ji)
         wc = self.gong2.get(self.skyeyes(ji))
         sj = self.gong2.get(self.sf(ji))
-        
-        return fb, hg, ag, ty, wc, sj
-    
+        if fb == ty:
+            return "太乙所在宮有風雲飛鳥等來衝格迫擊太乙者，大敗之兆。"
+        elif fb == wc:
+            return "從主目上去擊客，主勝"
+        elif fb == sj:
+            return "從客目上去擊主，客勝"
+        elif fb == hg or fb == hvg:
+            return "飛鳥扶主人陣者，主人勝"
+        elif fb = ag or fb == avg:
+            return "飛鳥扶客人陣者，客人勝"
     #五行
     def wuxing(self, ji):
         f = self.accnum(ji) // 5
