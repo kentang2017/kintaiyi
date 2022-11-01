@@ -87,8 +87,9 @@ class Taiyi():
         return dict(zip(range(1,73), dd.get(yy))).get(k)
     #推五將發不發
     def fivegenerals(self, ji):
-        if self.skyeyes_des(ji) == "" or self.home_general(ji) == 5:
-            return "五將發"
+        hg = self.home_general(ji) 
+        if self.skyeyes_des(ji) == "" or :
+            return "五將發", hg
         else:
             return "五將不發"
     
