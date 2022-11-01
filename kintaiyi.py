@@ -738,7 +738,7 @@ class Taiyi():
             return guan + "得客，主勝"
         elif relation == "尅我":
             return guan + "得主人，客勝"
-        elif relation == "比和" or "生我" or "我生"
+        elif relation == "比和" or "生我" or "我生":
             return guan + relation + "，和"
     #推八門分佈
     def geteightdoors(self, ji):
