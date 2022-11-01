@@ -42,6 +42,13 @@ class Taiyi():
         self.gong1 = list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥")
         #self.gong2 = dict(zip(list("亥子丑艮寅卯辰巽巳午未坤申酉戌乾"), [8,8,3,3,4,4,9,9,2,2,7,7,6,6,1,1]))
   
+    def Ganzhiwuxing(self, gangorzhi):
+        ganzhiwuxing = dict(zip(list(map(lambda x: tuple(x),"甲寅乙卯震巽,丙巳丁午離,壬亥癸子坎,庚申辛酉乾兌,未丑戊己未辰戌艮坤".split(","))), list("木火水金土")))
+        return self.multi_key_dict_get(ganzhiwuxing, gangorzhi)
+
+    def find_wx_relation(self, zhi1, zhi2):
+        return self.multi_key_dict_get(wuxing_relation_2, self.Ganzhiwuxing(zhi1)+self.Ganzhiwuxing(zhi2))
+
     #計神
     def jigod(self, ji):
         return dict(zip(self.Zhi, self.new_list(list(reversed(self.Zhi)), "寅"))).get(self.taishui(ji))
