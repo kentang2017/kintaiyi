@@ -17,6 +17,9 @@ def jiazi():
     Gan, Zhi = '甲乙丙丁戊己庚辛壬癸','子丑寅卯辰巳午未申酉戌亥'
     return list(map(lambda x: "{}{}".format(Gan[x % len(Gan)],Zhi[x % len(Zhi)]), list(range(60))))
 
+wuxing = "火水金火木金水土土木,水火火金金木土水木土,火火金金木木土土水水,火木水金木水土火金土,木火金水水木火土土金"
+wuxing_relation = dict(zip(list(map(lambda x: tuple(re.findall("..",x)), wuxing.split(","))), "尅我,我尅,比和,生我,我生".split(",")))
+
 class Taiyi():
     def __init__(self, year, month, day, hour, minute):
         self.year, self.month, self.day, self.hour, self.minute = year, month, day, hour, minute
