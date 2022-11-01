@@ -739,7 +739,6 @@ class Taiyi():
         elif relation == "尅我":
             return guan + "得主人，客勝"
         elif relation == "比和" or "生我" or "我生":
-            return guan + relation + "，和"
     #推八門分佈
     def geteightdoors(self, ji):
         ty = self.ty(ji)
@@ -829,6 +828,17 @@ class Taiyi():
         if fv == 0 or fv ==None:
             fv = 5
         return fv
+    #推太乙風雲飛鳥助戰法
+    def flybird_wl(self, ji):
+        fb = self.flybird(ji)
+        hg = self.home_general(ji)
+        ag = self.away_general(ji)
+        ty = self.ty(ji)
+        wc = self.skyeyes(ji)
+        sj = self.sf(ji)
+        
+        return fb, hg, ag, ty, wc, sj
+    
     #五行
     def wuxing(self, ji):
         f = self.accnum(ji) // 5
@@ -921,6 +931,7 @@ class Taiyi():
                 "推猛虎相拒":self.tiger(ji),
                 "推白龍得雲":self.dragon(ji),
                 "推回軍無言":self.returnarmy(ji),
+                "推太乙風雲飛鳥助戰法":self.flybird_wl(ji), 
                 "陽九":self.yangjiu(),
                 "百六":self.baliu(),
                 "太乙":self.ty(ji),
