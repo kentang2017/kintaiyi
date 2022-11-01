@@ -482,7 +482,7 @@ class Taiyi():
                    "癸":{"朝":"太乙", "暮":"太衝"}, "壬":{"朝":"太衝", "暮":"太乙"}, 
                    "辛":{"朝":"功曹", "暮":"勝光"}}
            general = "天乙,螣蛇,朱雀,六合,勾陳,青龍,天空,白虎,太常,玄武,太陰,天后".split(",")
-           tiany = self.skyyi(ji)
+           tiany = self.skyyi(ji).replace("兌", "酉").replace("坎", "子").replace("震","卯").replace("離","午").replace("艮", "丑")
            kook = self.kook(ji).get("文")[0]
            if kook == "陽":
                 return dict(zip(self.new_list(self.gong1, tiany) , general))
