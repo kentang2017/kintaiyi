@@ -847,7 +847,7 @@ class Taiyi():
             return "從客目上去擊主，客勝"
         elif fb == hg or fb == hvg:
             return "飛鳥扶主人陣者，主人勝"
-        elif fb = ag or fb == avg:
+        elif fb == ag or fb == avg:
             return "飛鳥扶客人陣者，客人勝"
     #五行
     def wuxing(self, ji):
