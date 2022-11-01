@@ -754,10 +754,16 @@ class Taiyi():
     def suenwl(self, ji):
         homecal = self.home_cal(ji)
         awaycal = self.away_cal(ji)
-        if awaycal < homecal:
+        hg = self.home_general(ji)
+        ag = self.away_general(ji)
+        if awaycal < homecal and hg != 5:
             return "客以少筭臨多，主人勝也。"
-        elif awaycal > homecal:
+        elif awaycal < homecal and hg == 5:
+            return "雖客以少筭臨多，惟主人不出中門，主客俱不利，和。"
+        elif awaycal > homecal and ag != 5:
             return "客以多筭臨少，主人敗也。"
+        elif awaycal > homecal and ag == 5:
+            return "雖客以多筭臨少，惟客人不出中門，主客俱不利，和。"
         else:
             return "主客旗鼓相當。"
     #陽九
