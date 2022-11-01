@@ -42,12 +42,11 @@ class Taiyi():
     #計神
     def jigod(self, ji):
         return dict(zip(self.Zhi, self.new_list(list(reversed(self.Zhi)), "寅"))).get(self.taishui(ji))
-        
     #太歲
     def taishui(self, ji):
         gz =  self.gangzhi()
         return {0: gz[0][1], 1:gz[1][1], 2:gz[2][1], 3:gz[3][1], 4:gz[4][1], 5: gz[0][1],}.get(ji)
-
+    #中國統治者在位年
     def kingyear(self):
         def closest(lst, K): 
             return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))] 
@@ -59,7 +58,6 @@ class Taiyi():
         preiodname = data[6::7]
         idx = y.index(closest(y, self.lunar_date_d().get("年")))
         year = year = self.lunar_date_d().get("年")
-
         if year < 1900:
             year = year - y[idx] +1 
             if year == 1:
@@ -79,21 +77,19 @@ class Taiyi():
             pn = "{}{}年".format(preiodname[idx], an2cn(year))
             kn = "{}{}{}".format(period[idx], king[idx], king_realname[idx])
             return  "{} {}".format(kn, pn)
- 
+    #文昌處境
     def skyeyes_des(self, ji):
         yy = self.kook(ji).get("文")[0]
         k = self.kook(ji).get("數")
         dd = {"陽":",,辰迫,,,,,辰迫,囚,辰迫,囚,辰迫,,,,辰迫,囚,囚,客挾,,,,,,,,,,,,,,,,,,,客挾,囚,辰迫,客挾,客挾,囚,,宮迫,,主挾，宮迫,辰迫,,,,主挾，辰迫,宮迫,宮迫,,,,,客挾,,,,,,主挾,,,,,,,".split(","),
               "陰":",辰迫,,,,,,辰迫,囚,辰迫,囚,辰迫,,,,辰迫,囚,囚,,關客,,關客,,,宮迫,,,,,,,,,,,,辰迫,囚,,,,,囚,辰迫,宮迫,,宮迫,辰迫,,,,辰擊,宮迫,辰迫,,,,,,,,,,,,,客目掩,,,,,".split(",")}
         return dict(zip(range(1,73), dd.get(yy))).get(k)
-
-    
+    #文昌(天目)
     def skyeyes(self, ji):   
         skyeyes_dict = {
             "陽" : list("申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤申酉戌乾乾亥子丑艮寅卯辰巽巳午未坤坤"),
             "陰" : list("寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮寅卯辰巽巽巳午未坤申酉戌乾亥子丑艮艮")}
-        return dict(zip(range(1,73),skyeyes_dict.get(self.kook(ji).get("文")[0]))).get(int(self.kook(ji).get("數")))
-            
+        return dict(zip(range(1,73),skyeyes_dict.get(self.kook(ji).get("文")[0]))).get(int(self.kook(ji).get("數"))) 
     #合神
     def hegod(self, ji):
         #findji = {"陽":list("寅丑子亥戌酉申未午巳辰卯"), "陰":list("申未午巳辰卯寅丑子亥戌酉")}.get(self.kook(ji).get("文")[0])
@@ -120,8 +116,7 @@ class Taiyi():
     def Ganzhiwuxing(self, gangorzhi):
         ganzhiwuxing = dict(zip(list(map(lambda x: tuple(x),"甲寅乙卯巽,丙巳丁午,壬亥癸子,庚申辛酉乾,未丑戊己未辰戌坤艮".split(","))), list("木火水金土")))
         return self.multi_key_dict_get(ganzhiwuxing, gangorzhi)
-    
-     #分干支
+    #分干支
     def minutes_jiazi_d(self):
         t = []
         for h in range(0,24):
@@ -224,7 +219,6 @@ class Taiyi():
             return bbf[0]
         else:
             return bf[0]
-    
 #%% 積年
     def accnum(self, ji):
         if ji == 0: #年計
@@ -339,7 +333,7 @@ class Taiyi():
             return "{}{}元".format(self.getepoch(ji), self.multi_key_dict_get(j, self.gangzhi()[3]))
         else:
             return "第{}紀第{}{}元".format(self.getepoch(ji).get("紀") ,self.getepoch(ji).get("元"), self.getyuan(ji))
-       
+    #太乙   
     def ty(self, ji):
         arr = np.arange(10) 
         repetitions = 3
@@ -347,7 +341,6 @@ class Taiyi():
         arrangement_r = list(reversed(arrangement))
         yy_dict = {"陽": dict(zip(range(1,73), list(itertools.chain.from_iterable([list(arrangement)[3:15]+ list(arrangement)[18:]] * 3)))),  "陰": dict(zip(range(1,73), (list(arrangement_r)[:12] + list(arrangement_r)[15:][:-3]) * 3))}
         return yy_dict.get(self.kook(ji).get("文")[0]).get(self.kook(ji).get("數"))  
-    
     #始擊
     def sf(self, ji):
         wc = self.skyeyes(ji)
@@ -380,7 +373,7 @@ class Taiyi():
         start1 = len(start[:start.index(ts)+1])
         start2 = self.new_list(self.gong1, wc)[start1-1]
         return  start2
-
+    #主算
     def home_cal(self, ji):
         num = self.num
         lnum = [8, 8, 3,  3, 4,4, 9, 9, 2, 2, 7, 7, 6, 6, 1, 1]
@@ -407,19 +400,19 @@ class Taiyi():
             return sum(wc_order[: wc_order.index(ty)])
         elif wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and ty == wc_num:
             return ty
-        
+    #主大將
     def home_general(self, ji):
         home_g = self.home_cal(ji)  % 10
         if home_g == 0:
             home_g = 5
         return home_g
-    
+    #主參將
     def home_vgen(self, ji):
         home_vg = self.home_general(ji) *3 % 10
         if home_vg ==0:
             home_vg = 5
         return home_vg
-        
+    #客算
     def away_cal(self, ji):
         num = self.num
         lnum = [8, 8, 3,  3, 4,4, 9, 9, 2, 2, 7, 7, 6, 6, 1, 1]
@@ -449,19 +442,19 @@ class Taiyi():
             return sum(sf_order[: sf_order.index(ty)])
         elif sf_jc !=1 and ty_jc !=1 and sf_jc1 !=1 and sf_num == ty:
             return ty
-    
+    #客將
     def away_general(self, ji):
         away_g = self.away_cal(ji)  % 10
         if away_g == 0:
             away_g = 5
         return away_g
-    
+    #客參
     def away_vgen(self, ji):
         away_vg = self.away_general(ji) *3 % 10
         if away_vg == 0:
             away_vg = 5
         return away_vg
-    
+    #十二神將
     def shensha(self, ji):
         if ji == 3:
            tz = "登明,河魁,從魁,傳送,小吉,勝光,太乙,天罡,太衝,功曹,大吉,神後".split(",")
@@ -485,7 +478,7 @@ class Taiyi():
            #return dict(zip(self.new_list(self.Zhi,tianyi),general))
         else:
            return "太乙時計才顯示"
-        
+    #定算
     def set_cal(self, ji):
         num = self.num
         lnum = [8, 8, 3,  3, 4,4, 9, 9, 2, 2, 7, 7, 6, 6, 1, 1]
@@ -539,19 +532,19 @@ class Taiyi():
                    34: "下和", 37: "雜重陽", 38: "下和", 39: "純陽"}
         t.append(numdict.get(num, None))
         return [i for i in t if i is not None]
-    
+    #定大將
     def set_general(self, ji):
         set_g = self.set_cal(ji)  % 10
         if set_g == 0:
             set_g = 5
         return set_g
-    
+    #定參將
     def set_vgen(self, ji):
         set_vg =  self.set_general(ji) *3 % 10
         if set_vg == 0:
             set_vg = 5
         return set_vg
-    
+    #十六宮
     def sixteen_gong1(self, ji):
         dict1 = [{self.skyeyes(ji):"昌"},{self.hegod(ji):"合"},{self.sf(ji):"始"},
                 {self.se(ji):"目"}, {self.kingbase(ji):"君"}, {self.officerbase(ji):"臣"}, {self.pplbase(ji):"民"},
@@ -574,7 +567,7 @@ class Taiyi():
         rrres = [re.findall("..", i) for i in rres]
         r = str(res.keys())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
         return {r[i]:rrres[i] for i in range(0,16)}
-    
+    #十六宮之二
     def sixteen_gong(self, ji):
         dict1 = [{self.skyeyes(ji):"文昌"},{self.taishui(ji):"太歲"},{self.hegod(ji):"合神"},{self.sf(ji):"始擊"},
                  {self.se(ji):"定目"}, {self.kingbase(ji):"君基"}, {self.officerbase(ji):"臣基"}, {self.pplbase(ji):"民基"},
@@ -618,7 +611,6 @@ class Taiyi():
                     except TypeError:
                         pass
         return res 
-    
     #太歲禽星
     def year_chin(self):
         chin_28_stars_code = dict(zip(range(1,29), self.su))
@@ -639,7 +631,6 @@ class Taiyi():
                 get_year_chin_number = int(28)
             year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
         return year_chin
-    
     #君基
     def kingbase(self, ji):
         kb = (self.accnum(ji) +250) % 360  / 30
@@ -717,6 +708,13 @@ class Taiyi():
             return "客將客參不出中門，杜塞無門"
         else:
             return "五將不發"
+    #推主客相闗法
+    def wc_n_sj(self, ji):
+        wc = self.skyeyes(ji)
+        sj = self.sf(ji)
+        
+        
+        return 
     #推八門分佈
     def geteightdoors(self, ji):
         ty = self.ty(ji)
@@ -856,7 +854,7 @@ class Taiyi():
             eightdoor_zhishi = 1
         #ty_gong = self.ty()
         return dict(zip(list(range(1,9)),self.door)).get(eightdoor_zhishi)
-   
+    #推二十八星宿
     def starhouse(self):
         numlist = [13,9,16,5,5,17,10,24,7,11,25,18,17,10,17,13,14,11,16,1,9,30,3,14,7,19,19,18]
         alljq = self.jieqi
