@@ -85,15 +85,7 @@ class Taiyi():
         dd = {"陽":",,辰迫,,,,,辰迫,囚,辰迫,囚,辰迫,,,,辰迫,囚,囚,客挾,,,,,,,,,,,,,,,,,,,客挾,囚,辰迫,客挾,客挾,囚,,宮迫,,主挾，宮迫,辰迫,,,,主挾，辰迫,宮迫,宮迫,,,,,客挾,,,,,,主挾,,,,,,,".split(","),
               "陰":",辰迫,,,,,,辰迫,囚,辰迫,囚,辰迫,,,,辰迫,囚,囚,,關客,,關客,,,宮迫,,,,,,,,,,,,辰迫,囚,,,,,囚,辰迫,宮迫,,宮迫,辰迫,,,,辰擊,宮迫,辰迫,,,,,,,,,,,,,客目掩,,,,,".split(",")}
         return dict(zip(range(1,73), dd.get(yy))).get(k)
-    #推五將發不發
-    def fivegenerals(self, ji):
-        hg = self.home_general(ji) 
-        if self.skyeyes_des(ji) == "" and hg != 5:
-            return "五將發", hg
-        elif hg == 5:
-            return "主將不出中門而杜塞"
-        else:
-            return "五將不發"
+
     
     def skyeyes(self, ji):   
         skyeyes_dict = {
@@ -712,6 +704,15 @@ class Taiyi():
             return "三門不具"
         else:
             return "三門具"
+    #推五將發不發
+    def fivegenerals(self, ji):
+        hg = self.home_general(ji) 
+        if self.skyeyes_des(ji) == "" and hg != 5:
+            return "五將發"
+        elif hg == 5:
+            return "主將不出中門而杜塞"
+        else:
+            return "五將不發"
     #推八門分佈
     def geteightdoors(self, ji):
         ty = self.ty(ji)
