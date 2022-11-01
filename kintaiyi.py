@@ -722,9 +722,9 @@ class Taiyi():
     def wc_n_sj(self, ji):
         wc = self.skyeyes(ji)
         sj = self.sf(ji)
-        
-        
-        return 
+        wc_f = self.Ganzhiwuxing(wc)
+        sj_f = self.Ganzhiwuxing(sj)
+        return wc_f, sj_f
     #推八門分佈
     def geteightdoors(self, ji):
         ty = self.ty(ji)
@@ -896,6 +896,7 @@ class Taiyi():
                 "八宮旺衰":self.gong_wangzhuai(self.jq(self.year, self.month, self.day, self.hour)),
                 "十二月將": self.shensha(ji),
                 "推三門具不具":self.threedoors(ji),
+                "推主客相闗法":self.wc_n_sj(ji),
                 "推五將發不發":self.fivegenerals(ji),
                 "推多少以占勝負":self.suenwl(ji),
                 "推雷公入水":self.leigong(ji),
