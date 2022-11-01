@@ -726,7 +726,20 @@ class Taiyi():
         sj = self.sf(ji)
         wc_f = self.Ganzhiwuxing(wc)
         sj_f = self.Ganzhiwuxing(sj)
-        return wc_f, sj_f, self.multi_key_dict_get(nayin_wuxing, self.gangzhi()[3])
+        hguan = self.multi_key_dict_get(nayin_wuxing, self.gangzhi()[3])
+        if hguan == wc_f:
+            guan = "主關"
+        elif hguan == sj_f:
+            guan = "客關"
+        else:
+            guan = "關"
+        relation = find_wx_relation(wc_f, sj_f)
+        if relation == "我尅":
+            return guan + "得客，主勝"
+        elif relation == "尅我":
+            return guan + "得主人，客勝"
+        elif relation == "比和" or "生我" or "我生"
+            return guan + relation + "，和"
     #推八門分佈
     def geteightdoors(self, ji):
         ty = self.ty(ji)
