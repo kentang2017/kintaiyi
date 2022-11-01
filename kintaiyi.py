@@ -707,10 +707,13 @@ class Taiyi():
     #推五將發不發
     def fivegenerals(self, ji):
         hg = self.home_general(ji) 
-        if self.skyeyes_des(ji) == "" and hg != 5:
+        ag = self.away_general(ji)
+        if self.skyeyes_des(ji) == "" and hg != 5 and ag != 5:
             return "五將發"
         elif hg == 5:
-            return "主將不出中門而杜塞"
+            return "主將主參不出中門，杜塞無門"
+        elif ag == 5:
+            return "客將客參不出中門，杜塞無門"
         else:
             return "五將不發"
     #推八門分佈
