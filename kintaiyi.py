@@ -49,7 +49,7 @@ class Taiyi():
         return self.multi_key_dict_get(ganzhiwuxing, gangorzhi)
 
     def find_wx_relation(self, zhi1, zhi2):
-        return self.multi_key_dict_get(wuxing_relation_2, self.Ganzhiwuxing(zhi1)+self.Ganzhiwuxing(zhi2))
+        return self.multi_key_dict_get(wuxing_relation, self.Ganzhiwuxing(zhi1)+self.Ganzhiwuxing(zhi2))
 
     #計神
     def jigod(self, ji):
