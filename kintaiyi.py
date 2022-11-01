@@ -90,6 +90,8 @@ class Taiyi():
         hg = self.home_general(ji) 
         if self.skyeyes_des(ji) == "":
             return "五將發", hg
+        elif hg == 5:
+            return "主將不出中門而杜塞"
         else:
             return "五將不發"
     
