@@ -414,10 +414,13 @@ class Taiyi():
             return ty
     #主大將
     def home_general(self, ji):
-        home_g = self.home_cal(ji)  % 10
-        if home_g == 0:
-            home_g = 5
-        return home_g
+        if self.home_cal(ji) < 10:
+           return self.home_cal(ji)
+        else:
+           home_g = self.home_cal(ji)  % 10
+           if home_g == 0:
+              home_g = 5
+           return home_g
     #主參將
     def home_vgen(self, ji):
         home_vg = self.home_general(ji) *3 % 10
