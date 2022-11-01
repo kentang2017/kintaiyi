@@ -849,6 +849,8 @@ class Taiyi():
             return "飛鳥扶主人陣者，主人勝"
         elif fb == ag or fb == avg:
             return "飛鳥扶客人陣者，客人勝"
+        else:
+            return "飛鳥方向不明確，和"
     #五行
     def wuxing(self, ji):
         f = self.accnum(ji) // 5
