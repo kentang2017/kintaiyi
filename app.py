@@ -53,7 +53,7 @@ with pan:
     with st_capture(output5.code):
         col1, col2 = st.columns(2)
         with col1:
-            #try:
+            try:
                 if st.button('手動'):
                     p = str(idate).split("/")
                     pp = str(itime).replace("：",":").split(":")
@@ -101,8 +101,8 @@ with pan:
                     expander.write(str(ttext))
                 else:
                     st.empty()
-            #except ValueError:
-            #    st.empty()
+            except ValueError:
+                st.empty()
         with col2:
              if st.button('即時'):
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
