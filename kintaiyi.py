@@ -733,7 +733,7 @@ class Taiyi():
             guan = "客關"
         else:
             guan = "關"
-        relation = self.find_wx_relation(wc_f, sj_f)
+        relation = self.multi_key_dict_get(wuxing_relation_2, wc_f+sj_f)
         if relation == "我尅":
             return guan + "得客，主勝"
         elif relation == "尅我":
