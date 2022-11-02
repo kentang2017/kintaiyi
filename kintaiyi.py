@@ -362,7 +362,7 @@ class Taiyi():
             return sf
         elif wc != jd:
             start = self.new_list(self.gong1, jd)
-            start1 = len(start[0:start.index("艮")+1])
+            start1 = len(start[0:start.index(wc)+1])
             start2 = self.new_list(self.gong1, wc)[start1-1]
             return  start2
     
