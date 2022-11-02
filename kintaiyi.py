@@ -355,16 +355,8 @@ class Taiyi():
         return yy_dict.get(self.kook(ji).get("文")[0]).get(self.kook(ji).get("數"))  
     #始擊
     def sf(self, ji):
-        wc = self.skyeyes(ji)
-        jd = self.jigod(ji)
-        if wc == jd:
-            sf = "艮"
-            return sf
-        elif wc != jd:
-            start = self.new_list(self.gong1, jd)
-            start1 = len(start[0:start.index(wc)+1])
-            start2 = self.new_list(self.gong1, wc)[start1-1]
-            return  start2
+        sf_list = list("坤戌亥丑寅辰巳坤酉乾丑寅辰午坤酉亥子艮辰巳未申戌亥艮卯巽未丑戌子艮卯巳午坤戌亥丑寅辰巳坤酉乾丑寅辰午坤酉亥子艮辰巳未申戌亥艮卯巽未丑戌子艮卯巳午")
+        return dict(zip(range(1,73),sf_list)).get(int(self.kook(ji).get("數")))
     
     def sf_num(self, ji):
         sf = self.sf(ji)
