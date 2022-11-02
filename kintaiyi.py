@@ -408,11 +408,10 @@ class Taiyi():
     def home_general(self, ji):
         if self.home_cal(ji) == 1:
            return self.ty(ji)
-        else:
-           home_g = self.home_cal(ji)  % 10
-           if home_g == 0:
-              home_g = 5
-           return home_g
+        elif self.home_cal(ji) == (5,15,25,35,45,55):
+           return 5
+        else: 
+           return self.home_cal(ji) // 10
     #主參將
     def home_vgen(self, ji):
         home_vg = self.home_general(ji) *3 % 10
@@ -451,13 +450,12 @@ class Taiyi():
             return ty
     #客將
     def away_general(self, ji):
-        if self.away_cal(ji) ==1:
+        if self.away_cal(ji) == 1:
            return self.ty(ji)
-        else:
-           away_g = self.away_cal(ji)  % 10
-           if away_g == 0:
-              away_g = 5
-           return away_g
+        elif self.away_cal(ji) == (5,15,25,35,45,55):
+           return 5
+        else: 
+           return self.away_cal(ji) // 10
     #客參
     def away_vgen(self, ji):
         away_vg = self.away_general(ji) *3 % 10
