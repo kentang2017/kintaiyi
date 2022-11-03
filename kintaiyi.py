@@ -777,7 +777,8 @@ class Taiyi():
     #推回軍無言
     def returnarmy(self,ji,tn):
         ag_num = self.away_general(ji,tn)
-        return self.new_list(self.gong1, "寅")[ag_num]
+        return ag_num
+        #return self.new_list(self.gong1, "寅")[ag_num]
     #推多少以占勝負  客以多筭臨少主人敗客以少筭臨多主人勝也
     def suenwl(self, ji, tn):
         homecal = self.home_cal(ji,tn)
