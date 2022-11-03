@@ -460,7 +460,7 @@ class Taiyi():
         elif self.away_cal(ji,tn) > 10:
            return self.away_cal(ji,tn) // 10
         else:
-           return 5
+           return 1
     
     def away_vgen(self, ji,tn):
         away_vg = self.away_general(ji,tn) *3 % 10
