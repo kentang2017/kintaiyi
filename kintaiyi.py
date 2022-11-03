@@ -411,10 +411,15 @@ class Taiyi():
     def home_general(self, ji,tn):
         if self.home_cal(ji,tn) == 1:
            return self.ty(ji,tn)
-        elif self.home_cal(ji,tn) == (5,15,25,35,45,55):
+        elif self.home_cal(ji,tn) == 5 or 15  or 25  or 35  or 45  or 55:
            return 5
-        else: 
+        elif self.home_cal(ji,tn) < 10:
+           return self.home_cal(ji,tn) 
+        elif self.home_cal(ji,tn) > 10:
            return self.home_cal(ji,tn) // 10
+        else:
+           return 1
+      
     #主參將
     def home_vgen(self, ji,tn):
         home_vg = self.home_general(ji,tn) *3 % 10
@@ -448,12 +453,11 @@ class Taiyi():
             return sum(sf_order[: sf_order.index(ty)])
         elif sf_jc !=1 and ty_jc !=1 and sf_jc1 !=1 and sf_num == ty:
             return ty
-    
     #客將
     def away_general(self, ji,tn):
         if self.away_cal(ji,tn) == 1:
            return self.gong.get(self.sf(ji,tn))
-        elif self.away_cal(ji,tn) == (5,15,25,35,45,55):
+        elif self.away_cal(ji,tn) == 5 or 15  or 25  or 35  or 45  or 55:
            return 5
         elif self.away_cal(ji,tn) < 10:
            return self.away_cal(ji,tn) 
