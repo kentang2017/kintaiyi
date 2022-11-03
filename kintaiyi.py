@@ -374,7 +374,7 @@ class Taiyi():
            return dict(zip(list(range(1,29)),self.new_list(self.su, sf_su))).get(total)
     #定目
     def se(self, ji,tn):
-        wc,hg,ts = self.skyeyes(ji,tn),self.hegod(ji),self.taishui(ji,tn)
+        wc,hg,ts = self.skyeyes(ji,tn),self.hegod(ji),self.taishui(ji)
         start = self.new_list(self.gong1, hg)
         start1 = len(start[:start.index(ts)+1])
         start2 = self.new_list(self.gong1, wc)[start1-1]
