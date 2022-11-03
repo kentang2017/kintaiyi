@@ -276,7 +276,7 @@ class Taiyi():
                 dun = "陰遁"
             else:
                 dun = "陽遁"
-        three_year = {0:"理天", 1:"理地", 2:"理人"}.get(dict(zip(range(1,73), [[0,1,2] * 24])).get(k))
+        three_year = {0:"理天", 1:"理地", 2:"理人"}.get(dict(zip(list(range(1,73)), [0,1,2] * 24)).get(k))
         return {"文":"{}{}局".format(dun, an2cn(k)), "數":k, "年":three_year}
     
     def getyuan(self, ji):
