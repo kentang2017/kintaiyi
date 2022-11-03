@@ -544,14 +544,14 @@ class Taiyi():
         t.append(numdict.get(num, None))
         return [i for i in t if i is not None]
     #定大將
-    def set_general(self, ji):
-        set_g = self.set_cal(ji)  % 10
+    def set_general(self, ji,tn):
+        set_g = self.set_cal(ji,tn)  % 10
         if set_g == 0:
             set_g = 5
         return set_g
     #定參將
-    def set_vgen(self, ji):
-        set_vg =  self.set_general(ji) *3 % 10
+    def set_vgen(self, ji,tn):
+        set_vg =  self.set_general(ji,tn) *3 % 10
         if set_vg == 0:
             set_vg = 5
         return set_vg
@@ -604,7 +604,7 @@ class Taiyi():
     #九宮
     def nine_gong(self, ji, tn):
         dict1 = [{self.home_general(ji,tn):"主將"},{self.home_vgen(ji,tn):"主參"},{self.away_general(ji,tn):"客將"},
-                 {self.away_vgen(ji,tn):"客參"},{self.set_general(ji):"定將"},{self.set_vgen(ji):"定參"},
+                 {self.away_vgen(ji,tn):"客參"},{self.set_general(ji,tn):"定將"},{self.set_vgen(ji, tn):"定參"},
                  {self.ty(ji,tn):"太乙"}, {self.threewind(ji):"三風"},  {self.fivewind(ji, tn):"五風"},
                  {self.eightwind(ji, tn):"八風"},  {self.flybird(ji,tn):"飛鳥"},{self.bigyo(ji, tn):"大游"},
                  {self.smyo(ji, tn):"小游"},]
@@ -938,7 +938,7 @@ class Taiyi():
                 "客算":[self.away_cal(ji,tn), self.cal_des(self.away_cal(ji,tn))],
                 "客將":self.away_general(ji,tn),
                 "客參":self.away_vgen(ji,tn),
-                "定算":[self.set_cal(ji), self.cal_des(self.set_cal(ji))],
+                "定算":[self.set_cal(ji,tn), self.cal_des(self.set_cal(ji,tn))],
                 "合神":self.hegod(ji,tn),
                 "計神":self.jigod(ji,tn),
                 "定目":self.se(ji,tn),
@@ -982,7 +982,7 @@ class Taiyi():
                 <p><span style="font-size:large"><strong>'''+self.jiyuan(ji,tn)+"  "+self.kook(ji, tn).get("文")+'''<br />
     			主算:'''+str(self.home_cal(ji,tn))+"".join(self.cal_des(self.home_cal(ji,tn)))+'''<br />
     			客算:'''+str(self.away_cal(ji,tn))+"".join(self.cal_des(self.away_cal(ji,tn)))+'''<br />
-    			定算:'''+str(self.set_cal(ji))+"".join(self.cal_des(self.set_cal(ji)))+'''</strong></span></p>
+    			定算:'''+str(self.set_cal(ji,tn))+"".join(self.cal_des(self.set_cal(ji,tn)))+'''</strong></span></p>
     			</td>
     		</tr>
     		<tr>
