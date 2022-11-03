@@ -737,6 +737,8 @@ class Taiyi():
         sj = self.sf(ji,tn)
         wc_f = self.Ganzhiwuxing(wc)
         sj_f = self.Ganzhiwuxing(sj)
+        hg = self.home_general(ji, tn)
+        ty = self.ty(ji, tn)
         hguan = self.multi_key_dict_get(nayin_wuxing, self.gangzhi()[3])
         if hguan == wc_f:
             guan = "主關"
@@ -745,8 +747,10 @@ class Taiyi():
         else:
             guan = "關"
         relation = self.multi_key_dict_get(wuxing_relation_2, wc_f+sj_f)
-        if relation == "我尅":
-            return guan + "得客，主勝"
+        if relation == "我尅" and ty == hg: 
+            return "主將囚，不利主"
+        elif relation == "我尅" and ty != hg: 
+            return  "主尅客，主勝"
         elif relation == "尅我":
             return guan + "得主人，客勝"
         elif relation == "比和" or "生我" or "我生":
