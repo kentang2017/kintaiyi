@@ -26,6 +26,7 @@ class Taiyi():
     def __init__(self, year, month, day, hour, minute):
         self.year, self.month, self.day, self.hour, self.minute = year, month, day, hour, minute
         self.taiyiyear  = 10153917
+        #太乙統宗 10153917 , 太乙金鏡 1936557, 太乙淘金歌 10154193
         self.jieqi = re.findall('..', '春分清明穀雨立夏小滿芒種夏至小暑大暑立秋處暑白露秋分寒露霜降立冬小雪大雪冬至小寒大寒立春雨水驚蟄')
         self.num =  [8,3,4,9,2,7,6,1]
         self.su = list('角亢氐房心尾箕斗牛女虛危室壁奎婁胃昴畢觜參井鬼柳星張翼軫')
