@@ -324,7 +324,7 @@ class Taiyi():
             return "第{}紀".format(self.multi_key_dict_get(epochdict, self.gangzhi()[3]))
     
     
-    def jiyuan(self, ji):
+    def jiyuan(self, ji,tn):
         if ji == 3:
             j = dict(zip([('甲子', '甲午', '乙丑', '乙未', '丙寅', '丙申', '丁卯', '丁酉', '戊辰', '戊戌', '己巳', '己亥'), 
                                   ('庚午', '庚子', '辛未', '辛丑', '壬申', '壬寅', '癸酉', '癸卯', '甲戌', '甲辰', '乙亥', '乙巳'),
@@ -332,7 +332,7 @@ class Taiyi():
                                   ('壬午', '壬子', '癸未', '癸丑', '甲申', '甲寅', '乙酉', '乙卯', '丙戌', '丙辰', '丁亥', '丁巳'),
                                   ('戊子', '戊午', '己丑', '己未', '庚寅', '庚申', '辛卯', '辛酉', '壬辰', '壬戌', '癸巳', '癸亥')], "甲子,丙子,戊子,庚子,壬子".split(",")))
             
-            return "{}{}元".format(self.getepoch(ji), self.multi_key_dict_get(j, self.gangzhi()[2]))
+            return "{}{}元".format(self.getepoch(ji,tn), self.multi_key_dict_get(j, self.gangzhi()[2]))
         elif ji == 4:
             j = dict(zip([('甲子', '甲午', '乙丑', '乙未', '丙寅', '丙申', '丁卯', '丁酉', '戊辰', '戊戌', '己巳', '己亥'), 
                                   ('庚午', '庚子', '辛未', '辛丑', '壬申', '壬寅', '癸酉', '癸卯', '甲戌', '甲辰', '乙亥', '乙巳'),
@@ -340,9 +340,9 @@ class Taiyi():
                                   ('壬午', '壬子', '癸未', '癸丑', '甲申', '甲寅', '乙酉', '乙卯', '丙戌', '丙辰', '丁亥', '丁巳'),
                                   ('戊子', '戊午', '己丑', '己未', '庚寅', '庚申', '辛卯', '辛酉', '壬辰', '壬戌', '癸巳', '癸亥')], "甲子,丙子,戊子,庚子,壬子".split(",")))
             
-            return "{}{}元".format(self.getepoch(ji), self.multi_key_dict_get(j, self.gangzhi()[3]))
+            return "{}{}元".format(self.getepoch(ji,tn), self.multi_key_dict_get(j, self.gangzhi()[3]))
         else:
-            return "第{}紀第{}{}元".format(self.getepoch(ji).get("紀") ,self.getepoch(ji).get("元"), self.getyuan(ji))
+            return "第{}紀第{}{}元".format(self.getepoch(ji,tn).get("紀") ,self.getepoch(ji,tn).get("元"), self.getyuan(ji,tn))
     #太乙   
     def ty(self, ji,tn):
         arr = np.arange(10) 
@@ -919,7 +919,7 @@ class Taiyi():
                 "干支":self.gangzhi(),
                 "農曆":self.lunar_date_d(),
                 "年號":self.kingyear(),
-                "紀元":self.jiyuan(ji),
+                "紀元":self.jiyuan(ji,tn),
                 "太歲":self.taishui(ji),
                 "局式":self.kook(ji, tn),
                 "陽九":self.yangjiu(),
@@ -971,7 +971,7 @@ class Taiyi():
                 "十天干歲始擊落宮預測": self.multi_key_dict_get (tengan_shiji, self.gangzhi()[0][0]).get(self.Ganzhiwuxing(self.sf(ji,tn))),
                 }
     
-    def html(self, ji):
+    def html(self, ji, tn):
         text = '''<html><body><table border="0" cellpadding="1" cellspacing="1" style="width:500px">
     	<tbody>
     		<tr>
@@ -979,7 +979,7 @@ class Taiyi():
     			<p><span style="font-size:large"><strong>'''+str(self.year)+"年"+str(self.month)+"月"+str(self.day)+"日"+str(self.hour)+"時"+'''<br />
     			干支: '''+self.gangzhi()[0]+"  "+self.gangzhi()[1]+"  "+self.gangzhi()[2]+"  "+self.gangzhi()[3]+'''&nbsp;</strong></span></p>
                 <p><span style="font-size:large"><strong>'''+self.kingyear()+'''<br />
-                <p><span style="font-size:large"><strong>'''+self.jiyuan(ji)+"  "+self.kook(ji, tn).get("文")+'''<br />
+                <p><span style="font-size:large"><strong>'''+self.jiyuan(ji,tn)+"  "+self.kook(ji, tn).get("文")+'''<br />
     			主算:'''+str(self.home_cal(ji,tn))+"".join(self.cal_des(self.home_cal(ji,tn)))+'''<br />
     			客算:'''+str(self.away_cal(ji,tn))+"".join(self.cal_des(self.away_cal(ji,tn)))+'''<br />
     			定算:'''+str(self.set_cal(ji))+"".join(self.cal_des(self.set_cal(ji)))+'''</strong></span></p>
