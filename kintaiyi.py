@@ -475,7 +475,7 @@ class Taiyi():
         away_vg = self.away_general(ji,tn) *3 % 10
         if away_vg == 0:
             away_vg = 5
-        return self.away_general(ji,tn)
+        return away_vg
     
     #十二神將
     def shensha(self, ji, tn):
