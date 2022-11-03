@@ -232,7 +232,7 @@ class Taiyi():
             return bf[0]
 #%% 積年
     def accnum(self, ji, tn):
-        tndict = {0:10153917, 1:1936557, 2:10154193 #太乙統宗 10153917 , 太乙金鏡 1936557, 太乙淘金歌 10154193}
+        tndict = {0:10153917, 1:1936557, 2:10154193 }
         tn_num = tndict.get(tn)
         if ji == 0: #年計
             if self.year >= 0:
