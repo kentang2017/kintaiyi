@@ -743,7 +743,7 @@ class Taiyi():
     def geteightdoors(self, ji, tn):
         ty = self.ty(ji,tn)
         new_ty_order = self.new_list([8,3,4,9,2,7,6,1], ty)
-        doors  = self.new_list(self.door, self.eight_door(ji))
+        doors  = self.new_list(self.door, self.eight_door(ji, tn))
         return dict(zip(new_ty_order, doors))
     #推雷公入水
     def leigong(self, ji,tn):
