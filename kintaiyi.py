@@ -605,7 +605,7 @@ class Taiyi():
     def nine_gong(self, ji, tn):
         dict1 = [{self.home_general(ji,tn):"主將"},{self.home_vgen(ji,tn):"主參"},{self.away_general(ji,tn):"客將"},
                  {self.away_vgen(ji,tn):"客參"},{self.set_general(ji,tn):"定將"},{self.set_vgen(ji, tn):"定參"},
-                 {self.ty(ji,tn):"太乙"}, {self.threewind(ji):"三風"},  {self.fivewind(ji, tn):"五風"},
+                 {self.ty(ji,tn):"太乙"}, {self.threewind(ji,tn):"三風"},  {self.fivewind(ji, tn):"五風"},
                  {self.eightwind(ji, tn):"八風"},  {self.flybird(ji,tn):"飛鳥"},{self.bigyo(ji, tn):"大游"},
                  {self.smyo(ji, tn):"小游"},]
         res = {8:"", 3:"", 4:"", 9:"",5:"", 2:"", 7:"", 6:"", 1:""}
