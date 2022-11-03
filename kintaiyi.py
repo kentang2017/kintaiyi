@@ -374,7 +374,7 @@ class Taiyi():
            return dict(zip(list(range(1,29)),self.new_list(self.su, sf_su))).get(total)
     #定目
     def se(self, ji,tn):
-        wc,hg,ts = self.skyeyes(ji,tn),self.hegod(ji,tn),self.taishui(ji,tn)
+        wc,hg,ts = self.skyeyes(ji,tn),self.hegod(ji),self.taishui(ji,tn)
         start = self.new_list(self.gong1, hg)
         start1 = len(start[:start.index(ts)+1])
         start2 = self.new_list(self.gong1, wc)[start1-1]
@@ -557,7 +557,7 @@ class Taiyi():
         return set_vg
     #十六宮
     def sixteen_gong1(self, ji, tn):
-        dict1 = [{self.skyeyes(ji,tn):"昌"},{self.hegod(ji,tn):"合"},{self.sf(ji,tn):"始"},
+        dict1 = [{self.skyeyes(ji,tn):"昌"},{self.hegod(ji):"合"},{self.sf(ji,tn):"始"},
                 {self.se(ji, tn):"目"}, {self.kingbase(ji):"君"}, {self.officerbase(ji):"臣"}, {self.pplbase(ji):"民"},
                 {self.fgd(ji,tn):"四"},{self.skyyi(ji):"乙"},{self.earthyi(ji):"地"},{self.zhifu(ji):"符"},
                 {self.flyfu(ji):"飛"},{self.kingfu(ji):"帝"}, {self.wufu(ji):"福"},  {self.jigod(ji):"計"}]
@@ -939,7 +939,7 @@ class Taiyi():
                 "客將":self.away_general(ji,tn),
                 "客參":self.away_vgen(ji,tn),
                 "定算":[self.set_cal(ji,tn), self.cal_des(self.set_cal(ji,tn))],
-                "合神":self.hegod(ji,tn),
+                "合神":self.hegod(ji),
                 "計神":self.jigod(ji,tn),
                 "定目":self.se(ji,tn),
                 "君基":self.kingbase(ji,tn),
