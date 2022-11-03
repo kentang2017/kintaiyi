@@ -479,7 +479,7 @@ class Taiyi():
                    "癸":{"朝":"太乙", "暮":"太衝"}, "壬":{"朝":"太衝", "暮":"太乙"}, 
                    "辛":{"朝":"功曹", "暮":"勝光"}}
            general = "天乙,螣蛇,朱雀,六合,勾陳,青龍,天空,白虎,太常,玄武,太陰,天后".split(",")
-           tiany = self.skyyi(ji).replace("兌", "酉").replace("坎", "子").replace("震","卯").replace("離","午").replace("艮", "丑")
+           tiany = self.skyyi(ji,tn).replace("兌", "酉").replace("坎", "子").replace("震","卯").replace("離","午").replace("艮", "丑")
            kook = self.kook(ji,tn).get("文")[0]
            if kook == "陽":
                 return dict(zip(self.new_list(self.gong1, tiany) , general))
@@ -559,8 +559,8 @@ class Taiyi():
     def sixteen_gong1(self, ji, tn):
         dict1 = [{self.skyeyes(ji,tn):"昌"},{self.hegod(ji):"合"},{self.sf(ji,tn):"始"},
                 {self.se(ji, tn):"目"}, {self.kingbase(ji):"君"}, {self.officerbase(ji):"臣"}, {self.pplbase(ji):"民"},
-                {self.fgd(ji,tn):"四"},{self.skyyi(ji):"乙"},{self.earthyi(ji):"地"},{self.zhifu(ji):"符"},
-                {self.flyfu(ji):"飛"},{self.kingfu(ji):"帝"}, {self.wufu(ji):"福"},  {self.jigod(ji):"計"}]
+                {self.fgd(ji,tn):"四"},{self.skyyi(ji,tn):"乙"},{self.earthyi(ji,tn):"地"},{self.zhifu(ji):"符"},
+                {self.flyfu(ji,tn):"飛"},{self.kingfu(ji,tn):"帝"}, {self.wufu(ji,tn):"福"},  {self.jigod(ji):"計"}]
         res = {"子":"", "丑":"", "艮":"","寅":"", "卯":"", "辰":"", "巽":"","巳":"", "午":"", "未":"", "申":"", "坤":"", "酉":"", "戌":"", "乾":"", "亥":"", "中":""}
         for dict in dict1:
            for list in dict:
@@ -581,9 +581,9 @@ class Taiyi():
     #十六宮之二
     def sixteen_gong(self, ji,tn):
         dict1 = [{self.skyeyes(ji,tn):"文昌"},{self.taishui(ji):"太歲"},{self.hegod(ji):"合神"},{self.sf(ji,tn):"始擊"},
-                 {self.se(ji,tn):"定目"}, {self.kingbase(ji):"君基"}, {self.officerbase(ji):"臣基"}, {self.pplbase(ji):"民基"},
-                 {self.fgd(ji):"四神"},{self.skyyi(ji):"天乙"},{self.earthyi(ji):"地乙"},{self.zhifu(ji):"直符"},
-                 {self.flyfu(ji):"飛符"},{self.kingfu(ji):"帝符"},{self.taijun(ji):"太尊"}, {self.wufu(ji):"五福"} ]
+                 {self.se(ji,tn):"定目"}, {self.kingbase(ji,tn):"君基"}, {self.officerbase(ji,tn):"臣基"}, {self.pplbase(ji,tn):"民基"},
+                 {self.fgd(ji,tn):"四神"},{self.skyyi(ji,tn):"天乙"},{self.earthyi(ji,tn):"地乙"},{self.zhifu(ji,tn):"直符"},
+                 {self.flyfu(ji,tn):"飛符"},{self.kingfu(ji,tn):"帝符"},{self.taijun(ji):"太尊"}, {self.wufu(ji,tn):"五福"} ]
         res = {"子":"", "丑":"", "艮":"","寅":"", "卯":"", "辰":"", "巽":"","巳":"", "午":"", "未":"", "申":"", "坤":"", "酉":"", "戌":"", "乾":"", "亥":"", "中":""}
         for dict in dict1:
             for list in dict:
