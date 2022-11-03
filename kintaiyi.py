@@ -25,8 +25,6 @@ nayin_wuxing = dict(zip([tuple(re.findall("..", i)) for i in nayin], list("金�
 class Taiyi():
     def __init__(self, year, month, day, hour, minute):
         self.year, self.month, self.day, self.hour, self.minute = year, month, day, hour, minute
-        self.taiyiyear  = 10153917
-        #太乙統宗 10153917 , 太乙金鏡 1936557, 太乙淘金歌 10154193
         self.jieqi = re.findall('..', '春分清明穀雨立夏小滿芒種夏至小暑大暑立秋處暑白露秋分寒露霜降立冬小雪大雪冬至小寒大寒立春雨水驚蟄')
         self.num =  [8,3,4,9,2,7,6,1]
         self.su = list('角亢氐房心尾箕斗牛女虛危室壁奎婁胃昴畢觜參井鬼柳星張翼軫')
@@ -233,17 +231,19 @@ class Taiyi():
         else:
             return bf[0]
 #%% 積年
-    def accnum(self, ji):
+    def accnum(self, ji, tn):
+        tndict = {0:10153917, 1:1936557, 2:10154193 #太乙統宗 10153917 , 太乙金鏡 1936557, 太乙淘金歌 10154193}
+        tn_num = tndict.get(tn)
         if ji == 0: #年計
             if self.year >= 0:
-                return self.taiyiyear + self.year 
+                return tn_num + self.year 
             elif self.year < 0:
-                return self.taiyiyear + self.year + 1 
+                return tn_num + self.year + 1 
         elif ji == 1: #月計
             if self.year >= 0:
-                accyear = self.taiyiyear + self.year - 1
+                accyear = tn_num + self.year - 1
             elif self.year < 0:
-                accyear = self.taiyiyear + self.year + 1 
+                accyear = tn_num + self.year + 1 
             return accyear * 12 + 2 + self.lunar_date_d().get("月")
         elif ji == 2:#日計
             return int(Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00")) 
@@ -257,11 +257,7 @@ class Taiyi():
         elif ji == 4: #分計
             return int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00") - 1)) * 120 + (self.minute + 1 ) // 2 + 1 
             #return ((datetime.strptime("{0:04}-{1:02d}-{2:02d} 00:00:00".format(self.year, self.month, self.day), "%Y-%m-%d %H:%M:%S") - datetime.strptime("1900-06-19 00:00:00","%Y-%m-%d %H:%M:%S")).days - 1 ) * 12 + (self.hour + 1 ) // 2 + 1
-        elif ji == 5: #太乙淘金歌年計
-            if self.year >= 0:
-               return self.taiyiyear + self.year + 276
-            elif self.year < 0:
-               return self.taiyiyear + self.year + 1 + 276
+       
     
     def kook(self, ji):
         xz = self.xzdistance()
