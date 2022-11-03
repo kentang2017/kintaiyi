@@ -353,6 +353,10 @@ class Taiyi():
         arrangement_r = list(reversed(arrangement))
         yy_dict = {"陽": dict(zip(range(1,73), list(itertools.chain.from_iterable([list(arrangement)[3:15]+ list(arrangement)[18:]] * 3)))),  "陰": dict(zip(range(1,73), (list(arrangement_r)[:12] + list(arrangement_r)[15:][:-3]) * 3))}
         return yy_dict.get(self.kook(ji).get("文")[0]).get(self.kook(ji).get("數"))  
+    
+    #太乙落宮
+    def ty_gong(self, ji):
+        return dict(zip(range(1,73), list("乾乾乾離離離艮艮艮震震震兌兌兌坤坤坤坎坎坎巽巽巽乾乾乾離離離艮艮艮震震震兌兌兌坤坤坤坎坎坎巽巽巽乾乾乾離離離艮艮艮震震震兌兌兌坤坤坤坎坎坎巽巽巽"))).get(self.kook(ji).get("數")) 
     #始擊
     def sf(self, ji):
         sf_list = list("坤戌亥丑寅辰巳坤酉乾丑寅辰午坤酉亥子艮辰巳未申戌亥艮卯巽未丑戌子艮卯巳午坤戌亥丑寅辰巳坤酉乾丑寅辰午坤酉亥子艮辰巳未申戌亥艮卯巽未丑戌子艮卯巳午")
@@ -920,6 +924,29 @@ class Taiyi():
                 "紀元":self.jiyuan(ji),
                 "太歲":self.taishui(ji),
                 "局式":self.kook(ji),
+                "陽九":self.yangjiu(),
+                "百六":self.baliu(),
+                "太乙落宮":self.ty(ji),
+                "太乙":self.ty_gong(ji), 
+                "天乙":self.skyyi(ji),
+                "地乙":self.earthyi(ji),
+                "四神":self.fgd(ji),
+                "直符":self.zhifu(ji),
+                "文昌":[self.skyeyes(ji), self.skyeyes_des(ji)],
+                "始擊":self.sf(ji),
+                "主算":[self.home_cal(ji), self.cal_des(self.home_cal(ji))],
+                "主將":self.home_general(ji),
+                "主參":self.home_vgen(ji),
+                "客算":[self.away_cal(ji), self.cal_des(self.away_cal(ji))],
+                "客將":self.away_general(ji),
+                "客參":self.away_vgen(ji),
+                "定算":[self.set_cal(ji), self.cal_des(self.set_cal(ji))],
+                "合神":self.hegod(ji),
+                "計神":self.jigod(ji),
+                "定目":self.se(ji),
+                "君基":self.kingbase(ji),
+                "臣基":self.officerbase(ji),
+                "民基":self.pplbase(ji),
                 "二十八宿值日":self.starhouse(),
                 "太歲二十八宿":self.year_chin(),
                 "太歲值宿斷事": su_dist.get(self.year_chin()),
@@ -941,24 +968,6 @@ class Taiyi():
                 "推白龍得雲":self.dragon(ji),
                 "推回軍無言":self.returnarmy(ji),
                 "推太乙風雲飛鳥助戰法":self.flybird_wl(ji), 
-                "陽九":self.yangjiu(),
-                "百六":self.baliu(),
-                "太乙":self.ty(ji),
-                "天乙":self.skyyi(ji),
-                "地乙":self.earthyi(ji),
-                "四神":self.fgd(ji),
-                "直符":self.zhifu(ji),
-                "文昌":[self.skyeyes(ji), self.skyeyes_des(ji)],
-                "始擊":self.sf(ji),
-                "主算":[self.home_cal(ji), self.cal_des(self.home_cal(ji))],
-                "客算":[self.away_cal(ji), self.cal_des(self.away_cal(ji))],
-                "定算":[self.set_cal(ji), self.cal_des(self.set_cal(ji))],
-                "合神":self.hegod(ji),
-                "計神":self.jigod(ji),
-                "定目":self.se(ji),
-                "君基":self.kingbase(ji),
-                "臣基":self.officerbase(ji),
-                "民基":self.pplbase(ji),
                 "九宮":self.nine_gong(ji), 
                 "十六宮":self.sixteen_gong(ji),
                 "十天干歲始擊落宮預測": self.multi_key_dict_get (tengan_shiji, self.gangzhi()[0][0]).get(self.Ganzhiwuxing(self.sf(ji))),
