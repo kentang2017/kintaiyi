@@ -413,10 +413,15 @@ class Taiyi():
            return self.ty(ji,tn)
         elif self.home_cal(ji,tn) < 10:
            return self.home_cal(ji,tn) 
-        elif self.home_cal(ji,tn) > 10:
-           return self.home_cal(ji,tn) // 10
-        else:
-           return 1
+        elif self.home_cal(ji, tn) % 10 == 0:
+            return 5
+        elif self.home_cal(ji,tn) > 10 and self.home_cal(ji,tn) < 20 :
+           return self.home_cal(ji,tn) - 10
+        elif self.home_cal(ji,tn) > 20 and self.home_cal(ji,tn) < 30 :
+           return self.home_cal(ji,tn) - 20
+        elif self.home_cal(ji,tn) > 30 and self.home_cal(ji,tn) < 40 :
+           return self.home_cal(ji,tn) - 30
+      
     #主參將
     def home_vgen(self, ji,tn):
         home_vg = self.home_general(ji,tn) *3 % 10
@@ -456,10 +461,15 @@ class Taiyi():
            return self.gong.get(self.sf(ji,tn))
         elif self.away_cal(ji,tn) < 10:
            return self.away_cal(ji,tn) 
-        elif self.away_cal(ji,tn) > 10:
-           return self.away_cal(ji,tn) // 10
-        else:
-           return 1
+        elif self.away_cal(ji, tn) % 10 == 0:
+            return 5
+        elif self.away_cal(ji,tn) > 10 and self.away_cal(ji,tn) < 20 :
+           return self.away_cal(ji,tn) - 10
+        elif self.away_cal(ji,tn) > 20 and self.away_cal(ji,tn) < 30 :
+           return self.away_cal(ji,tn) - 20
+        elif self.away_cal(ji,tn) > 30 and self.away_cal(ji,tn) < 40 :
+           return self.away_cal(ji,tn) - 30
+        
     
     def away_vgen(self, ji,tn):
         away_vg = self.away_general(ji,tn) *3 % 10
