@@ -583,7 +583,7 @@ class Taiyi():
         dict1 = [{self.skyeyes(ji,tn):"文昌"},{self.taishui(ji):"太歲"},{self.hegod(ji):"合神"},{self.sf(ji,tn):"始擊"},
                  {self.se(ji,tn):"定目"}, {self.kingbase(ji,tn):"君基"}, {self.officerbase(ji,tn):"臣基"}, {self.pplbase(ji,tn):"民基"},
                  {self.fgd(ji,tn):"四神"},{self.skyyi(ji,tn):"天乙"},{self.earthyi(ji,tn):"地乙"},{self.zhifu(ji,tn):"直符"},
-                 {self.flyfu(ji,tn):"飛符"},{self.kingfu(ji,tn):"帝符"},{self.taijun(ji):"太尊"}, {self.wufu(ji,tn):"五福"} ]
+                 {self.flyfu(ji,tn):"飛符"},{self.kingfu(ji,tn):"帝符"},{self.taijun(ji,tn):"太尊"}, {self.wufu(ji,tn):"五福"} ]
         res = {"子":"", "丑":"", "艮":"","寅":"", "卯":"", "辰":"", "巽":"","巳":"", "午":"", "未":"", "申":"", "坤":"", "酉":"", "戌":"", "乾":"", "亥":"", "中":""}
         for dict in dict1:
             for list in dict:
