@@ -42,7 +42,8 @@ class Taiyi():
         self.gong = dict(zip(list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥"), range(1,17)))
         self.gong1 = list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥")
         self.gong2 = dict(zip(list("亥子丑艮寅卯辰巽巳午未坤申酉戌乾"), [8,8,3,3,4,4,9,9,2,2,7,7,6,6,1,1]))
-  
+        self.gong3 = list("子丑艮寅卯辰巽巳中午未坤申酉戌乾亥")
+
     def Ganzhiwuxing(self, gangorzhi):
         ganzhiwuxing = dict(zip(list(map(lambda x: tuple(x),"甲寅乙卯震巽,丙巳丁午離,壬亥癸子坎,庚申辛酉乾兌,未丑戊己未辰戌艮坤".split(","))), list("木火水金土")))
         return self.multi_key_dict_get(ganzhiwuxing, gangorzhi)
@@ -482,10 +483,10 @@ class Taiyi():
            tiany = self.skyyi(ji,tn).replace("兌", "酉").replace("坎", "子").replace("震","卯").replace("離","午").replace("艮", "丑")
            kook = self.kook(ji,tn).get("文")[0]
            if kook == "陽":
-                return dict(zip(self.new_list(self.gong1, tiany) , general))
+                return dict(zip(self.new_list(self.gong3, tiany) , general))
            #tianyi = ztz.get(self.multi_key_dict_get(gzzm, self.gangzhi()[2][0]).get( self.multi_key_dict_get(zm, self.gangzhi()[3][1]) ))
            else:
-                return dict(zip(self.new_list(list(reversed(self.gong1)), tiany) , general))
+                return dict(zip(self.new_list(list(reversed(self.gong3)), tiany) , general))
            #return dict(zip(self.new_list(self.Zhi,tianyi),general))
         else:
            return "太乙時計才顯示"
