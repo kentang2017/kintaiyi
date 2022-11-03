@@ -973,7 +973,7 @@ class Taiyi():
                 "推白龍得雲":self.dragon(ji,tn),
                 "推回軍無言":self.returnarmy(ji,tn),
                 "推太乙風雲飛鳥助戰法":self.flybird_wl(ji,tn), 
-                #"九宮":self.nine_gong(ji,tn), 
+                "九宮":self.nine_gong(ji,tn), 
                 #"十六宮":self.sixteen_gong(ji,tn),
                 "十天干歲始擊落宮預測": self.multi_key_dict_get (tengan_shiji, self.gangzhi()[0][0]).get(self.Ganzhiwuxing(self.sf(ji,tn))),
                 }
