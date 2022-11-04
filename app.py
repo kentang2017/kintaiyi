@@ -52,6 +52,7 @@ with pan:
     num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option)
     tn = dict(zip([' 太乙統宗 ', ' 太乙金鏡 ', ' 太乙淘金歌 '],[0,1,2])).get(acum)
     output5 = st.empty()
+    
     with st_capture(output5.code):
         col1, col2 = st.columns(2)
         with col1:
@@ -74,7 +75,6 @@ with pan:
                        ch = ""
                     r = list(map(lambda x:[x, x+25]  ,list(range(0,3000)[0::25])))
                     tys = "".join([ts[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ts) / 25+1))])
-                    billboard = "{} |\n{} |\n{} |\n太乙{} - {} ({}) | 積年數︰{} | \n紀元︰{} |   |\n\n".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元"))
                     if ttext.get("局式").get("文")[0] == "陽":
                         yy = "yang"
                     else:
@@ -99,7 +99,7 @@ with pan:
                         
                         st.title("九宮分野︰")
                         st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-                    print(billboard )
+                    print( "{} |\n{} |\n{} |\n太乙{} - {} ({}) | 積年數︰{} | \n紀元︰{} |   |\n\n".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元")) )
                     expander = st.expander("原始碼")
                     expander.write(str(ttext))
                 else:
@@ -152,7 +152,7 @@ with pan:
                     
                     st.title("九宮分野︰")
                     st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-                print(billboard)
+                print( "{} |\n{} |\n{} |\n太乙{} - {} ({}) | 積年數︰{} | \n紀元︰{} |   |\n\n".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元")) )
                 expander = st.expander("原始碼")
                 expander.write(str(ttext))
              else:
