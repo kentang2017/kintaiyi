@@ -932,11 +932,14 @@ class Taiyi():
         return "{}年{}月{}日{}時".format(self.year, self.month, self.day, self.hour)
     
     def taiyi_name(self, ji):
-        return {0:"年計", 1:"月計", 2:"日計", 3:"時計", 4:"分計", 5:"淘金歌年計"}.get(ji)
+        return {0:"年計", 1:"月計", 2:"日計", 3:"時計", 4:"分計"}.get(ji)
+    
+    def ty_method(self,  tn):
+        return  {0:"太乙統宗", 1:"太乙金鏡", 2:"太乙淘金歌" }.get(tn)
     
     def pan(self, ji, tn):
         return {
-                "太乙計":self.taiyi_name(ji), 
+                "太乙計":self.taiyi_name(ji),
                 "公元日期":self.gendatetime(),
                 "干支":self.gangzhi(),
                 "農曆":self.lunar_date_d(),
