@@ -47,7 +47,7 @@ with pan:
     st.header('排盘')
     idate = st.text_input('輸入日期(如: 1997/8/8)', '')
     itime = st.text_input('輸入時間(如: 18:30)', '')
-    option = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
+    option = st.selectbox( '起盤方式', (' 年計 ', ' 月計 ', ' 日計 ', ' 時計 ', ' 分計 '))
     acum = st.selectbox( '太乙積年數', (' 太乙統宗 ', ' 太乙金鏡 ', ' 太乙淘金歌 '))
     num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option)
     tn = dict(zip([' 太乙統宗 ', ' 太乙金鏡 ', ' 太乙淘金歌 '],[0,1,2])).get(acum)
@@ -102,7 +102,7 @@ with pan:
                         
                         st.title("九宮分野︰")
                         st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-                    print("{} |\n{} |\n{} |\n太乙{} - {} | 積年數︰{} | \n紀元︰{} | \n\n".format(ty.gendatetime(), gz, ty.kingyear(), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num,tn), ttext.get("紀元")))
+                    print("{} |\n{} |\n{} |\n太乙{} - {} | 積年數︰{} | \n紀元︰{} | \n\n".format(ty.gendatetime(), gz, ty.kingyear(), tn+" - "+num,  ttext.get("局式").get("文"), ty.accnum(num,tn), ttext.get("紀元")))
                     expander = st.expander("原始碼")
                     expander.write(str(ttext))
                 else:
@@ -155,7 +155,7 @@ with pan:
                     
                     st.title("九宮分野︰")
                     st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-                print("{} |\n{} |\n{} |\n太乙{} - {} ({}) | 積年數︰{} | \n紀元︰{} |   |\n\n".format(ty.gendatetime(), gz, ty.kingyear(), ttext.get("太乙計"),  ttext.get("局式").get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元")))
+                print("{} |\n{} |\n{} |\n太乙{} - {} ({}) | 積年數︰{} | \n紀元︰{} |   |\n\n".format(ty.gendatetime(), gz, ty.kingyear(), tn+" - "+num,  ttext.get("局式").get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元")))
                 expander = st.expander("原始碼")
                 expander.write(str(ttext))
              else:
