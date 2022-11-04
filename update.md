@@ -59,3 +59,4 @@
 
 # 開發者資訊
 ![看倏爍](https://github.com/kentang2017/yanqin_studies/blob/master/pic/qrcode_for_gh_1f2187149437_258.jpg?raw=true)
+或加本人微信gnatnek
