@@ -66,8 +66,10 @@ with pan:
                     h = int(pp[0])
                     min = int(pp[1])
                     ty = Taiyi(y,m,d,h,min)
-                    ttext = Taiyi(y,m,d,h,min).pan(num,tn)
-                    kook = Taiyi(y,m,d,h,min).kook(num,tn)
+                    ttext = ty.pan(num,tn)
+                    kook = ty.kook(num,tn)
+                    homecal = ty.home_cal(num,tn)
+                    awaycal = ty.away_cal(num,tn)
                     ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
                     gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
                     ch = chistory.get(y)
@@ -99,7 +101,7 @@ with pan:
                         
                         st.title("九宮分野︰")
                         st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-                    print( "{} |\n{} |\n{} |\n太乙{} - {} ({}) | 積年數︰{} | \n紀元︰{} |   |\n\n".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元")) )
+                    print( "{} |\n{} |\n{} |\n太乙{} - {} ({}) | 積年數︰{} | \n紀元︰{} | \n主筭︰{} 客筭︰{}   |\n\n".format(ty.gendatetime(), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元")), homecal, awaycal )
                     expander = st.expander("原始碼")
                     expander.write(str(ttext))
                 else:
@@ -152,7 +154,7 @@ with pan:
                     
                     st.title("九宮分野︰")
                     st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-                print( "{} |\n{} |\n{} |\n太乙{} - {} ({}) | 積年數︰{} | \n紀元︰{} |   |\n\n".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元")) )
+                print( "{} |\n{} |\n{} |\n太乙{} - {} ({}) | 積年數︰{} | \n紀元︰{} | \n主筭︰{} 客筭︰{}   |\n\n".format(ty.gendatetime(), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元")), homecal, awaycal )
                 expander = st.expander("原始碼")
                 expander.write(str(ttext))
              else:
