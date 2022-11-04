@@ -172,7 +172,7 @@ with guji:
 with update:
     st.header('更新日誌')
     st.markdown(get_file_content_as_string("update.md"))
-expander = st.expander("原始碼")
+    expander = st.expander("原始碼")
                 expander.write(str(ttext))
              else:
                 st.empty()
