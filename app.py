@@ -117,9 +117,9 @@ with pan:
                 h = now.hour
                 min = now.minute
                 ty = Taiyi(y,m,d,h,min)
-                ttext = ty.pan(num,tn)
-                kook = ty.kook(num,tn)
-                ts = ty.get(kook.get('文')[0:2]).get(kook.get('數'))
+                ttext = Taiyi(y,m,d,h,min).pan(num,tn)
+                kook = Taiyi(y,m,d,h,min).kook(num,tn)
+                ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
                 gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
                 ch = chistory.get(y)
                 if ch == None:
@@ -160,18 +160,6 @@ with pan:
              else:
                 st.empty()
     #print(tys+"\n")
-
-with example:
-    st.header('案例')
-    st.markdown(get_file_content_as_string("example.md"))
-    
-with guji:
-    st.header('古籍')
-    st.markdown(get_file_content_as_string("guji.md"))
-  
-with update:
-    st.header('更新日誌')
-    st.markdown(get_file_content_as_string("update.md"))
 
 with example:
     st.header('案例')
