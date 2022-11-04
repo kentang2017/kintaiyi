@@ -65,6 +65,8 @@ with pan:
                     h = int(pp[0])
                     min = int(pp[1])
                     ty = Taiyi(y,m,d,h,min)
+                    homecal = ty.home_cal(num, tn)
+                    awaycal = ty.away_cal(num, tn)
                     ttext = Taiyi(y,m,d,h,min).pan(num,tn)
                     kook = Taiyi(y,m,d,h,min).kook(num,tn)
                     ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
@@ -102,7 +104,7 @@ with pan:
                         
                         st.title("九宮分野︰")
                         st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-                    print("{} |\n{} |\n{} |\n太乙{} - {} ({}) | 積年數︰{} | \n紀元︰{} |   |\n\n".format(ty.gendatetime(), gz, ty.kingyear(), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元")))
+                    print("{} |\n{} |\n{} |\n太乙{} - {} ({}) | 積年數︰{} | \n紀元︰{} |  主筭︰{}  客筭︰{}   |\n\n".format(ty.gendatetime(), gz, ty.kingyear(), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元"), homecal, awaycal))
                     expander = st.expander("原始碼")
                     expander.write(str(ttext))
                 else:
@@ -118,6 +120,8 @@ with pan:
                 h = now.hour
                 min = now.minute
                 ty = Taiyi(y,m,d,h,min)
+                homecal = ty.home_cal(num, tn)
+                awaycal = ty.away_cal(num, tn)
                 ttext = Taiyi(y,m,d,h,min).pan(num,tn)
                 kook = Taiyi(y,m,d,h,min).kook(num,tn)
                 ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
@@ -155,7 +159,7 @@ with pan:
                     
                     st.title("九宮分野︰")
                     st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-                print("{} |\n{} |\n{} |\n太乙{} - {} ({}) | 積年數︰{} | \n紀元︰{} |   |\n\n".format(ty.gendatetime(), gz, ty.kingyear(), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元")))
+                print("{} |\n{} |\n{} |\n太乙{} - {} ({}) | 積年數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n\n".format(ty.gendatetime(), gz, ty.kingyear(), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元"), homecal, awaycal))
                 expander = st.expander("原始碼")
                 expander.write(str(ttext))
              else:
