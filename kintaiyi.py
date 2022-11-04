@@ -966,6 +966,7 @@ class Taiyi():
                 "太歲值宿斷事": su_dist.get(self.year_chin()),
                 "始擊二十八宿":self.sf_num(ji,tn),
                 "始擊值宿斷事":su_dist.get(self.sf_num(ji,tn)),
+                "十天干歲始擊落宮預測": self.multi_key_dict_get (tengan_shiji, self.gangzhi()[0][0]).get(self.Ganzhiwuxing(self.sf(ji,tn))),
                 "八門值事":self.eight_door(ji, tn),
                 "八門分佈":self.geteightdoors(ji, tn),
                 "八宮旺衰":self.gong_wangzhuai(self.jq(self.year, self.month, self.day, self.hour)),
@@ -974,6 +975,7 @@ class Taiyi():
                 "推五將發不發":self.fivegenerals(ji,tn),
                 "推主客相闗法":self.wc_n_sj(ji,tn),
                 "推多少以占勝負":self.suenwl(ji,tn),
+                "推太乙風雲飛鳥助戰法":self.flybird_wl(ji,tn), 
                 "推雷公入水":self.leigong(ji,tn),
                 "推臨津問道":self.lijin(),
                 "推獅子反擲":self.lion(),
@@ -981,10 +983,9 @@ class Taiyi():
                 "推猛虎相拒":self.tiger(ji,tn),
                 "推白龍得雲":self.dragon(ji,tn),
                 "推回軍無言":self.returnarmy(ji,tn),
-                "推太乙風雲飛鳥助戰法":self.flybird_wl(ji,tn), 
-                "九宮":self.nine_gong(ji,tn), 
+                #"九宮":self.nine_gong(ji,tn), 
                 #"十六宮":self.sixteen_gong(ji,tn),
-                "十天干歲始擊落宮預測": self.multi_key_dict_get (tengan_shiji, self.gangzhi()[0][0]).get(self.Ganzhiwuxing(self.sf(ji,tn))),
+                
                 }
     
     def html(self, ji, tn):
