@@ -74,10 +74,7 @@ with pan:
                        ch = ""
                     r = list(map(lambda x:[x, x+25]  ,list(range(0,3000)[0::25])))
                     tys = "".join([ts[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ts) / 25+1))])
-                    #try:
-                        #cys = "".join([ch[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ch) / 25+1))])
-                    #except (TypeError,IndexError):
-                        #cys = ""
+                    billboard = "{} |\n{} |\n{} |\n太乙{} - {} ({}) | 積年數︰{} | \n紀元︰{} |   |\n\n".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元"))
                     if ttext.get("局式").get("文")[0] == "陽":
                         yy = "yang"
                     else:
@@ -102,7 +99,7 @@ with pan:
                         
                         st.title("九宮分野︰")
                         st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-                    print("{} |\n{} |\n{} |\n太乙{} - {} | 積年數︰{} | \n紀元︰{} | \n\n".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num,tn), ttext.get("紀元")))
+                    print(billboard )
                     expander = st.expander("原始碼")
                     expander.write(str(ttext))
                 else:
@@ -155,7 +152,7 @@ with pan:
                     
                     st.title("九宮分野︰")
                     st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-                print("{} |\n{} |\n{} |\n太乙{} - {} ({}) | 積年數︰{} | \n紀元︰{} |   |\n\n".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元")))
+                print(billboard)
                 expander = st.expander("原始碼")
                 expander.write(str(ttext))
              else:
