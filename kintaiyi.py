@@ -477,7 +477,7 @@ class Taiyi():
             away_vg = 5
         return away_vg
     
-    #十二神將
+    #推太乙當時法
     def shensha(self, ji, tn):
         if ji == 3:
            tz = "登明,河魁,從魁,傳送,小吉,勝光,太乙,天罡,太衝,功曹,大吉,神後".split(",")
@@ -970,7 +970,7 @@ class Taiyi():
                 "八門值事":self.eight_door(ji, tn),
                 "八門分佈":self.geteightdoors(ji, tn),
                 "八宮旺衰":self.gong_wangzhuai(self.jq(self.year, self.month, self.day, self.hour)),
-                "十二月將": self.shensha(ji,tn),
+                "推太乙當時法": self.shensha(ji,tn),
                 "推三門具不具":self.threedoors(ji,tn),
                 "推五將發不發":self.fivegenerals(ji,tn),
                 "推主客相闗法":self.wc_n_sj(ji,tn),
