@@ -88,6 +88,8 @@ with pan:
                         st.markdown(ts)
                         st.title("史事記載︰")
                         st.markdown(ch)
+                        st.title("太乙盤局分析︰")
+                        
                         st.title("九宮分野︰")
                         st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
                     except (FileNotFoundError,IndexError, ValueError):
@@ -96,6 +98,8 @@ with pan:
                         st.markdown(ts)
                         st.title("史事記載︰")
                         st.markdown(ch)
+                        st.title("太乙盤局分析︰")
+                        
                         st.title("九宮分野︰")
                         st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
                     print("{} |\n{} |\n{} |\n太乙{} - {} | 積年數︰{} | \n紀元︰{} | \n\n".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num,tn), ttext.get("紀元")))
@@ -137,6 +141,8 @@ with pan:
                     st.markdown(ts)
                     st.title("史事記載︰")
                     st.markdown(ch)
+                    st.title("太乙盤局分析︰")
+                    
                     st.title("九宮分野︰")
                     st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
                 except (FileNotFoundError,IndexError, ValueError):
@@ -145,9 +151,11 @@ with pan:
                     st.markdown(ts)
                     st.title("史事記載︰")
                     st.markdown(ch)
+                    st.title("太乙盤局分析︰")
+                    
                     st.title("九宮分野︰")
                     st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-                print("{} |\n{} |\n{} |\n太乙{} - {} | 積年數︰{} | \n紀元︰{} | \n\n".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"), ty.accnum(num,tn), ttext.get("紀元")))
+                print("{} |\n{} |\n{} |\n太乙{} - {} ({}) | 積年數︰{} | \n紀元︰{} |   |\n\n".format(ttext.get("公元日期"), gz, ttext.get("年號"), ttext.get("太乙計"),  ttext.get("局式").get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元")))
                 expander = st.expander("原始碼")
                 expander.write(str(ttext))
              else:
