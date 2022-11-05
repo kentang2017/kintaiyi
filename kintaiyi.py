@@ -78,7 +78,7 @@ class Taiyi():
                 cyear = "元"
             else:
                 cyear = an2cn(year)
-            pn = "{}{}年".format(preiodname[idx-1],cyear)
+            pn = "{}{}年".format(preiodname[idx],cyear)
             kn = "{}{}{}".format(period[idx], king[idx], king_realname[idx])
             return  "{} {}".format(kn, pn)
         elif year >= 1900:
