@@ -76,6 +76,7 @@ class Taiyi():
             year = year - y[idx] +1 
             if year < 0:
                 year - y[idx+1] +1
+                cyear = an2cn(year)
             if year == 1:
                 cyear = "元"
             else:
