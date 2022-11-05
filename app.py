@@ -104,9 +104,7 @@ with pan:
         expander.write(str(ttext))
     else:
         st.empty()
- 
-
-     if instant:
+    if instant:
         now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
         y = now.year
         m = now.month
@@ -152,7 +150,7 @@ with pan:
         print("{} |\n{} |\n{} |\n{} - 太乙{} - {} ({}) | \n積年數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n\n".format(ty.gendatetime(), gz, ty.kingyear(), ty.ty_method(tn), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元"), homecal, awaycal))
         expander = st.expander("原始碼")
         expander.write(str(ttext))
-     else:
+    else:
         st.empty()
 
 with example:
