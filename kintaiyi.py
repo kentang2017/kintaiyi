@@ -12,6 +12,7 @@ from ephem import Sun, Date, Ecliptic, Equatorial, hour
 from cn2an import an2cn
 from itertools import cycle, repeat
 from taiyidict import tengan_shiji, su_dist
+from ruler import ruler_data
 
 def jiazi():
     Gan, Zhi = '甲乙丙丁戊己庚辛壬癸','子丑寅卯辰巳午未申酉戌亥'
@@ -62,7 +63,8 @@ class Taiyi():
     def kingyear(self):
         def closest(lst, K): 
             return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))] 
-        data = pickle.load(open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'history.pkl'), "rb")).split(",")
+        #data = pickle.load(open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'history.pkl'), "rb")).split(",")
+        data = ruler_data
         y =  list(map(lambda x: int(x), data[0::7]))
         period = data[3::7]
         king = data[4::7]
