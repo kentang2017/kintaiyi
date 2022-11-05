@@ -41,6 +41,7 @@ def st_capture(output_func):
         yield
         
 st.set_page_config(layout="wide",page_title="太鳦 - 太乙排盘")
+st.header('太鳦排盘')
 pan,example,guji,update = st.tabs([' 排盤 ', ' 案例 ', ' 古籍 ',' 日誌 ' ])
 
 with st.sidebar:
@@ -54,7 +55,6 @@ with st.sidebar:
     instant = st.button('即時')
 
 with pan:
-    st.header('太鳦排盘')
     output5 = st.empty()
     with st_capture(output5.code):
         try:
