@@ -259,7 +259,7 @@ class Taiyi():
                 acc = jiazi_ac+ zhi_code.get(hz) - 1 
                 return int(acc)
             else:
-                return jiazi_ac
+                return int(jiazi_ac)
             #if self.hour == 0:
             #    return (int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00") - 1)) * 12 + (self.hour + 1 ) // 2 + 1) + 12
             #else:
