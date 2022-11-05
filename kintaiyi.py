@@ -400,7 +400,7 @@ class Taiyi():
         wc_jc1  = list(map(lambda x: x == wc, self.jc1)).count(True)
         wc_order = self.new_list(num, wc_num)
         if wc_jc == 1 and ty_jc != 1 and wc_jc1 !=1 :
-            return sum(wc_order[: wc_order.index(ty)])
+            return sum(wc_order[: wc_order.index(ty)]) +1
         elif wc_jc !=1 and ty_jc != 1 and wc_jc1 ==1:
             return sum(wc_order[: wc_order.index(ty)])
         elif wc_jc != 1 and ty_jc ==1 and wc_jc1 !=1:
@@ -410,7 +410,7 @@ class Taiyi():
         elif wc_jc !=1 and ty_jc ==1 and wc_jc1 ==1 :
             return sum(wc_order[: wc_order.index(ty)])
         elif wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and ty != wc_num:
-            return sum(wc_order[: wc_order.index(ty)]) +1
+            return sum(wc_order[: wc_order.index(ty)]) 
         elif wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and ty == wc_num:
             return ty
     #主大將
