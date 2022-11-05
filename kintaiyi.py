@@ -410,7 +410,7 @@ class Taiyi():
         elif wc_jc !=1 and ty_jc ==1 and wc_jc1 ==1 :
             return sum(wc_order[: wc_order.index(ty)])
         elif wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and ty != wc_num:
-            return sum(wc_order[: wc_order.index(ty)])
+            return sum(wc_order[: wc_order.index(ty)]) +1
         elif wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and ty == wc_num:
             return ty
     #主大將
