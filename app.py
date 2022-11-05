@@ -54,7 +54,7 @@ with st.sidebar:
     instant = st.button('即時')
 
 with pan:
-    st.header('排盘')
+    st.header('太鳦排盘')
     output5 = st.empty()
     with st_capture(output5.code):
         try:
