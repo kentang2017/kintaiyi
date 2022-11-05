@@ -84,7 +84,7 @@ class Taiyi():
         elif year >= 1900:
             year = year - y[idx-1] +1
             pn = "{}{}年".format(preiodname[idx-1], an2cn(year))
-            kn = "{}{}{}".format(period[idx-1], king[idx], king_realname[idx-1])
+            kn = "{}{}{}".format(period[idx-1], king[idx+1], king_realname[idx+1])
             return  "{} {}".format(kn, pn)
        
     #文昌處境
