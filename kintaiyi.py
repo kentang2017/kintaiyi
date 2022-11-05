@@ -72,19 +72,23 @@ class Taiyi():
         preiodname = data[6::7]
         idx = y.index(closest(y, self.lunar_date_d().get("年")))
         year = year = self.lunar_date_d().get("年")
-        if year < 1900:
-            year = year - y[idx-1]
-            if year == 1:
-                cyear = "元"
-            else:
-                cyear = an2cn(year)
-            pn = "{}{}年".format(preiodname[idx-1],cyear)
+        #if year < 1900:
+        if year == y[idx]:
+            year = "元"
+            pn = "{}{}年".format(preiodname[idx], year)
             kn = "{}{}{}".format(period[idx], king[idx], king_realname[idx])
             return  "{} {}".format(kn, pn)
-        elif year >= 1900:
+        elif year > y[idx]:
             year = year - y[idx] +1
-            pn = "{}{}年".format(preiodname[idx], an2cn(year))
+            cyear = an2cn(year)
+            pn = "{}{}年".format(preiodname[idx],cyear)
             kn = "{}{}{}".format(period[idx], king[idx], king_realname[idx])
+            return  "{} {}".format(kn, pn)
+        elif year < y[idx]:
+            year = year - y[idx-1] + 1
+            cyear = an2cn(year)
+            pn = "{}{}年".format(preiodname[idx-1],cyear)
+            kn = "{}{}{}".format(period[idx-1], king[idx-1], king_realname[idx-1])
             return  "{} {}".format(kn, pn)
        
     #文昌處境
