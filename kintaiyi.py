@@ -73,7 +73,7 @@ class Taiyi():
         idx = y.index(closest(y, self.lunar_date_d().get("年")))
         year = year = self.lunar_date_d().get("年")
         if year < 1900:
-            year = year - y[idx] +1 
+            year = y[idx] +1 - year
             if year < 0:
                 year =  y[idx-1] - year
                 cyear = an2cn(year)
