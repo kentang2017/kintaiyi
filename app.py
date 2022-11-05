@@ -7,6 +7,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 from kintaiyi import Taiyi
 from historytext import chistory
+from taiyidict import tengan_shiji, su_dist
 from taiyimishu import taiyi_yingyang
 import base64
 import textwrap
@@ -66,12 +67,19 @@ with pan:
                 h = int(pp[0])
                 min = int(pp[1])
                 ty = Taiyi(y,m,d,h,min)
+                ttext = ty.pan(num,tn)
+                kook = ty.kook(num,tn)
                 homecal = ty.home_cal(num, tn)
                 awaycal = ty.away_cal(num, tn)
                 ed = ty.eight_door(num, tn)
                 yc = ty.year_chin()
-                ttext = ty.pan(num,tn)
-                kook = ty.kook(num,tn)
+                day_su = ty.starhouse()
+                year_predict = "太歲" + yc  +"值宿，"+ su_dist.get(ty.sf_num(num,tn))
+                sj_su_predict = "始擊落"+ ty.sf_num(num,tn)+ "宿，"+ su_dist.get(ty.sf_num(num,tn))
+                tg_sj_su_predict = ty.multi_key_dict_get (tengan_shiji, ty.gangzhi()[0][0]).get(ty.Ganzhiwuxing(ty.sf(num,tn)))
+                three_door = ty.threedoors(num,tn)
+                five_generals = ty.fivegenerals(num,tn)
+                
                 yj = ty.yangjiu()
                 bl = ty.baliu()
                 ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
@@ -85,26 +93,17 @@ with pan:
                     yy = "yang"
                 else:
                     yy = "yin"
-                try:
-                    st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
-                    st.title("《太乙秘書》︰")
-                    st.markdown(ts)
-                    st.title("史事記載︰")
-                    st.markdown(ch)
-                    st.title("太乙盤局分析︰")
-
-                    st.title("九宮分野︰")
-                    st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-                except (FileNotFoundError,IndexError, ValueError):
-                    image = st.empty()
-                    st.title("《太乙秘書》︰")
-                    st.markdown(ts)
-                    st.title("史事記載︰")
-                    st.markdown(ch)
-                    st.title("太乙盤局分析︰")
-
-                    st.title("九宮分野︰")
-                    st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
+                st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
+                st.title("《太乙秘書》︰")
+                st.markdown(ts)
+                st.title("史事記載︰")
+                st.markdown(ch)
+                st.title("太乙盤局分析︰")
+                st.markdown("太歲值宿斷事︰"+ year_predict)
+                st.markdown("始擊值宿斷事︰"+ sj_su_predict)
+                st.markdown("十天干歲始擊落宮預測︰"+ tg_sj_su_predict)
+                st.title("九宮分野︰")
+                st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
                 print("{} |\n{} |\n{} |\n{} - 太乙{} - {} ({}) | \n積年數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | 陽九︰{} 百六︰{}\n\n".format(ty.gendatetime(), gz, ty.kingyear(), ty.ty_method(tn), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元"), homecal, awaycal, yc, ed, yj, bl))
                 expander = st.expander("原始碼")
                 expander.write(str(ttext))
@@ -126,6 +125,11 @@ with pan:
             yc = ty.year_chin()
             ttext = Taiyi(y,m,d,h,min).pan(num,tn)
             kook = Taiyi(y,m,d,h,min).kook(num,tn)
+            year_predict = "太歲" + yc  +"值宿，"+ su_dist.get(ty.sf_num(num,tn))
+            sj_su_predict = "始擊落"+ ty.sf_num(num,tn)+ "宿，"+ su_dist.get(ty.sf_num(num,tn))
+            tg_sj_su_predict = ty.multi_key_dict_get (tengan_shiji, ty.gangzhi()[0][0]).get(ty.Ganzhiwuxing(ty.sf(num,tn)))
+            three_door = ty.threedoors(num,tn)
+            five_generals = ty.fivegenerals(num,tn)
             yj = ty.yangjiu()
             bl = ty.baliu()
             ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
@@ -139,26 +143,17 @@ with pan:
                 yy = "yang"
             else:
                 yy = "yin"
-            try:
-                st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
-                st.title("《太乙秘書》︰")
-                st.markdown(ts)
-                st.title("史事記載︰")
-                st.markdown(ch)
-                st.title("太乙盤局分析︰")
-
-                st.title("九宮分野︰")
-                st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-            except (FileNotFoundError,IndexError, ValueError):
-                st.empty()
-                st.title("《太乙秘書》︰")
-                st.markdown(ts)
-                st.title("史事記載︰")
-                st.markdown(ch)
-                st.title("太乙盤局分析︰")
-
-                st.title("九宮分野︰")
-                st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
+            st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
+            st.title("《太乙秘書》︰")
+            st.markdown(ts)
+            st.title("史事記載︰")
+            st.markdown(ch)
+            st.title("太乙盤局分析︰")
+             st.markdown("太歲值宿斷事︰"+ year_predict)
+            st.markdown("始擊值宿斷事︰"+ sj_su_predict)
+            st.markdown("十天干歲始擊落宮預測︰"+ tg_sj_su_predict)
+            st.title("九宮分野︰")
+            st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
             print("{} |\n{} |\n{} |\n{} - 太乙{} - {} ({}) | \n積年數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | 陽九︰{} 百六︰{}\n\n".format(ty.gendatetime(), gz, ty.kingyear(), ty.ty_method(tn), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元"), homecal, awaycal, yc, ed, yj, bl))
             expander = st.expander("原始碼")
             expander.write(str(ttext))
