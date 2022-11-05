@@ -149,7 +149,7 @@ with pan:
             st.title("史事記載︰")
             st.markdown(ch)
             st.title("太乙盤局分析︰")
-             st.markdown("太歲值宿斷事︰"+ year_predict)
+            st.markdown("太歲值宿斷事︰"+ year_predict)
             st.markdown("始擊值宿斷事︰"+ sj_su_predict)
             st.markdown("十天干歲始擊落宮預測︰"+ tg_sj_su_predict)
             st.title("九宮分野︰")
