@@ -55,7 +55,6 @@ with st.sidebar:
 
 with pan:
     st.header('排盘')
-    image = st.empty()
     output5 = st.empty()
     with st_capture(output5.code):
         if manual:
@@ -85,7 +84,7 @@ with pan:
             else:
                 yy = "yin"
             try:
-                image = st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
+                st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
                 st.title("史事記載︰")
