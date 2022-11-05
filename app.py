@@ -52,8 +52,8 @@ with st.sidebar:
     num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option)
     tn = dict(zip([' 太乙統宗 ', ' 太乙金鏡 ', ' 太乙淘金歌 '],[0,1,2])).get(acum)
     manual1 = st.button('手動簡盤')
-    instant1 = st.button('即時簡盤')
     manual = st.button('手動詳盤')
+    instant1 = st.button('即時簡盤')
     instant = st.button('即時詳盤')
     
 
