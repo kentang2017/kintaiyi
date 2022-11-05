@@ -55,6 +55,7 @@ with st.sidebar:
 
 with pan:
     st.header('排盘')
+    output5 = st.empty()
     with st_capture(output5.code):
         if manual:
             p = str(idate).split("/")
