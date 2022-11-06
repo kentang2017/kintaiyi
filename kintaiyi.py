@@ -60,7 +60,7 @@ class Taiyi():
     def taishui(self, ji):
         gz =  self.gangzhi()
         return {0: gz[0][1], 1:gz[1][1], 2:gz[2][1], 3:gz[3][1], 4:gz[4][1], 5: gz[0][1],}.get(ji)
-        #中國統治者在位年
+    #中國統治者在位年
     def kingyear(self):
         def closest(lst, K): 
             return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))] 
@@ -86,13 +86,12 @@ class Taiyi():
             kn = "{}{}{}".format(period[idx], king[idx], king_realname[idx])
             return  "{} {}".format(kn, pn)
         elif year < y[idx]:
-            year = year - y[idx-1] + 1
+            year = year - y[idx-1] 
             cyear = an2cn(year)
             pn = "{}{}年".format(preiodname[idx-1],cyear)
             kn = "{}{}{}".format(period[idx-1], king[idx-1], king_realname[idx-1])
             return  "{} {}".format(kn, pn)
-       
-       
+
     #文昌處境
     def skyeyes_des(self, ji,tn):
         yy = self.kook(ji,tn).get("文")[0]
