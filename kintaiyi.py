@@ -80,8 +80,8 @@ class Taiyi():
             kn = "{}{}{}".format(period[idx], king[idx], king_realname[idx])
             return  "{} {}".format(kn, pn)
         elif year > y[idx]:
-            year = year - y[idx]+1 
-            cyear = an2cn(year)
+            year = year - y[idx] 
+            cyear = an2cn(year+1)
             pn = "{}{}年".format(preiodname[idx],cyear)
             kn = "{}{}{}".format(period[idx], king[idx], king_realname[idx])
             return  "{} {}".format(kn, pn)
