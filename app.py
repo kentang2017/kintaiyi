@@ -136,7 +136,6 @@ with pan:
                 awaycal = ty.away_cal(num, tn)
                 ed = ty.eight_door(num, tn)
                 yc = ty.year_chin()
-                day_su = ty.starhouse()
                 yj = ty.yangjiu()
                 bl = ty.baliu()
                 ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
