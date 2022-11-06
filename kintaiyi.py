@@ -707,7 +707,7 @@ class Taiyi():
     #太乙在天外地內法
     def ty_gong_dist(self, ji, tn):
         ty = self.ty(ji, tn)
-        tyg = self.ty_gong(ji, tn)
+        tyg = num2gong(self.ty(ji, tn))
         return self.multi_key_dict_get({tuple([1,8,3,4]): "太乙在"+tyg+"，助主", tuple([9,2,6,7]): "太乙在"+tyg+"，助客"}, ty)
     #推三門具不具
     def threedoors(self, ji,tn):
