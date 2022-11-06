@@ -708,28 +708,28 @@ class Taiyi():
     def ty_gong_dist(self, ji, tn):
         ty = self.ty(ji, tn)
         tyg = num2gong(self.ty(ji, tn))
-        return self.multi_key_dict_get({tuple([1,8,3,4]): "太乙在"+tyg+"，助主", tuple([9,2,6,7]): "太乙在"+tyg+"，助客"}, ty)
+        return self.multi_key_dict_get({tuple([1,8,3,4]): "太乙在"+tyg+"，助主。", tuple([9,2,6,7]): "太乙在"+tyg+"，助客。"}, ty)
     #推三門具不具
     def threedoors(self, ji,tn):
         ty = self.ty(ji,tn)
         ed = self.geteightdoors(ji,tn)
         door = ed.get(ty)
         if door in list("休生開"):
-            return "三門不具"
+            return "三門不具。"
         else:
-            return "三門具"
+            return "三門具。"
     #推五將發不發
     def fivegenerals(self, ji, tn):
         hg = self.home_general(ji,tn) 
         ag = self.away_general(ji,tn)
         if self.skyeyes_des(ji,tn) == "" and hg != 5 and ag != 5:
-            return "五將發"
+            return "五將發。"
         elif hg == 5:
-            return "主將主參不出中門，杜塞無門"
+            return "主將主參不出中門，杜塞無門。"
         elif ag == 5:
-            return "客將客參不出中門，杜塞無門"
+            return "客將客參不出中門，杜塞無門。"
         else:
-            return "五將不發"
+            return "五將不發。"
     #推主客相闗法
     def wc_n_sj(self, ji,tn):
         wc = self.skyeyes(ji,tn)
