@@ -91,6 +91,8 @@ class Taiyi():
             pn = "{}{}年".format(preiodname[idx-1],cyear)
             kn = "{}{}{}".format(period[idx-1], king[idx-1], king_realname[idx-1])
             return  "{} {}".format(kn, pn)
+        elif year < -2069:
+            return ""
 
     #文昌處境
     def skyeyes_des(self, ji,tn):
