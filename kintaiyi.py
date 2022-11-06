@@ -468,7 +468,7 @@ class Taiyi():
     #客將
     def away_general(self, ji,tn):
         if self.away_cal(ji,tn) == 1:
-           return self.gong.get(self.sf(ji,tn))
+           return 1
         elif self.away_cal(ji,tn) < 10:
            return self.away_cal(ji,tn) 
         elif self.away_cal(ji, tn) % 10 == 0:
@@ -480,7 +480,6 @@ class Taiyi():
         elif self.away_cal(ji,tn) > 30 and self.away_cal(ji,tn) < 40 :
            return self.away_cal(ji,tn) - 30
         
-    
     def away_vgen(self, ji,tn):
         away_vg = self.away_general(ji,tn) *3 % 10
         if away_vg == 0:
