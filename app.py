@@ -42,7 +42,7 @@ def st_capture(output_func):
         yield
         
 st.set_page_config(layout="wide",page_title="太鳦 - 太乙排盘")
-pan,example,guji,update = st.tabs([' 排盤 ', ' 案例 ', ' 古籍 ',' 日誌 ' ])
+pan,example,guji,update = st.tabs([' 排盤 ', ' 史例 ', ' 古籍 ',' 日誌 ' ])
 
 with st.sidebar:
     idate = st.text_input('輸入日期(如: 1997/8/8)', '')
