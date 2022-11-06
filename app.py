@@ -246,8 +246,10 @@ with pan:
             else:
                 yy = "yin"
             st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
-            st.markdown("《太乙秘書》︰"+ts)
-            st.markdown("史事記載︰"+ch)
+            st.title("《太乙秘書》︰")
+            st.markdown(ts)
+            st.title("史事記載︰")
+            st.markdown(ch)
             print("{} |\n{} |\n{} |\n{} - {} - {} ({}) | \n積年數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | 陽九︰{} 百六︰{}\n\n".format(ty.gendatetime(), gz, ty.kingyear(), ty.ty_method(tn), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元"), homecal, awaycal, yc, ed, yj, bl))
             expander = st.expander("原始碼")
             expander.write(str(ttext))
