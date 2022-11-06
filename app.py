@@ -113,7 +113,7 @@ with pan:
                 st.markdown("推太乙風雲飛鳥助戰︰"+ home_vs_away3)
                 st.title("九宮分野︰")
                 st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-                print("{} |\n{} |\n{} |\n{} - {} - {} ({}) | \n積年數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | 陽九︰{} 百六︰{} |\n{} \n\n".format(ty.gendatetime(), gz, ty.kingyear(), ty.ty_method(tn), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元"), homecal, awaycal, yc, ed, yj, bl, ty.ty_gong_dist(num, tn)))
+                print("{} |\n{} |\n{} |\n{} - {} - {} ({}) | \n積年數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | 陽九︰{} 百六︰{} |\n{}{}{} \n\n".format(ty.gendatetime(), gz, ty.kingyear(), ty.ty_method(tn), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元"), homecal, awaycal, yc, ed, yj, bl, ty.ty_gong_dist(num, tn), ty.threedoors(num, tn), ty.fivegenerals(num, tn) ))
                 expander = st.expander("原始碼")
                 expander.write(str(ttext))
             else:
@@ -212,7 +212,7 @@ with pan:
             st.markdown("推太乙風雲飛鳥助戰︰"+ home_vs_away3)
             st.title("九宮分野︰")
             st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-            print("{} |\n{} |\n{} |\n{} - {} - {} ({}) | \n積年數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | 陽九︰{} 百六︰{}|\n{} \n\n".format(ty.gendatetime(), gz, ty.kingyear(), ty.ty_method(tn), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元"), homecal, awaycal, yc, ed, yj, bl, ty.ty_gong_dist(num, tn)))
+            print("{} |\n{} |\n{} |\n{} - {} - {} ({}) | \n積年數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | 陽九︰{} 百六︰{}|\n{}{}{} \n\n".format(ty.gendatetime(), gz, ty.kingyear(), ty.ty_method(tn), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.accnum(num,tn), ttext.get("紀元"), homecal, awaycal, yc, ed, yj, bl, ty.ty_gong_dist(num, tn), ty.threedoors(num, tn), ty.fivegenerals(num, tn)))
             expander = st.expander("原始碼")
             expander.write(str(ttext))
         else:
