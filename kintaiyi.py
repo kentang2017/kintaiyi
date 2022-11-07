@@ -21,6 +21,14 @@ def jiazi():
 def num2gong(num):
     return dict(zip(range(1,10), list("乾午艮卯中酉坤子巽"))).get(num)
 
+#[i*12 for i in jiazi()],[1,13,25,37,49,61]
+#甲子甲午庚子庚午丙子丙午壬子壬午戊子戊午 ： 1
+#乙丑乙未辛丑辛未丁丑丁未癸未癸丑己丑己未 ：13
+#丙寅丙申壬寅壬申戊寅戊申甲寅甲申庚寅庚申 ：25
+#丁卯丁酉癸卯癸酉己卯己酉乙卯乙酉辛卯辛酉 ：37
+#戊辰戊戌甲戌甲辰庚辰庚戌丙戌丙辰壬辰壬戌 ：49
+#己巳己亥乙亥乙已辛已辛亥丁亥丁巳癸已癸亥 ：61
+
 class Taiyi():
     def __init__(self, year, month, day, hour, minute):
         self.year, self.month, self.day, self.hour, self.minute = year, month, day, hour, minute
