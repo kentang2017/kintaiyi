@@ -129,7 +129,6 @@ class Taiyi():
             if k in keys:
                 return v
         return None
-    
     #分干支
     def minutes_jiazi_d(self):
         t = []
@@ -274,8 +273,7 @@ class Taiyi():
         elif ji == 4: #分計
             return int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00") - 1)) * 120 + (self.minute + 1 ) // 2 + 1 
             #return ((datetime.strptime("{0:04}-{1:02d}-{2:02d} 00:00:00".format(self.year, self.month, self.day), "%Y-%m-%d %H:%M:%S") - datetime.strptime("1900-06-19 00:00:00","%Y-%m-%d %H:%M:%S")).days - 1 ) * 12 + (self.hour + 1 ) // 2 + 1
-       
-    
+      
     def kook(self, ji, tn):
         xz = self.xzdistance()
         current_date =  Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2)))
@@ -285,13 +283,16 @@ class Taiyi():
             k = 72
         if ji == 0 or ji == 1 or ji ==5 or ji ==2:
             dun = "陽遁"
+            three_year = {0:"理天", 1:"理地", 2:"理人"}.get(dict(zip(list(range(1,73)), [0,1,2] * 24)).get(k))
+            return {"文":"{}{}局".format(dun, an2cn(k)), "數":k, "年":three_year}
         elif ji == 3 or ji == 4:
             if current_date >= xz_date and self.month >= 6:
                 dun = "陰遁"
             else:
                 dun = "陽遁"
-        three_year = {0:"理天", 1:"理地", 2:"理人"}.get(dict(zip(list(range(1,73)), [0,1,2] * 24)).get(k))
-        return {"文":"{}{}局".format(dun, an2cn(k)), "數":k, "年":three_year}
+            three_year = {0:"理天", 1:"理地", 2:"理人"}.get(dict(zip(list(range(1,73)), [0,1,2] * 24)).get(k))
+            k = self.accnum(ji, tn)
+            return {"文":"{}{}局".format(dun, an2cn(k)), "數":k, "年":three_year}
     
     def getyuan(self, ji, tn):
         accnum = self.accnum(ji, tn)
