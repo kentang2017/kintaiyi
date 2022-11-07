@@ -19,7 +19,7 @@ def jiazi():
     return list(map(lambda x: "{}{}".format(Gan[x % len(Gan)],Zhi[x % len(Zhi)]), list(range(60))))
 
 def num2gong(num):
-    return dict(zip(range(1,10), list("子午艮卯中酉坤子巽"))).get(num)
+    return dict(zip(range(1,10), list("乾午艮卯中酉坤子巽"))).get(num)
 
 class Taiyi():
     def __init__(self, year, month, day, hour, minute):
