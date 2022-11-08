@@ -276,7 +276,7 @@ class Taiyi():
             #return ((datetime.strptime("{0:04}-{1:02d}-{2:02d} 00:00:00".format(self.year, self.month, self.day), "%Y-%m-%d %H:%M:%S") - datetime.strptime("1900-06-19 00:00:00","%Y-%m-%d %H:%M:%S")).days - 1 ) * 12 + (self.hour + 1 ) // 2 + 1
     
     def yeargua(self, tn):
-        tynum = accnum(0, tn) % 64
+        tynum = self.accnum(0, tn) % 64
         if tynum == 0:
             tynum = 64
         return self.gua.get(tynum)
