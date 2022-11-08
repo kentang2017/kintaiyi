@@ -288,7 +288,7 @@ with update:
     st.header('更新日誌')
     st.markdown(get_file_content_as_string("update.md"))
 
-with ins:
+with disaster:
     st.header('災害')
     st.markdown(get_file_content_as_string("disaster.md"))
    
