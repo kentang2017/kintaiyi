@@ -46,6 +46,7 @@ class Taiyi():
         self.wuxing_relation_2 = dict(zip(list(map(lambda x: tuple(re.findall("..",x)), self.wuxing.split(","))), "尅我,我尅,比和,生我,我生".split(",")))
         self.nayin = "甲子乙丑壬申癸酉庚辰辛巳甲午乙未壬寅癸卯庚戌辛亥,丙寅丁卯甲戌乙亥戊子己丑丙申丁酉甲辰乙巳戊午己未,戊辰己巳壬午癸未庚寅辛卯戊戌己亥壬子癸丑庚申辛酉,庚午辛未戊寅己卯丙戌丁亥庚子辛丑戊申己酉丙辰丁巳,甲申乙酉丙子丁丑甲寅乙卯丙午丁未壬戌癸亥壬辰癸巳".split(",") 
         self.nayin_wuxing = dict(zip([tuple(re.findall("..", i)) for i in self.nayin], list("金火木土水")))
+        self.gua = dict(zip(range(1,65),"乾䷀,坤䷁,屯䷂,蒙䷃,需䷄,訟䷅,師䷆,比䷇,小畜䷈,履䷉,泰䷊,否䷋,同人䷌,大有䷍,謙䷎,豫䷏,隨䷐,蠱䷑,臨䷒,觀䷓,噬嗑䷔,賁䷕,剝䷖,復䷗,无妄䷘,大畜䷙,頤䷚,大過䷛,坎䷜,離䷝,咸䷞,恆䷟,遯䷠,大壯䷡,晉䷢,明夷䷣,家人䷤,睽䷥,蹇䷦,解䷧,損䷨,益䷩,夬䷪,姤䷫,萃䷬,升䷭,困䷮,井䷯,革䷰,鼎䷱,震䷲,艮䷳,漸䷴,歸妹䷵,豐䷶,旅䷷,巽䷸,兌䷹,渙䷺,節䷻,中孚䷼,小過䷽,既濟䷾,未濟䷿".split(",")))
 
     def Ganzhiwuxing(self, gangorzhi):
         ganzhiwuxing = dict(zip(list(map(lambda x: tuple(x),"甲寅乙卯震巽,丙巳丁午離,壬亥癸子坎,庚申辛酉乾兌,未丑戊己未辰戌艮坤".split(","))), list("木火水金土")))
@@ -273,7 +274,13 @@ class Taiyi():
         elif ji == 4: #分計
             return int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00") - 1)) * 120 + (self.minute + 1 ) // 2 + 1 
             #return ((datetime.strptime("{0:04}-{1:02d}-{2:02d} 00:00:00".format(self.year, self.month, self.day), "%Y-%m-%d %H:%M:%S") - datetime.strptime("1900-06-19 00:00:00","%Y-%m-%d %H:%M:%S")).days - 1 ) * 12 + (self.hour + 1 ) // 2 + 1
-      
+    
+    def yeargua(self, tn):
+        tynum = accnum(0, tn) % 64
+        if tynum == 0:
+            tynum = 64
+        return self.gua.get(tynum)
+
     def kook(self, ji, tn):
         xz = self.xzdistance()
         current_date =  Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2)))
