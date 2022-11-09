@@ -259,7 +259,7 @@ class Taiyi():
             #num  = self.multi_key_dict_get(b, dgz)
             #return dict(zip(self.Zhi, range(num, num + 12))).get(hz)
             #jiazi_ac = (tn_num + self.year) * 365.2425 * 12 -1
-            jiazi_ac= (tn_num + self.year) % 360
+            jiazi_ac= (tn_num + self.year) // 360
             zhi_code = dict(zip(self.Zhi, range(1,13)))
             hz = self.gangzhi()[3][1]
             if self.hour != 0:
