@@ -94,7 +94,6 @@ class Taiyi():
             return  "{} {}".format(kn, pn)
         elif year < -2068:
             return ""
-
     #文昌處境
     def skyeyes_des(self, ji,tn):
         yy = self.kook(ji,tn).get("文")[0]
@@ -150,7 +149,6 @@ class Taiyi():
         yTG,mTG,dTG,hTG = "{}{}".format(self.Gan[cdate.getYearGZ().tg], self.Zhi[cdate.getYearGZ().dz]), "{}{}".format(self.Gan[cdate.getMonthGZ().tg],self.Zhi[cdate.getMonthGZ().dz]), "{}{}".format(self.Gan[cdate.getDayGZ().tg], self.Zhi[cdate.getDayGZ().dz]), "{}{}".format(self.Gan[cdate.getHourGZ(dd[3]).tg], self.Zhi[cdate.getHourGZ(dd[3]).dz])
         gangzhi_minute = self.minutes_jiazi_d().get(str(self.hour)+":"+str(self.minute))
         return [yTG, mTG, dTG, hTG, gangzhi_minute]
-
 #%% #節氣
     def ecliptic_lon(self, jd_utc):
         return Ecliptic(Equatorial(Sun(jd_utc).ra,Sun(jd_utc).dec,epoch=jd_utc)).lon
@@ -252,6 +250,7 @@ class Taiyi():
             return int(Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00")) 
             #return (datetime.strptime("{0:04}-{1:02d}-{2:02d} 00:00:00".format(self.year, self.month, self.day), "%Y-%m-%d %H:%M:%S") - datetime.strptime("1900-06-19 00:00:00","%Y-%m-%d %H:%M:%S")).days
         elif ji == 3: #時計
+            
             #dgz = self.gangzhi()[2]
             #hz =  self.gangzhi()[3][1]
             #a = "甲子甲午庚子庚午丙子丙午壬子壬午戊子戊午,乙丑乙未辛丑辛未丁丑丁未癸未癸丑己丑己未,丙寅丙申壬寅壬申戊寅戊申甲寅甲申庚寅庚申,丁卯丁酉癸卯癸酉己卯己酉乙卯乙酉辛卯辛酉,戊辰戊戌甲戌甲辰庚辰庚戌丙戌丙辰壬辰壬戌,己巳己亥乙亥乙已辛已辛亥丁亥丁巳癸已癸亥".split(",")
@@ -267,7 +266,12 @@ class Taiyi():
             #    return int(acc) 
             #else:
             #    return int(jiazi_ac)
-            t = 708011105
+            if tn_num ==0:
+                t = 708011105
+            elif tn_num ==2:
+                t = 708011105 - tn_num + 10154913
+            elif tn_num ==1;
+                t = 708011105 - tn_num +1936557
             accday = t + int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/12/21 00:00:00.00") )) 
             acchr = ((accday -1) * 12) + (self.hour+1)//2 +1
             return acchr
