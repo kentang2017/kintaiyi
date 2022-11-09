@@ -266,11 +266,11 @@ class Taiyi():
             #    return int(acc) 
             #else:
             #    return int(jiazi_ac)
-            if tn_num ==0:
+            if tn ==0:
                 t = 708011105
-            elif tn_num ==2:
+            elif tn ==2:
                 t = 708011105 - tn_num + 10154913
-            elif tn_num ==1;
+            elif tn ==1;
                 t = 708011105 - tn_num +1936557
             accday = t + int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/12/21 00:00:00.00") )) 
             acchr = ((accday -1) * 12) + (self.hour+1)//2 +1
