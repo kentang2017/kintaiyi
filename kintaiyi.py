@@ -484,7 +484,7 @@ class Taiyi():
         elif sf_jc !=1 and ty_jc ==1 and sf_jc1 ==1 :
             return sum(sf_order[: sf_order.index(ty)])
         elif sf_jc !=1 and ty_jc !=1 and sf_jc1 !=1 and sf_num != ty:
-            return sum(sf_order[: sf_order.index(ty)])
+            return sum(sf_order[: sf_order.index(ty)]) +10
         elif sf_jc !=1 and ty_jc !=1 and sf_jc1 !=1 and sf_num == ty:
             return ty
     #客將
