@@ -92,7 +92,7 @@ with pan:
                 gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
                 ch = chistory.get(y)
                 if num == 3:
-                   tynum = ty.accnum(0,tn)
+                   tynum = ty.accnum(num,tn)
                 else: 
                    tynum = ty.accnum(num,tn)
                 if ch == None:
@@ -156,7 +156,7 @@ with pan:
                 else:
                     yy = "yin"
                 if num == 3:
-                   tynum = ""
+                   tynum = ty.accnum(num,tn)
                 else: 
                    tynum = ty.accnum(num,tn)
                 st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
@@ -196,7 +196,7 @@ with pan:
             home_vs_away2 = ty.suenwl(num,tn)
             home_vs_away3 = ty.flybird_wl(num,tn)
             if num == 3:
-               tynum = ty.accnum(0,tn)
+               tynum = ty.accnum(num,tn)
             else: 
                tynum = ty.accnum(num,tn)
             yj = ty.yangjiu()
@@ -262,7 +262,7 @@ with pan:
             else:
                 yy = "yin"
             if num == 3:
-                tynum = ty.accnum(0,tn)
+                tynum = ty.accnum(num,tn)
             else: 
                 tynum = ty.accnum(num,tn)
             st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
