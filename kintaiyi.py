@@ -262,10 +262,10 @@ class Taiyi():
             zhi_code = dict(zip(self.Zhi, range(1,13)))
             hz = self.gangzhi()[3][1]
             if self.hour != 0:
-                acc = jiazi_ac+ zhi_code.get(hz) - 1 
-                return int(acc) % 360
+                acc = jiazi_ac + zhi_code.get(hz) 
+                return int(acc) 
             else:
-                return int(jiazi_ac) % 360
+                return int(jiazi_ac)
             #if self.hour == 0:
             #    return (int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00") - 1)) * 12 + (self.hour + 1 ) // 2 + 1) + 12
             #else:
@@ -298,7 +298,7 @@ class Taiyi():
             else:
                 dun = "陽遁"
             three_year = {0:"理天", 1:"理地", 2:"理人"}.get(dict(zip(list(range(1,73)), [0,1,2] * 24)).get(k))
-            k = self.accnum(ji, tn)%72%24
+            k = self.accnum(ji, tn)%72
             return {"文":"{}{}局".format(dun, an2cn(k)), "數":k, "年":three_year}
     
     def getyuan(self, ji, tn):
