@@ -258,7 +258,8 @@ class Taiyi():
             #b = dict(zip([tuple(re.findall('..', i)) for i in a], [1,13,25,37,49,61]))
             #num  = self.multi_key_dict_get(b, dgz)
             #return dict(zip(self.Zhi, range(num, num + 12))).get(hz)
-            jiazi_ac = (tn_num + self.year) * 365.2425 * 12 -1
+            #jiazi_ac = (tn_num + self.year) * 365.2425 * 12 -1
+            jiazi_ac= (tn_num + self.year) % 360
             zhi_code = dict(zip(self.Zhi, range(1,13)))
             hz = self.gangzhi()[3][1]
             if self.hour != 0:
@@ -298,11 +299,9 @@ class Taiyi():
             else:
                 dun = "陽遁"
             three_year = {0:"理天", 1:"理地", 2:"理人"}.get(dict(zip(list(range(1,73)), [0,1,2] * 24)).get(k))
-            k = self.accnum(ji, tn) % 360 % 24
+            k = self.accnum(ji, tn) % 72
             if k == 0:
                 k = 72
-            elif k > 72:
-                k = k % 72
             return {"文":"{}{}局".format(dun, an2cn(k)), "數":k, "年":three_year}
     
     def getyuan(self, ji, tn):
