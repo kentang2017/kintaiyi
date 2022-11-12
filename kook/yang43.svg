@@ -26,13 +26,13 @@
      showgrid="false"
      inkscape:snap-text-baseline="true"
      inkscape:zoom="1.2398921"
-     inkscape:cx="270.1848"
+     inkscape:cx="229.85871"
      inkscape:cy="251.6348"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
+     inkscape:window-width="944"
+     inkscape:window-height="993"
+     inkscape:window-x="7"
+     inkscape:window-y="2"
+     inkscape:window-maximized="0"
      inkscape:current-layer="figure_1"
      width="400pt"
      fit-margin-top="0"
@@ -67,7 +67,8 @@
     <g
        id="g946"
        transform="translate(72.779707,46.940335)"
-       style="stroke-linecap:butt;stroke-linejoin:round">
+       style="stroke-linecap:butt;stroke-linejoin:round"
+       sodipodi:insensitive="true">
       <g
          id="g4454">
         <g
@@ -1156,7 +1157,8 @@
     </g>
     <g
        id="axes_1"
-       transform="matrix(1.2239325,0,0,1.2191774,-11.433152,-8.5709151)">
+       transform="matrix(1.2239325,0,0,1.2191774,-11.433152,-8.5709151)"
+       sodipodi:insensitive="true">
       <g
          id="matplotlib.axis_1" />
       <g
@@ -1176,19 +1178,19 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:11px;line-height:1.05;font-family:sans-serif;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.916162;stroke-linecap:butt;stroke-linejoin:round"
-       x="205.56351"
-       y="314.4823"
+       x="210.05476"
+       y="317.48816"
        id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7"
        transform="scale(1.0019482,0.99805558)"><tspan
          sodipodi:role="line"
          id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8-8-5-1-1-6-0-5-5-0-0-9-6"
          style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
-         x="205.56351"
-         y="314.4823">主</tspan><tspan
+         x="210.05476"
+         y="317.48816">主</tspan><tspan
          sodipodi:role="line"
          style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
-         x="205.56351"
-         y="327.07874"
+         x="210.05476"
+         y="330.08459"
          id="tspan19700">大</tspan></text>
     <text
        xml:space="preserve"
@@ -1207,6 +1209,23 @@
          x="119.07343"
          y="202.01721"
          id="tspan19700-8">參</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:11px;line-height:1.05;font-family:sans-serif;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.916162;stroke-linecap:butt;stroke-linejoin:round"
+       x="129.43399"
+       y="265.67511"
+       id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-2"
+       transform="scale(1.0019482,0.99805558)"><tspan
+         sodipodi:role="line"
+         id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8-8-5-1-1-6-0-5-5-0-0-9-6-7-5"
+         style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
+         x="129.43399"
+         y="265.67511">四</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
+         x="129.43399"
+         y="278.27155"
+         id="tspan19700-8-6">神</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:11px;line-height:1.05;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.916162;stroke-linecap:butt;stroke-linejoin:round"
@@ -1244,53 +1263,138 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:11px;line-height:1.05;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.916162;stroke-linecap:butt;stroke-linejoin:round"
-       x="332.60342"
-       y="226.41554"
+       x="330.18857"
+       y="189.44528"
        id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8-6"
        transform="scale(1.0019482,0.99805558)"><tspan
          sodipodi:role="line"
          style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
-         x="332.60342"
-         y="226.41554"
+         x="330.18857"
+         y="189.44528"
          id="tspan23632-3">計</tspan><tspan
          sodipodi:role="line"
          style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
-         x="332.60342"
-         y="239.01198"
+         x="330.18857"
+         y="202.04172"
          id="tspan24208">神</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:11px;line-height:1.05;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.916162;stroke-linecap:butt;stroke-linejoin:round"
-       x="195.23994"
-       y="314.4823"
+       x="340.66806"
+       y="189.44528"
+       id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8-6-5"
+       transform="scale(1.0019482,0.99805558)"><tspan
+         sodipodi:role="line"
+         style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
+         x="340.66806"
+         y="189.44528"
+         id="tspan23632-3-4">地</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
+         x="340.66806"
+         y="202.04172"
+         id="tspan24208-3">乙</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:11px;line-height:1.05;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.916162;stroke-linecap:butt;stroke-linejoin:round"
+       x="190.10443"
+       y="316.22638"
+       id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8-6-5-7"
+       transform="scale(1.0019482,0.99805558)"><tspan
+         sodipodi:role="line"
+         style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
+         x="190.10443"
+         y="316.22638"
+         id="tspan23632-3-4-8">天</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
+         x="190.10443"
+         y="328.82281"
+         id="tspan24208-3-4">乙</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:11px;line-height:1.05;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.916162;stroke-linecap:butt;stroke-linejoin:round"
+       x="313.55124"
+       y="144.91019"
+       id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8-6-5-7-3"
+       transform="scale(1.0019482,0.99805558)"><tspan
+         sodipodi:role="line"
+         style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
+         x="313.55124"
+         y="144.91019"
+         id="tspan23632-3-4-8-4">值</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
+         x="313.55124"
+         y="157.50662"
+         id="tspan24208-3-4-1">符</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:11px;line-height:1.05;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.916162;stroke-linecap:butt;stroke-linejoin:round"
+       x="280.45935"
+       y="115.99235"
+       id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8-6-5-7-3-9"
+       transform="scale(1.0019482,0.99805558)"><tspan
+         sodipodi:role="line"
+         style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
+         x="280.45935"
+         y="115.99235"
+         id="tspan23632-3-4-8-4-6">臣</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
+         x="280.45935"
+         y="128.58879"
+         id="tspan24208-3-4-1-4">基</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:11px;line-height:1.05;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.916162;stroke-linecap:butt;stroke-linejoin:round"
+       x="116.81095"
+       y="227.39919"
+       id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8-6-5-7-3-9-0"
+       transform="scale(1.0019482,0.99805558)"><tspan
+         sodipodi:role="line"
+         style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
+         x="116.81095"
+         y="227.39919"
+         id="tspan23632-3-4-8-4-6-3">民</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
+         x="116.81095"
+         y="239.99562"
+         id="tspan24208-3-4-1-4-2">基</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:11px;line-height:1.05;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.916162;stroke-linecap:butt;stroke-linejoin:round"
+       x="201.22829"
+       y="317.48816"
        id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8-6-2"
        transform="scale(1.0019482,0.99805558)"><tspan
          sodipodi:role="line"
          style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
-         x="195.23994"
-         y="314.4823"
+         x="201.22829"
+         y="317.48816"
          id="tspan24208-4">太</tspan><tspan
          sodipodi:role="line"
          style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
-         x="195.23994"
-         y="327.07874"
+         x="201.22829"
+         y="330.08459"
          id="tspan25440">乙</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:11px;line-height:1.05;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.916162;stroke-linecap:butt;stroke-linejoin:round"
-       x="216.90648"
-       y="313.54263"
+       x="219.90065"
+       y="316.54849"
        id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8-6-2-8"
        transform="scale(1.0019482,0.99805558)"><tspan
          sodipodi:role="line"
          style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
-         x="216.90648"
-         y="313.54263"
+         x="219.90065"
+         y="316.54849"
          id="tspan25440-6">文</tspan><tspan
          sodipodi:role="line"
          style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
-         x="216.90648"
-         y="326.13907"
+         x="219.90065"
+         y="329.14493"
          id="tspan26334">昌</tspan></text>
     <text
        xml:space="preserve"
@@ -1343,5 +1447,22 @@
          x="323.83258"
          y="157.24768"
          id="tspan24858">大</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:11px;line-height:1.05;font-family:sans-serif;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.916162;stroke-linecap:butt;stroke-linejoin:round"
+       x="246.62624"
+       y="97.264694"
+       id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8-6-2-1-9"
+       transform="scale(1.0019482,0.99805558)"><tspan
+         sodipodi:role="line"
+         style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
+         x="246.62624"
+         y="97.264694"
+         id="tspan24208-4-7-7">太</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
+         x="246.62624"
+         y="109.86113"
+         id="tspan24858-2">歲</tspan></text>
   </g>
 </svg>
