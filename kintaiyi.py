@@ -952,7 +952,11 @@ class Taiyi():
         njq_list = dict(zip(njq, jqsulist))
         currentjq = self.jq(self.year, self.month, self.day, self.hour)
         distance_to_cjq = self.distancejq(currentjq)
-        return gensulist[gensulist.index(   njq_list.get(currentjq)[0]  )+  njq_list.get(currentjq)[1]  + distance_to_cjq]
+        num = gensulist.index(   njq_list.get(currentjq)[0]  )+  njq_list.get(currentjq)[1]  + distance_to_cjq
+        if num >360:
+            return self.new_list(gensulist, njq_list.get(currentjq)[0] )[num-360]
+        else:
+            return gensulist[num]
     
     def gendatetime(self):
         return "{}年{}月{}日{}時".format(self.year, self.month, self.day, self.hour)
