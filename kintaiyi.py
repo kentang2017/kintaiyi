@@ -13,14 +13,18 @@ from cn2an import an2cn
 from itertools import cycle, repeat
 from taiyidict import tengan_shiji, su_dist
 from ruler import ruler_data
+import taichi
 
+ti.init(arch=ti.gpu)
+
+@ti.func
 def jiazi():
     Gan, Zhi = '甲乙丙丁戊己庚辛壬癸','子丑寅卯辰巳午未申酉戌亥'
     return list(map(lambda x: "{}{}".format(Gan[x % len(Gan)],Zhi[x % len(Zhi)]), list(range(60))))
-
+@ti.func
 def num2gong(num):
     return dict(zip(range(1,10), list("乾午艮卯中酉坤子巽"))).get(num)
-
+@ti.kernel
 class Taiyi():
     def __init__(self, year, month, day, hour, minute):
         self.year, self.month, self.day, self.hour, self.minute = year, month, day, hour, minute
