@@ -13,7 +13,7 @@ from cn2an import an2cn
 from itertools import cycle, repeat
 from taiyidict import tengan_shiji, su_dist
 from ruler import ruler_data
-import taichi
+import taichi as ti
 
 ti.init(arch=ti.gpu)
 
