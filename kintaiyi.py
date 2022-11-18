@@ -844,7 +844,7 @@ class Taiyi():
     def yangjiu(self):
         getyj = (self.year + 12607)%4560%456//10
         if getyj>12:
-          getyj = getyj - 12
+          getyj = getyj - 11
         return dict(zip(range(0,13),self.Zhi)).get(getyj)
     #百六
     def baliu(self):
