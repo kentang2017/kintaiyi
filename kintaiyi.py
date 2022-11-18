@@ -13,9 +13,6 @@ from cn2an import an2cn
 from itertools import cycle, repeat
 from taiyidict import tengan_shiji, su_dist
 from ruler import ruler_data
-import taichi as ti
-
-
 
 def jiazi():
     Gan, Zhi = '甲乙丙丁戊己庚辛壬癸','子丑寅卯辰巳午未申酉戌亥'
