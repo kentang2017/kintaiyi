@@ -313,7 +313,7 @@ class Taiyi():
             else:
                 dun = "陽遁"
             three_year = {0:"理天", 1:"理地", 2:"理人"}.get(dict(zip(list(range(1,73)), [0,1,2] * 24)).get(k))
-            return {"文":"{}{}局".format(dun, an2cn(k)), "數":k, "年":three_year}
+            return {"文":"{}{}局".format(dun, an2cn(k)), "數":k, "年":three_year, "積年數":self.accnum(ji, tn) }
     
     def getyuan(self, ji, tn):
         accnum = self.accnum(ji, tn)
