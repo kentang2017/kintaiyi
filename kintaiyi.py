@@ -843,13 +843,13 @@ class Taiyi():
     #陽九
     def yangjiu(self):
         getyj = (self.year + 12607)%4560%456//10
-        if getyj>12:
-          getyj = getyj - 11
+        if getyj>=12:
+          getyj = getyj % 12
         return dict(zip(range(0,13),self.Zhi)).get(getyj)
     #百六
     def baliu(self):
         getbl = (self.year + 12607)%4320%288//24
-        if getbl >12:
+        if getbl >=12:
           getbl = getbl %12
         return dict(zip(range(0,13),self.new_list(self.Zhi, "寅"))).get(getbl)
     #帝符
