@@ -315,6 +315,18 @@ class Taiyi():
             three_year = {0:"理天", 1:"理地", 2:"理人"}.get(dict(zip(list(range(1,73)), [0,1,2] * 24)).get(k))
             return {"文":"{}{}局".format(dun, an2cn(k)), "數":k, "年":three_year, "積年數":self.accnum(ji, tn) }
     
+    def getyuan(self, ji, tn):
+        accnum = self.accnum(ji, tn)
+        if round(accnum % 360) == 1:
+            find_ji_num = 1
+        else:
+            find_ji_num = int(round((accnum % 360) / 72, 0))
+        fiveyuen_d = dict(zip(range(1,6), jiazi()[0::12]))
+        if find_ji_num == 0:
+            find_ji_num = 1
+        jiyuan = fiveyuen_d.get(find_ji_num) 
+        return jiyuan
+    
     def getepoch(self, ji, tn):
         accnum = self.accnum(ji, tn)
         if ji == 0 or ji == 1 or ji ==2:
