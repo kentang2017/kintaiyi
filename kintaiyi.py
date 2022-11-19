@@ -281,7 +281,8 @@ class Taiyi():
                 accyear = tn_num + self.year + 1 
             return accyear * 12 + 2 + self.lunar_date_d().get("月")
         elif ji == 2:#日計
-            return int(Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00")) 
+            t = 708011105 
+            return t - int(Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00")) 
             #return (datetime.strptime("{0:04}-{1:02d}-{2:02d} 00:00:00".format(self.year, self.month, self.day), "%Y-%m-%d %H:%M:%S") - datetime.strptime("1900-06-19 00:00:00","%Y-%m-%d %H:%M:%S")).days
         elif ji == 3: #時計
             
