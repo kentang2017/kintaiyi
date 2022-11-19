@@ -361,6 +361,10 @@ class Taiyi():
             find_ji_num2 = int(accnum % 360 % 72 % 24 / 3)
             if find_ji_num2 == 0:
                 find_ji_num2 = 1
+            if find_ji_num2 > 6:
+                find_ji_num2 = find_ji_num2  - 6
+            if find_ji_num > 6:
+                find_ji_num = find_ji_num - 6
             cnum = list("一二三四五六七八九十")
             return {"元":dict(zip(range(1,7), cnum[0:6])).get(find_ji_num), "紀":dict(zip(range(1,7), cnum[0:6])).get(find_ji_num2)}
         elif ji == 3:
