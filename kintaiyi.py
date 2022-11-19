@@ -378,7 +378,7 @@ class Taiyi():
                return "{}{}元".format(self.getepoch(ji,tn), self.multi_key_dict_get(j, self.gangzhi()[3]))
             else:
                return "{}{}元".format(self.getepoch(ji,tn), self.multi_key_dict_get(j, self.gangzhi()[2]))
-         elif ji == 4:
+        elif ji == 4:
             j = dict(zip([('甲子', '甲午', '乙丑', '乙未', '丙寅', '丙申', '丁卯', '丁酉', '戊辰', '戊戌', '己巳', '己亥'), 
                                   ('庚午', '庚子', '辛未', '辛丑', '壬申', '壬寅', '癸酉', '癸卯', '甲戌', '甲辰', '乙亥', '乙巳'),
                                   ('丙子', '丙午', '丁丑', '丁未', '戊寅', '戊申', '己卯', '己酉', '庚辰', '庚戌', '辛巳', '辛亥'),
