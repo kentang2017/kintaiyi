@@ -338,10 +338,8 @@ class Taiyi():
                         ('甲申', '甲寅', '乙酉', '乙卯', '丙戌', '丙辰', '丁亥', '丁巳', '戊子', '戊午'),
                         ('己丑', '己未', '庚寅', '庚申', '辛卯', '辛酉', '壬辰', '壬戌', '癸巳', '癸亥')], 
                                  list("一二三四五六")))
-            if tn!=1:
-                return "第{}紀".format(self.multi_key_dict_get(epochdict, self.gangzhi()[3]))
-            else:
-                return "第{}紀".format(self.multi_key_dict_get(epochdict, self.gangzhi()[1]))
+            
+            return "第{}紀".format(self.multi_key_dict_get(epochdict, self.gangzhi()[0]))
         
         elif ji == 4:
             epochdict = dict(zip([
