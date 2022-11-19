@@ -88,7 +88,7 @@ class Taiyi():
             return  "{} {}".format(kn, pn)
         elif year < y[idx] and year> -2069:
             year = year - y[idx-1] 
-            cyear = an2cn(year)
+            cyear = an2cn(year+1)
             pn = "{}{}年".format(preiodname[idx-1],cyear)
             kn = "{}{}{}".format(period[idx-1], king[idx-1], king_realname[idx-1])
             return  "{} {}".format(kn, pn)
