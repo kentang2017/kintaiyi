@@ -90,6 +90,7 @@ with pan:
                 home_vs_away3 = ty.flybird_wl(num,tn)
                 ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
                 gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
+                lunard = "{}年{}月{}日".format(ty.lunar_date_d().get("年"), ty.lunar_date_d().get("月"), ty.lunar_date_d().get("日"))
                 ch = chistory.get(y)
                 if num == 3:
                    tynum = ty.accnum(num,tn)
@@ -119,7 +120,7 @@ with pan:
                 st.markdown("推太乙風雲飛鳥助戰︰"+ home_vs_away3)
                 st.title("九宮分野︰")
                 st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-                print("{} |\n{} |\n{} |\n{} - {} - {} ({}) | \n積年數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | {}卦值年  |\n 陽九︰{} 百六︰{} |\n{}{}{}\n{} \n\n".format(ty.gendatetime(), gz, ty.kingyear(), ty.ty_method(tn), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), tynum, ttext.get("紀元"), homecal, awaycal, yc, ed, g, yj, bl, ty.ty_gong_dist(num, tn), ty.threedoors(num, tn), ty.fivegenerals(num, tn), ty.geteightdoors(num, tn) ))
+                print("{} |\n農曆︰{} |\n{} |\n{} |\n{} - {} - {} ({}) | \n積年數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | {}卦值年  |\n 陽九︰{} 百六︰{} |\n{}{}{}\n{} \n\n".format(ty.gendatetime(), lunard, gz, ty.kingyear(), ty.ty_method(tn), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), tynum, ttext.get("紀元"), homecal, awaycal, yc, ed, g, yj, bl, ty.ty_gong_dist(num, tn), ty.threedoors(num, tn), ty.fivegenerals(num, tn), ty.geteightdoors(num, tn) ))
                 expander = st.expander("原始碼")
                 expander.write(str(ttext))
             else:
@@ -147,6 +148,7 @@ with pan:
                 g = ty.yeargua(tn)
                 ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
                 gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
+                lunard = "{}年{}月{}日".format(ty.lunar_date_d().get("年"), ty.lunar_date_d().get("月"), ty.lunar_date_d().get("日"))
                 ch = chistory.get(y)
                 if ch == None:
                    ch = ""
@@ -204,6 +206,7 @@ with pan:
             bl = ty.baliu()
             ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
             gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
+            lunard = "{}年{}月{}日".format(ty.lunar_date_d().get("年"), ty.lunar_date_d().get("月"), ty.lunar_date_d().get("日"))
             ch = chistory.get(y)
             if ch == None:
                ch = ""
@@ -254,6 +257,7 @@ with pan:
             bl = ty.baliu()
             ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
             gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
+            lunard = "{}年{}月{}日".format(ty.lunar_date_d().get("年"), ty.lunar_date_d().get("月"), ty.lunar_date_d().get("日"))
             ch = chistory.get(y)
             if ch == None:
                ch = ""
