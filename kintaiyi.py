@@ -315,18 +315,6 @@ class Taiyi():
             three_year = {0:"理天", 1:"理地", 2:"理人"}.get(dict(zip(list(range(1,73)), [0,1,2] * 24)).get(k))
             return {"文":"{}{}局".format(dun, an2cn(k)), "數":k, "年":three_year, "積年數":self.accnum(ji, tn) }
     
-    def getyuan(self, ji, tn):
-        accnum = self.accnum(ji, tn)
-        if round(accnum % 360) == 1:
-            find_ji_num = 1
-        else:
-            find_ji_num = int(round((accnum % 360) / 72, 0))
-        fiveyuen_d = dict(zip(range(1,6), jiazi()[0::12]))
-        if find_ji_num == 0:
-            find_ji_num = 1
-        jiyuan = fiveyuen_d.get(find_ji_num) 
-        return jiyuan
-    
     def getepoch(self, ji, tn):
         accnum = self.accnum(ji, tn)
         if ji == 0 or ji == 1 or ji ==2:
@@ -351,7 +339,7 @@ class Taiyi():
                         ('己丑', '己未', '庚寅', '庚申', '辛卯', '辛酉', '壬辰', '壬戌', '癸巳', '癸亥')], 
                                  list("一二三四五六")))
             if tn!=1:
-                return "第{}紀".format(self.multi_key_dict_get(epochdict, self.gangzhi()[2]))
+                return "第{}紀".format(self.multi_key_dict_get(epochdict, self.gangzhi()[3]))
             else:
                 return "第{}紀".format(self.multi_key_dict_get(epochdict, self.gangzhi()[1]))
         
@@ -365,6 +353,18 @@ class Taiyi():
                         ('己丑', '己未', '庚寅', '庚申', '辛卯', '辛酉', '壬辰', '壬戌', '癸巳', '癸亥')], 
                                  list("一二三四五六")))
             return "第{}紀".format(self.multi_key_dict_get(epochdict, self.gangzhi()[3]))
+        
+    def getyuan(self, ji, tn):
+        accnum = self.accnum(ji, tn)
+        if round(accnum % 360) == 1:
+            find_ji_num = 1
+        else:
+            find_ji_num = int(round((accnum % 360) / 72, 0))
+        fiveyuen_d = dict(zip(range(1,6), jiazi()[0::12]))
+        if find_ji_num == 0:
+            find_ji_num = 1
+        jiyuan = fiveyuen_d.get(find_ji_num) 
+        return jiyuan
     
     
     def jiyuan(self, ji,tn):
@@ -374,11 +374,7 @@ class Taiyi():
                                   ('丙子', '丙午', '丁丑', '丁未', '戊寅', '戊申', '己卯', '己酉', '庚辰', '庚戌', '辛巳', '辛亥'),
                                   ('壬午', '壬子', '癸未', '癸丑', '甲申', '甲寅', '乙酉', '乙卯', '丙戌', '丙辰', '丁亥', '丁巳'),
                                   ('戊子', '戊午', '己丑', '己未', '庚寅', '庚申', '辛卯', '辛酉', '壬辰', '壬戌', '癸巳', '癸亥')], "甲子,丙子,戊子,庚子,壬子".split(",")))
-            
-            if tn != 1:
-                return "{}{}元".format(self.getepoch(ji,tn), self.multi_key_dict_get(j, self.gangzhi()[2]))
-            else:
-                return "{}{}元".format(self.getepoch(ji,tn), self.multi_key_dict_get(j, self.gangzhi()[1]))
+            return "{}{}元".format(self.getepoch(ji,tn), self.multi_key_dict_get(j, self.gangzhi()[1]))
         elif ji == 4:
             j = dict(zip([('甲子', '甲午', '乙丑', '乙未', '丙寅', '丙申', '丁卯', '丁酉', '戊辰', '戊戌', '己巳', '己亥'), 
                                   ('庚午', '庚子', '辛未', '辛丑', '壬申', '壬寅', '癸酉', '癸卯', '甲戌', '甲辰', '乙亥', '乙巳'),
@@ -1149,6 +1145,6 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Taiyi(2022,6,19,0,0).sixteen_gong(3, 0) )
+    print(Taiyi(628,11,6,15,0).lunar_date_d() )
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
