@@ -138,6 +138,36 @@ class Taiyi():
                 t.append(b)
         minutelist = dict(zip(t, cycle(self.repeat_list(2, jiazi()))))
         return minutelist
+    #五虎遁，起正月
+    def find_lunar_month(self, year):
+        fivetigers = {
+        tuple(list('甲己')):'丙寅',
+        tuple(list('乙庚')):'戊寅',
+        tuple(list('丙辛')):'庚寅',
+        tuple(list('丁壬')):'壬寅',
+        tuple(list('戊癸')):'甲寅'
+        }
+        if self.multi_key_dict_get(fivetigers, year[0]) == None:
+            result = self.multi_key_dict_get(fivetigers, year[1])
+        else:
+            result = self.multi_key_dict_get(fivetigers, year[0])
+        return dict(zip(range(1,13),self.new_list(jiazi(), result)[:12]))
+    
+    #五鼠遁，起子時
+    def find_lunar_hour(self, day):
+        fiverats = {
+        tuple(list('甲己')):'甲子',
+        tuple(list('乙庚')):'丙子',
+        tuple(list('丙辛')):'戊子',
+        tuple(list('丁壬')):'庚子',
+        tuple(list('戊癸')):'壬子'
+        }
+        if self.multi_key_dict_get(fiverats, day[0]) == None:
+            result = self.multi_key_dict_get(fiverats, day[1])
+        else:
+            result = self.multi_key_dict_get(fiverats, day[0])
+        return dict(zip(list(self.Zhi), self.new_list(jiazi(), result)[:12]))
+    
     #干支
     def gangzhi(self):
         if self.hour == 23:
@@ -146,9 +176,13 @@ class Taiyi():
             d = Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2) ))
         dd = list(d.tuple())
         cdate = fromSolar(dd[0], dd[1], dd[2])
+        
         yTG,mTG,dTG,hTG = "{}{}".format(self.Gan[cdate.getYearGZ().tg], self.Zhi[cdate.getYearGZ().dz]), "{}{}".format(self.Gan[cdate.getMonthGZ().tg],self.Zhi[cdate.getMonthGZ().dz]), "{}{}".format(self.Gan[cdate.getDayGZ().tg], self.Zhi[cdate.getDayGZ().dz]), "{}{}".format(self.Gan[cdate.getHourGZ(dd[3]).tg], self.Zhi[cdate.getHourGZ(dd[3]).dz])
+        mTG1 = self.find_lunar_month(yTG).get(self.lunar_date_d().get("月"))
+        hTG1 = self.find_lunar_hour(dTG).get(hTG[1])
         gangzhi_minute = self.minutes_jiazi_d().get(str(self.hour)+":"+str(self.minute))
-        return [yTG, mTG, dTG, hTG, gangzhi_minute]
+        return [yTG, mTG1, dTG, hTG1, gangzhi_minute]
+    
 #%% #節氣
     def ecliptic_lon(self, jd_utc):
         return Ecliptic(Equatorial(Sun(jd_utc).ra,Sun(jd_utc).dec,epoch=jd_utc)).lon
