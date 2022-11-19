@@ -277,7 +277,7 @@ class Taiyi():
             elif tn ==1:
                 t = 708011105 - 10153917 +tn_num
                 accday = t + int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/12/21 00:00:00.00") )) 
-                acchr = ((accday -1) * 12) + (self.hour+1)//2 -17
+                acchr = ((accday -1) * 12) + (self.hour+1)//2 -11
             
             return acchr
             #acchr = (accday -1)*12+ (self.hour + 1)//2+1
