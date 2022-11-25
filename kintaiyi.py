@@ -265,6 +265,9 @@ class Taiyi():
             return bbf[0]
         else:
             return bf[0]
+        
+    def getjq(self):
+        return self.jq(self.year, self.month, self.day, self.hour)
 #%% 積年
     def accnum(self, ji, tn):
         tndict = {0:10153917, 1:1936557, 2:10154193 }
