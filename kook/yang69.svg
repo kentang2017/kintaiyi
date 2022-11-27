@@ -26,11 +26,11 @@
      showgrid="false"
      inkscape:snap-text-baseline="true"
      inkscape:zoom="1.2398921"
-     inkscape:cx="210.90545"
+     inkscape:cx="431.89242"
      inkscape:cy="256.07067"
      inkscape:window-width="993"
      inkscape:window-height="1008"
-     inkscape:window-x="-7"
+     inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
      inkscape:current-layer="figure_1"
@@ -1446,5 +1446,22 @@
          x="260.45392"
          y="111.57809"
          id="tspan24858">大</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:11px;line-height:1.05;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.916162;stroke-linecap:butt;stroke-linejoin:round"
+       x="289.47351"
+       y="112.86301"
+       id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8-6-2-8-40"
+       transform="scale(1.0019482,0.99805558)"><tspan
+         sodipodi:role="line"
+         style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
+         x="289.47351"
+         y="112.86301"
+         id="tspan25440-6-7">君</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
+         x="289.47351"
+         y="125.45945"
+         id="tspan26334-2">基</tspan></text>
   </g>
 </svg>
