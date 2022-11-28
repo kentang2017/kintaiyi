@@ -293,14 +293,14 @@ class Taiyi():
             elif tn ==1:
                 t = 708011105 - 185
                 return t + int(Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00")) 
-            elif tn ==3:
+            elif tn == 3:
                 ly = self.lunar_date_d().get("年")
                 lm = self.lunar_date_d().get("月")
                 ld = self.lunar_date_d().get("日")
                 n1 = round((ly - 423 )  * (235 / 19) ,0)
                 n2 = round(n1 * 29.5306, 0) 
                 n3 = (n2 + self.dzdistance()) % 72 
-                return n2, n3, ld, lm
+                return 
         elif ji == 3: #時計
             #dgz = self.gangzhi()[2]
             #hz =  self.gangzhi()[3][1]
