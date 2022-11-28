@@ -300,7 +300,7 @@ class Taiyi():
                 n1 = round((ly - 423 )  * (235 / 19) ,0)
                 n2 = round(n1 * 29.5306, 0) 
                 n3 = (n2 + self.dzdistance()) % 72 
-                return 
+                return n3
         elif ji == 3: #時計
             #dgz = self.gangzhi()[2]
             #hz =  self.gangzhi()[3][1]
