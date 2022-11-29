@@ -1024,7 +1024,7 @@ class Taiyi():
         return {0:"年計", 1:"月計", 2:"日計", 3:"時計", 4:"分計"}.get(ji)
     
     def ty_method(self,  tn):
-        return  {0:"太乙統宗", 1:"太乙金鏡", 2:"太乙淘金歌" }.get(tn)
+        return  {0:"太乙統宗", 1:"太乙金鏡", 2:"太乙淘金歌" , 3:"太乙局"}.get(tn)
     
     def pan(self, ji, tn):
         return {
