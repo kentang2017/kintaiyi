@@ -48,7 +48,7 @@ with st.sidebar:
     idate = st.text_input('輸入日期(如: 1997/8/8)', '')
     itime = st.text_input('輸入時間(如: 18:30)', '')
     option = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
-    acum = st.selectbox( '太乙積年數', (' 太乙統宗 ', ' 太乙金鏡 ', ' 太乙淘金歌 ', '太乙局'))
+    acum = st.selectbox( '太乙積年數', (' 太乙統宗 ', ' 太乙金鏡 ', ' 太乙淘金歌 ', ' 太乙局 '))
     num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option)
     tn = dict(zip([' 太乙統宗 ', ' 太乙金鏡 ', ' 太乙淘金歌 ',' 太乙局 '],[0,1,2,3])).get(acum)
     manual1 = st.button('手動簡盤')
