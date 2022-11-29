@@ -270,7 +270,7 @@ class Taiyi():
         return self.jq(self.year, self.month, self.day, self.hour)
 #%% 積年
     def accnum(self, ji, tn):
-        tndict = {0:10153917, 1:1936557, 2:10154193 }
+        tndict = {0:10153917, 1:1936557, 2:10154193, 3:10153917 }
         tn_num = tndict.get(tn)
         if ji == 0: #年計
             if self.year >= 0:
