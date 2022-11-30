@@ -329,7 +329,15 @@ class Taiyi():
                 t = 708011105 - 10153917 +tn_num
                 accday = t + int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/12/21 00:00:00.00") )) 
                 acchr = ((accday -1) * 12) + (self.hour+1)//2 -11
-            
+            elif tn == 4:
+                tiangan = dict(zip([tuple(jiazi()[jiazi().index(i):jiazi().index(i)+6]) for i in jiazi()[0::6]], jiazi()[0::6]))
+                getfut = dict(zip(jiazi()[0::6], [1,7,13,19,25,31,37,43,49,55])).get(self.multi_key_dict_get(tiangan, self.gangzhi()[2]))
+                dgz_num = dict(zip(jiazi(), range(1,61))).get( self.gangzhi()[2])
+                zhi_num = dict(zip(list('子丑寅卯辰巳午未申酉戌亥'), range(1,13))).get(self.gangzhi()[3][1])
+                if tiangan != dgz_num:
+                    acchr  =  ((dgz_num- getfut) * 12) + zhi_num
+                elif tiangan == dgz_num:
+                    acchr = zhi_num
             return acchr
             #acchr = (accday -1)*12+ (self.hour + 1)//2+1
             #if self.hour == 0:
@@ -1024,7 +1032,7 @@ class Taiyi():
         return {0:"年計", 1:"月計", 2:"日計", 3:"時計", 4:"分計"}.get(ji)
     
     def ty_method(self,  tn):
-        return  {0:"太乙統宗", 1:"太乙金鏡", 2:"太乙淘金歌" , 3:"太乙局"}.get(tn)
+        return  {0:"太乙統宗", 1:"太乙金鏡", 2:"太乙淘金歌" , 3:"太乙局", 4: "太乙淘金歌時計捷法"}.get(tn)
     
     def pan(self, ji, tn):
         return {
