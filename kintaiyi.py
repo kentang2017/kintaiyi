@@ -1070,7 +1070,7 @@ class Taiyi():
                 "君基":self.kingbase(ji,tn),
                 "臣基":self.officerbase(ji,tn),
                 "民基":self.pplbase(ji,tn),
-                "二十八宿值日":self.starhouse(),
+                #"二十八宿值日":self.starhouse(),
                 "太歲二十八宿":self.year_chin(),
                 #"太歲值宿斷事": su_dist.get(self.year_chin()),
                 #"始擊二十八宿":self.sf_num(ji,tn),
