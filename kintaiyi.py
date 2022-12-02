@@ -178,7 +178,10 @@ class Taiyi():
         cdate = fromSolar(dd[0], dd[1], dd[2])
         
         yTG,mTG,dTG,hTG = "{}{}".format(self.Gan[cdate.getYearGZ().tg], self.Zhi[cdate.getYearGZ().dz]), "{}{}".format(self.Gan[cdate.getMonthGZ().tg],self.Zhi[cdate.getMonthGZ().dz]), "{}{}".format(self.Gan[cdate.getDayGZ().tg], self.Zhi[cdate.getDayGZ().dz]), "{}{}".format(self.Gan[cdate.getHourGZ(dd[3]).tg], self.Zhi[cdate.getHourGZ(dd[3]).dz])
-        mTG1 = self.find_lunar_month(yTG).get(self.lunar_date_d().get("月"))
+        if self.year < 1900:
+            mTG1 = self.find_lunar_month(yTG).get(self.lunar_date_d().get("月"))
+        else:
+            mTG1 = mTG
         hTG1 = self.find_lunar_hour(dTG).get(hTG[1])
         gangzhi_minute = self.minutes_jiazi_d().get(str(self.hour)+":"+str(self.minute))
         return [yTG, mTG1, dTG, hTG1, gangzhi_minute]
