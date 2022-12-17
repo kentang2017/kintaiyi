@@ -1161,9 +1161,11 @@
           </g>
         </g>
         <g
-           id="matplotlib.axis_1" />
+           id="matplotlib.axis_1"
+           sodipodi:insensitive="true" />
         <g
-           id="matplotlib.axis_2" />
+           id="matplotlib.axis_2"
+           sodipodi:insensitive="true" />
         <text
            xml:space="preserve"
            style="font-style:normal;font-weight:normal;font-size:8.89882px;line-height:1.05;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
