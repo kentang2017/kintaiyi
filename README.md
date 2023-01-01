@@ -15,6 +15,12 @@
 
 因應現代都市人的需求，與時並進，就時計太乙的基礎上，下開分計太乙，至於果效，留待閣下驗證。
 
+Tai Yi Shen Shu is a form of divination from China. It is also one of the Three Styles (三式; sānshì; 'three styles') of divination, the others being Da Liu Ren and Qi Men Dun Jia. Tai Yi Shen Shu is used to predict macroscopic events like wars or the meaning of supernovae. One form of Tai Yi Shen Shu has been popularized over the centuries to predict personal fortunes. Genghis Khan, emperor of China, referred to Tai Yi at one point to decide whether or not his planned invasion of Japan would succeed. When the Tai Yi count indicated that invasion would prove unsuccessful, Khan decided not to invade Japan that year. Numerous similar examples abound in classical Chinese literature, especially among the dynastic histories.
+
+The methodology is quite similar to the other arts with a rotating heavenly plate and fixed earthly plate. While the art makes use of the 8 trigrams as well as the 64 hexagrams as a foundation, analysis is conducted from the Tai Yi Cosmic Board and the array of symbols found thereon, with special reference to the position of symbols in specific palaces. Important symbols include the Calculator, the Scholar, Tai Yi and Tai Yi, for example.
+
+A number of spirits rotate around the sixteen palaces of the Tai Yi cosmic board, of which there are 72 cosmic boards for the Yin Dun period of each year, and 72 cosmic boards for the Yang Dun period of the year. The spirits land in different palaces with each configuration of the cosmic board. Each cosmic board contains a number of "counts" or numbers – the Host Count and the Guest Count taking primary importance over the Fixed Count.
+
 含史事對照的太鳦排盤 https://kintaiyi.streamlitapp.com
 
 Taiyishenshu, one of the Ancient Chinese Divinations, along with Qimendunjia and Dailiuren known as "three styles".
