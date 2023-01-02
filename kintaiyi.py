@@ -913,7 +913,7 @@ class Taiyi():
         getyj = (self.year + 12607)%4560%456//12
         if getyj>=12:
           getyj = getyj % 12
-        return dict(zip(range(0,13),self.Zhi)).get(getyj)
+        return dict(zip(range(0,13),self.new_list(self.Zhi, "寅"))).get(getyj)
     #百六
     def baliu(self):
         getbl = (self.year + 12607)%4320%288//24
