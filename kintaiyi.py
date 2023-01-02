@@ -910,7 +910,7 @@ class Taiyi():
             return "主客旗鼓相當。"
     #陽九
     def yangjiu(self):
-        getyj = (self.year + 12607)%4560%456//13
+        getyj = (self.year + 12607)%4560%456//12
         if getyj>=12:
           getyj = getyj % 12
         return dict(zip(range(0,13),self.Zhi)).get(getyj)
