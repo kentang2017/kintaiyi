@@ -275,16 +275,17 @@ class Taiyi():
     def accnum(self, ji, tn):
         tndict = {0:10153917, 1:1936557, 2:10154193, 3:10153917 }
         tn_num = tndict.get(tn)
+        year = self.lunar_date_d().get("年")
         if ji == 0: #年計
-            if self.year >= 0:
-                return tn_num + self.year 
-            elif self.year < 0:
-                return tn_num + self.year + 1 
+            if year >= 0:
+                return tn_num + year 
+            elif year < 0:
+                return tn_num + year + 1 
         elif ji == 1: #月計
-            if self.year >= 0:
-                accyear = tn_num + self.year - 1
-            elif self.year < 0:
-                accyear = tn_num + self.year + 1 
+            if year >= 0:
+                accyear = tn_num + year - 1
+            elif year < 0:
+                accyear = tn_num + year + 1 
             return accyear * 12 + 2 + self.lunar_date_d().get("月")
         elif ji == 2:#日計
             if tn ==0:
@@ -910,13 +911,15 @@ class Taiyi():
             return "主客旗鼓相當。"
     #陽九
     def yangjiu(self):
-        getyj = (self.year + 12607)%4560%456//13
+        year = self.lunar_date_d().get("年")
+        getyj = (year + 12607)%4560%456//13
         if getyj>=12:
           getyj = getyj % 12
         return dict(zip(range(0,13),self.new_list(self.Zhi, "寅"))).get(getyj)
     #百六
     def baliu(self):
-        getbl = (self.year + 12607)%4320%288//24
+        year = self.lunar_date_d().get("年")
+        getbl = (year + 12607)%4320%288//24
         if getbl >=12:
           getbl = getbl %12
         return dict(zip(range(0,13),self.new_list(self.Zhi, "寅"))).get(getbl)
