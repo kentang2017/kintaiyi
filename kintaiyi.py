@@ -922,10 +922,10 @@ class Taiyi():
         getbl = (year + 12607)%4320%288//24
         if getbl >=12:
           getbl = getbl %12
-        return dict(zip(range(0,13),self.new_list(self.Zhi, "寅"))).get(getbl)
+        return dict(zip(range(0,13),self.new_list(self.Zhi, "卯"))).get(getbl)
     #帝符
     def kingfu(self, ji, tn):
-        f = self.accnum(ji, tn)  %20
+        f = self.accnum(ji, tn) % 20
         if f > 16:
             f = f - 16
         fv = dict(zip(range(1,17), self.new_list(self.gong1, "戌"))).get(int(f))
