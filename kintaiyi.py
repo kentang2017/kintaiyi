@@ -912,19 +912,18 @@ class Taiyi():
     #陽九
     def yangjiu(self):
         year = self.lunar_date_d().get("年")
-        #getyj = (year + 12607)%4560%456//24
-        getyj = (year + 12607)%4560%456//13
+        getyj = (year + 12607)%4560%456//24
         if getyj>=12:
           getyj = getyj % 12
-        return dict(zip(range(1,13),self.new_list(self.Zhi, "寅"))).get(getyj)
+        return dict(zip(range(0,13),self.new_list(self.Zhi, "寅"))).get(getyj)
     #百六
     def baliu(self):
         year = self.lunar_date_d().get("年")
         getbl = (year + 12607)%4320%288//24
         if getbl >=12:
           getbl = getbl %12
-        return dict(zip(range(1,13),self.new_list(self.Zhi, "子"))).get(getbl)
-        #return dict(zip(range(0,13),self.new_list(self.Zhi, "卯"))).get(getbl)
+        #return dict(zip(range(1,13),self.new_list(self.Zhi, "子"))).get(getbl)
+        return dict(zip(range(0,13),self.new_list(self.Zhi, "卯"))).get(getbl)
     #帝符
     def kingfu(self, ji, tn):
         f = self.accnum(ji, tn) % 20
