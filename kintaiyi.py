@@ -917,7 +917,7 @@ class Taiyi():
           getyj = getyj % 12
           return dict(zip(range(1,13),self.new_list(self.Zhi, "寅"))).get(getyj)
         elif getyj == 0:
-          return "寅"
+          return dict(zip(range(1,13),self.new_list(self.Zhi, "寅"))).get(12)
         else:
           return dict(zip(range(1,13),self.new_list(self.Zhi, "寅"))).get(getyj) 
     #百六
@@ -928,7 +928,7 @@ class Taiyi():
           getbl = getbl %12
           return dict(zip(range(1,13),self.new_list(self.Zhi, "卯"))).get(getbl)
         elif getbl == 0:
-          return "酉"
+          return dict(zip(range(1,13),self.new_list(self.Zhi, "酉"))).get(12)
         else:
           return dict(zip(range(1,13),self.new_list(self.Zhi, "酉"))).get(getbl)
         
