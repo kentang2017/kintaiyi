@@ -924,7 +924,7 @@ class Taiyi():
     def baliu(self):
         year = self.lunar_date_d().get("年")
         getbl = (year + 12607)%4320%288 % 24
-        if getbl >=12:
+        if getbl >12:
           getbl = getbl %12
           return dict(zip(range(1,13),self.new_list(self.Zhi, "卯"))).get(getbl)
         elif getbl == 0:
