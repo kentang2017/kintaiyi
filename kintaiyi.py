@@ -925,8 +925,9 @@ class Taiyi():
         year = self.lunar_date_d().get("年")
         getbl = (year + 12607)%4320%288 % 24
         if getbl >12:
-          getbl = getbl %12
+          getbl = (getbl - 12) %12
           return dict(zip(range(1,13),self.new_list(self.Zhi, "卯"))).get(getbl)
+    
         elif getbl == 0:
           return dict(zip(range(1,13),self.new_list(self.Zhi, "酉"))).get(12)
         else:
