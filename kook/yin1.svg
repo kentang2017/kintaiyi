@@ -26,13 +26,13 @@
      showgrid="false"
      inkscape:snap-text-baseline="true"
      inkscape:zoom="1.7469907"
-     inkscape:cx="155.6963"
-     inkscape:cy="157.69975"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
+     inkscape:cx="174.01352"
+     inkscape:cy="203.20658"
+     inkscape:window-width="1226"
+     inkscape:window-height="1001"
+     inkscape:window-x="278"
+     inkscape:window-y="14"
+     inkscape:window-maximized="0"
      inkscape:current-layer="figure_1"
      width="400pt"
      fit-margin-top="0"
@@ -1279,19 +1279,19 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:11px;line-height:1.05;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.916162;stroke-linecap:butt;stroke-linejoin:round"
-       x="201.3091"
-       y="101.85474"
+       x="152.46295"
+       y="116.90985"
        id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8-6-22-2"
        transform="scale(1.0019482,0.99805558)"><tspan
          sodipodi:role="line"
          style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
-         x="201.3091"
-         y="101.85474"
+         x="152.46295"
+         y="116.90985"
          id="tspan23632-3-1-6">地</tspan><tspan
          sodipodi:role="line"
          style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
-         x="201.3091"
-         y="114.45117"
+         x="152.46295"
+         y="129.50629"
          id="tspan24208-42-9">乙</tspan></text>
     <text
        xml:space="preserve"
@@ -1347,36 +1347,36 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:11px;line-height:1.05;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.916162;stroke-linecap:butt;stroke-linejoin:round"
-       x="242.12407"
-       y="316.57025"
+       x="286.68546"
+       y="297.64383"
        id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8-6-22-2-8-4-1-4"
        transform="scale(1.0019482,0.99805558)"><tspan
          sodipodi:role="line"
          style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
-         x="242.12407"
-         y="316.57025"
+         x="286.68546"
+         y="297.64383"
          id="tspan23632-3-1-6-0-2-3-0">四</tspan><tspan
          sodipodi:role="line"
          style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
-         x="242.12407"
-         y="329.16669"
+         x="286.68546"
+         y="310.24026"
          id="tspan24208-42-9-1-8-5-0">神</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:11px;line-height:1.05;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.916162;stroke-linecap:butt;stroke-linejoin:round"
        x="161.91278"
-       y="118.19843"
+       y="116.69551"
        id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8-6-2"
        transform="scale(1.0019482,0.99805558)"><tspan
          sodipodi:role="line"
          style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
          x="161.91278"
-         y="118.19843"
+         y="116.69551"
          id="tspan24208-4">太</tspan><tspan
          sodipodi:role="line"
          style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
          x="161.91278"
-         y="130.79488"
+         y="129.29195"
          id="tspan25440">乙</tspan></text>
     <text
        xml:space="preserve"
@@ -1450,18 +1450,18 @@
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:11px;line-height:1.05;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.916162;stroke-linecap:butt;stroke-linejoin:round"
        x="172.62738"
-       y="117.63239"
+       y="116.12947"
        id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-5-7-8-6-2-1"
        transform="scale(1.0019482,0.99805558)"><tspan
          sodipodi:role="line"
          style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
          x="172.62738"
-         y="117.63239"
+         y="116.12947"
          id="tspan24208-4-7">客</tspan><tspan
          sodipodi:role="line"
          style="font-size:11px;fill:#ffffff;stroke-width:0.916162"
          x="172.62738"
-         y="130.22884"
+         y="128.72591"
          id="tspan24858">大</tspan></text>
   </g>
 </svg>

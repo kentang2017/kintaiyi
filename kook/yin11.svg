@@ -26,13 +26,13 @@
      showgrid="false"
      inkscape:snap-text-baseline="true"
      inkscape:zoom="1.7469907"
-     inkscape:cx="213.2238"
-     inkscape:cy="240.41341"
-     inkscape:window-width="1920"
-     inkscape:window-height="1121"
-     inkscape:window-x="-9"
-     inkscape:window-y="-9"
-     inkscape:window-maximized="1"
+     inkscape:cx="179.73765"
+     inkscape:cy="240.12721"
+     inkscape:window-width="1168"
+     inkscape:window-height="996"
+     inkscape:window-x="41"
+     inkscape:window-y="15"
+     inkscape:window-maximized="0"
      inkscape:current-layer="g3367"
      showguides="false"
      fit-margin-top="0"
@@ -1205,18 +1205,18 @@
           <text
              xml:space="preserve"
              style="font-style:normal;font-weight:normal;font-size:8.94075px;line-height:1.05;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-             x="221.35133"
-             y="81.228516"
+             x="182.89517"
+             y="93.766655"
              id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-4-7"><tspan
                sodipodi:role="line"
                id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8-8-5-1-1-6-0-5-5-0-0-9-6-4-5"
                style="font-size:8.94075px;fill:#ffffff;stroke-width:0.749999"
-               x="221.35133"
-               y="81.228516">天</tspan><tspan
+               x="182.89517"
+               y="93.766655">天</tspan><tspan
                sodipodi:role="line"
                style="font-size:8.94075px;fill:#ffffff;stroke-width:0.749999"
-               x="221.35133"
-               y="91.466843"
+               x="182.89517"
+               y="104.00498"
                id="tspan19700-6-0">乙</tspan></text>
           <text
              xml:space="preserve"
@@ -1285,19 +1285,35 @@
           <text
              xml:space="preserve"
              style="font-style:normal;font-weight:normal;font-size:8.94075px;line-height:1.05;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
-             x="173.78766"
-             y="244.66653"
+             x="148.61636"
+             y="186.85176"
              id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-4-7-7-3-9-3-9"><tspan
                sodipodi:role="line"
                id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8-8-5-1-1-6-0-5-5-0-0-9-6-4-5-0-1-7-9-5"
                style="font-size:8.94075px;fill:#ffffff;stroke-width:0.749999"
-               x="173.78766"
-               y="244.66653">地</tspan><tspan
+               x="148.61636"
+               y="186.85176">地</tspan><tspan
                sodipodi:role="line"
                style="font-size:8.94075px;fill:#ffffff;stroke-width:0.749999"
-               x="173.78766"
-               y="254.90486"
+               x="148.61636"
+               y="197.09009"
                id="tspan19700-6-0-2-6-7-5-5">乙</tspan></text>
+          <text
+             xml:space="preserve"
+             style="font-style:normal;font-weight:normal;font-size:8.94075px;line-height:1.05;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
+             x="205.48347"
+             y="259.63113"
+             id="text3247-9-4-1-6-8-4-3-5-8-3-9-5-2-6-5-5-8-2-6-3-6-5-8-7-0-7-4-7-7-3-9-3-9-2"><tspan
+               sodipodi:role="line"
+               id="tspan3245-4-1-4-3-5-1-3-8-8-8-88-0-1-8-8-5-1-1-6-0-5-5-0-0-9-6-4-5-0-1-7-9-5-5"
+               style="font-size:8.94075px;fill:#ffffff;stroke-width:0.749999"
+               x="205.48347"
+               y="259.63113">值</tspan><tspan
+               sodipodi:role="line"
+               style="font-size:8.94075px;fill:#ffffff;stroke-width:0.749999"
+               x="205.48347"
+               y="269.86948"
+               id="tspan19700-6-0-2-6-7-5-5-4">符</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-weight:normal;font-size:8.94075px;line-height:1.05;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.749999;stroke-linecap:butt;stroke-linejoin:round"
