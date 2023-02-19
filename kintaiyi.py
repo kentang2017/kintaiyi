@@ -759,7 +759,7 @@ class Taiyi():
         return kb_v
     #臣基
     def officerbase(self, ji, tn):
-        return dict(zip(range(1,73), cycle(list("巳巳午午午未未未申申酉酉戌戌戌亥亥亥子子子丑丑寅寅寅卯卯卯辰辰辰巳")))).get(self.kook(ji, tn).get("數"))
+        return dict(zip(range(1,73), cycle(list("巳巳午午午未未未申申申酉酉酉戌戌戌亥亥亥子子子丑丑丑寅寅寅卯卯卯辰辰辰巳")))).get(self.kook(ji, tn).get("數"))
     #民基
     def pplbase(self, ji, tn):
         return dict(zip(range(1,73), cycle(self.new_list(self.Zhi,"申")))).get(self.kook(ji, tn).get("數"))
