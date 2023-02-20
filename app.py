@@ -14,12 +14,6 @@ import textwrap
 import datetime, pytz
 import os, urllib
 
-hide_menu_style = """
-        <style>
-        #MainMenu {visibility: hidden;}
-        </style>
-        """
-st.markdown(hide_menu_style, unsafe_allow_html=True)
 
 def get_file_content_as_string(path):
     url = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/master/' + path
