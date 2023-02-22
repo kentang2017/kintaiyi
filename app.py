@@ -105,7 +105,7 @@ with pan:
                 else:
                     yy = "yin"
                 st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
-                st.markdown("""<img src = """ + "kook/"+yy+str(ttext.get("局式").get("數"))+""".svg/></img>""" )
+                st.markdown('''<img src = ''' + '''"kook/"'''+yy+str(ttext.get("局式").get("數"))+'''".svg/></img>''' )
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
                 st.title("史事記載︰")
@@ -164,7 +164,7 @@ with pan:
                 else: 
                    tynum = ty.accnum(num,tn)
                 st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
-                st.markdown("""<img src = """ + "kook/"+yy+str(ttext.get("局式").get("數"))+""".svg/></img>""" )
+                st.markdown('''<img src = ''' + '''"kook/"'''+yy+str(ttext.get("局式").get("數"))+'''".svg/></img>''' )
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
                 st.title("史事記載︰")
@@ -219,7 +219,7 @@ with pan:
             else:
                 yy = "yin"
             st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
-            st.markdown("""<img src = """ + "kook/"+yy+str(ttext.get("局式").get("數"))+""".svg/></img>""" )
+            st.markdown('''<img src = ''' + '''"kook/"'''+yy+str(ttext.get("局式").get("數"))+'''".svg/></img>''' )
             st.title("《太乙秘書》︰")
             st.markdown(ts)
             st.title("史事記載︰")
@@ -275,7 +275,7 @@ with pan:
             else: 
                 tynum = ty.accnum(num,tn)
             st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
-            st.markdown("""<img src = """ + "kook/"+yy+str(ttext.get("局式").get("數"))+""".svg/></img>""" )
+            st.markdown('''<img src = ''' + '''"kook/"'''+yy+str(ttext.get("局式").get("數"))+'''".svg/></img>''' )
             st.title("《太乙秘書》︰")
             st.markdown(ts)
             st.title("史事記載︰")
