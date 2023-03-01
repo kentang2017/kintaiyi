@@ -47,10 +47,6 @@ pan,example,disaster,guji,update,ins = st.tabs([' 排盤 ', ' 史例 ', ' 災異
 with st.sidebar:
     idate = st.text_input('輸入日期(如: 1997/8/8)', '')
     itime = st.text_input('輸入時間(如: 18:30)', '')
-    option = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
-    acum = st.selectbox( '太乙積年數', (' 太乙統宗 ', ' 太乙金鏡 ', ' 太乙淘金歌 ', ' 太乙局 '))
-    num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option)
-    tn = dict(zip([' 太乙統宗 ', ' 太乙金鏡 ', ' 太乙淘金歌 ',' 太乙局 '],[0,1,2,3])).get(acum)
     manual1 = st.button('手動簡盤')
     manual = st.button('手動詳盤')
     instant1 = st.button('即時簡盤')
@@ -60,8 +56,10 @@ with st.sidebar:
 with pan:
     output5 = st.empty()
     with st_capture(output5.code):
-        option1 = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
-        num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option1)
+        option = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
+        acum = st.selectbox( '太乙積年數', (' 太乙統宗 ', ' 太乙金鏡 ', ' 太乙淘金歌 ', ' 太乙局 '))
+        num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option)
+        tn = dict(zip([' 太乙統宗 ', ' 太乙金鏡 ', ' 太乙淘金歌 ',' 太乙局 '],[0,1,2,3])).get(acum)
         now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
         y = now.year 
         m = now.month
