@@ -60,6 +60,47 @@ with st.sidebar:
 with pan:
     output5 = st.empty()
     with st_capture(output5.code):
+        tn = 0
+        num = 3
+        y = datetime.datetime.now().year 
+        m = datetime.datetime.now().month
+        d = datetime.datetime.now().day
+        h = datetime.datetime.now().hour
+        min = datetime.datetime.now().minute
+        ty = Taiyi(y,m,d,h,min)
+        ttext = ty.pan(num,tn)
+        kook = ty.kook(num,tn)
+        homecal = ty.home_cal(num, tn)
+        awaycal = ty.away_cal(num, tn)
+        ed = ty.eight_door(num, tn)
+        yc = ty.year_chin()
+        yj = ty.yangjiu()
+        bl = ty.baliu()
+        g = ty.yeargua(tn)
+        ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
+        gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
+        lunard = "{}年{}月{}日".format(ty.lunar_date_d().get("年"), ty.lunar_date_d().get("月"), ty.lunar_date_d().get("日"))
+        ch = chistory.get(y)
+        if ch == None:
+           ch = ""
+        r = list(map(lambda x:[x, x+25]  ,list(range(0,3000)[0::25])))
+        tys = "".join([ts[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ts) / 25+1))])
+        if ttext.get("局式").get("文")[0] == "陽":
+            yy = "yang"
+        else:
+            yy = "yin"
+        if num == 3:
+           tynum = ty.accnum(num,tn)
+        else: 
+           tynum = ty.accnum(num,tn)
+        st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
+        st.title("《太乙秘書》︰")
+        st.markdown(ts)
+        st.title("史事記載︰")
+        st.markdown(ch)
+        print("{} |\n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | \n積{}數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | {}卦值年  |\n陽九︰{} 百六︰{}\n\n".format(ty.gendatetime(),lunard, ty.getjq(), gz, ty.kingyear(), ty.ty_method(tn), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.taiyi_name(num)[0], tynum, ttext.get("紀元"), homecal, awaycal, yc, ed,g, yj, bl))
+        expander = st.expander("原始碼")
+        expander.write(str(ttext))
         try:
             if manual:
                 p = str(idate).split("/")
