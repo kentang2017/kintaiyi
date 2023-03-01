@@ -62,11 +62,12 @@ with pan:
     with st_capture(output5.code):
         tn = 0
         num = 3
-        y = datetime.datetime.now().year 
-        m = datetime.datetime.now().month
-        d = datetime.datetime.now().day
-        h = datetime.datetime.now().hour
-        min = datetime.datetime.now().minute
+        now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
+        y = now.year 
+        m = now.month
+        d = now.day
+        h = now.hour
+        min = now.minute
         ty = Taiyi(y,m,d,h,min)
         ttext = ty.pan(num,tn)
         kook = ty.kook(num,tn)
