@@ -61,7 +61,7 @@ with pan:
     output5 = st.empty()
     with st_capture(output5.code):
         tn = 0
-        num = 3
+        num = 0
         now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
         y = now.year 
         m = now.month
