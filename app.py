@@ -60,8 +60,8 @@ with st.sidebar:
 with pan:
     output5 = st.empty()
     with st_capture(output5.code):
-        tn = 0
-        num = 0
+        option = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
+        num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option)
         now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
         y = now.year 
         m = now.month
