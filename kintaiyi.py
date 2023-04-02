@@ -678,8 +678,8 @@ class Taiyi():
     #十六宮
     def sixteen_gong1(self, ji, tn):
         dict1 = [{self.skyeyes(ji,tn):"昌"},{self.hegod(ji):"合"},{self.sf(ji,tn):"始"},
-                {self.se(ji, tn):"目"}, {self.kingbase(ji):"君"}, {self.officerbase(ji):"臣"}, {self.pplbase(ji):"民"},
-                {self.fgd(ji,tn):"四"},{self.skyyi(ji,tn):"乙"},{self.earthyi(ji,tn):"地"},{self.zhifu(ji):"符"},
+                {self.se(ji, tn):"目"}, {self.kingbase(ji, tn):"君"}, {self.officerbase(ji, tn):"臣"}, {self.pplbase(ji, tn):"民"},
+                {self.fgd(ji,tn):"四"},{self.skyyi(ji,tn):"乙"},{self.earthyi(ji,tn):"地"},{self.zhifu(ji, tn):"符"},
                 {self.flyfu(ji,tn):"飛"},{self.kingfu(ji,tn):"帝"}, {self.wufu(ji,tn):"福"},  {self.jigod(ji):"計"}, 
                 ]
         res = {"子":"", "丑":"", "艮":"","寅":"", "卯":"", "辰":"", "巽":"","巳":"", "午":"", "未":"", "申":"", "坤":"", "酉":"", "戌":"", "乾":"", "亥":"", "中":""}
@@ -699,6 +699,7 @@ class Taiyi():
         rrres = [re.findall("..", i) for i in rres]
         r = str(res.keys())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
         return {r[i]:rrres[i] for i in range(0,16)}
+
     #十六宮之二
     def sixteen_gong(self, ji,tn):
         dict1 = [{self.skyeyes(ji,tn):"文昌"},{self.taishui(ji):"太歲"},{self.hegod(ji):"合神"},{self.sf(ji,tn):"始擊"},
@@ -1089,42 +1090,42 @@ class Taiyi():
                 "文昌":[self.skyeyes(ji,tn), self.skyeyes_des(ji,tn)],
                 "始擊":self.sf(ji,tn),
                 "主算":[self.home_cal(ji,tn), self.cal_des(self.home_cal(ji,tn))],
-                #"主將":self.home_general(ji,tn),
-                #"主參":self.home_vgen(ji,tn),
+                "主將":self.home_general(ji,tn),
+                "主參":self.home_vgen(ji,tn),
                 "客算":[self.away_cal(ji,tn), self.cal_des(self.away_cal(ji,tn))],
-                #"客將":self.away_general(ji,tn),
-                #"客參":self.away_vgen(ji,tn),
-                #"定算":[self.set_cal(ji,tn), self.cal_des(self.set_cal(ji,tn))],
+                "客將":self.away_general(ji,tn),
+                "客參":self.away_vgen(ji,tn),
+                "定算":[self.set_cal(ji,tn), self.cal_des(self.set_cal(ji,tn))],
                 "合神":self.hegod(ji),
                 "計神":self.jigod(ji),
                 "定目":self.se(ji,tn),
                 "君基":self.kingbase(ji,tn),
                 "臣基":self.officerbase(ji,tn),
                 "民基":self.pplbase(ji,tn),
-                #"二十八宿值日":self.starhouse(),
+                "二十八宿值日":self.starhouse(),
                 "太歲二十八宿":self.year_chin(),
-                #"太歲值宿斷事": su_dist.get(self.year_chin()),
-                #"始擊二十八宿":self.sf_num(ji,tn),
-                #"始擊值宿斷事":su_dist.get(self.sf_num(ji,tn)),
-                #"十天干歲始擊落宮預測": self.multi_key_dict_get (tengan_shiji, self.gangzhi()[0][0]).get(self.Ganzhiwuxing(self.sf(ji,tn))),
-                #"八門值事":self.eight_door(ji, tn),
-                #"八門分佈":self.geteightdoors(ji, tn),
-                #"八宮旺衰":self.gong_wangzhuai(self.jq(self.year, self.month, self.day, self.hour)),
-                #"推太乙當時法": self.shensha(ji,tn),
-                #"推三門具不具":self.threedoors(ji,tn),
-                #"推五將發不發":self.fivegenerals(ji,tn),
-                #"推主客相闗法":self.wc_n_sj(ji,tn),
-                #"推多少以占勝負":self.suenwl(ji,tn),
-                #"推太乙風雲飛鳥助戰法":self.flybird_wl(ji,tn), 
-                #"推雷公入水":self.leigong(ji,tn),
-                #"推臨津問道":self.lijin(),
-                #"推獅子反擲":self.lion(),
-                #"推白雲捲空":self.cloud(ji,tn),
-                #"推猛虎相拒":self.tiger(ji,tn),
-                #"推白龍得雲":self.dragon(ji,tn),
-                #"推回軍無言":self.returnarmy(ji,tn),
+                "太歲值宿斷事": su_dist.get(self.year_chin()),
+                "始擊二十八宿":self.sf_num(ji,tn),
+                "始擊值宿斷事":su_dist.get(self.sf_num(ji,tn)),
+                "十天干歲始擊落宮預測": self.multi_key_dict_get (tengan_shiji, self.gangzhi()[0][0]).get(self.Ganzhiwuxing(self.sf(ji,tn))),
+                "八門值事":self.eight_door(ji, tn),
+                "八門分佈":self.geteightdoors(ji, tn),
+                "八宮旺衰":self.gong_wangzhuai(self.jq(self.year, self.month, self.day, self.hour)),
+                "推太乙當時法": self.shensha(ji,tn),
+                "推三門具不具":self.threedoors(ji,tn),
+                "推五將發不發":self.fivegenerals(ji,tn),
+                "推主客相闗法":self.wc_n_sj(ji,tn),
+                "推多少以占勝負":self.suenwl(ji,tn),
+                "推太乙風雲飛鳥助戰法":self.flybird_wl(ji,tn), 
+                "推雷公入水":self.leigong(ji,tn),
+                "推臨津問道":self.lijin(),
+                "推獅子反擲":self.lion(),
+                "推白雲捲空":self.cloud(ji,tn),
+                "推猛虎相拒":self.tiger(ji,tn),
+                "推白龍得雲":self.dragon(ji,tn),
+                "推回軍無言":self.returnarmy(ji,tn),
                 #"九宮":self.nine_gong(ji,tn), 
-                #"十六宮":self.sixteen_gong(ji,tn),
+                "十六宮":self.sixteen_gong(ji,tn),
                 
                 }
     
@@ -1132,6 +1133,6 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Taiyi(628,11,6,15,0).lunar_date_d() )
+    print(Taiyi(2023,4,3,16,43).pan(3,1) )
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
