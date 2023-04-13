@@ -832,7 +832,7 @@ class Taiyi():
         elif ag == 5:
             return "客將客參不出中門，杜塞無門。"
         else:
-            return "五將不發。"
+            return self.skyeyes_des(ji,tn)+"。五將不發。"
     #推主客相闗法
     def wc_n_sj(self, ji,tn):
         wc = self.skyeyes(ji,tn)
