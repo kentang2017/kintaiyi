@@ -295,6 +295,10 @@ with pan:
 with example:
     st.header('史例')
     st.markdown(get_file_content_as_string("example.md"))
+
+with tutorial:
+    st.header('教學')
+    st.markdown(get_file_content_as_string("tutorial.md"))
     
 with guji:
     st.header('古籍')
