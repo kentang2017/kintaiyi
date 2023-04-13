@@ -43,7 +43,7 @@ def st_capture(output_func):
         
 
 st.set_page_config(layout="wide",page_title="太鳦 - 太乙排盘")
-pan,example,disaster,guji,update,ins = st.tabs([' 排盤 ', ' 史例 ', ' 災異 ' ,' 古籍 ',' 日誌 ', ' 說明 ' ])
+pan,example,disaster,guji,update,ins,tutorial = st.tabs([' 排盤 ', ' 史例 ', ' 災異 ' ,' 古籍 ',' 日誌 ', ' 說明 ', ' 教學 ' ])
 hide_st_style = """
             <style>
             #MainMenu {visibility: hidden;}
