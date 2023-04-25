@@ -44,14 +44,14 @@ def st_capture(output_func):
 
 st.set_page_config(layout="wide",page_title="太鳦 - 太乙排盘")
 pan,example,disaster,guji,update,ins,tutorial = st.tabs([' 排盤 ', ' 史例 ', ' 災異 ' ,' 古籍 ',' 日誌 ', ' 說明 ', ' 教學 ' ])
-hide_st_style = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            header {visibility: hidden;}
-            </style>
-            """
-st.markdown(hide_st_style, unsafe_allow_html=True)
+#hide_st_style = """
+#            <style>
+#            #MainMenu {visibility: hidden;}
+#            footer {visibility: hidden;}
+#            header {visibility: hidden;}
+#            </style>
+#            """
+#st.markdown(hide_st_style, unsafe_allow_html=True)
 
 with st.sidebar:
     idate = st.text_input('輸入日期(如: 1997/8/8)', '')
