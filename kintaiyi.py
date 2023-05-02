@@ -387,7 +387,7 @@ class Taiyi():
             if accnum % 360 == 1:
                 find_ji_num = 1
             else:
-                find_ji_num = int((accnum % 360) // 60)+1
+                find_ji_num = int((accnum % 360) // 60 + 1)
             if find_ji_num == 0:
                 find_ji_num = 1
             find_ji_num2 = int(accnum % 360 % 72 % 24 / 3)
