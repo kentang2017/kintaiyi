@@ -756,7 +756,7 @@ class Taiyi():
         kb = (self.accnum(ji, tn) +250) % 360  / 30
         kb_v = dict(zip(range(1,13), self.new_list(self.Zhi, "午"))).get(int(kb))
         if kb_v == 0 or kb_v ==None:
-            kb_v = "中"
+            kb_v = "午"
         return kb_v
     #臣基
     def officerbase(self, ji, tn):
