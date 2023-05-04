@@ -109,16 +109,11 @@ class Taiyi():
         return dict(zip(range(1,73),skyeyes_dict.get(self.kook(ji, tn).get("文")[0]))).get(int(self.kook(ji,tn).get("數"))) 
     #合神
     def hegod(self, ji):
-        #findji = {"陽":list("寅丑子亥戌酉申未午巳辰卯"), "陰":list("申未午巳辰卯寅丑子亥戌酉")}.get(self.kook(ji,tn).get("文")[0])
-        #return dict(zip(self.Zhi, findji )).get(self.taishui(ji))
         return dict(zip(self.Zhi, self.new_list(list(reversed(self.Zhi)), "丑"))).get(self.taishui(ji))
 
-    def new_list(self, olist, o):
+    def new_list(olist, o):
         a = olist.index(o)
-        res1 = []
-        for i in range(len(olist)):
-            res1.append( olist[a % len(olist)])
-            a = a + 1
+        res1 = olist[a:] + olist[:a]
         return res1
     
     def repeat_list(self, n, thelist):
@@ -131,11 +126,7 @@ class Taiyi():
         return None
     #分干支
     def minutes_jiazi_d(self):
-        t = []
-        for h in range(0,24):
-            for m in range(0,60):
-                b = str(h)+":"+str(m)
-                t.append(b)
+        t = [f"{h}:{m}" for h in range(24) for m in range(60)]
         minutelist = dict(zip(t, cycle(self.repeat_list(2, jiazi()))))
         return minutelist
     #五虎遁，起正月
