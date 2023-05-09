@@ -20,7 +20,6 @@ def get_file_content_as_string(path):
     response = urllib.request.urlopen(url)
     return response.read().decode("utf-8")
 
-
 def render_svg(svg):
     """Renders the given svg string."""
     b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
@@ -64,12 +63,10 @@ with st.sidebar:
     manual = st.button('手動詳盤')
     instant1 = st.button('即時簡盤')
     instant = st.button('即時詳盤')
-    
 
 with pan:
     output5 = st.empty()
     with st_capture(output5.code):
-       
         try:
             if manual:
                 p = str(idate).split("/")
@@ -100,7 +97,7 @@ with pan:
                 home_vs_away3 = ty.flybird_wl(num,tn)
                 ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
                 gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
-                lunard = "{}年{}月{}日".format(ty.lunar_date_d().get("年"), ty.lunar_date_d().get("月"), ty.lunar_date_d().get("日"))
+                lunard = "{}年{}月{}日".format(config.lunar_date_d(y, m, d).get("年"), config.lunar_date_d(y, m, d).get("月"), config.lunar_date_d(y, m, d).get("日"))
                 ch = chistory.get(y)
                 if num == 3:
                    tynum = ty.accnum(num,tn)
@@ -158,7 +155,7 @@ with pan:
                 g = ty.yeargua(tn)
                 ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
                 gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
-                lunard = "{}年{}月{}日".format(ty.lunar_date_d().get("年"), ty.lunar_date_d().get("月"), ty.lunar_date_d().get("日"))
+                lunard = "{}年{}月{}日".format(config.lunar_date_d(y, m, d).get("年"), config.lunar_date_d(y, m, d).get("月"), config.lunar_date_d(y, m, d).get("日"))
                 ch = chistory.get(y)
                 if ch == None:
                    ch = ""
@@ -216,7 +213,7 @@ with pan:
             bl = ty.baliu()
             ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
             gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
-            lunard = "{}年{}月{}日".format(ty.lunar_date_d().get("年"), ty.lunar_date_d().get("月"), ty.lunar_date_d().get("日"))
+            lunard = "{}年{}月{}日".format(config.lunar_date_d(y, m, d).get("年"), config.lunar_date_d(y, m, d).get("月"), config.lunar_date_d(y, m, d).get("日"))
             ch = chistory.get(y)
             if ch == None:
                ch = ""
@@ -247,7 +244,6 @@ with pan:
             expander.write(str(ttext))
         else:
             st.empty()
-
         if instant1:
             now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
             y = now.year
@@ -267,7 +263,7 @@ with pan:
             bl = ty.baliu()
             ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
             gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
-            lunard = "{}年{}月{}日".format(ty.lunar_date_d(y, m, d).get("年"), ty.lunar_date_d(y, m, d).get("月"), ty.lunar_date_d().get("日"))
+            lunard = "{}年{}月{}日".format(config.lunar_date_d(y, m, d).get("年"), config.lunar_date_d(y, m, d).get("月"), config.lunar_date_d(y, m, d).get("日"))
             ch = chistory.get(y)
             if ch == None:
                ch = ""
