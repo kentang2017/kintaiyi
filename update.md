@@ -143,7 +143,7 @@ Ken苦思《太乙金鏡式經》卷一之「推太乙當時法」時計排例�
 =============================================
 
 # 開發者資訊
-![看倏爍](https://github.com/kentang2017/kintaiyi/blob/master/pic/qrcode_for_gh_561840f80b67_1280.jpg?raw=true)
+![看倏爍](https://github.com/kentang2017/kintaiyi/blob/master/pic/qrcode_for_gh_561840f80b67_1280.jpg?raw=true =250x250)
 
 如對本系統有任何建議
 可加本人微信gnatnek
