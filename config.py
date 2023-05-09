@@ -104,7 +104,7 @@ def gangzhi(year, month, day, hour, minute):
     cdate = fromSolar(dd[0], dd[1], dd[2])
     yTG,mTG,dTG,hTG = "{}{}".format(tian_gan[cdate.getYearGZ().tg], di_zhi[cdate.getYearGZ().dz]), "{}{}".format(tian_gan[cdate.getMonthGZ().tg],di_zhi[cdate.getMonthGZ().dz]), "{}{}".format(tian_gan[cdate.getDayGZ().tg], di_zhi[cdate.getDayGZ().dz]), "{}{}".format(tian_gan[cdate.getHourGZ(dd[3]).tg], di_zhi[cdate.getHourGZ(dd[3]).dz])
     if year < 1900:
-        mTG1 = find_lunar_month(yTG).get(lunar_date_d().get("月"))
+        mTG1 = find_lunar_month(yTG).get(lunar_date_d(year, month, day).get("月"))
     else:
         mTG1 = mTG
     hTG1 = find_lunar_hour(dTG).get(hTG[1])
