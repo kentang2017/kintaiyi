@@ -16,16 +16,16 @@ import os, urllib
 import config
 import jieqi
 
-def get_file_content_as_string(path):
-    url = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/master/' + path
-    response = urllib.request.urlopen(url)
-    return response.read().decode("utf-8")
-
 def render_svg(svg):
     """Renders the given svg string."""
     b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
     html = r'<img src="data:image/svg+xml;base64,%s"/>' % b64
-    st.write(html, unsafe_allow_html=False)
+    st.write(html, unsafe_allow_html=True)
+    
+def get_file_content_as_string(path):
+    url = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/master/' + path
+    response = urllib.request.urlopen(url)
+    return response.read().decode("utf-8")
 
 def render_svg_example(html):
     render_svg(html)
@@ -109,8 +109,7 @@ with pan:
                     yy = "yang"
                 else:
                     yy = "yin"
-                #st.image("kook/"+yy+str(ttext.get("局式").get("數"))+".svg", use_column_width=True)
-                st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
+                st.image("https://raw.githubusercontent.com/kentang2017/kintaiyi/a76abf4958ea48accb1f3b8b8c7cfd96710ea67f/kook/"+yy+str(ttext.get("局式").get("數"))+".svg")
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
                 st.title("史事記載︰")
@@ -174,7 +173,8 @@ with pan:
                 yy = "yang"
             else:
                 yy = "yin"
-            st.image("kook/"+yy+str(ttext.get("局式").get("數"))+".svg")
+            render_svg()
+            st.image("https://raw.githubusercontent.com/kentang2017/kintaiyi/a76abf4958ea48accb1f3b8b8c7cfd96710ea67f/kook/"+yy+str(ttext.get("局式").get("數"))+".svg")
             st.title("《太乙秘書》︰")
             st.markdown(ts)
             st.title("史事記載︰")
