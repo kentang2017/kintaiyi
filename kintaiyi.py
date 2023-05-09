@@ -7,14 +7,14 @@ import re
 import time
 import itertools
 from itertools import cycle
-from math import pi
+from ephem import Date
 import numpy as np
 from cn2an import an2cn
-import ephem
-from ephem import Date, Ecliptic, Equatorial
 from taiyidict import tengan_shiji, su_dist
 import config
-from config import num, su, gong, gong1, gong2, gong3, gua, nayin_wuxing, wuxing_relation_2, jc, jc1, tyjc, kingyear, skyeyes_dict, multi_key_dict_get, jieqi_name, jiazi, num2gong, Ganzhiwuxing, di_zhi, gangzhi
+import jieqi
+from jieqi import jieqi_name
+from config import num, su, gong, gong1, gong2, gong3, gua, nayin_wuxing, wuxing_relation_2, jc, jc1, tyjc, kingyear, skyeyes_dict, multi_key_dict_get, jiazi, num2gong, Ganzhiwuxing, di_zhi, gangzhi
 
 
 class Taiyi():
@@ -53,86 +53,6 @@ class Taiyi():
         """ji_style 年計、月計、日計、時計或分計"""
         return dict(zip(di_zhi, config.new_list(list(reversed(di_zhi)), "丑"))).get(self.taishui(ji_style))
 
-#%% #節氣
-    """jd_utc"""
-    def ecliptic_lon(self, jd_utc):
-        return Ecliptic(Equatorial(ephem.Sun(jd_utc).ra,ephem.Sun(jd_utc).dec,epoch=jd_utc)).lon
-
-    def sta(self, jd_num):
-        return int(self.ecliptic_lon(jd_num)*180.0/pi/15)
-
-    def iteration(self, jd_num):
-        s1_jd=self.sta(jd_num)
-        s0_jd=s1_jd
-        dt=1.0
-        while True:
-            jd_num+=dt
-            s=self.sta(jd_num)
-            if s0_jd!=s:
-                s0_jd=s
-                dt=-dt/2
-            if abs(dt)<0.0000001 and s!=s1_jd:
-                break
-        return jd_num
-
-    def find_jq_date(self, year, month, day, hour, jie_qi):
-        jd_format=Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
-        e_1=self.ecliptic_lon(jd_format)
-        n_1=int(e_1*180.0/pi/15)+1
-        dzlist = []
-        for i in range(24):
-            if n_1>=24:
-                n_1-=24
-            jd_d=self.iteration(jd_format)
-            d=Date(jd_d+1/3).tuple()
-            bb_1 = {jieqi_name[n_1]: Date("{}/{}/{} {}:{}:00.00".format(str(d[0]).zfill(4), str(d[1]).zfill(2), str(d[2]).zfill(2), str(d[3]).zfill(2) , str(d[4]).zfill(2)))}
-            n_1+=1
-            dzlist.append(bb_1)
-        return list(dzlist[list(map(lambda i:list(i.keys())[0], dzlist)).index(jie_qi)].values())[0]
-
-    def gong_wangzhuai(self):
-        wangzhuai = list("旺相胎沒死囚休廢")
-        wangzhuai_num = [3,4,9,2,7,6,1,8]
-        wangzhuai_jieqi = {('春分','清明','穀雨'):'春分',
-                            ('立夏','小滿','芒種'):'立夏',
-                            ('夏至','小暑','大暑'):'夏至',
-                            ('立秋','處暑','白露'):'立秋',
-                            ('秋分','寒露','霜降'):'秋分',
-                            ('立冬','小雪','大雪'):'立冬',
-                            ('冬至','小寒','大寒'):'冬至',
-                            ('立春','雨水','驚蟄'):'立春'}
-        return dict(zip(config.new_list(wangzhuai_num, dict(zip(jieqi_name[0::3],wangzhuai_num )).get(multi_key_dict_get(wangzhuai_jieqi, "霜降"))), wangzhuai))
-
-    def xzdistance(self):
-        return int(self.find_jq_date(self.year, self.month, self.day, self.hour, "夏至") -  Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))))
-
-    def distancejq(self, jq):
-        return int( Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - self.find_jq_date(self.year-1, self.month, self.day, self.hour, jq) )
-
-    def fjqs(self, year, month, day, hour):
-        jd_format = Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
-        n= int(self.ecliptic_lon(jd_format)*180.0/pi/15)+1
-        c = []
-        for i in range(1):
-            if n>=24:
-                n-=24
-            d = Date(jd_format+1/3).tuple()
-            c.append([jieqi_name[n], Date("{}/{}/{} {}:{}:00.00".format(str(d[0]).zfill(4), str(d[1]).zfill(2), str(d[2]).zfill(2), str(d[3]).zfill(2) , str(d[4]).zfill(2)))])
-        return c[0]
-
-    def jq(self, year, month, day, hour):
-        ct =  Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
-        p = Date(round((ct - 7 ), 3)).tuple()
-        pp = Date(round((ct - 21 ), 3)).tuple()
-        bf = self.fjqs(p[0], p[1], p[2], p[3])
-        bbf = self.fjqs(pp[0], pp[1], pp[2], pp[3])
-        if ct < bf[1]:
-            return bbf[0]
-        else:
-            return bf[0]
-
-    def getjq(self):
-        return self.jq(self.year, self.month, self.day, self.hour)
 #%% 積年
     def accnum(self, ji_style, taiyi_acumyear):
         tndict = {0:10153917, 1:1936557, 2:10154193, 3:10153917 }
@@ -141,25 +61,25 @@ class Taiyi():
         if ji_style == 0: #年計
             if year >= 0:
                 return tn_num + year
-            elif year < 0:
+            if year < 0:
                 return tn_num + year + 1
-        elif ji_style ==1: #月計
+        if ji_style ==1: #月計
             if year >= 0:
                 accyear = tn_num + year - 1
-            elif year < 0:
+            if year < 0:
                 accyear = tn_num + year + 1
             return accyear * 12 + 2 + config.lunar_date_d(self.year, self.month, self.day).get("月")
-        elif ji_style ==2:#日計
+        if ji_style ==2:#日計
             if taiyi_acumyear ==0:
                 t = 708011105
                 return t + int(Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00"))
-            elif taiyi_acumyear ==2:
+            if taiyi_acumyear ==2:
                 t = 708011105 - 10153917 +tn_num
                 return t + int(Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00"))
-            elif taiyi_acumyear ==1:
+            if taiyi_acumyear ==1:
                 t = 708011105 - 185
                 return t + int(Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00"))
-            elif taiyi_acumyear == 3:
+            if taiyi_acumyear == 3:
                 ly = config.lunar_date_d(self.year, self.month, self.day).get("年")
                 ld = config.lunar_date_d(self.year, self.month, self.day).get("日")
                 n1 = round((ly - 423 )  * (235 / 19) ,0)
@@ -200,7 +120,7 @@ class Taiyi():
 
     def kook(self, ji_style, taiyi_acumyear):
         alljq = jieqi_name
-        jq = self.getjq()
+        j_q = jieqi.jq(self.year, self.month, self.day, self.hour)
         jqmap = {tuple(config.new_list(alljq, "冬至")[0:12]):"冬至", tuple(config.new_list(alljq, "夏至")[0:12]):"夏至"}
         k = self.accnum(ji_style, taiyi_acumyear)%72
         if k == 0:
@@ -210,9 +130,9 @@ class Taiyi():
             three_year = {0:"理天", 1:"理地", 2:"理人"}.get(dict(zip(list(range(1,73)), [0,1,2] * 24)).get(k))
             return {"文":"{}{}局".format(dun, an2cn(k)), "數":k, "年":three_year}
         elif ji_style == 3 or ji_style == 4:
-            if multi_key_dict_get(jqmap, jq) == "夏至":
+            if multi_key_dict_get(jqmap, j_q) == "夏至":
                 dun = "陰遁"
-            elif multi_key_dict_get(jqmap, jq) == "冬至":
+            elif multi_key_dict_get(jqmap, j_q) == "冬至":
                 dun = "陽遁"
             three_year = {0:"理天", 1:"理地", 2:"理人"}.get(dict(zip(list(range(1,73)), [0,1,2] * 24)).get(k))
             return {"文":"{}{}局".format(dun, an2cn(k)), "數":k, "年":three_year, "積年數":self.accnum(ji_style, taiyi_acumyear) }
@@ -677,53 +597,6 @@ class Taiyi():
         new_ty_order = config.new_list([8,3,4,9,2,7,6,1], ty)
         doors  = config.new_list(self.door, self.eight_door(ji_style, taiyi_acumyear))
         return dict(zip(new_ty_order, doors))
-    #推雷公入水
-    def leigong(self, ji_style, taiyi_acumyear):
-        ty = self.ty(ji_style, taiyi_acumyear)
-        find_ty = dict(zip([1,2,3,4,6,7,8,9],list("乾午艮卯酉坤子巽"))).get(ty)
-        new_order = config.new_list(gong1, find_ty)
-        return dict(zip(range(1,17),new_order)).get(1+4)
-    #推臨津問道
-    def lijin(self):
-        year = dict(zip(di_zhi, range(1,13))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[0][1])
-        return config.new_list(gong1, "寅")[year]
-    #推獅子反擲
-    def lion(self):
-        return config.new_list(gong1, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[0][1])[4]
-    #推白雲捲空
-    def cloud(self, ji_style, taiyi_acumyear):
-        hg_num = self.home_general(ji_style, taiyi_acumyear)
-        return config.new_list(list(reversed(gong1)), "寅")[hg_num]
-    #推猛虎相拒
-    def tiger(self, ji_style, taiyi_acumyear):
-        ty= self.ty(ji_style, taiyi_acumyear)
-        new_order = config.new_list(gong1, "寅")
-        return new_order[ty]
-    #推白龍得云
-    def dragon(self, ji_style, taiyi_acumyear):
-        ty = self.ty(ji_style, taiyi_acumyear)
-        new_order = config.new_list(list(reversed(gong1)), "寅")
-        return new_order[ty]
-    #推回軍無言
-    def returnarmy(self, ji_style, taiyi_acumyear):
-        ag_num = self.away_general(ji_style, taiyi_acumyear)
-        return config.new_list(gong1, "寅")[ag_num]
-    #推多少以占勝負  客以多筭臨少主人敗客以少筭臨多主人勝也
-    def suenwl(self, ji_style, taiyi_acumyear):
-        homecal = self.home_cal(ji_style, taiyi_acumyear)
-        awaycal = self.away_cal(ji_style, taiyi_acumyear)
-        hg = self.home_general(ji_style, taiyi_acumyear)
-        ag = self.away_general(ji_style, taiyi_acumyear)
-        if awaycal < homecal and hg != 5:
-            return "客以少筭臨多，主人勝也。"
-        elif awaycal < homecal and hg == 5:
-            return "雖客以少筭臨多，惟主人不出中門，主客俱不利，和。"
-        elif awaycal > homecal and ag != 5:
-            return "客以多筭臨少，主人敗也。"
-        elif awaycal > homecal and ag == 5:
-            return "雖客以多筭臨少，惟客人不出中門，主客俱不利，和。"
-        else:
-            return "主客旗鼓相當。"
     #陽九
     def yangjiu(self):
         year = config.lunar_date_d(self.year, self.month, self.day).get("年")
@@ -746,7 +619,7 @@ class Taiyi():
             return dict(zip(range(1,13),config.new_list(di_zhi, "酉"))).get(12)
         else:
             return dict(zip(range(1,13),config.new_list(di_zhi, "酉"))).get(getbl)
-
+    #帝符
     def kingfu(self, ji_style, taiyi_acumyear):
         f = self.accnum(ji_style, taiyi_acumyear) % 20
         if f > 16:
@@ -841,35 +714,12 @@ class Taiyi():
             eightdoor_zhishi = 1
         #ty_gong = self.ty()
         return dict(zip(list(range(1,9)),self.door)).get(eightdoor_zhishi)
-    #推二十八星宿
-    def starhouse(self):
-        numlist = [13,9,16,5,5,17,10,24,7,11,25,18,17,10,17,13,14,11,16,1,9,30,3,14,7,19,19,18]
-        alljq = jieqi_name
-        njq = config.new_list(alljq, "冬至")
-        gensulist =  list(itertools.chain.from_iterable([[su[i]]*numlist[i] for i in range(0,28)]))
-        jqsulist = [["斗", 9],["斗",24] ,["女", 8],["危",2],["室", 1],["壁",1] ,["奎", 4],["婁",2] ,["胃", 4],["昴",4] ,["畢", 8],["參",6] ,["井", 1],["井", 27],["柳",8] ,["張", 3],["翼",1] ,["翼", 16],["軫",13] ,["角", 9],["房", 1],["氐",2] ,["尾", 6],["箕",24]]
-        njq_list = dict(zip(njq, jqsulist))
-        currentjq = self.jq(self.year, self.month, self.day, self.hour)
-        distance_to_cjq = self.distancejq(currentjq)
-        num = gensulist.index(njq_list.get(currentjq)[0]) + njq_list.get(currentjq)[1] + distance_to_cjq
-        if num >360:
-            return config.new_list(gensulist, njq_list.get(currentjq)[0])[num-360]
-        else:
-            return gensulist[num]
-
-    def gendatetime(self):
-        return "{}年{}月{}日{}時".format(self.year, self.month, self.day, self.hour)
-
-    def taiyi_name(self, ji):
-        return {0:"年計", 1:"月計", 2:"日計", 3:"時計", 4:"分計"}.get(ji)
-
-    def ty_method(self,  tn):
-        return  {0:"太乙統宗", 1:"太乙金鏡", 2:"太乙淘金歌", 3:"太乙局", 4: "太乙淘金歌時計捷法"}.get(tn)
 
     def pan(self, ji_style, taiyi_acumyear):
         return {
-                "太乙計":self.taiyi_name(ji_style),
-                "公元日期":self.gendatetime(),
+                "太乙計":config.taiyi_name(ji_style),
+                "太乙公式類別":config.ty_method(taiyi_acumyear), 
+                "公元日期":config.gendatetime(self.year, self.month, self.day, self.hour),
                 "干支":gangzhi(self.year, self.month, self.day, self.hour, self.minute),
                 "農曆":config.lunar_date_d(self.year, self.month, self.day),
                 "年號":kingyear(config.lunar_date_d(self.year, self.month, self.day).get("年")),
@@ -899,7 +749,7 @@ class Taiyi():
                 "君基":self.kingbase(ji_style, taiyi_acumyear),
                 "臣基":self.officerbase(ji_style, taiyi_acumyear),
                 "民基":self.pplbase(ji_style, taiyi_acumyear),
-                "二十八宿值日":self.starhouse(),
+                "二十八宿值日":config.starhouse(self.year, self.month, self.day, self.hour),
                 "太歲二十八宿":self.year_chin(),
                 "太歲值宿斷事": su_dist.get(self.year_chin()),
                 "始擊二十八宿":self.sf_num(ji_style, taiyi_acumyear),
@@ -907,24 +757,27 @@ class Taiyi():
                 "十天干歲始擊落宮預測": multi_key_dict_get (tengan_shiji, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[0][0]).get(Ganzhiwuxing(self.sf(ji_style, taiyi_acumyear))),
                 "八門值事":self.eight_door(ji_style, taiyi_acumyear),
                 "八門分佈":self.geteightdoors(ji_style, taiyi_acumyear),
-                "八宮旺衰":self.gong_wangzhuai(),
+                "八宮旺衰":jieqi.gong_wangzhuai(),
                 "推太乙當時法": self.shensha(ji_style, taiyi_acumyear),
                 "推三門具不具":self.threedoors(ji_style, taiyi_acumyear),
                 "推五將發不發":self.fivegenerals(ji_style, taiyi_acumyear),
                 "推主客相闗法":self.wc_n_sj(ji_style, taiyi_acumyear),
-                "推多少以占勝負":self.suenwl(ji_style, taiyi_acumyear),
+                "推多少以占勝負":config.suenwl(self.home_cal(ji_style, taiyi_acumyear),
+                                        self.away_cal(ji_style, taiyi_acumyear),
+                                        self.home_general(ji_style, taiyi_acumyear),
+                                        self.away_general(ji_style, taiyi_acumyear)),
                 "推太乙風雲飛鳥助戰法":self.flybird_wl(ji_style, taiyi_acumyear),
-                "推雷公入水":self.leigong(ji_style, taiyi_acumyear),
-                "推臨津問道":self.lijin(),
-                "推獅子反擲":self.lion(),
-                "推白雲捲空":self.cloud(ji_style, taiyi_acumyear),
-                "推猛虎相拒":self.tiger(ji_style, taiyi_acumyear),
-                "推白龍得雲":self.dragon(ji_style, taiyi_acumyear),
-                "推回軍無言":self.returnarmy(ji_style, taiyi_acumyear),
+                "推雷公入水":config.leigong(self.ty(ji_style, taiyi_acumyear)),
+                "推臨津問道":config.lijin(self.year, self.month, self.day, self.hour, self.minute),
+                "推獅子反擲":config.lion(self.year, self.month, self.day, self.hour, self.minute),
+                "推白雲捲空":config.cloud(self.home_general(ji_style, taiyi_acumyear)),
+                "推猛虎相拒":config.tiger(self.ty(ji_style, taiyi_acumyear)),
+                "推白龍得雲":config.dragon(self.ty(ji_style, taiyi_acumyear)),
+                "推回軍無言":config.returnarmy(self.away_general(ji_style, taiyi_acumyear)),
                 }
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Taiyi(2023,4,3,18,43).pan(3,1))
+    print(Taiyi(2023,4,3,18,43).pan(3,0))
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
