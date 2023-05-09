@@ -173,7 +173,6 @@ with pan:
                 yy = "yang"
             else:
                 yy = "yin"
-            render_svg()
             st.image("https://raw.githubusercontent.com/kentang2017/kintaiyi/a76abf4958ea48accb1f3b8b8c7cfd96710ea67f/kook/"+yy+str(ttext.get("局式").get("數"))+".svg")
             st.title("《太乙秘書》︰")
             st.markdown(ts)
