@@ -1,18 +1,19 @@
 import streamlit as st
 import pendulum as pdlm
+import base64
+import textwrap
+import datetime, pytz
 from contextlib import contextmanager, redirect_stdout
 from io import StringIO
 from time import sleep
 import streamlit as st
+import cn2an
 from cn2an import an2cn
 import streamlit.components.v1 as components
 from kintaiyi import Taiyi
 from historytext import chistory
 from taiyidict import tengan_shiji, su_dist
 from taiyimishu import taiyi_yingyang
-import base64
-import textwrap
-import datetime, pytz
 import os, urllib
 import config
 import jieqi
@@ -96,7 +97,7 @@ with pan:
                 home_vs_away3 = ty.flybird_wl(num,tn)
                 ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
                 gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
-                lunard = "{}年{}月{}日".format(  an2cn(str(config.lunar_date_d(y, m, d).get("年"))+"年"), an2cn(config.lunar_date_d(y, m, d).get("月")), an2cn(config.lunar_date_d(y, m, d).get("日")))
+                lunard = "{}年{}月{}日".format(  cn2an.transform(str(config.lunar_date_d(y, m, d).get("年"))+"年", "an2cn"), an2cn(config.lunar_date_d(y, m, d).get("月")), an2cn(config.lunar_date_d(y, m, d).get("日")))
                 ch = chistory.get(y)
                 if num == 3:
                    tynum = ty.accnum(num,tn)
@@ -164,7 +165,7 @@ with pan:
             bl = ty.baliu()
             ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
             gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
-            lunard = "{}年{}月{}日".format(  an2cn(str(config.lunar_date_d(y, m, d).get("年"))+"年"), an2cn(config.lunar_date_d(y, m, d).get("月")), an2cn(config.lunar_date_d(y, m, d).get("日")))
+            lunard = "{}年{}月{}日".format(  cn2an.transform(str(config.lunar_date_d(y, m, d).get("年"))+"年", "an2cn"), an2cn(config.lunar_date_d(y, m, d).get("月")), an2cn(config.lunar_date_d(y, m, d).get("日")))
             ch = chistory.get(y)
             if ch == None:
                ch = ""
