@@ -174,7 +174,7 @@ with pan:
                 yy = "yang"
             else:
                 yy = "yin"
-            st.image(open("kook/"+yy+str(ttext.get("局式").get("數"))+".svg").read(), use_column_width=True)
+            st.image("kook/"+yy+str(ttext.get("局式").get("數"))+".svg")
             st.title("《太乙秘書》︰")
             st.markdown(ts)
             st.title("史事記載︰")
