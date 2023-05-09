@@ -13,7 +13,7 @@ import base64
 import textwrap
 import datetime, pytz
 import os, urllib
-
+import config
 
 def get_file_content_as_string(path):
     url = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/master/' + path
@@ -267,7 +267,7 @@ with pan:
             bl = ty.baliu()
             ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
             gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
-            lunard = "{}年{}月{}日".format(ty.lunar_date_d().get("年"), ty.lunar_date_d().get("月"), ty.lunar_date_d().get("日"))
+            lunard = "{}年{}月{}日".format(ty.lunar_date_d(y, m, d).get("年"), ty.lunar_date_d(y, m, d).get("月"), ty.lunar_date_d().get("日"))
             ch = chistory.get(y)
             if ch == None:
                ch = ""
