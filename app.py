@@ -127,7 +127,7 @@ with pan:
                 st.markdown("推太乙風雲飛鳥助戰︰"+ home_vs_away3)
                 st.title("九宮分野︰")
                 st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-                print("{} |\n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | \n積{}數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | {}卦值年  |\n 陽九︰{} 百六︰{} |\n{}{}{}\n{} \n\n".format(ty.gendatetime(), lunard, ty.getjq(),gz, ty.kingyear(), ty.ty_method(tn), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.taiyi_name(num)[0],tynum, ttext.get("紀元"), homecal, awaycal, yc, ed, g, yj, bl, ty.ty_gong_dist(num, tn), ty.threedoors(num, tn), ty.fivegenerals(num, tn), ty.geteightdoors(num, tn) ))
+                print("{} |\n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | \n積{}數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | {}卦值年  |\n 陽九︰{} 百六︰{} |\n{}{}{}\n{} \n\n".format(config.gendatetime(y,m,d,h), lunard, ty.getjq(),gz, ty.kingyear(), ty.ty_method(tn), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.taiyi_name(num)[0],tynum, ttext.get("紀元"), homecal, awaycal, yc, ed, g, yj, bl, ty.ty_gong_dist(num, tn), ty.threedoors(num, tn), ty.fivegenerals(num, tn), ty.geteightdoors(num, tn) ))
                 expander = st.expander("原始碼")
                 expander.write(str(ttext))
             else:
@@ -174,7 +174,7 @@ with pan:
                 st.markdown(ts)
                 st.title("史事記載︰")
                 st.markdown(ch)
-                print("{} |\n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | \n積{}數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | {}卦值年  |\n陽九︰{} 百六︰{}\n\n".format(ty.gendatetime(),lunard, ty.getjq(), gz, ty.kingyear(), ty.ty_method(tn), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.taiyi_name(num)[0], tynum, ttext.get("紀元"), homecal, awaycal, yc, ed,g, yj, bl))
+                print("{} |\n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | \n積{}數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | {}卦值年  |\n陽九︰{} 百六︰{}\n\n".format(config.gendatetime(y,m,d,h),lunard, ty.getjq(), gz, ty.kingyear(), ty.ty_method(tn), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.taiyi_name(num)[0], tynum, ttext.get("紀元"), homecal, awaycal, yc, ed,g, yj, bl))
                 expander = st.expander("原始碼")
                 expander.write(str(ttext))
             else:
@@ -239,7 +239,7 @@ with pan:
             st.markdown("推太乙風雲飛鳥助戰︰"+ home_vs_away3)
             st.title("九宮分野︰")
             st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-            print("{} |\n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | \n積{}數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | {}卦值年  |\n 陽九︰{} 百六︰{} |\n{}{}{}\n{} \n\n".format(ty.gendatetime(), lunard, ty.getjq(),  gz, ty.kingyear(), ty.ty_method(tn), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.taiyi_name(num)[0],tynum, ttext.get("紀元"), homecal, awaycal, yc, ed, g, yj, bl, ty.ty_gong_dist(num, tn), ty.threedoors(num, tn), ty.fivegenerals(num, tn), ty.geteightdoors(num, tn) ))
+            print("{} |\n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | \n積{}數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | {}卦值年  |\n 陽九︰{} 百六︰{} |\n{}{}{}\n{} \n\n".format(config.gendatetime(y,m,d,h), lunard, ty.getjq(),  gz, ty.kingyear(), ty.ty_method(tn), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.taiyi_name(num)[0],tynum, ttext.get("紀元"), homecal, awaycal, yc, ed, g, yj, bl, ty.ty_gong_dist(num, tn), ty.threedoors(num, tn), ty.fivegenerals(num, tn), ty.geteightdoors(num, tn) ))
             expander = st.expander("原始碼")
             expander.write(str(ttext))
         else:
@@ -282,7 +282,7 @@ with pan:
             st.markdown(ts)
             st.title("史事記載︰")
             st.markdown(ch)
-            print("{} |\n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | \n積{}數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | {}卦值年  |\n陽九︰{} 百六︰{}\n\n".format(ty.gendatetime(),lunard, ty.getjq() , gz, ty.kingyear(), ty.ty_method(tn), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.taiyi_name(num)[0], tynum, ttext.get("紀元"), homecal, awaycal, yc, ed,g, yj, bl))
+            print("{} |\n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | \n積{}數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | {}卦值年  |\n陽九︰{} 百六︰{}\n\n".format(config.gendatetime(y,m,d,h),lunard, ty.getjq() , gz, ty.kingyear(), ty.ty_method(tn), ty.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ty.taiyi_name(num)[0], tynum, ttext.get("紀元"), homecal, awaycal, yc, ed,g, yj, bl))
             expander = st.expander("原始碼")
             expander.write(str(ttext))
         else:
