@@ -69,6 +69,16 @@ with st.sidebar:
 with lpan:
     output5 = st.empty()
     with st_capture(output5.code):
+        now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
+        y = now.year
+        m = now.month
+        d = now.day
+        h = now.hour
+        min = now.minute
+        ty = Taiyi(y,m,d,h,min)
+        homecal = ty.home_cal(num, tn)
+        awaycal = ty.away_cal(num, tn)
+        ed = ty.eight_door(num, tn)
         yc = ty.year_chin()
         g = ty.yeargua(tn)
         ttext = Taiyi(y,m,d,h,min).pan(num,tn)
