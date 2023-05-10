@@ -41,9 +41,7 @@ class Taiyi():
         """ji_style 年計、月計、日計、時計或分計；"""
         kook_text = self.kook(ji_style, taiyi_acumyear).get("文")[0]
         kook_num = self.kook(ji_style, taiyi_acumyear).get("數")
-        skyeyes_summary = {"陽":",始擊擊,,內迫,,,辰迫,,囚,,囚,,,,,,囚,囚,客挾,,,,,,,,囚,囚,始擊擊,,,始擊擊,始擊掩,始擊掩,,,,囚,辰迫,,客挾,客挾,囚,客挾,宮迫,,主挾，宮迫,辰迫,,,,主挾，辰迫,宮迫,宮迫,始擊掩,,,,客挾,,,,,,主挾,辰擊,,始擊掩,始擊擊,始擊擊,囚,始擊擊".split(","),
-              "陰":",內辰迫,外辰迫,內辰擊,,,外宮迫,掩、辰迫,掩,掩、辰迫,掩、囚,內宮迫,內宮擊,,,掩、外辰迫,掩,掩,,關客,關客,關客,,外宮擊,,,外宮擊,,,,內宮擊,,關主,關客,,,外辰迫,掩,內辰迫,關客,內辰擊,,掩,內辰迫,內宮迫,掩,外宮迫,外宮迫,外宮擊,內宮擊,,內辰迫,外辰擊,掩,關主,,,外宮擊,掩,內宮擊,內宮迫,外宮擊,,內宮擊,,,,,,,,,".split(",")}
-        return dict(zip(range(1,73), skyeyes_summary.get(kook_text))).get(kook_num)
+        return dict(zip(range(1,73), config.skyeyes_summary.get(kook_text))).get(kook_num)
     #文昌(天目)
     def skyeyes(self, ji_style, taiyi_acumyear):
         """ji_style 年計、月計、日計、時計或分計"""
@@ -71,14 +69,14 @@ class Taiyi():
             return accyear * 12 + 2 + config.lunar_date_d(self.year, self.month, self.day).get("月")
         if ji_style ==2:#日計
             if taiyi_acumyear ==0:
-                t = 708011105
-                return t + int(Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00"))
+                ty_acu_num = 708011105
+                return ty_acu_num + int(Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00"))
             if taiyi_acumyear ==2:
-                t = 708011105 - 10153917 +tn_num
-                return t + int(Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00"))
+                ty_acu_num = 708011105 - 10153917 +tn_num
+                return ty_acu_num + int(Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00"))
             if taiyi_acumyear ==1:
-                t = 708011105 - 185
-                return t + int(Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00"))
+                ty_acu_num = 708011105 - 185
+                return ty_acu_num + int(Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00"))
             if taiyi_acumyear == 3:
                 ly = config.lunar_date_d(self.year, self.month, self.day).get("年")
                 ld = config.lunar_date_d(self.year, self.month, self.day).get("日")
@@ -88,16 +86,16 @@ class Taiyi():
                 return int(n3)
         elif ji_style ==3: #時計
             if taiyi_acumyear ==0:
-                t = 708011105
-                accday = t + int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/12/21 00:00:00.00") ))
+                ty_acu_num = 708011105
+                accday = ty_acu_num + int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/12/21 00:00:00.00") ))
                 acchr = ((accday -1) * 12) + (self.hour+1)//2 +1
             elif taiyi_acumyear ==2:
-                t = 708011105 - 10153917 +tn_num
-                accday = t + int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/12/21 00:00:00.00") ))
+                ty_acu_num = 708011105 - 10153917 +tn_num
+                accday = ty_acu_num + int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/12/21 00:00:00.00") ))
                 acchr = ((accday -1) * 12) + (self.hour+1)//2 +1
             elif taiyi_acumyear ==1:
-                t = 708011105 - 10153917 +tn_num
-                accday = t + int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/12/21 00:00:00.00") ))
+                ty_acu_num = 708011105 - 10153917 +tn_num
+                accday = ty_acu_num + int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/12/21 00:00:00.00") ))
                 acchr = ((accday -1) * 12) + (self.hour+1)//2 -11
             elif taiyi_acumyear == 4:
                 tiangan = dict(zip([tuple(jiazi()[jiazi().index(i):jiazi().index(i)+6]) for i in jiazi()[0::6]], jiazi()[0::6]))
@@ -156,24 +154,9 @@ class Taiyi():
             cnum = list("一二三四五六七八九十")
             return {"元":dict(zip(range(1,7), cnum[0:6])).get(find_ji_num2), "紀":dict(zip(range(1,7), cnum[0:6])).get(find_ji_num)}
         elif ji_style == 3:
-            epochdict = dict(zip([
-                        ('甲子', '甲午', '乙丑', '乙未', '丙寅', '丙申', '丁卯', '丁酉', '戊辰', '戊戌'),
-                        ('己巳', '己亥', '庚午', '庚子', '辛未', '辛丑', '壬申', '壬寅', '癸酉', '癸卯'),
-                        ('甲戌', '甲辰', '乙亥', '乙巳', '丙子', '丙午', '丁丑', '丁未', '戊寅', '戊申'),
-                        ('己卯', '己酉', '庚辰', '庚戌', '辛巳', '辛亥', '壬午', '壬子', '癸未', '癸丑'),
-                        ('甲申', '甲寅', '乙酉', '乙卯', '丙戌', '丙辰', '丁亥', '丁巳', '戊子', '戊午'),
-                        ('己丑', '己未', '庚寅', '庚申', '辛卯', '辛酉', '壬辰', '壬戌', '癸巳', '癸亥')],  list("一二三四五六")))
-            return "第{}紀".format(multi_key_dict_get(epochdict, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]))
-
+            return "第{}紀".format(multi_key_dict_get(config.epochdict, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]))
         elif ji_style == 4:
-            epochdict = dict(zip([
-                        ('甲子', '甲午', '乙丑', '乙未', '丙寅', '丙申', '丁卯', '丁酉', '戊辰', '戊戌'),
-                        ('己巳', '己亥', '庚午', '庚子', '辛未', '辛丑', '壬申', '壬寅', '癸酉', '癸卯'),
-                        ('甲戌', '甲辰', '乙亥', '乙巳', '丙子', '丙午', '丁丑', '丁未', '戊寅', '戊申'),
-                        ('己卯', '己酉', '庚辰', '庚戌', '辛巳', '辛亥', '壬午', '壬子', '癸未', '癸丑'),
-                        ('甲申', '甲寅', '乙酉', '乙卯', '丙戌', '丙辰', '丁亥', '丁巳', '戊子', '戊午'),
-                        ('己丑', '己未', '庚寅', '庚申', '辛卯', '辛酉', '壬辰', '壬戌', '癸巳', '癸亥')], list("一二三四五六")))
-            return "第{}紀".format(multi_key_dict_get(epochdict, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3]))
+            return "第{}紀".format(multi_key_dict_get(config.epochdict, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3]))
 
     def getyuan(self, ji_style, taiyi_acumyear):
         accnum = self.accnum(ji_style, taiyi_acumyear)
@@ -189,22 +172,12 @@ class Taiyi():
 
     def jiyuan(self, ji_style, taiyi_acumyear):
         if ji_style == 3:
-            j = dict(zip([('甲子', '甲午', '乙丑', '乙未', '丙寅', '丙申', '丁卯', '丁酉', '戊辰', '戊戌', '己巳', '己亥'),
-                            ('庚午', '庚子', '辛未', '辛丑', '壬申', '壬寅', '癸酉', '癸卯', '甲戌', '甲辰', '乙亥', '乙巳'),
-                            ('丙子', '丙午', '丁丑', '丁未', '戊寅', '戊申', '己卯', '己酉', '庚辰', '庚戌', '辛巳', '辛亥'),
-                            ('壬午', '壬子', '癸未', '癸丑', '甲申', '甲寅', '乙酉', '乙卯', '丙戌', '丙辰', '丁亥', '丁巳'),
-                            ('戊子', '戊午', '己丑', '己未', '庚寅', '庚申', '辛卯', '辛酉', '壬辰', '壬戌', '癸巳', '癸亥')], "甲子,丙子,戊子,庚子,壬子".split(",")))
             if taiyi_acumyear!=1:
-                return "{}{}元".format(self.getepoch(ji_style, taiyi_acumyear), multi_key_dict_get(j, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3]))
+                return "{}{}元".format(self.getepoch(ji_style, taiyi_acumyear), multi_key_dict_get(config.jiyuan_dict, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3]))
             else:
-                return "{}{}元".format(self.getepoch(ji_style, taiyi_acumyear), multi_key_dict_get(j, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]))
+                return "{}{}元".format(self.getepoch(ji_style, taiyi_acumyear), multi_key_dict_get(config.jiyuan_dict, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]))
         elif ji_style == 4:
-            j = dict(zip([('甲子', '甲午', '乙丑', '乙未', '丙寅', '丙申', '丁卯', '丁酉', '戊辰', '戊戌', '己巳', '己亥'),
-                          ('庚午', '庚子', '辛未', '辛丑', '壬申', '壬寅', '癸酉', '癸卯', '甲戌', '甲辰', '乙亥', '乙巳'),
-                          ('丙子', '丙午', '丁丑', '丁未', '戊寅', '戊申', '己卯', '己酉', '庚辰', '庚戌', '辛巳', '辛亥'),
-                          ('壬午', '壬子', '癸未', '癸丑', '甲申', '甲寅', '乙酉', '乙卯', '丙戌', '丙辰', '丁亥', '丁巳'),
-                          ('戊子', '戊午', '己丑', '己未', '庚寅', '庚申', '辛卯', '辛酉', '壬辰', '壬戌', '癸巳', '癸亥')], "甲子,丙子,戊子,庚子,壬子".split(",")))
-            return "{}{}元".format(self.getepoch(ji_style, taiyi_acumyear), multi_key_dict_get(j, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3]))
+            return "{}{}元".format(self.getepoch(ji_style, taiyi_acumyear), multi_key_dict_get(config.jiyuan_dict, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3]))
         else:
             return "第{}紀第{}{}元".format(self.getepoch(ji_style, taiyi_acumyear).get("紀") ,self.getepoch(ji_style, taiyi_acumyear).get("元"), self.getyuan(ji_style, taiyi_acumyear))
     #太乙
@@ -446,8 +419,8 @@ class Taiyi():
                  {num2gong(self.away_general(ji_style, taiyi_acumyear)):"客將"},  {num2gong(self.away_vgen(ji_style, taiyi_acumyear)):"客參"},
                  {num2gong(self.threewind(ji_style, taiyi_acumyear)):"三風"},  {num2gong(self.fivewind(ji_style, taiyi_acumyear)):"五風"},
                  {num2gong(self.eightwind(ji_style, taiyi_acumyear)):"八風"},  {num2gong(self.flybird(ji_style, taiyi_acumyear)):"飛鳥"},{num2gong(self.bigyo(ji_style, taiyi_acumyear)):"大游"},
-                 {num2gong(self.smyo(ji_style, taiyi_acumyear)):"小游"},  {self.leigong(ji_style, taiyi_acumyear):"雷公"},  {self.yangjiu():"陽九"},  {self.baliu():"百六"},
-                 {self.lijin():"臨津"},{self.lion():"獅子"}, {self.cloud(ji_style, taiyi_acumyear):"白雲"}, {self.dragon(ji_style, taiyi_acumyear):"白龍"}, {self.tiger(ji_style, taiyi_acumyear):"猛虎"}, {self.returnarmy(ji_style, taiyi_acumyear):"回軍"}
+                 {num2gong(self.smyo(ji_style, taiyi_acumyear)):"小游"},  {config.leigong(ji_style, taiyi_acumyear):"雷公"},  {self.yangjiu():"陽九"},  {self.baliu():"百六"},
+                 {config.lijin():"臨津"},{config.lion():"獅子"}, {config.cloud(ji_style, taiyi_acumyear):"白雲"}, {config.dragon(ji_style, taiyi_acumyear):"白龍"}, {self.tiger(ji_style, taiyi_acumyear):"猛虎"}, {self.returnarmy(ji_style, taiyi_acumyear):"回軍"}
                  ]
         res = {"子":"", "丑":"", "艮":"","寅":"", "卯":"", "辰":"", "巽":"","巳":"", "午":"", "未":"", "申":"", "坤":"", "酉":"", "戌":"", "乾":"", "亥":"", "中":""}
         for dict in dict1:
