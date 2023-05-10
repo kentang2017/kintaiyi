@@ -73,7 +73,7 @@ with pan:
             if manual:
                 p = str(idate).split("/")
                 #pp = str(itime).replace("：",":").split(":")
-                pp = str(pp_time).split(":")
+                pp = str(itime).split(":")
                 y = int(p[0])
                 m = int(p[1])
                 d = int(p[2])
