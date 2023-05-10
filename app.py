@@ -84,10 +84,10 @@ with pan:
                 awaycal = ty.away_cal(num, tn)
                 ed = ty.eight_door(num, tn)
                 yc = ty.year_chin()
-                day_su = ty.starhouse()
+              
                 yj = ty.yangjiu()
                 bl = ty.baliu()
-                g = ty.yeargua(tn)
+                #g = ty.yeargua(tn)
                 year_predict = "太歲" + yc  +"值宿，"+ su_dist.get(yc)
                 sj_su_predict = "始擊落"+ ty.sf_num(num,tn)+ "宿，"+ su_dist.get(ty.sf_num(num,tn))
                 tg_sj_su_predict = config.multi_key_dict_get (tengan_shiji, config.gangzhi(y,m,d,h,min)[0][0]).get(config.Ganzhiwuxing(ty.sf(num,tn)))
