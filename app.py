@@ -57,7 +57,8 @@ pan,example,disaster,guji,update,ins,tutorial = st.tabs([' 排盤 ', ' 史例 ',
 
 with st.sidebar:
     idate = st.text_input('輸入日期(如: 1997/8/8)', '')
-    itime = st.text_input('輸入時間(如: 18:30)', '')
+    #itime = st.text_input('輸入時間(如: 18:30)', '')
+    itime=st.time_input("時間",pdlm.now(tz='Asia/Shanghai').time())
     option = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
     acum = st.selectbox( '太乙積年數', (' 太乙統宗 ', ' 太乙金鏡 ', ' 太乙淘金歌 ', ' 太乙局 '))
     num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option)
@@ -71,7 +72,8 @@ with pan:
         try:
             if manual:
                 p = str(idate).split("/")
-                pp = str(itime).replace("：",":").split(":")
+                #pp = str(itime).replace("：",":").split(":")
+                pp = str(pp_time).split(":")
                 y = int(p[0])
                 m = int(p[1])
                 d = int(p[2])
