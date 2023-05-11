@@ -351,7 +351,6 @@ def baliu(year, month, day):
         return dict(zip(range(1,13),new_list(di_zhi, "酉"))).get(12)
     else:
         return dict(zip(range(1,13),new_list(di_zhi, "酉"))).get(getbl)
-
 #大游
 def bigyo(taiyi_acumyear):
     #big_yo = int((self.accnum(ji_style, taiyi_acumyear) +34) % 388)
@@ -378,9 +377,7 @@ def smyo(taiyi_acumyear):
     if syv == 0 or syv is None:
         syv = 5
     return syv
-
 #%% 三門五將
-
 #八門值事
 def eight_door(taiyi_acumyear):
     acc = taiyi_acumyear % 240
@@ -401,8 +398,6 @@ def geteightdoors(ty, doors):
     #doors  = new_list(door, eight_door(taiyi_acumyear))
     #doors = new_list(door, eightdoor)
     return dict(zip(new_ty_order, doors))
-
-
 
 #%% 太乙七式
 #推雷公入水
