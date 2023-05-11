@@ -94,8 +94,8 @@ with lpan:
            tynum = ty.accnum(num,tn)
         else: 
            tynum = ty.accnum(num,tn)
-        yj = ty.yangjiu()
-        bl = ty.baliu()
+        yj = ttext.get("陽九")
+        bl = ttext.get("百六")
         ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
         gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
         lunard = "{}{}月{}日".format(  cn2an.transform(str(config.lunar_date_d(y, m, d).get("年"))+"年", "an2cn"), an2cn(config.lunar_date_d(y, m, d).get("月")), an2cn(config.lunar_date_d(y, m, d).get("日")))
@@ -148,9 +148,8 @@ with pan:
                 awaycal = ty.away_cal(num, tn)
                 #ed = ty.eight_door(num, tn)
                 yc = ty.year_chin()
-              
-                yj = ty.yangjiu()
-                bl = ty.baliu()
+                yj = ttext.get("陽九")
+                bl = ttext.get("百六")
                 g = ty.yeargua(tn)
                 year_predict = "太歲" + yc  +"值宿，"+ su_dist.get(yc)
                 sj_su_predict = "始擊落"+ ty.sf_num(num,tn)+ "宿，"+ su_dist.get(ty.sf_num(num,tn))
@@ -225,8 +224,8 @@ with pan:
                tynum = ty.accnum(num,tn)
             else: 
                tynum = ty.accnum(num,tn)
-            yj = ty.yangjiu()
-            bl = ty.baliu()
+            yj = ttext.get("陽九")
+            bl = ttext.get("百六")
             ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
             gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
             lunard = "{}{}月{}日".format(  cn2an.transform(str(config.lunar_date_d(y, m, d).get("年"))+"年", "an2cn"), an2cn(config.lunar_date_d(y, m, d).get("月")), an2cn(config.lunar_date_d(y, m, d).get("日")))
