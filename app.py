@@ -89,7 +89,7 @@ with lpan:
         three_door = ty.threedoors(num,tn)
         five_generals = ty.fivegenerals(num,tn)
         home_vs_away1 = ty.wc_n_sj(num,tn)
-        home_vs_away3 = Taiyi(y,m,d,h,min).pan.get("推太乙風雲飛鳥助戰法")
+        home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
         if num == 3:
            tynum = ty.accnum(num,tn)
         else: 
@@ -158,7 +158,7 @@ with pan:
                 three_door = ty.threedoors(num,tn)
                 five_generals = ty.fivegenerals(num,tn)
                 home_vs_away1 = ty.wc_n_sj(num,tn)
-                home_vs_away3 = Taiyi(y,m,d,h,min).pan.get("推太乙風雲飛鳥助戰法")
+                home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
                 ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
                 gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
                 lunard = "{}{}月{}日".format(  cn2an.transform(str(config.lunar_date_d(y, m, d).get("年"))+"年", "an2cn"), an2cn(config.lunar_date_d(y, m, d).get("月")), an2cn(config.lunar_date_d(y, m, d).get("日")))
@@ -220,7 +220,7 @@ with pan:
             three_door = ty.threedoors(num,tn)
             five_generals = ty.fivegenerals(num,tn)
             home_vs_away1 = ty.wc_n_sj(num,tn)
-            home_vs_away3 = Taiyi(y,m,d,h,min).pan.get("推太乙風雲飛鳥助戰法")
+            home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
             if num == 3:
                tynum = ty.accnum(num,tn)
             else: 
