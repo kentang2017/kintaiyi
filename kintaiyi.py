@@ -27,46 +27,49 @@ class Taiyi():
         self.minute = minute
         #間辰
         self.door = list("開休生傷杜景死驚")
-    #計神
+
     def jigod(self, ji_style):
         """ji_style 年計、月計、日計、時計或分計"""
         return dict(zip(di_zhi, config.new_list(list(reversed(di_zhi)), "寅"))).get(self.taishui(ji_style))
-    #太歲
+
     def taishui(self, ji_style):
         """太歲"""
         gang_zhi =  config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
         return {0: gang_zhi[0][1], 1: gang_zhi[1][1], 2: gang_zhi[2][1], 3:gang_zhi[3][1], 4:gang_zhi[4][1], 5: gang_zhi[0][1],}.get(ji_style)
-    #文昌始擊處境
+
     def skyeyes_des(self, ji_style, taiyi_acumyear):
-        """ji_style 年計、月計、日計、時計或分計；"""
+        """文昌始擊處境 年計、月計、日計、時計或分計；"""
         kook_text = self.kook(ji_style, taiyi_acumyear).get("文")[0]
         kook_num = self.kook(ji_style, taiyi_acumyear).get("數")
         return dict(zip(range(1,73), config.skyeyes_summary.get(kook_text))).get(kook_num)
-    #文昌(天目)
+
     def skyeyes(self, ji_style, taiyi_acumyear):
-        """ji_style 年計、月計、日計、時計或分計"""
+        """文昌(天目)"""
         return dict(zip(range(1,73),skyeyes_dict.get(self.kook(ji_style, taiyi_acumyear).get("文")[0]))).get(int(self.kook(ji_style, taiyi_acumyear).get("數")))
-    #合神
+
     def hegod(self, ji_style):
-        """ji_style 年計、月計、日計、時計或分計"""
-        return dict(zip(di_zhi, config.new_list(list(reversed(di_zhi)), "丑"))).get(self.taishui(ji_style))
+        """合神 年計、月計、日計、時計或分計"""
+        he_god = dict(zip(di_zhi, config.new_list(list(reversed(di_zhi)), "丑"))).get(self.taishui(ji_style))
+        return he_god
 #%% 積年
     def accnum(self, ji_style, taiyi_acumyear):
         """0太乙統宗, 1太乙金鏡, 2太乙淘金歌", 3太乙局"""
         tndict = {0:10153917, 1:1936557, 2:10154193, 3:10153917 }
         tn_num = tndict.get(taiyi_acumyear)
-        year = config.lunar_date_d(self.year, self.month, self.day).get("年")
+        lunar_year = config.lunar_date_d(self.year, self.month, self.day).get("年")
+        lunar_month = config.lunar_date_d(self.year, self.month, self.day).get("月")
+        lunar_day = config.lunar_date_d(self.year, self.month, self.day).get("日")
         if ji_style == 0: #年計
-            if year >= 0:
-                return tn_num + year
-            if year < 0:
-                return tn_num + year + 1
+            if lunar_year >= 0:
+                return tn_num + lunar_year
+            if lunar_year < 0:
+                return tn_num + lunar_year + 1
         if ji_style ==1: #月計
-            if year >= 0:
-                accyear = tn_num + year - 1
-            if year < 0:
-                accyear = tn_num + year + 1
-            return accyear * 12 + 2 + config.lunar_date_d(self.year, self.month, self.day).get("月")
+            if lunar_year >= 0:
+                accyear = tn_num + lunar_year - 1
+            if lunar_year < 0:
+                accyear = tn_num + lunar_year + 1
+            return accyear * 12 + 2 + lunar_month
         if ji_style ==2:#日計
             diff_val = int(Date(f"{str(self.year).zfill(4)}/{str(self.month).zfill(2)}/{str(self.day).zfill(2)} {str(self.hour).zfill(2)}:00:00.00") - Date("1900/06/19 00:00:00.00"))
             if taiyi_acumyear ==0:
@@ -79,8 +82,6 @@ class Taiyi():
                 ty_num = 708011105 - 185
                 return ty_num + diff_val
             if taiyi_acumyear ==3:
-                lunar_year = config.lunar_date_d(self.year, self.month, self.day).get("年")
-                lunar_day = config.lunar_date_d(self.year, self.month, self.day).get("日")
                 number_1 = round((lunar_year - 423 )  * (235 / 19) ,0)
                 number_2 = round(number_1 * 29.5306, 0)
                 number_3 = number_2 + lunar_day
@@ -110,35 +111,38 @@ class Taiyi():
                     acchr = zhi_num
             return acchr
         if ji_style == 4: #分計
+            diff_val_two = int(Date(f"{str(self.year).zfill(4)}/{str(self.month).zfill(2)}/{str(self.day).zfill(2)} {str(self.hour).zfill(2)}:00:00.00") - Date("1900/12/21 00:00:00.00"))
             return int(diff_val_two - 1) * 120 + (self.minute + 1 ) // 2 + 1
+        return None
 
     def yeargua(self, taiyi_acumyear):
+        """值年卦"""
         tynum = self.accnum(0, taiyi_acumyear) % 64
         if tynum == 0:
             tynum = 64
         return gua.get(tynum)
-    #太乙局數
+
     def kook(self, ji_style, taiyi_acumyear):
+        """太乙局數"""
         alljq = jieqi_name
         j_q = jieqi.jq(self.year, self.month, self.day, self.hour)
         jqmap = {tuple(config.new_list(alljq, "冬至")[0:12]):"冬至", tuple(config.new_list(alljq, "夏至")[0:12]):"夏至"}
         k = self.accnum(ji_style, taiyi_acumyear)%72
         if k == 0:
             k = 72
-        if ji_style == 0 or ji_style == 1 or ji_style ==5 or ji_style ==2:
+        three_year = {0:"理天", 1:"理地", 2:"理人"}.get(dict(zip(list(range(1,73)), [0,1,2] * 24)).get(k))
+        if ji_style in (0, 1, 5, 2):
             dun = "陽遁"
-            three_year = {0:"理天", 1:"理地", 2:"理人"}.get(dict(zip(list(range(1,73)), [0,1,2] * 24)).get(k))
-        if ji_style == 3 or ji_style == 4:
-            if multi_key_dict_get(jqmap, j_q) == "夏至":
-                dun = "陰遁"
-            if multi_key_dict_get(jqmap, j_q) == "冬至":
-                dun = "陽遁"
-            three_year = {0:"理天", 1:"理地", 2:"理人"}.get(dict(zip(list(range(1,73)), [0,1,2] * 24)).get(k))
-        return {"文":"{}{}局".format(dun, an2cn(k)), "數":k, "年":three_year, "積"+config.taiyi_name(ji_style)[0]+"數":self.accnum(ji_style, taiyi_acumyear) }
+            return {"文":f"{dun}{an2cn(k)}局", "數":k, "年":three_year, "積"+config.taiyi_name(ji_style)[0]+"數":self.accnum(ji_style, taiyi_acumyear) }
+        if ji_style in (3, 4):
+            dun = {"夏至":"陰遁", "冬至":"陽遁"}.get(multi_key_dict_get(jqmap, j_q))
+            return {"文":f"{dun}{an2cn(k)}局", "數":k, "年":three_year, "積"+config.taiyi_name(ji_style)[0]+"數":self.accnum(ji_style, taiyi_acumyear) }
+        return None
 
     def getepoch(self, ji_style, taiyi_acumyear):
+        """求太乙的紀"""
         accnum = self.accnum(ji_style, taiyi_acumyear)
-        if ji_style == 0 or ji_style == 1 or ji_style ==2:
+        if ji_style in (0, 1, 2):
             if accnum % 360 == 1:
                 find_ji_num = 1
             else:
@@ -154,11 +158,12 @@ class Taiyi():
                 find_ji_num = find_ji_num - 6
             return {"元":dict(zip(range(1,7), config.cnum[0:6])).get(find_ji_num2), "紀":dict(zip(range(1,7), config.cnum[0:6])).get(find_ji_num)}
         if ji_style == 3:
-            return "第{}紀".format(multi_key_dict_get(config.epochdict, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]))
+            return f"第{multi_key_dict_get(config.epochdict, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2])}紀"
         if ji_style == 4:
-            return "第{}紀".format(multi_key_dict_get(config.epochdict, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3]))
+            return f"第{multi_key_dict_get(config.epochdict, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3])}紀"
 
     def getyuan(self, ji_style, taiyi_acumyear):
+        """求太乙的元"""
         accnum = self.accnum(ji_style, taiyi_acumyear)
         if round(accnum % 360) == 1:
             find_ji_num = 1
@@ -171,31 +176,35 @@ class Taiyi():
         return jiyuan
 
     def jiyuan(self, ji_style, taiyi_acumyear):
+        """太乙紀元"""
+        gang_zhi = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
         if ji_style == 3:
             if taiyi_acumyear!=1:
-                return "{}{}元".format(self.getepoch(ji_style, taiyi_acumyear), multi_key_dict_get(config.jiyuan_dict, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3]))
-            else:
-                return "{}{}元".format(self.getepoch(ji_style, taiyi_acumyear), multi_key_dict_get(config.jiyuan_dict, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]))
-        elif ji_style == 4:
-            return "{}{}元".format(self.getepoch(ji_style, taiyi_acumyear), multi_key_dict_get(config.jiyuan_dict, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3]))
-        else:
-            return "第{}紀第{}{}元".format(self.getepoch(ji_style, taiyi_acumyear).get("紀") ,self.getepoch(ji_style, taiyi_acumyear).get("元"), self.getyuan(ji_style, taiyi_acumyear))
-    #太乙
+                return f"{self.getepoch(ji_style, taiyi_acumyear)}{multi_key_dict_get(config.jiyuan_dict, gang_zhi[3])}元"
+            return f"{self.getepoch(ji_style, taiyi_acumyear)}{multi_key_dict_get(config.jiyuan_dict, gang_zhi[2])}元"
+        if ji_style == 4:
+            return f"{self.getepoch(ji_style, taiyi_acumyear)}{multi_key_dict_get(config.jiyuan_dict, gang_zhi[3])}元"
+        return f"第{self.getepoch(ji_style, taiyi_acumyear).get('紀')}紀第{self.getepoch(ji_style, taiyi_acumyear).get('元')}{self.getyuan(ji_style, taiyi_acumyear)}元"
+
     def ty(self, ji_style, taiyi_acumyear):
+        """求太乙所在"""
         arr = np.arange(10)
         repetitions = 3
         arrangement = np.repeat(arr, repetitions)
         arrangement_r = list(reversed(arrangement))
         yy_dict = {"陽": dict(zip(range(1,73), list(itertools.chain.from_iterable([list(arrangement)[3:15]+ list(arrangement)[18:]] * 3)))),  "陰": dict(zip(range(1,73), (list(arrangement_r)[:12] + list(arrangement_r)[15:][:-3]) * 3))}
         return yy_dict.get(self.kook(ji_style, taiyi_acumyear).get("文")[0]).get(self.kook(ji_style, taiyi_acumyear).get("數"))
-    #太乙落宮
+
     def ty_gong(self, ji_style, taiyi_acumyear):
+        """太乙落宮"""
         return dict(zip(range(1,73), config.taiyi_pai)).get(self.kook(ji_style, taiyi_acumyear).get("數"))
-    #始擊
+
     def sf(self, ji_style, taiyi_acumyear):
+        """始擊落宮"""
         return dict(zip(range(1,73),config.sf_list)).get(int(self.kook(ji_style, taiyi_acumyear).get("數")))
-    #始擊數
+
     def sf_num(self, ji_style, taiyi_acumyear):
+        """始擊值"""
         sf = self.sf(ji_style, taiyi_acumyear)
         sf_z = dict(zip(gong, list(range(1,17)))).get(sf)
         sf_su = config.su_gong.get(sf)
@@ -206,201 +215,167 @@ class Taiyi():
             return config.new_list(su, a)[total - 28 -1]
         else:
             return dict(zip(list(range(1,29)),config.new_list(su, sf_su))).get(total)
-    #定目
+
     def se(self, ji_style, taiyi_acumyear):
+        """定目"""
         wc,hg,ts = self.skyeyes(ji_style, taiyi_acumyear),self.hegod(ji_style),self.taishui(ji_style)
         start = config.new_list(gong1, hg)
         start1 = len(start[:start.index(ts)+1])
         start2 = config.new_list(gong1, wc)[start1-1]
         return  start2
-    #主算
+
     def home_cal(self, ji_style, taiyi_acumyear):
+        """主算"""
         lnum = [8,8,3,3,4,4,9,9,2,2,7,7,6,6,1,1]
-        gong = config.new_list(config.sixteen, "亥")
-        wc = self.skyeyes(ji_style, taiyi_acumyear)
-        lg = dict(zip(gong, lnum))
-        wc_num = lg.get(wc)
-        ty = self.ty(ji_style, taiyi_acumyear)
-        wc_jc = list(map(lambda x: x == wc, jc)).count(True)
-        ty_jc = list(map(lambda x: x == ty, tyjc)).count(True)
-        wc_jc1  = list(map(lambda x: x == wc, jc1)).count(True)
+        wancheong = self.skyeyes(ji_style, taiyi_acumyear)
+        wc_num = dict(zip(config.new_list(config.sixteen, "亥"), lnum)).get(wancheong)
+        taiyi = self.ty(ji_style, taiyi_acumyear)
+        wc_jc = list(map(lambda x: x == wancheong, jc)).count(True)
+        ty_jc = list(map(lambda x: x == taiyi, tyjc)).count(True)
+        wc_jc1  = list(map(lambda x: x == wancheong, jc1)).count(True)
         wc_order = config.new_list(num, wc_num)
         if wc_jc == 1 and ty_jc != 1 and wc_jc1 !=1 :
-            return sum(wc_order[: wc_order.index(ty)]) +1
-        elif wc_jc !=1 and ty_jc != 1 and wc_jc1 ==1:
-            return sum(wc_order[: wc_order.index(ty)])
-        elif wc_jc != 1 and ty_jc ==1 and wc_jc1 !=1:
-            return sum(wc_order[: wc_order.index(ty)])
-        elif wc_jc ==1 and ty_jc ==1 and wc_jc1 !=1 :
-            return sum(wc_order[: wc_order.index(ty)])+1
-        elif wc_jc !=1 and ty_jc ==1 and wc_jc1 ==1 :
-            return sum(wc_order[: wc_order.index(ty)])
-        elif wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and ty != wc_num:
-            return sum(wc_order[: wc_order.index(ty)])
-        elif wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and ty == wc_num:
-            return ty
-    #主大將
+            return sum(wc_order[: wc_order.index(taiyi)]) +1
+        if wc_jc !=1 and ty_jc != 1 and wc_jc1 ==1:
+            return sum(wc_order[: wc_order.index(taiyi)])
+        if wc_jc != 1 and ty_jc ==1 and wc_jc1 !=1:
+            return sum(wc_order[: wc_order.index(taiyi)])
+        if wc_jc ==1 and ty_jc ==1 and wc_jc1 !=1 :
+            return sum(wc_order[: wc_order.index(taiyi)])+1
+        if wc_jc !=1 and ty_jc ==1 and wc_jc1 ==1 :
+            return sum(wc_order[: wc_order.index(taiyi)])
+        if wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and taiyi != wc_num:
+            return sum(wc_order[: wc_order.index(taiyi)])
+        if wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and taiyi == wc_num:
+            return taiyi
+
     def home_general(self, ji_style, taiyi_acumyear):
+        """主大將"""
         if self.home_cal(ji_style, taiyi_acumyear) == 1:
             return self.ty(ji_style, taiyi_acumyear)
-        elif self.home_cal(ji_style, taiyi_acumyear) < 10:
+        if self.home_cal(ji_style, taiyi_acumyear) < 10:
             return self.home_cal(ji_style, taiyi_acumyear)
-        elif self.home_cal(ji_style, taiyi_acumyear) % 10 == 0:
+        if self.home_cal(ji_style, taiyi_acumyear) % 10 == 0:
             return 5
-        elif self.home_cal(ji_style, taiyi_acumyear) > 10 and self.home_cal(ji_style, taiyi_acumyear) < 20 :
+        if self.home_cal(ji_style, taiyi_acumyear) > 10 and self.home_cal(ji_style, taiyi_acumyear) < 20 :
             return self.home_cal(ji_style, taiyi_acumyear) - 10
-        elif self.home_cal(ji_style, taiyi_acumyear) > 20 and self.home_cal(ji_style, taiyi_acumyear) < 30 :
+        if self.home_cal(ji_style, taiyi_acumyear) > 20 and self.home_cal(ji_style, taiyi_acumyear) < 30 :
             return self.home_cal(ji_style, taiyi_acumyear) - 20
-        elif self.home_cal(ji_style, taiyi_acumyear) > 30 and self.home_cal(ji_style, taiyi_acumyear) < 40 :
+        if self.home_cal(ji_style, taiyi_acumyear) > 30 and self.home_cal(ji_style, taiyi_acumyear) < 40 :
             return self.home_cal(ji_style, taiyi_acumyear) - 30
-    #主參將
+
     def home_vgen(self, ji_style, taiyi_acumyear):
+        """主參將"""
         home_vg = self.home_general(ji_style, taiyi_acumyear) *3 % 10
         if home_vg ==0:
             home_vg = 5
         return home_vg
-    #客算
+
     def away_cal(self, ji_style, taiyi_acumyear):
+        """主算"""
         lnum = [8,8,3,3,4,4,9,9,2,2,7,7,6,6,1,1]
-        gong =  config.new_list(config.sixteen, "亥")
-        sf = self.sf(ji_style, taiyi_acumyear)
-        lg = dict(zip(gong, lnum))
-        sf_num = lg.get(sf)
-        ty = self.ty(ji_style, taiyi_acumyear)
-        sf_jc = list(map(lambda x: x == sf, jc)).count(True)
-        ty_jc = list(map(lambda x: x == ty, tyjc)).count(True)
-        sf_jc1 = list(map(lambda x: x == sf, jc1)).count(True)
+        shiji = self.sf(ji_style, taiyi_acumyear)
+        sf_num = dict(zip(config.new_list(config.sixteen, "亥"), lnum)).get(shiji)
+        taiyi = self.ty(ji_style, taiyi_acumyear)
+        sf_jc = list(map(lambda x: x == shiji, jc)).count(True)
+        ty_jc = list(map(lambda x: x == taiyi, tyjc)).count(True)
+        sf_jc1 = list(map(lambda x: x == shiji, jc1)).count(True)
         sf_order = config.new_list(num, sf_num)
         if sf_jc == 1 and ty_jc != 1 and sf_jc1 !=1 :
-            return sum(sf_order[: sf_order.index(ty)])+1
-        elif sf_jc !=1 and ty_jc != 1 and sf_jc1 ==1:
-            return sum(sf_order[: sf_order.index(ty)])
-        elif sf_jc != 1 and ty_jc ==1 and sf_jc1 !=1:
-            return sum(sf_order[: sf_order.index(ty)])
-        elif sf_jc ==1 and ty_jc ==1 and sf_jc1 !=1 :
-            return sum(sf_order[: sf_order.index(ty)])+1
-        elif sf_jc !=1 and ty_jc ==1 and sf_jc1 ==1 :
-            return sum(sf_order[: sf_order.index(ty)])
-        elif sf_jc !=1 and ty_jc !=1 and sf_jc1 !=1 and sf_num != ty:
-            return sum(sf_order[: sf_order.index(ty)])
-        elif sf_jc !=1 and ty_jc !=1 and sf_jc1 !=1 and sf_num == ty:
-            return ty
-    #客將
+            return sum(sf_order[: sf_order.index(taiyi)])+1
+        if sf_jc !=1 and ty_jc != 1 and sf_jc1 ==1:
+            return sum(sf_order[: sf_order.index(taiyi)])
+        if sf_jc != 1 and ty_jc ==1 and sf_jc1 !=1:
+            return sum(sf_order[: sf_order.index(taiyi)])
+        if sf_jc ==1 and ty_jc ==1 and sf_jc1 !=1 :
+            return sum(sf_order[: sf_order.index(taiyi)])+1
+        if sf_jc !=1 and ty_jc ==1 and sf_jc1 ==1 :
+            return sum(sf_order[: sf_order.index(taiyi)])
+        if sf_jc !=1 and ty_jc !=1 and sf_jc1 !=1 and sf_num != taiyi:
+            return sum(sf_order[: sf_order.index(taiyi)])
+        if sf_jc !=1 and ty_jc !=1 and sf_jc1 !=1 and sf_num == taiyi:
+            return taiyi
+
     def away_general(self, ji_style, taiyi_acumyear):
+        """客大將"""
         if self.away_cal(ji_style, taiyi_acumyear) == 1:
             return 1
-        elif self.away_cal(ji_style, taiyi_acumyear) < 10:
+        if self.away_cal(ji_style, taiyi_acumyear) < 10:
             return self.away_cal(ji_style, taiyi_acumyear)
-        elif self.away_cal(ji_style, taiyi_acumyear) % 10 == 0:
+        if self.away_cal(ji_style, taiyi_acumyear) % 10 == 0:
             return 5
-        elif self.away_cal(ji_style, taiyi_acumyear) > 10 and self.away_cal(ji_style, taiyi_acumyear) < 20 :
+        if self.away_cal(ji_style, taiyi_acumyear) > 10 and self.away_cal(ji_style, taiyi_acumyear) < 20 :
             return self.away_cal(ji_style, taiyi_acumyear) - 10
-        elif self.away_cal(ji_style, taiyi_acumyear) > 20 and self.away_cal(ji_style, taiyi_acumyear) < 30 :
+        if self.away_cal(ji_style, taiyi_acumyear) > 20 and self.away_cal(ji_style, taiyi_acumyear) < 30 :
             return self.away_cal(ji_style, taiyi_acumyear) - 20
-        elif self.away_cal(ji_style, taiyi_acumyear) > 30 and self.away_cal(ji_style, taiyi_acumyear) < 40 :
+        if self.away_cal(ji_style, taiyi_acumyear) > 30 and self.away_cal(ji_style, taiyi_acumyear) < 40 :
             return self.away_cal(ji_style, taiyi_acumyear) - 30
-    #客參將
+
     def away_vgen(self, ji_style, taiyi_acumyear):
+        """客參將"""
         away_vg = self.away_general(ji_style, taiyi_acumyear) *3 % 10
         if away_vg == 0:
             away_vg = 5
         return away_vg
-    #推太乙當時法
+
     def shensha(self, ji_style, taiyi_acumyear):
+        """推太乙當時法"""
         if ji_style ==3:
             general = "天乙,螣蛇,朱雀,六合,勾陳,青龍,天空,白虎,太常,玄武,太陰,天后".split(",")
             tiany = self.skyyi(ji_style, taiyi_acumyear).replace("兌", "酉").replace("坎", "子").replace("震","卯").replace("離","午").replace("艮", "丑")
             kook = self.kook(ji_style, taiyi_acumyear).get("文")[0]
             if kook == "陽":
                 return dict(zip(config.new_list(gong3, tiany) , general))
-            else:
-                return dict(zip(config.new_list(list(reversed(gong3)), tiany), general))
-        else:
-            return "太乙時計才顯示"
-    #定算
+            return dict(zip(config.new_list(list(reversed(gong3)), tiany), general))
+        return "太乙時計才顯示"
+
     def set_cal(self, ji_style, taiyi_acumyear):
+        """定算"""
         lnum = [8, 8, 3, 3, 4,4, 9, 9, 2, 2, 7, 7, 6, 6, 1, 1]
-        gong =  config.new_list(config.sixteen, "亥")
-        se = self.se(ji_style, taiyi_acumyear)
-        lg = dict(zip(gong, lnum))
-        se_num = lg.get(se)
-        ty = self.ty(ji_style, taiyi_acumyear)
-        se_jc = list(map(lambda x: x == se, jc)).count(True)
-        ty_jc = list(map(lambda x: x == ty, tyjc)).count(True)
-        se_jc1 = list(map(lambda x: x == se, jc1)).count(True)
+        setcal = self.se(ji_style, taiyi_acumyear)
+        se_num = dict(zip(config.new_list(config.sixteen, "亥"), lnum)).get(setcal)
+        taiyi = self.ty(ji_style, taiyi_acumyear)
+        se_jc = list(map(lambda x: x == setcal, jc)).count(True)
+        ty_jc = list(map(lambda x: x == taiyi, tyjc)).count(True)
+        se_jc1 = list(map(lambda x: x == setcal, jc1)).count(True)
         se_order = config.new_list(num, se_num)
         if se_jc == 1 and ty_jc != 1 and se_jc1 !=1 :
-            if sum(se_order[: se_order.index(ty)]) == 0:
+            if sum(se_order[: se_order.index(taiyi)]) == 0:
                 return 1
-            else:
-                return sum(se_order[: se_order.index(ty)])+1
-        elif se_jc !=1 and ty_jc != 1 and se_jc1 ==1:
-            return sum(se_order[: se_order.index(ty)])
-        elif se_jc != 1 and ty_jc ==1 and se_jc1 !=1:
-            return sum(se_order[: se_order.index(ty)])
-        elif se_jc ==1 and ty_jc ==1 and se_jc1 !=1 :
-            return sum(se_order[: se_order.index(ty)])+1
-        elif se_jc !=1 and ty_jc ==1 and se_jc1 ==1 :
-            if sum(se_order[: se_order.index(ty)]) == 0:
+            return sum(se_order[: se_order.index(taiyi)])+1
+        if se_jc !=1 and ty_jc != 1 and se_jc1 ==1:
+            return sum(se_order[: se_order.index(taiyi)])
+        if se_jc != 1 and ty_jc ==1 and se_jc1 !=1:
+            return sum(se_order[: se_order.index(taiyi)])
+        if se_jc ==1 and ty_jc ==1 and se_jc1 !=1 :
+            return sum(se_order[: se_order.index(taiyi)])+1
+        if se_jc !=1 and ty_jc ==1 and se_jc1 ==1 :
+            if sum(se_order[: se_order.index(taiyi)]) == 0:
                 return 1
-            else:
-                return sum(se_order[: se_order.index(ty)])
-        elif se_jc !=1 and ty_jc !=1 and se_jc1 !=1 :
-            return sum(se_order[: se_order.index(ty)])
-        elif se_jc !=1 and ty_jc !=1 and se_jc1 !=1 and se_num != ty:
-            return sum(se_order[: se_order.index(ty)])
-        elif se_jc !=1 and ty_jc !=1 and se_jc1 !=1 and se_num == ty:
-            return ty
-    #算數定義
-    def cal_des(self, num):
-        t = []
-        if num > 10 and num % 10 > 5:
-            t.append("三才足數")
-        if num < 10:
-            t.append("無天，二曜虛蝕、五緯失度、慧孛飛流、霜雹為害")
-        if num % 10 < 5:
-            t.append("無地，有崩地震、川竭蝗蝻之象")
-        if num % 10 == 0:
-            t.append("無人，口舌妖言更相殘賊，疾疫、遷移、流亡")
-        t.append(config.numdict.get(num, None))
-        return [i for i in t if i is not None]
-    #定大將
+            return sum(se_order[: se_order.index(taiyi)])
+        if se_jc !=1 and ty_jc !=1 and se_jc1 !=1 :
+            return sum(se_order[: se_order.index(taiyi)])
+        if se_jc !=1 and ty_jc !=1 and se_jc1 !=1 and se_num != taiyi:
+            return sum(se_order[: se_order.index(taiyi)])
+        if se_jc !=1 and ty_jc !=1 and se_jc1 !=1 and se_num == taiyi:
+            return taiyi
+
     def set_general(self, ji_style, taiyi_acumyear):
+        """定大將"""
         set_g = self.set_cal(ji_style, taiyi_acumyear)  % 10
         if set_g == 0:
             set_g = 5
         return set_g
-    #定參將
+
     def set_vgen(self, ji_style, taiyi_acumyear):
+        """定參將"""
         set_vg =  self.set_general(ji_style, taiyi_acumyear) *3 % 10
         if set_vg == 0:
             set_vg = 5
         return set_vg
-    #十六宮
-    def sixteen_gong1(self, ji_style, taiyi_acumyear):
-        dict1 = [{self.skyeyes(ji_style, taiyi_acumyear):"昌"},{self.hegod(ji_style):"合"},{self.sf(ji_style, taiyi_acumyear):"始"},
-                {self.se(ji_style, taiyi_acumyear):"目"}, {self.kingbase(ji_style, taiyi_acumyear):"君"}, {self.officerbase(ji_style, taiyi_acumyear):"臣"}, {self.pplbase(ji_style, taiyi_acumyear):"民"},
-                {self.fgd(ji_style, taiyi_acumyear):"四"},{self.skyyi(ji_style, taiyi_acumyear):"乙"},{self.earthyi(ji_style, taiyi_acumyear):"地"},{self.zhifu(ji_style, taiyi_acumyear):"符"},
-                {self.flyfu(ji_style, taiyi_acumyear):"飛"},{self.kingfu(ji_style, taiyi_acumyear):"帝"}, {self.wufu(ji_style, taiyi_acumyear):"福"},  {self.jigod(ji_style):"計"}]
-        res = {"子":"", "丑":"", "艮":"","寅":"", "卯":"", "辰":"", "巽":"","巳":"", "午":"", "未":"", "申":"", "坤":"", "酉":"", "戌":"", "乾":"", "亥":"", "中":""}
-        for dict in dict1:
-            for list in dict:
-                if list in res:
-                    try:
-                        res[list] += (dict[list])
-                    except TypeError:
-                        pass
-                else:
-                    try:
-                        res[list] = dict[list]
-                    except TypeError:
-                        pass
-        rres = str(res.values())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
-        rrres = [re.findall("..", i) for i in rres]
-        r = str(res.keys())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
-        return {r[i]:rrres[i] for i in range(0,16)}
-    #十六宮之二
+
     def sixteen_gong(self, ji_style, taiyi_acumyear):
+        """十六宮各星將與十精分佈"""
         dict1 = [{self.skyeyes(ji_style, taiyi_acumyear):"文昌"},{self.taishui(ji_style):"太歲"},{self.hegod(ji_style):"合神"},{self.sf(ji_style, taiyi_acumyear):"始擊"},
                  {self.se(ji_style, taiyi_acumyear):"定目"}, {self.kingbase(ji_style, taiyi_acumyear):"君基"}, {self.officerbase(ji_style, taiyi_acumyear):"臣基"}, {self.pplbase(ji_style, taiyi_acumyear):"民基"},
                  {self.fgd(ji_style, taiyi_acumyear):"四神"},{self.skyyi(ji_style, taiyi_acumyear):"天乙"},{self.earthyi(ji_style, taiyi_acumyear):"地乙"},{self.zhifu(ji_style, taiyi_acumyear):"直符"},
@@ -427,13 +402,14 @@ class Taiyi():
                         pass
         rres = str(res.values())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
         rrres = [re.findall("..", i) for i in rres]
-        r = str(res.keys())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
-        return {r[i]:rrres[i] for i in range(0,16)}
-    #太歲禽星
+        overall = str(res.keys())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
+        return {overall[i]:rrres[i] for i in range(0,16)}
+
     def year_chin(self):
+        """太歲禽星"""
         chin_28_stars_code = dict(zip(range(1,29), su))
         if config.lunar_date_d(self.year, self.month, self.day).get("月") == "十二月" or config.lunar_date_d(self.year, self.month, self.day).get("月") == "十一月":
-            if self.jq() == "立春":
+            if jieqi.jq(self.year, self.month, self.day, self.hour) == "立春":
                 get_year_chin_number = (int(self.year)+15) % 28 #求年禽之公式為西元年加15除28之餘數
                 if get_year_chin_number == int(0):
                     get_year_chin_number = int(28)
@@ -443,76 +419,86 @@ class Taiyi():
                 if get_year_chin_number == int(0):
                     get_year_chin_number = int(28)
                     year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
-        elif config.lunar_date_d(self.year, self.month, self.day).get("月") != "十二月" or config.lunar_date_d(self.year, self.month, self.day).get("月") == "十一月":
+        if config.lunar_date_d(self.year, self.month, self.day).get("月") != "十二月" or config.lunar_date_d(self.year, self.month, self.day).get("月") == "十一月":
             get_year_chin_number = (int(self.year)+15) % 28 #求年禽之公式為西元年加15除28之餘數
             if get_year_chin_number == int(0):
                 get_year_chin_number = int(28)
             year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
         return year_chin
-    #君基
+
     def kingbase(self, ji_style, taiyi_acumyear):
-        kb = (self.accnum(ji_style, taiyi_acumyear) +250) % 360  / 30
-        kb_v = dict(zip(range(0,13), config.new_list(di_zhi, "午"))).get(int(kb))
+        """君基"""
+        king_base = (self.accnum(ji_style, taiyi_acumyear) +250) % 360  / 30
+        kb_v = dict(zip(range(0,13), config.new_list(di_zhi, "午"))).get(int(king_base))
         return kb_v
-    #臣基
+
     def officerbase(self, ji_style, taiyi_acumyear):
+        """臣基"""
         return dict(zip(range(1,73), cycle(config.officer_base))).get(self.kook(ji_style, taiyi_acumyear).get("數"))
-    #民基
+
     def pplbase(self, ji_style, taiyi_acumyear):
+        """民基"""
         return dict(zip(range(1,73), cycle(config.new_list(di_zhi,"申")))).get(self.kook(ji_style, taiyi_acumyear).get("數"))
-    #四神
+
     def fgd(self, ji_style, taiyi_acumyear):
+        """四神"""
         return dict(zip(range(1,73), cycle(list(config.four_god)))).get(self.kook(ji_style, taiyi_acumyear).get("數"))
-    #天乙
+
     def skyyi(self, ji_style, taiyi_acumyear):
+        """天乙"""
         return dict(zip(range(1,73), cycle(list(config.sky_yi)))).get(self.kook(ji_style, taiyi_acumyear).get("數"))
-    #地乙
+
     def earthyi(self, ji_style, taiyi_acumyear):
+        """地乙"""
         return dict(zip(range(1,73), cycle(list(config.earth_yi)))).get(self.kook(ji_style, taiyi_acumyear).get("數"))
-    #直符
+
     def zhifu(self, ji_style, taiyi_acumyear):
+        """直符"""
         return dict(zip(range(1,73), cycle(list(config.zhi_fu)))).get(self.kook(ji_style, taiyi_acumyear).get("數"))
-    #飛符
+
     def flyfu(self, ji_style, taiyi_acumyear):
-        f = self.accnum(ji_style, taiyi_acumyear) % 360 % 36 / 3
-        fv = dict(zip(range(1,13), config.new_list(di_zhi, "辰"))).get(int(f))
-        if fv == 0 or fv is None:
-            fv = "中"
-        return fv
-    #太乙在天外地內法
+        """飛符"""
+        fly = self.accnum(ji_style, taiyi_acumyear) % 360 % 36 / 3
+        fly_fu = dict(zip(range(1,13), config.new_list(di_zhi, "辰"))).get(int(fly))
+        if fly_fu == 0 or fly_fu is None:
+            fly_fu = "中"
+        return fly_fu
+
     def ty_gong_dist(self, ji_style, taiyi_acumyear):
-        ty = self.ty(ji_style, taiyi_acumyear)
+        """太乙在天外地內法"""
+        tai_yi = self.ty(ji_style, taiyi_acumyear)
         tyg = num2gong(self.ty(ji_style, taiyi_acumyear))
-        return multi_key_dict_get({tuple([1,8,3,4]): "太乙在"+tyg+"，助主。", tuple([9,2,6,7]): "太乙在"+tyg+"，助客。"}, ty)
-    #推三門具不具
+        return multi_key_dict_get({tuple([1,8,3,4]): "太乙在"+tyg+"，助主。", tuple([9,2,6,7]): "太乙在"+tyg+"，助客。"}, tai_yi)
+
     def threedoors(self, ji_style, taiyi_acumyear):
-        ty = self.ty(ji_style, taiyi_acumyear)
-        ed = self.geteightdoors(ji_style, taiyi_acumyear)
-        door = ed.get(ty)
+        """推三門具不具"""
+        taiyi = self.ty(ji_style, taiyi_acumyear)
+        eightd = self.geteightdoors(ji_style, taiyi_acumyear)
+        door = eightd.get(taiyi)
         if door in list("休生開"):
             return "三門不具。"
-        else:
-            return "三門具。"
-    #推五將發不發
+        return "三門具。"
+
     def fivegenerals(self, ji_style, taiyi_acumyear):
-        hg = self.home_general(ji_style, taiyi_acumyear)
-        ag = self.away_general(ji_style, taiyi_acumyear)
-        if self.skyeyes_des(ji_style, taiyi_acumyear) == "" and hg != 5 and ag != 5:
+        """推五將發不發"""
+        home_general = self.home_general(ji_style, taiyi_acumyear)
+        away_general = self.away_general(ji_style, taiyi_acumyear)
+        if self.skyeyes_des(ji_style, taiyi_acumyear) == "" and home_general != 5 and away_general != 5:
             return "五將發。"
-        if hg == 5:
+        if home_general == 5:
             return "主將主參不出中門，杜塞無門。"
-        if ag == 5:
+        if away_general == 5:
             return "客將客參不出中門，杜塞無門。"
-        else:
-            return self.skyeyes_des(ji_style, taiyi_acumyear)+"。五將不發。"
-    #推主客相闗法
+        return self.skyeyes_des(ji_style, taiyi_acumyear)+"。五將不發。"
+
     def wc_n_sj(self, ji_style, taiyi_acumyear):
-        wc = self.skyeyes(ji_style, taiyi_acumyear)
-        sj = self.sf(ji_style, taiyi_acumyear)
-        wc_f = Ganzhiwuxing(wc)
-        sj_f = Ganzhiwuxing(sj)
-        hg = self.home_general(ji_style, taiyi_acumyear)
-        ty = self.ty(ji_style, taiyi_acumyear)
+        """推主客相闗法"""
+        wan_c = self.skyeyes(ji_style, taiyi_acumyear)
+        shi_ji = self.sf(ji_style, taiyi_acumyear)
+        wc_f = Ganzhiwuxing(wan_c)
+        sj_f = Ganzhiwuxing(shi_ji)
+        home_g = self.home_general(ji_style, taiyi_acumyear)
+        tai_yi = self.ty(ji_style, taiyi_acumyear)
         hguan = multi_key_dict_get(nayin_wuxing, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3])
         if hguan == wc_f:
             guan = "主關"
@@ -521,22 +507,24 @@ class Taiyi():
         else:
             guan = "關"
         relation = multi_key_dict_get(wuxing_relation_2, wc_f+sj_f)
-        if relation == "我尅" and ty == hg:
+        if relation == "我尅" and tai_yi == home_g:
             return "主將囚，不利主"
-        if relation == "我尅" and ty != hg:
+        if relation == "我尅" and tai_yi != home_g:
             return  "主尅客，主勝"
         if relation == "尅我":
             return guan + "得主人，客勝"
         if relation in ["比和","生我","我生"]:
             return guan + relation + "，和"
-    #推八門分佈
+
     def geteightdoors(self, ji_style, taiyi_acumyear):
-        ty = self.ty(ji_style, taiyi_acumyear)
-        new_ty_order = config.new_list([8,3,4,9,2,7,6,1], ty)
+        """推八門分佈"""
+        tai_yi = self.ty(ji_style, taiyi_acumyear)
+        new_ty_order = config.new_list([8,3,4,9,2,7,6,1], tai_yi)
         doors  = config.new_list(self.door, config.eight_door(self.accnum(ji_style, taiyi_acumyear)))
         return dict(zip(new_ty_order, doors))
-    #起盤
+
     def pan(self, ji_style, taiyi_acumyear):
+        """起盤詳細內容"""
         return {
                 "太乙計":config.taiyi_name(ji_style),
                 "太乙公式類別":config.ty_method(taiyi_acumyear),
@@ -557,13 +545,13 @@ class Taiyi():
                 "直符":self.zhifu(ji_style, taiyi_acumyear),
                 "文昌":[self.skyeyes(ji_style, taiyi_acumyear), self.skyeyes_des(ji_style, taiyi_acumyear)],
                 "始擊":self.sf(ji_style, taiyi_acumyear),
-                "主算":[self.home_cal(ji_style, taiyi_acumyear), self.cal_des(self.home_cal(ji_style, taiyi_acumyear))],
+                "主算":[self.home_cal(ji_style, taiyi_acumyear), config.cal_des(self.home_cal(ji_style, taiyi_acumyear))],
                 "主將":self.home_general(ji_style, taiyi_acumyear),
                 "主參":self.home_vgen(ji_style, taiyi_acumyear),
-                "客算":[self.away_cal(ji_style, taiyi_acumyear), self.cal_des(self.away_cal(ji_style, taiyi_acumyear))],
+                "客算":[self.away_cal(ji_style, taiyi_acumyear), config.cal_des(self.away_cal(ji_style, taiyi_acumyear))],
                 "客將":self.away_general(ji_style, taiyi_acumyear),
                 "客參":self.away_vgen(ji_style, taiyi_acumyear),
-                "定算":[self.set_cal(ji_style, taiyi_acumyear), self.cal_des(self.set_cal(ji_style, taiyi_acumyear))],
+                "定算":[self.set_cal(ji_style, taiyi_acumyear), config.cal_des(self.set_cal(ji_style, taiyi_acumyear))],
                 "合神":self.hegod(ji_style),
                 "計神":self.jigod(ji_style),
                 "定目":self.se(ji_style, taiyi_acumyear),
@@ -616,6 +604,6 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Taiyi(2023,5,9,23,39).pan(0,0))
+    print(Taiyi(2023,5,9,23,39).pan(4,0))
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
