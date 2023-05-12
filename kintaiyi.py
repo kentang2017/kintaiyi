@@ -68,34 +68,36 @@ class Taiyi():
                 accyear = tn_num + year + 1
             return accyear * 12 + 2 + config.lunar_date_d(self.year, self.month, self.day).get("月")
         if ji_style ==2:#日計
+            diff_val = int(Date(f"{str(self.year).zfill(4)}/{str(self.month).zfill(2)}/{str(self.day).zfill(2)} {str(self.hour).zfill(2)}:00:00.00") - Date("1900/06/19 00:00:00.00"))
             if taiyi_acumyear ==0:
                 ty_num = 708011105
-                return ty_num + int(Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00"))
+                return ty_num + diff_val
             if taiyi_acumyear ==2:
                 ty_num = 708011105 - 10153917 + tn_num
-                return ty_num + int(Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00"))
+                return ty_num + diff_val
             if taiyi_acumyear ==1:
                 ty_num = 708011105 - 185
-                return ty_num + int(Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00"))
-            if taiyi_acumyear == 3:
-                ly = config.lunar_date_d(self.year, self.month, self.day).get("年")
-                ld = config.lunar_date_d(self.year, self.month, self.day).get("日")
-                n1 = round((ly - 423 )  * (235 / 19) ,0)
-                n2 = round(n1 * 29.5306, 0)
-                n3 = n2 + ld
-                return int(n3)
+                return ty_num + diff_val
+            if taiyi_acumyear ==3:
+                lunar_year = config.lunar_date_d(self.year, self.month, self.day).get("年")
+                lunar_day = config.lunar_date_d(self.year, self.month, self.day).get("日")
+                number_1 = round((lunar_year - 423 )  * (235 / 19) ,0)
+                number_2 = round(number_1 * 29.5306, 0)
+                number_3 = number_2 + lunar_day
+                return int(number_3)
         if ji_style ==3: #時計
+            diff_val_two = int(Date(f"{str(self.year).zfill(4)}/{str(self.month).zfill(2)}/{str(self.day).zfill(2)} {str(self.hour).zfill(2)}:00:00.00") - Date("1900/12/21 00:00:00.00"))
             if taiyi_acumyear ==0:
                 ty_num = 708011105
-                accday = ty_num + int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/12/21 00:00:00.00") ))
+                accday = ty_num + diff_val_two
                 acchr = ((accday -1) * 12) + (self.hour+1)//2 +1
             if taiyi_acumyear ==2:
                 ty_num = 708011105 - 10153917 + tn_num
-                accday = ty_num + int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/12/21 00:00:00.00") ))
+                accday = ty_num + diff_val_two
                 acchr = ((accday -1) * 12) + (self.hour+1)//2 +1
             if taiyi_acumyear ==1:
                 ty_num = 708011105 - 10153917 + tn_num
-                accday = ty_num + int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/12/21 00:00:00.00") ))
+                accday = ty_num + diff_val_two
                 acchr = ((accday -1) * 12) + (self.hour+1)//2 -11
             if taiyi_acumyear == 4:
                 tiangan = dict(zip([tuple(jiazi()[jiazi().index(i):jiazi().index(i)+6]) for i in jiazi()[0::6]], jiazi()[0::6]))
@@ -108,7 +110,7 @@ class Taiyi():
                     acchr = zhi_num
             return acchr
         if ji_style == 4: #分計
-            return int((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) - Date("1900/06/19 00:00:00.00") - 1)) * 120 + (self.minute + 1 ) // 2 + 1
+            return int(diff_val_two - 1) * 120 + (self.minute + 1 ) // 2 + 1
 
     def yeargua(self, taiyi_acumyear):
         tynum = self.accnum(0, taiyi_acumyear) % 64
