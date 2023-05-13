@@ -122,6 +122,20 @@ class Taiyi():
             tynum = 64
         return gua.get(tynum)
 
+    def daygua(self, taiyi_acumyear):
+        """值日卦"""
+        tynum = self.accnum(1, taiyi_acumyear) % 646464 % 20
+        if tynum == 0:
+            tynum = 64
+        return gua.get(tynum)
+
+    def hourgua(self, taiyi_acumyear):
+        """值時卦"""
+        tynum = self.accnum(3, taiyi_acumyear) % 64 
+        if tynum == 0:
+            tynum = 64
+        return gua.get(tynum)
+
     def kook(self, ji_style, taiyi_acumyear):
         """太乙局數"""
         alljq = jieqi_name
