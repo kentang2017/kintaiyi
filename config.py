@@ -88,7 +88,6 @@ numdict = {1: "雜陰", 2: "純陰", 3: "純陽", 4: "雜陽", 6: "純陰", 7: "
            28: "雜重陰", 29: "次和", 31: "雜重陽", 32: "次和", 33: "純陽",
            34: "下和", 37: "雜重陽", 38: "下和", 39: "純陽"}
 
-
 #%% 基本功能函數
 def multi_key_dict_get(d, k):
     for keys, v in d.items():
@@ -116,6 +115,18 @@ def taiyi_name(ji_style):
 def ty_method(taiyi_acumyear):
     return  {0:"太乙統宗", 1:"太乙金鏡", 2:"太乙淘金歌", 3:"太乙局", 4: "太乙淘金歌時計捷法"}.get(taiyi_acumyear)
 
+def cal_des(num):
+    tnum = []
+    if num > 10 and num % 10 > 5:
+        tnum.append("三才足數")
+    if num < 10:
+        tnum.append("無天，二曜虛蝕、五緯失度、慧孛飛流、霜雹為害")
+    if num % 10 < 5:
+        tnum.append("無地，有崩地震、川竭蝗蝻之象")
+    if num % 10 == 0:
+        tnum.append("無人，口舌妖言更相殘賊，疾疫、遷移、流亡")
+    tnum.append(numdict.get(num, None))
+    return [i for i in tnum if i is not None]
 
 #%% 甲子平支
 def jiazi():
