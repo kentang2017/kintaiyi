@@ -207,10 +207,10 @@ def lunar_date_d(year, month, day):
 def five_zi_yuan(taiyiju, gangzhi):
     a =["甲子","丙子","戊子","庚子","壬子"]
     b = [1,73,145,217,289]
-    c = [new_list(jiazi(),i )for  i in a]
+    c = [(new_list(jiazi(),i)*2)[0:72] for  i in a]
     d = [new_list(list(range(i, i+72)), i) for i in b]
     return an2cn(dict(zip([c[i][taiyiju-1] for i in range(0,5)], [d[i][taiyiju-1] for i in range(0,5)])).get(gangzhi)) + "局"
-    
+
 #中國統治者在位年
 def kingyear(year):
     def closest(lst, K):
