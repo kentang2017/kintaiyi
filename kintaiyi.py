@@ -152,6 +152,11 @@ class Taiyi():
             dun = {"夏至":"陰遁", "冬至":"陽遁"}.get(multi_key_dict_get(jqmap, j_q))
             return {"文":f"{dun}{an2cn(k)}局", "數":k, "年":three_year, "積"+config.taiyi_name(ji_style)[0]+"數":self.accnum(ji_style, taiyi_acumyear) }
         return None
+    
+    def get_five_yuan_kook(self, ji_style, taiyi_acumyear):
+        """太乙五子元局"""
+        gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
+        return self.kook(ji_style, taiyi_acumyear).get("文")[0:2] + config.five_zi_yuan(self.kook(ji_style, taiyi_acumyear).get("數"), gz[ji_style])
 
     def getepoch(self, ji_style, taiyi_acumyear):
         """求太乙的紀"""
@@ -549,6 +554,7 @@ class Taiyi():
                 "紀元":self.jiyuan(ji_style, taiyi_acumyear),
                 "太歲":self.taishui(ji_style),
                 "局式":self.kook(ji_style, taiyi_acumyear),
+                "五子元局":self.get_five_yuan_kook(ji_style, taiyi_acumyear),
                 "陽九":config.yangjiu(self.year, self.month, self.day),
                 "百六":config.baliu(self.year, self.month, self.day),
                 "太乙落宮":self.ty(ji_style, taiyi_acumyear),
