@@ -199,6 +199,14 @@ def lunar_date_d(year, month, day):
     day = fromSolar(year, month, day)
     return {"年":day.getLunarYear(),  "月": day.getLunarMonth(), "日":day.getLunarDay()}
 
+#五子元局數
+def five_zi_yuan(taiyiju, yeargangzhi):
+    a =["甲子","丙子","戊子","庚子","壬子"]
+    b = [1,73,145,217,289]
+    c = [new_list(jiazi(),i )for  i in a]
+    d = [new_list(list(range(i, i+72)), i) for i in b]
+    return  "第" + an2cn(dict(zip([c[i][taiyiju-1] for i in range(0,5)], [d[i][taiyiju-1] for i in range(0,5)])).get(yeargangzhi)) + "局"
+
 #中國統治者在位年
 def kingyear(year):
     def closest(lst, K):
