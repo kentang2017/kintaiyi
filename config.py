@@ -145,6 +145,10 @@ def find_wx_relation(zhi1, zhi2):
     return multi_key_dict_get(wuxing_relation_2, Ganzhiwuxing(zhi1) + Ganzhiwuxing(zhi2))
 #換算干支
 def gangzhi(year, month, day, hour, minute):
+    if year == 0:
+        return ["無效"]
+    if year < 0:
+        year = year + 1 
     if hour == 23:
         d = Date(round((Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2))) + 1 * hour), 3))
     else:
