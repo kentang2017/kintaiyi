@@ -192,6 +192,29 @@ def genyao(a):
         g = "上六"
     return [b,c,d,e,f,g]
 
+def find_gua(year):
+    def closest(lst, K):
+        return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))]
+    def closest1(lst, K):
+        return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))-1]
+    if year in year_for_gua:
+        year_point = closest(year_for_gua, year)
+    if year not in year_for_gua:
+        year_point = closest1(year_for_gua, year)
+    year_gua = year_rep_gua.get(year_point)
+    y = gua_yao_years.get( year_gua )
+    yao_list2 = sumlist(y)
+    yao = genyao(y)
+    year_diff = year - year_point
+    yao_index = yao_list2.index(closest(yao_list2, year_diff))
+    return year_gua + "之" + yao[yao_index]
+
+def multi_key_dict_get(d, k):
+    for keys, v in d.items():
+        if k in keys:
+            return v
+    return None
+
 def multi_key_dict_get(d, k):
     for keys, v in d.items():
         if k in keys:
