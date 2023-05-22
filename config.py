@@ -206,10 +206,14 @@ def find_gua(year):
         return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))]
     def closest1(lst, K):
         return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))-1]
-    if year in year_for_gua:
-        year_point = closest(year_for_gua, year)
-    if year not in year_for_gua:
-        year_point = closest1(year_for_gua, year)
+    a = closest(year_for_gua, year)
+    b = closest1(year_for_gua, year)
+    if year > a and year > b:
+        year_point = max(a,b)
+    if year == a:
+        year_point = a
+    if year < a:
+        year_point = b
     year_gua = year_rep_gua.get(year_point)
     y = gua_yao_years.get( year_gua )
     yao_list2 = sumlist(y)
