@@ -22,7 +22,7 @@ The methodology is quite similar to the other arts with a rotating heavenly plat
 
 A number of spirits rotate around the sixteen palaces of the Tai Yi cosmic board, of which there are 72 cosmic boards for the Yin Dun period of each year, and 72 cosmic boards for the Yang Dun period of the year. The spirits land in different palaces with each configuration of the cosmic board. Each cosmic board contains a number of "counts" or numbers – the Host Count and the Guest Count taking primary importance over the Fixed Count.
 
-含史事對照的太鳦排盤 https://kintaiyi.streamlitapp.com
+含史事對照的多功能太鳦排盤 https://kintaiyi.streamlitapp.com (欲窮千里目，麻煩國內朋友擔條梯子看。)
 
 Taiyishenshu, one of the Ancient Chinese Divinations, along with Qimendunjia and Dailiuren known as "three styles".
 
