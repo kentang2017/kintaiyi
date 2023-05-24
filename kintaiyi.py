@@ -646,6 +646,12 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Taiyi(2023,5,9,23,39).pan(4,0))
+    year = 2023
+    month = 5
+    day = 9
+    hour = 23
+    minute = 39
+    print(Taiyi(year, month, day, hour, minute).pan(4, 0))
+
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")

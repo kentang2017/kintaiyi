@@ -228,12 +228,6 @@ def multi_key_dict_get(d, k):
             return v
     return None
 
-def multi_key_dict_get(d, k):
-    for keys, v in d.items():
-        if k in keys:
-            return v
-    return None
-
 def new_list(olist, o):
     a = olist.index(o)
     res1 = olist[a:] + olist[:a]
@@ -345,6 +339,13 @@ def five_zi_yuan(taiyiju, gangzhi):
     c = [(new_list(jiazi(),i)*2)[0:72] for  i in a]
     d = [new_list(list(range(i, i+72)), i) for i in b]
     return an2cn(dict(zip([c[i][taiyiju-1] for i in range(0,5)], [d[i][taiyiju-1] for i in range(0,5)])).get(gangzhi)) + "局"
+
+def five_zi_yuan1(taiyiju):
+    a =["甲子","丙子","戊子","庚子","壬子"]
+    b = [1,73,145,217,289]
+    c = [(new_list(jiazi(),i)*2)[0:72] for  i in a]
+    d = [new_list(list(range(i, i+72)), i) for i in b]
+    return dict(zip([c[i][taiyiju-1] for i in range(0,5)], [d[i][taiyiju-1] for i in range(0,5)]))
 
 #中國統治者在位年
 def kingyear(year):
