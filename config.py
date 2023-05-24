@@ -201,11 +201,13 @@ def genyao(a):
         g = "上六"
     return [b,c,d,e,f,g]
 
+def closest(lst, K):
+    return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))]
+
+def closest1(lst, K):
+    return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))-1]
+
 def find_gua(year):
-    def closest(lst, K):
-        return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))]
-    def closest1(lst, K):
-        return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))-1]
     a = closest(year_for_gua, year)
     b = closest1(year_for_gua, year)
     if year > a and year > b:
@@ -324,6 +326,7 @@ def find_lunar_hour(day):
 
 #分干支
 def minutes_jiazi_d():
+
     t = [f"{h}:{m}" for h in range(24) for m in range(60)]
     minutelist = dict(zip(t, cycle(repeat_list(2, jiazi()))))
     return minutelist
@@ -346,7 +349,6 @@ def five_zi_yuan1(taiyiju):
     c = [(new_list(jiazi(),i)*2)[0:72] for  i in a]
     d = [new_list(list(range(i, i+72)), i) for i in b]
     return dict(zip([c[i][taiyiju-1] for i in range(0,5)], [d[i][taiyiju-1] for i in range(0,5)]))
-
 #中國統治者在位年
 def kingyear(year):
     def closest(lst, K):
@@ -395,10 +397,7 @@ def starhouse(year, month, day, hour):
     else:
         return gensulist[num]
     
-
-
 #%% 太乙十精
-
 #五行
 def wuxing(taiyi_acumyear):
     #f = self.accnum(ji_style, taiyi_acumyear) // 5
