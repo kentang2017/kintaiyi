@@ -44,7 +44,7 @@ def st_capture(output_func):
         yield
         
 
-st.set_page_config(layout="wide",page_title="太鳦 - 太乙排盘")
+st.set_page_config(layout="wide",page_title="堅太乙 - 太鳦排盘")
 lpan,pan,example,disaster,guji,update,ins,tutorial = st.tabs([' 即時 ' ,' 排盤 ', ' 史例 ', ' 災異 ' ,' 古籍 ',' 日誌 ', ' 說明 ', ' 教學 ' ])
 #hide_st_style = """
 #            <style>
