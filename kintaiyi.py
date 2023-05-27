@@ -112,29 +112,7 @@ class Taiyi():
             return acchr
         if ji_style == 4: #分計
             diff_val_two = int(Date(f"{str(self.year).zfill(4)}/{str(self.month).zfill(2)}/{str(self.day).zfill(2)} {str(self.hour).zfill(2)}:00:00.00") - Date("-1197/02/02 00:00:00.00"))
-            #return int(diff_val_two - 1) * 120 + (self.minute + 1 ) // 2 + 1
-            if taiyi_acumyear ==0:
-                ty_num = 708011105
-                accday = ty_num + diff_val_two
-                acchr = ((accday -1) * 120) + (self.minute + 1 )//2 
-            if taiyi_acumyear ==2:
-                ty_num = 708011105 - 10153917 + tn_num
-                accday = ty_num + diff_val_two
-                acchr = ((accday -1) * 120) + (self.minute + 1)//2 
-            if taiyi_acumyear ==1:
-                ty_num = 708011105 - 10153917 + tn_num
-                accday = ty_num + diff_val_two
-                acchr = ((accday -1) * 120) + (self.minute + 1)//2 
-            if taiyi_acumyear == 4:
-                tiangan = dict(zip([tuple(jiazi()[jiazi().index(i):jiazi().index(i)+6]) for i in jiazi()[0::6]], jiazi()[0::6]))
-                getfut = dict(zip(jiazi()[0::6], [1,7,13,19,25,31,37,43,49,55])).get(multi_key_dict_get(tiangan, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]))
-                dgz_num = dict(zip(jiazi(), range(1,61))).get( config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2])
-                zhi_num = dict(zip(config.di_zhi, range(1,13))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
-                if tiangan != dgz_num:
-                    acchr  =  ((dgz_num- getfut) * 12) + zhi_num
-                if tiangan == dgz_num:
-                    acchr = zhi_num
-            return acchr
+            return int(diff_val_two - 1) * 23 + (self.minute + 1 ) // 23 -48
         return None
 
     def yeargua(self, taiyi_acumyear):
@@ -646,20 +624,21 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    year = 2023
-    month = 5
+    year = 1552
+    month = 9
     day = 24
-    hour = 22
-    minute = 5
+    hour = 0
+    minute = 0
+    print(Taiyi(year, month, day, hour, minute).kook(2, 1))
     print(config.gangzhi(year, month, day, hour, minute))
+    print(Taiyi(year, month, day, hour, minute).pan(0, 1))
     #print(config.gangzhi(-1197, 2, 2, 0, 0))
-    print(Taiyi(year, month, day, hour, minute).pan(4, 0))
-    print(Taiyi(year, month, day, hour, minute).kook(0, 0))
-    print(Taiyi(year, month, day, hour, minute).kook(1, 0))
-    print(Taiyi(year, month, day, hour, minute).kook(2, 0))
-    print(Taiyi(year, month, day, hour, minute).kook(3, 0))
-    print(Taiyi(year, month, day, hour, minute).kook(4, 0))
-    print(config.five_zi_yuan1(66))
+    #
+    #print(Taiyi(year, month, day, hour, minute).kook(0, 0))
+    #print(Taiyi(year, month, day, hour, minute).kook(1, 0))
+    #print(Taiyi(year, month, day, hour, minute).kook(2, 0))
+    #print(Taiyi(year, month, day, hour, minute).kook(3, 0))
+    #print(Taiyi(year, month, day, hour, minute).kook(4, 0))
 
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
