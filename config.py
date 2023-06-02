@@ -238,6 +238,7 @@ def find_gua(year):
     return year_gua + "之" + yao[yao_index]
 
 def change(g, yao):
+    g = list(g)
     y = {6: 5, 5: 4, 4: 3, 3: 2, 2: 1, 1: 0}.get(yao)
     if g[y] == "7":
         a = "8"
