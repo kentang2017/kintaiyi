@@ -209,6 +209,11 @@ def genyao(a):
         g = "上六"
     return [b,c,d,e,f,g]
 
+#旬
+def liujiashun_dict():
+    return dict(zip(list(map(lambda x: tuple(x), list(map(lambda x:new_list(jiazi(), x)[0:10] ,jiazi()[0::10])))), jiazi()[0::10]))
+
+
 def closest(lst, K):
     return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))]
 
@@ -232,8 +237,16 @@ def find_gua(year):
     yao_index = yao_list2.index(closest(yao_list2, year_diff))
     return year_gua + "之" + yao[yao_index]
 
+def change(g, yao):
+    y = {6: 5, 5: 4, 4: 3, 3: 2, 2: 1, 1: 0}.get(yao)
+    if g[y] == "7":
+        a = "8"
+    if g[y] == "8":
+        a = "7"
+    return "".join([a if i == y else g[i] for i in range(len(g))])
 
-def wanji_four_gua(year):
+def wanji_four_gua(year, month, day, hour, minute):
+    ygz = gangzhi(year, month, day, hour, minute)[0]
     if year < 0:
         acum_year = 67017 + year + 1
     else:
@@ -254,7 +267,7 @@ def wanji_four_gua(year):
     shis1 = change(mys1, shi_yao)
     shigua = multi_key_dict_get(sixtyfourgua, change(mys1, shi_yao))
     shi_shun = dict(zip("甲子,甲戌,甲申,甲午,甲辰".split(","),range(1,7)))
-    shun_yao = shi_shun.get(multi_key_dict_get(liujiashun_dict(),"癸卯"))
+    shun_yao = shi_shun.get(multi_key_dict_get(liujiashun_dict(), ygz))
     shungua1 = change(shis1,shun_yao)
     shun_gua = multi_key_dict_get(sixtyfourgua, shungua1)
     jiazi_years = [4 - 60 * i for i in range(50)]+[4 + 60 * i for i in range(50)]
