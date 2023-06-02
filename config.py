@@ -14,7 +14,13 @@ from ephem import Date
 from sxtwl import fromSolar
 from itertools import cycle, repeat
 import jieqi
+from bidict import bidict
+import os
+import pickle
 
+
+
+wangji_gua = dict(zip(range(1,61),"復,頤,屯,益,震,噬嗑,隨,无妄,明夷,賁,既濟,家人,豐,革,同人,臨,損,節,中孚,歸妹,睽,兌,履,泰,大畜,需,小畜,大壯,大有,夬,姤,大過,鼎,恆,巽,井,蠱,升,訟,困,未濟,解,渙,蒙,師,遯,咸,旅,小過,漸,蹇,艮,謙,否,萃,晉,豫,觀,比,剝".split(",")))
 
 cnum = list("一二三四五六七八九十")
 #干支
@@ -223,6 +229,38 @@ def find_gua(year):
     year_diff = year - year_point
     yao_index = yao_list2.index(closest(yao_list2, year_diff))
     return year_gua + "之" + yao[yao_index]
+
+
+def wanji_four_gua(year):
+    if year < 0:
+        acum_year = 67017 + year + 1
+    else:
+        acum_year = 67017 + year #積年數
+    hui  = int(round((10800/ 360), 0)) #會
+    yun = acum_year // 360 +1  #運
+    shi = acum_year // 30 + 1 #世
+    duiying_yao = shi / 2 
+    main_gua = wangji_gua.get(int(round((acum_year / 2160), 0)))#
+    mys = list(sixtyfourgua.inverse[main_gua][0].replace("6","8").replace("9","7"))
+    if yun % 6 == 0:
+        yun_gua_yao = 6
+    else:
+        yun_gua_yao = yun % 6
+    mys1 = change(mys, yun_gua_yao)
+    yungua = multi_key_dict_get(sixtyfourgua, mys1)
+    shi_yao = shi // 2 % 6  
+    shis1 = change(mys1, shi_yao)
+    shigua = multi_key_dict_get(sixtyfourgua, change(mys1, shi_yao))
+    shi_shun = dict(zip("甲子,甲戌,甲申,甲午,甲辰".split(","),range(1,7)))
+    shun_yao = shi_shun.get(multi_key_dict_get(liujiashun_dict(),"癸卯"))
+    shungua1 = change(shis1,shun_yao)
+    shun_gua = multi_key_dict_get(sixtyfourgua, shungua1)
+    jiazi_years = [4 - 60 * i for i in range(50)]+[4 + 60 * i for i in range(50)]
+    close_jiazi_year = closest(jiazi_years, year)
+    yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(year)
+    return {"會":hui, "運":yun, "世":shi, "正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua} 
+
+
 
 def multi_key_dict_get(d, k):
     for keys, v in d.items():
