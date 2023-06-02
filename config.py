@@ -271,7 +271,7 @@ def wanji_four_gua(year, month, day, hour, minute):
     shungua1 = change(shis1,shun_yao)
     shun_gua = multi_key_dict_get(sixtyfourgua, shungua1)
     jiazi_years = [4 - 60 * i for i in range(50)]+[4 + 60 * i for i in range(50)]
-    close_jiazi_year = closest(jiazi_years, year)
+    close_jiazi_year = closest1(jiazi_years, year)
     yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(year)
     return {"會":hui, "運":yun, "世":shi, "正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua} 
 
