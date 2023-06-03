@@ -252,10 +252,9 @@ def wanji_four_gua(year, month, day, hour, minute):
         acum_year = 67017 + year + 1
     else:
         acum_year = 67017 + year #積年數
-    hui  = int(round((10800/ 360), 0)) #會
+    hui  = acum_year // 10800 +1 #會
     yun = acum_year // 360 +1  #運
     shi = acum_year // 30 + 1 #世
-    duiying_yao = shi / 2 
     main_gua = wangji_gua.get(int(round((acum_year / 2160), 0)))#
     mys = list(sixtyfourgua.inverse[main_gua][0].replace("6","8").replace("9","7"))
     if yun % 6 == 0:
@@ -272,7 +271,7 @@ def wanji_four_gua(year, month, day, hour, minute):
     shungua1 = change(shis1,shun_yao)
     shun_gua = multi_key_dict_get(sixtyfourgua, shungua1)
     jiazi_years = [4 - 60 * i for i in range(50)]+[4 + 60 * i for i in range(50)]
-    close_jiazi_year = closest1(jiazi_years, year)
+    close_jiazi_year = closest(jiazi_years, year)
     yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(year)
     return {"會":hui, "運":yun, "世":shi, "正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua} 
 
