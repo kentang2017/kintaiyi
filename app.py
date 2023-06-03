@@ -29,6 +29,11 @@ def get_file_content_as_string(path):
     response = urllib.request.urlopen(url)
     return response.read().decode("utf-8")
 
+def get_file_content_as_string1(path):
+    url = 'https://raw.githubusercontent.com/kentang2017/kinliuren/master/' + path
+    response = urllib.request.urlopen(url)
+    return response.read().decode("utf-8")
+
 def render_svg_example(html):
     render_svg(html)
 
@@ -44,7 +49,7 @@ def st_capture(output_func):
         yield
        
 st.set_page_config(layout="wide",page_title="堅太乙 - 太鳦排盘")
-pan,example,disaster,guji,update,ins,tutorial = st.tabs([' 排盤 ', ' 史例 ', ' 災異 ' ,' 古籍 ',' 日誌 ', ' 說明 ', ' 教學 ' ])
+pan,example,disaster,guji,update,ins,tutorial,connect = st.tabs([' 排盤 ', ' 史例 ', ' 災異 ' ,' 古籍 ',' 更新 ', ' 說明 ', ' 教學 ', ' 連結 '  ])
 
 with st.sidebar:
     idate = st.text_input('輸入日期(如: 1997/8/8)', '')
@@ -267,6 +272,10 @@ with pan:
             expander = st.expander("原始碼")
             expander.write(str(ttext))
 
+with connect:
+    st.header('連結')
+    st.markdown(get_file_content_as_string1("update.md"))
+            
 with example:
     st.header('史例')
     st.markdown(get_file_content_as_string("example.md"))
