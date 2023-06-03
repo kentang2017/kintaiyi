@@ -280,7 +280,7 @@ def wanji_four_gua(year, month, day, hour, minute):
     else:
         close_jiazi_year = closest1(jiazi_years, year)
     yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(year)
-    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua }, 
+    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua } 
 
 
 def multi_key_dict_get(d, k):
