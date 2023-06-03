@@ -99,7 +99,6 @@ with lpan:
         ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
         gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
         lunard = "{}{}月{}日".format(  cn2an.transform(str(config.lunar_date_d(y, m, d).get("年"))+"年", "an2cn"), an2cn(config.lunar_date_d(y, m, d).get("月")), an2cn(config.lunar_date_d(y, m, d).get("日")))
-        wangji = config.wanji_four_gua(y,m,d,h,min)
         ch = chistory.get(y)
         if ch == None:
            ch = ""
@@ -132,7 +131,7 @@ with lpan:
         st.markdown("推太乙風雲飛鳥助戰︰"+ home_vs_away3)
         st.title("九宮分野︰")
         st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-        print("{} | 農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | {} | \n積{}數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n陽九︰{} 百六︰{} | \n皇極經世值年卦︰{} |\n{}{}{}\n{} \n\n".format(config.gendatetime(y,m,d,h), lunard, jieqi.jq(y,m,d,h),  gz, config.kingyear(y), config.ty_method(tn), config.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ttext.get("五子元局") , config.taiyi_name(num)[0],tynum, ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(y, m, d).get("年")) ,  yj, bl, wangji.get("年卦"), ty.ty_gong_dist(num, tn), ty.threedoors(num, tn), ty.fivegenerals(num, tn), ty.geteightdoors(num, tn) ))
+        print("{} | 農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | {} | \n積{}數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n陽九︰{} 百六︰{} |\n{}{}{}\n{} \n\n".format(config.gendatetime(y,m,d,h), lunard, jieqi.jq(y,m,d,h),  gz, config.kingyear(y), config.ty_method(tn), config.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ttext.get("五子元局") , config.taiyi_name(num)[0],tynum, ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(y, m, d).get("年")) ,  yj, bl,  ty.ty_gong_dist(num, tn), ty.threedoors(num, tn), ty.fivegenerals(num, tn), ty.geteightdoors(num, tn) ))
         expander = st.expander("原始碼")
         expander.write(str(ttext))
     
@@ -169,7 +168,6 @@ with pan:
                 ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
                 gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
                 lunard = "{}{}月{}日".format(  cn2an.transform(str(config.lunar_date_d(y, m, d).get("年"))+"年", "an2cn"), an2cn(config.lunar_date_d(y, m, d).get("月")), an2cn(config.lunar_date_d(y, m, d).get("日")))
-                wangji = config.wanji_four_gua(y,m,d,h,min)
                 ch = chistory.get(y)
                 if num == 3:
                    tynum = ty.accnum(num,tn)
@@ -206,7 +204,7 @@ with pan:
                 st.markdown("推太乙風雲飛鳥助戰︰"+ home_vs_away3)
                 st.title("九宮分野︰")
                 st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-                print("{} | 農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | {} | \n積{}數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n陽九︰{} 百六︰{} | \n皇極經世年卦︰{} |\n{}{}{}\n{} \n\n".format(config.gendatetime(y,m,d,h), lunard, jieqi.jq(y,m,d,h),gz, config.kingyear(y), config.ty_method(tn), config.taiyi_name(num), ty.kook(num, tn).get("文") ,ttext.get("局式").get("年"), ttext.get("五子元局") , config.taiyi_name(num)[0],tynum, ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(y, m, d).get("年")) , yj, bl, wangji.get("年卦"), ty.ty_gong_dist(num, tn), ty.threedoors(num, tn), ty.fivegenerals(num, tn), ty.geteightdoors(num, tn) ))
+                print("{} | 農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | {} | \n積{}數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n陽九︰{} 百六︰{} |\n{}{}{}\n{} \n\n".format(config.gendatetime(y,m,d,h), lunard, jieqi.jq(y,m,d,h),gz, config.kingyear(y), config.ty_method(tn), config.taiyi_name(num), ty.kook(num, tn).get("文") ,ttext.get("局式").get("年"), ttext.get("五子元局") , config.taiyi_name(num)[0],tynum, ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(y, m, d).get("年")) , yj, bl, ty.ty_gong_dist(num, tn), ty.threedoors(num, tn), ty.fivegenerals(num, tn), ty.geteightdoors(num, tn) ))
                 expander = st.expander("原始碼")
                 expander.write(str(ttext))
             else:
@@ -245,7 +243,6 @@ with pan:
             ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
             gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
             lunard = "{}{}月{}日".format(  cn2an.transform(str(config.lunar_date_d(y, m, d).get("年"))+"年", "an2cn"), an2cn(config.lunar_date_d(y, m, d).get("月")), an2cn(config.lunar_date_d(y, m, d).get("日")))
-            wangji = config.wanji_four_gua(y,m,d,h,min)
             ch = chistory.get(y)
             if ch == None:
                ch = ""
@@ -278,7 +275,7 @@ with pan:
             st.markdown("推太乙風雲飛鳥助戰︰"+ home_vs_away3)
             st.title("九宮分野︰")
             st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-            print("{} | 農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) |  {} | \n積{}數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n陽九︰{} 百六︰{} | \n皇極經世值年卦︰{} | \n{}{}{}\n{} \n\n".format(config.gendatetime(y,m,d,h), lunard, jieqi.jq(y,m,d,h),  gz, config.kingyear(y), config.ty_method(tn), config.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ttext.get("五子元局") , config.taiyi_name(num)[0],tynum, ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(y, m, d).get("年")),   yj, bl, wangji.get("年卦"), ty.ty_gong_dist(num, tn), ty.threedoors(num, tn), ty.fivegenerals(num, tn), ty.geteightdoors(num, tn) ))
+            print("{} | 農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) |  {} | \n積{}數︰{} | \n紀元︰{} | 主筭︰{}  客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n陽九︰{} 百六︰{}  | \n{}{}{}\n{} \n\n".format(config.gendatetime(y,m,d,h), lunard, jieqi.jq(y,m,d,h),  gz, config.kingyear(y), config.ty_method(tn), config.taiyi_name(num), ty.kook(num, tn).get("文"),  ttext.get("局式").get("年"), ttext.get("五子元局") , config.taiyi_name(num)[0],tynum, ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(y, m, d).get("年")),   yj, bl, ty.ty_gong_dist(num, tn), ty.threedoors(num, tn), ty.fivegenerals(num, tn), ty.geteightdoors(num, tn) ))
             expander = st.expander("原始碼")
             expander.write(str(ttext))
         else:
