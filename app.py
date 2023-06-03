@@ -138,7 +138,7 @@ with pan:
         except ValueError:
             st.empty()
         
-        else:
+        if instant:
             now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
             y = now.year
             m = now.month
