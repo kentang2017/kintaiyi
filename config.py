@@ -220,6 +220,9 @@ def closest(lst, K):
 def closest1(lst, K):
     return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))-1]
 
+def closest2(lst, K):
+    return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))+1]
+
 def find_gua(year):
     a = closest(year_for_gua, year)
     b = closest1(year_for_gua, year)
@@ -246,6 +249,7 @@ def change(g, yao):
         a = "7"
     return "".join([a if i == y else g[i] for i in range(len(g))])
 
+
 def wanji_four_gua(year, month, day, hour, minute):
     ygz = gangzhi(year, month, day, hour, minute)[0]
     if year < 0:
@@ -270,10 +274,14 @@ def wanji_four_gua(year, month, day, hour, minute):
     shun_yao = shi_shun.get(multi_key_dict_get(liujiashun_dict(), ygz))
     shungua1 = change(shis1,shun_yao)
     shun_gua = multi_key_dict_get(sixtyfourgua, shungua1)
-    jiazi_years = [4 - 60 * i for i in range(50)]+[4 + 60 * i for i in range(50)]
-    close_jiazi_year = closest(jiazi_years, year)
+    jiazi_years = [4 - 60 * i for i in range(52)]+[4 + 60 * i for i in range(52)]
+    if year < 0:
+        close_jiazi_year = closest2(jiazi_years, year)
+    else:
+        close_jiazi_year = closest1(jiazi_years, year)
     yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(year)
-    return {"會":hui, "運":yun, "世":shi, "正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua} 
+    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua }, 
+
 
 def multi_key_dict_get(d, k):
     for keys, v in d.items():
