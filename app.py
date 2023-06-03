@@ -65,6 +65,7 @@ with st.sidebar:
 with pan:
     output5 = st.empty()
     with st_capture(output5.code):
+        st.text("點擊左上角'>'，輸入日期時間。")
         try:
             if manual:
                 p = str(idate).split("/")
