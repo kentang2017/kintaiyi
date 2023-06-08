@@ -651,7 +651,7 @@ def dragon(ty):
     return new_order[ty]
 #推回軍無言
 def returnarmy(ag_num):
-    return new_list(gong1, "寅")[ag_num]
+    return new_list(Zhi, "寅")[ag_num]
 #推多少以占勝負  客以多筭臨少主人敗客以少筭臨多主人勝也
 def suenwl(homecal, awaycal, home_general, away_general ):
     if awaycal < homecal and home_general != 5:
