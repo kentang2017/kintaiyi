@@ -633,7 +633,7 @@ def leigong(ty):
     return dict(zip(range(1,17),new_order)).get(1+4)
 #推臨津問道
 def lijin(year, month, day, hour, minute):
-    year = dict(zip(gong1, range(1,13))).get(gangzhi(year, month, day, hour, minute)[0][1])
+    year = dict(zip(di_zhi, range(1,13))).get(gangzhi(year, month, day, hour, minute)[0][1])
     return new_list(gong1, "寅")[year]
 #推獅子反擲
 def lion(year, month, day, hour, minute):
