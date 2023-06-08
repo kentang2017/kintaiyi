@@ -629,7 +629,7 @@ def geteightdoors(ty, doors):
 #推雷公入水
 def leigong(ty):
     find_ty = dict(zip([1,2,3,4,6,7,8,9],list("乾午艮卯酉坤子巽"))).get(ty)
-    new_order = new_list(gong1, find_ty)
+    new_order = new_list(Zhi, find_ty)
     return dict(zip(range(1,17),new_order)).get(1+4)
 #推臨津問道
 def lijin(year, month, day, hour, minute):
