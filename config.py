@@ -634,20 +634,20 @@ def leigong(ty):
 #推臨津問道
 def lijin(year, month, day, hour, minute):
     year = dict(zip(di_zhi, range(1,13))).get(gangzhi(year, month, day, hour, minute)[0][1])
-    return new_list(gong1, "寅")[year]
+    return new_list(di_zhi, "寅")[year]
 #推獅子反擲
 def lion(year, month, day, hour, minute):
-    return new_list(gong1, gangzhi(year, month, day, hour, minute)[0][1])[4]
+    return new_list(Zhi, gangzhi(year, month, day, hour, minute)[0][1])[4]
 #推白雲捲空
 def cloud(hg_num):
-    return new_list(list(reversed(gong1)), "寅")[hg_num]
+    return new_list(list(reversed(Zhi)), "寅")[hg_num]
 #推猛虎相拒
 def tiger(ty):
-    new_order = new_list(gong1, "寅")
+    new_order = new_list(Zhi, "寅")
     return new_order[ty]
 #推白龍得云
 def dragon(ty):
-    new_order = new_list(list(reversed(gong1)), "寅")
+    new_order = new_list(list(reversed(Zhi)), "寅")
     return new_order[ty]
 #推回軍無言
 def returnarmy(ag_num):
