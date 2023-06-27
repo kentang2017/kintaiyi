@@ -53,7 +53,7 @@ class Taiyi():
         return he_god
 #%% 積年
     def accnum(self, ji_style, taiyi_acumyear):
-        """0太乙統宗, 1太乙金鏡, 2太乙淘金歌", 3太乙局"""
+        """taiyi_acumyear積年數截法 0太乙統宗, 1太乙金鏡, 2太乙淘金歌", 3太乙局"""
         tndict = {0:10153917, 1:1936557, 2:10154193, 3:10153917 }
         tn_num = tndict.get(taiyi_acumyear)
         lunar_year = config.lunar_date_d(self.year, self.month, self.day).get("年")
