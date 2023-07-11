@@ -68,6 +68,8 @@ with pan:
        
         try:
             if manual:
+                if num == 0 & len(idate) <= 4:
+                    idate = idate + "/3/3"
                 p = str(idate).split("/")
                 pp = str(itime).split(":")
                 my = int(p[0])
