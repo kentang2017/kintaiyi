@@ -68,6 +68,7 @@
 | 明  | 佚名 | 太乙會鈐 |  1卷  |
 | 明  | 王肯堂 | 鬱岡齋筆塵 - 太乙 |  |
 | 明  | 佚名 | 太乙四種 |   |
+| 明  | 佚名 | 太乙經 | 十卷，藏於中文大學圖書館，https://repository.lib.cuhk.edu.hk/tc/item/cuhk-3246388?solr_nav%5Bid%5D=462e8c02d1db62e096fd&solr_nav%5Bpage%5D=0&solr_nav%5Boffset%5D=2&islandora_paged_content_page=1#page/1/mode/2up |
 | 明  | 佚名 | 太乙十精 | 2卷 |
 | 明  | 佚名 | 太乙星書 | 2卷 |
 | 明  | 佚名 | 黃帝太乙八門入式訣書 | 3卷 |
