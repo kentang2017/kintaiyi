@@ -139,7 +139,7 @@ class Taiyi():
     def kook(self, ji_style, taiyi_acumyear):
         """太乙局數"""
         alljq = jieqi_name
-        j_q = jieqi.Jq(self.year, self.month, self.day, self.hour, self.minute)
+        j_q = jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)
         jqmap = {tuple(config.new_list(alljq, "冬至")[0:12]):"冬至", tuple(config.new_list(alljq, "夏至")[0:12]):"夏至"}
         k = self.accnum(ji_style, taiyi_acumyear)%72
         if k == 0:
@@ -431,7 +431,7 @@ class Taiyi():
         """太歲禽星"""
         chin_28_stars_code = dict(zip(range(1,29), su))
         if config.lunar_date_d(self.year, self.month, self.day).get("月") == "十二月" or config.lunar_date_d(self.year, self.month, self.day).get("月") == "十一月":
-            if jieqi.Jq(self.year, self.month, self.day, self.hour, self.minute) == "立春":
+            if jieqi.jq(self.year, self.month, self.day, self.hour, self.minute) == "立春":
                 get_year_chin_number = (int(self.year)+15) % 28 #求年禽之公式為西元年加15除28之餘數
                 if get_year_chin_number == int(0):
                     get_year_chin_number = int(28)
