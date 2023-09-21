@@ -139,7 +139,7 @@ class Taiyi():
     def kook(self, ji_style, taiyi_acumyear):
         """太乙局數"""
         alljq = jieqi_name
-        j_q = jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)
+        j_q = jieqi.jq(self.year, self.month, self.day, self.hour)
         jqmap = {tuple(config.new_list(alljq, "冬至")[0:12]):"冬至", tuple(config.new_list(alljq, "夏至")[0:12]):"夏至"}
         k = self.accnum(ji_style, taiyi_acumyear)%72
         if k == 0:
@@ -431,7 +431,7 @@ class Taiyi():
         """太歲禽星"""
         chin_28_stars_code = dict(zip(range(1,29), su))
         if config.lunar_date_d(self.year, self.month, self.day).get("月") == "十二月" or config.lunar_date_d(self.year, self.month, self.day).get("月") == "十一月":
-            if jieqi.jq(self.year, self.month, self.day, self.hour, self.minute) == "立春":
+            if jieqi.jq(self.year, self.month, self.day, self.hour) == "立春":
                 get_year_chin_number = (int(self.year)+15) % 28 #求年禽之公式為西元年加15除28之餘數
                 if get_year_chin_number == int(0):
                     get_year_chin_number = int(28)
@@ -590,7 +590,7 @@ class Taiyi():
                 "八風":config.eightwind(self.accnum(ji_style, taiyi_acumyear)),
                 "大游":config.bigyo(self.accnum(ji_style, taiyi_acumyear)),
                 "小游":config.smyo(self.accnum(ji_style, taiyi_acumyear)),
-                "二十八宿值日":config.starhouse(self.year, self.month, self.day, self.hour, self.minute),
+                "二十八宿值日":config.starhouse(self.year, self.month, self.day, self.hour),
                 "太歲二十八宿":self.year_chin(),
                 "太歲值宿斷事": su_dist.get(self.year_chin()),
                 "始擊二十八宿":self.sf_num(ji_style, taiyi_acumyear),
