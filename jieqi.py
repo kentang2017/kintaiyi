@@ -19,6 +19,17 @@ jqmc = ["冬至", "小寒", "大寒", "立春", "雨水", "驚蟄", "春分", "�
      "立冬", "小雪", "大雪"]
 c_t = eacal.EACal(zh_t=True)
 
+def multi_key_dict_get(d, k):
+    for keys, v in d.items():
+        if k in keys:
+            return v
+    return None
+
+def new_list(olist, o):
+    a = olist.index(o)
+    res1 = olist[a:] + olist[:a]
+    return res1
+
 def solarterm_iter(jieqi):
     new_s_list = new_list(jieqi_name, jieqi)
     return new_s_list
