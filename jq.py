@@ -10,7 +10,7 @@ def new_list(olist, o):
 
 jieqi_name = re.findall('..', '冬至小寒大寒立春雨水驚蟄春分清明穀雨立夏小滿芒種夏至小暑大暑立秋處暑白露秋分寒露霜降立冬小雪大雪')
 
-def find_jq(year, month, day, hour, minute):
+def find_jq(year, month, day, hour, minute): #'{}-{}-{} {}:{}:00'
     lunar = Solar.fromYmd(year, month, day).getLunar()
     jieQi = lunar.getJieQiTable()
     converter = opencc.OpenCC('s2t.json')
@@ -23,7 +23,14 @@ def find_jq(year, month, day, hour, minute):
     def closest(lst, K): 
         return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))] 
     closest_date = closest(datetime_list, target_datetime)
-    jie_qi = jq_dict.get(str(closest_date))
+    
+    def convert_key_to_value(object):
+        jqeng = {"DONG_ZHI":"冬至", "XIAO_HAN":"小寒", "DA_HAN":"大寒", "LI_CHUN":"立春","YU_SHUI":"雨水","JING_ZHE":"驚蟄","DA_XUE":"大雪"}
+        if object in jqeng:
+            return jqeng[object]
+        else:
+            return object
+    jie_qi = convert_key_to_value(jq_dict.get(str(closest_date)))
     t_o_f = target_datetime > closest_date
     if  t_o_f == True:
         return converter.convert(jie_qi) 
@@ -37,4 +44,5 @@ def find_jq(year, month, day, hour, minute):
         return converter.convert(new_list(jieqi_name,jie_qi)[-1])
     #if target_datetime > closest_date == False:
     #    return 
+    
     
