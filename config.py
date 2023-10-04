@@ -446,7 +446,6 @@ def kingyear(year):
 
 #%% 二十八宿
 #推二十八星宿
-推二十八星宿
 def starhouse(year, month, day, hour, minute):
     numlist = [13,9,16,5,5,17,10,24,7,11,25,18,17,10,17,13,14,11,16,1,9,30,3,14,7,19,19,18]
     alljq = jieqi.jieqi_name
