@@ -69,7 +69,7 @@ def jq(year, month, day, hour, minute):#从当前时间开始连续输出未来n
     if current < j[1] and current < j[2]:
         return list(result[0].values())[0]
     
-def find_jq(year, month, day, hour, minute,jieqi):#从当前时间开始连续输出未来n个节气的时间
+def find_jq_date(year, month, day, hour, minute,jieqi):#从当前时间开始连续输出未来n个节气的时间
     current = Date("{}/{}/{} {}:{}:00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2),str(hour).zfill(2), str(minute).zfill(2)))
     jd = change(year, month, day, hour, minute)
     #jd = Date("{}/{}/{} {}:{}:00.00".format(str(b.year).zfill(4), str(b.month).zfill(2), str(b.day).zfill(2), str(b.hour).zfill(2), str(b.minute).zfill(2)  ))
