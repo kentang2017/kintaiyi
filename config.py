@@ -446,15 +446,15 @@ def kingyear(year):
 
 #%% 二十八宿
 #推二十八星宿
-def starhouse(year, month, day, hour):
+def starhouse(year, month, day, hour, minute):
     numlist = [13,9,16,5,5,17,10,24,7,11,25,18,17,10,17,13,14,11,16,1,9,30,3,14,7,19,19,18]
     alljq = jieqi.jieqi_name
     njq = new_list(alljq, "冬至")
     gensulist =  list(itertools.chain.from_iterable([[su[i]]*numlist[i] for i in range(0,28)]))
     jqsulist = [["斗", 9],["斗",24] ,["女", 8],["危",2],["室", 1],["壁",1] ,["奎", 4],["婁",2] ,["胃", 4],["昴",4] ,["畢", 8],["參",6] ,["井", 1],["井", 27],["柳",8] ,["張", 3],["翼",1] ,["翼", 16],["軫",13] ,["角", 9],["房", 1],["氐",2] ,["尾", 6],["箕",24]]
     njq_list = dict(zip(njq, jqsulist))
-    currentjq = jieqi.jq(year, month, day, hour)
-    distance_to_cjq = jieqi.distancejq(year, month, day, hour, currentjq)
+    currentjq = jieqi.jq(year, month, day, hour, minute)
+    distance_to_cjq = jieqi.distancejq(year, month, day, hour, minute, currentjq)
     num = gensulist.index(njq_list.get(currentjq)[0]) + njq_list.get(currentjq)[1] + distance_to_cjq
     if num >360:
         return new_list(gensulist, njq_list.get(currentjq)[0])[num-360]
