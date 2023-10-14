@@ -583,7 +583,7 @@ def baliu(year, month, day):
 #大游
 def bigyo(taiyi_acumyear):
     #big_yo = int((self.accnum(ji_style, taiyi_acumyear) +34) % 388)
-    big_yo = (taiyi_acumyear + 34) % 388
+    big_yo = (taiyi_acumyear + 34) % 288
     if big_yo < 36:
         big_yo = big_yo
     if big_yo > 36:
