@@ -100,7 +100,7 @@ class Taiyi():
                 ty_num = 708011105 - 10153917 + tn_num
                 accday = ty_num + diff_val_two
                 acchr = ((accday -1) * 12) + (self.hour+1)//2 -11
-            if taiyi_acumyear == 4:
+            if taiyi_acumyear == 3:
                 tiangan = dict(zip([tuple(jiazi()[jiazi().index(i):jiazi().index(i)+6]) for i in jiazi()[0::6]], jiazi()[0::6]))
                 getfut = dict(zip(jiazi()[0::6], [1,7,13,19,25,31,37,43,49,55])).get(multi_key_dict_get(tiangan, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]))
                 dgz_num = dict(zip(jiazi(), range(1,61))).get( config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2])
