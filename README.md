@@ -2,7 +2,7 @@
 [![Python](https://img.shields.io/pypi/pyversions/kintaiyi)](https://pypi.org/project/kintaiyi/)
 [![PIP](https://img.shields.io/pypi/v/kintaiyi)](https://pypi.org/project/kintaiyi/)
 [![Downloads](https://img.shields.io/pypi/dm/kintaiyi)](https://pypi.org/project/kintaiyi/)
-[![TG Me](https://img.shields.io/badge/chat-on%20telegram-blue)](https://t.me/gnatnek)
+[![TG Me](https://img.shields.io/badge/chat-on%20telegram-blue)](https://t.me/haizhonggum)
 [![TG Channel](https://img.shields.io/badge/chat-on%20telegram-red)](https://t.me/numerology_coding)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg?logo=paypal&style=flat-square)](https://www.paypal.me/kinyeah)&nbsp;
 
