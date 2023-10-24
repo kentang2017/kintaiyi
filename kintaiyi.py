@@ -546,6 +546,12 @@ class Taiyi():
         doors  = config.new_list(self.door, config.eight_door(self.accnum(ji_style, taiyi_acumyear)))
         return dict(zip(new_ty_order, doors))
 
+    def geteightdoors_text(self, ji_style, taiyi_acumyear):
+        k = [an2cn(i) for i in list(self.geteightdoors(ji_style, taiyi_acumyear).keys())]
+        v = list(self.geteightdoors(ji_style, taiyi_acumyear).values())
+        eightdoors = dict(zip(k,v))
+        return str(eightdoors)[1:-1].replace("'", "").replace(",", " |")
+        
     def pan(self, ji_style, taiyi_acumyear):
         """起盤詳細內容"""
         return {
