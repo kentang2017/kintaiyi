@@ -265,7 +265,7 @@ class Taiyi():
         if wc_jc ==1 and ty_jc ==1 and wc_jc1 !=1 :
             return sum(wc_order[: wc_order.index(taiyi)])+1
         if wc_jc !=1 and ty_jc ==1 and wc_jc1 ==1 :
-            return sum(wc_order[: wc_order.index(taiyi)])
+            return wc_order[wc_jc]
         if wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and taiyi != wc_num:
             return sum(wc_order[: wc_order.index(taiyi)])
         if wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and taiyi == wc_num:
@@ -312,11 +312,12 @@ class Taiyi():
         if sf_jc ==1 and ty_jc ==1 and sf_jc1 !=1 :
             return sum(sf_order[: sf_order.index(taiyi)])+1
         if sf_jc !=1 and ty_jc ==1 and sf_jc1 ==1 :
-            return sum(sf_order[: sf_order.index(taiyi)])
+            return sf_order[sf_jc]
         if sf_jc !=1 and ty_jc !=1 and sf_jc1 !=1 and sf_num != taiyi:
             return sum(sf_order[: sf_order.index(taiyi)])
         if sf_jc !=1 and ty_jc !=1 and sf_jc1 !=1 and sf_num == taiyi:
             return taiyi
+
 
     def away_general(self, ji_style, taiyi_acumyear):
         """客大將"""
