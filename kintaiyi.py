@@ -399,13 +399,13 @@ class Taiyi():
 
     def sixteen_gong(self, ji_style, taiyi_acumyear):
         """十六宮各星將與十精分佈"""
-        dict1 = [{self.skyeyes(ji_style, taiyi_acumyear):"文昌"},{self.taishui(ji_style):"太歲"},{self.hegod(ji_style):"合神"},{self.sf(ji_style, taiyi_acumyear):"始擊"},
+        dict1 = [{self.skyeyes(ji_style, taiyi_acumyear):"文昌"},{self.taishui(ji_style):"太歲"},{self.hegod(ji_style):"合神"},{self.jigod(ji_style):"計神"},{self.sf(ji_style, taiyi_acumyear):"始擊"},
                  {self.se(ji_style, taiyi_acumyear):"定目"}, {self.kingbase(ji_style, taiyi_acumyear):"君基"}, {self.officerbase(ji_style, taiyi_acumyear):"臣基"}, {self.pplbase(ji_style, taiyi_acumyear):"民基"},
                  {self.fgd(ji_style, taiyi_acumyear):"四神"},{self.skyyi(ji_style, taiyi_acumyear):"天乙"},{self.earthyi(ji_style, taiyi_acumyear):"地乙"},{self.zhifu(ji_style, taiyi_acumyear):"直符"},
-                 {self.flyfu(ji_style, taiyi_acumyear):"飛符"},{kingfu(taiyi_acumyear):"帝符"},{taijun(taiyi_acumyear):"太尊"}, {wufu(taiyi_acumyear):"五福"},
+                 {self.flyfu(ji_style, taiyi_acumyear):"飛符"},{kingfu(taiyi_acumyear):"帝符"},{taijun(taiyi_acumyear):"太尊"},
                  {self.ty_gong(ji_style, taiyi_acumyear):"太乙"}, {num2gong(self.home_general(ji_style, taiyi_acumyear)):"主將"},  {num2gong(self.home_vgen(ji_style, taiyi_acumyear)):"主參"},
                  {num2gong(self.away_general(ji_style, taiyi_acumyear)):"客將"},  {num2gong(self.away_vgen(ji_style, taiyi_acumyear)):"客參"},
-                 {num2gong(threewind(taiyi_acumyear)):"三風"},  {num2gong(fivewind(taiyi_acumyear)):"五風"},
+                 {num2gong(threewind(taiyi_acumyear)):"三風"},  {num2gong(fivewind(taiyi_acumyear)):"五風"},{config.wufu(self.accnum(ji_style, taiyi_acumyear)):"五福"},
                  {num2gong(eightwind(taiyi_acumyear)):"八風"},  {num2gong(flybird(taiyi_acumyear)):"飛鳥"},{num2gong(bigyo(taiyi_acumyear)):"大游"},
                  {num2gong(smyo(taiyi_acumyear)):"小游"},  {leigong(ji_style):"雷公"},  {yangjiu(self.year, self.month, self.day):"陽九"},  {baliu(self.year, self.month, self.day):"百六"},
                  {lijin(self.year, self.month, self.day, self.hour, self.minute):"臨津"}, {lion(self.year, self.month, self.day, self.hour, self.minute):"獅子"}, {cloud(self.home_general(ji_style, taiyi_acumyear)):"白雲"},
