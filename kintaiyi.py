@@ -15,6 +15,7 @@ import config
 import jieqi
 from jieqi import jieqi_name
 from config import *
+import chart
 
 
 class Taiyi():
