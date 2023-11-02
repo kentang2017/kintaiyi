@@ -14,7 +14,7 @@ from taiyidict import tengan_shiji, su_dist
 import config
 import jieqi
 from jieqi import jieqi_name
-from config import num, su, gong, gong1, gong2, gong3, gua, nayin_wuxing, wuxing_relation_2, jc, jc1, tyjc, kingyear, skyeyes_dict, multi_key_dict_get, jiazi, num2gong, Ganzhiwuxing, di_zhi, gangzhi
+from config import *
 
 
 class Taiyi():
