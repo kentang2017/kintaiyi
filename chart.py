@@ -19,7 +19,7 @@ import math
 #第一層中間, 第二層八門
 def gen_chart(first_layer, second_layer, sixth_layer):
     # Create an SVG drawing canvas
-    d = draw.Drawing(460, 400, origin='center')
+    d = draw.Drawing(470, 470, origin='center')
     # Set the donut's radii and number of divisions for each layer
     inner_radius = 20
     layer_gap = 35  # Gap between layers
