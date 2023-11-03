@@ -82,6 +82,7 @@ with pan:
                 kook = ty.kook(num,tn)
                 homecal = ty.home_cal(num, tn)
                 awaycal = ty.away_cal(num, tn)
+                genchart = ty.gen_gong(num, tn)
                 ed = ttext.get("八門值事")
                 yc = ty.year_chin()
                 yj = ttext.get("陽九")
@@ -133,6 +134,7 @@ with pan:
                 st.markdown("推太乙風雲飛鳥助戰︰"+ home_vs_away3)
                 st.title("九宮分野︰")
                 st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
+                
                 print("{} | 農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | {} | \n積{}數︰{} | \n紀元︰{} | 主筭︰{} 客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n陽九︰{} 百六︰{} |\n{}{}{}\n{} \n\n".format(config.gendatetime(my,mm,md,mh), lunard, jieqi.jq(my,mm,md,mh,mmin),gz, config.kingyear(my), config.ty_method(tn), config.taiyi_name(num), ty.kook(num, tn).get("文") ,ttext.get("局式").get("年"), ttext.get("五子元局") , config.taiyi_name(num)[0],tynum, ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(my, mm, md).get("年")) , yj, bl, ty.ty_gong_dist(num, tn), ty.threedoors(num, tn), ty.fivegenerals(num, tn), ty.geteightdoors_text(num, tn) ))
             else:
                 output5 = st.empty()
@@ -150,6 +152,7 @@ with pan:
             ty = Taiyi(y,m,d,h,min)
             ttext = Taiyi(y,m,d,h,min).pan(num,tn)
             kook = Taiyi(y,m,d,h,min).kook(num,tn)
+            genchart = ty.gen_gong(num, tn)
             homecal = ty.home_cal(num, tn)
             awaycal = ty.away_cal(num, tn)
             ed = ttext.get("八門值事")
