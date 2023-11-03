@@ -63,4 +63,4 @@ def gen_chart(first_layer, second_layer, sixth_layer):
     #center_text = draw.Text("a", 40, center_x, center_y, center=1, fill="#ffffff")
     # Save the SVG file
       # Change this angle to the desired rotation
-    return d.save_svg('chart.svg')
+    return d.as_svg()
