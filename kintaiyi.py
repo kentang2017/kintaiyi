@@ -414,29 +414,29 @@ class Taiyi():
                  {self.earthyi(ji_style, taiyi_acumyear):"地乙"},
                  {self.zhifu(ji_style, taiyi_acumyear):"直符"},
                  {self.flyfu(ji_style, taiyi_acumyear):"飛符"},
-                 {kingfu(taiyi_acumyear):"帝符"},
-                 {taijun(taiyi_acumyear):"太尊"},
+                 {config.kingfu(taiyi_acumyear):"帝符"},
+                 {config.taijun(taiyi_acumyear):"太尊"},
                  #{self.ty_gong(ji_style, taiyi_acumyear):"太乙"},
-                 {num2gong(self.home_general(ji_style, taiyi_acumyear)):"主將"},  
-                 {num2gong(self.home_vgen(ji_style, taiyi_acumyear)):"主參"},
-                 {num2gong(self.away_general(ji_style, taiyi_acumyear)):"客將"},  
-                 {num2gong(self.away_vgen(ji_style, taiyi_acumyear)):"客參"},
-                 {num2gong(threewind(taiyi_acumyear)):"三風"},  
-                 {num2gong(fivewind(taiyi_acumyear)):"五風"},
-                 {config.wufu(self.accnum(ji_style, taiyi_acumyear)):"五福"},
-                 {num2gong(eightwind(taiyi_acumyear)):"八風"},  
-                 {num2gong(flybird(taiyi_acumyear)):"飛鳥"},
-                 {num2gong(bigyo(taiyi_acumyear)):"大游"},
-                 {num2gong(smyo(taiyi_acumyear)):"小游"},  
-                 {leigong(ji_style):"雷公"},  
-                 {yangjiu(self.year, self.month, self.day):"陽九"}, 
-                 {baliu(self.year, self.month, self.day):"百六"},
-                 {lijin(self.year, self.month, self.day, self.hour, self.minute):"臨津"}, 
-                 {lion(self.year, self.month, self.day, self.hour, self.minute):"獅子"}, 
-                 {cloud(self.home_general(ji_style, taiyi_acumyear)):"白雲"},
-                 {tiger(self.ty(ji_style, taiyi_acumyear)):"猛虎"}, 
-                 {returnarmy(self.away_general(ji_style, taiyi_acumyear)):"回軍"}, 
-                 {num2gong(self.ty(ji_style, taiyi_acumyear)):"太乙"}, 
+                 {config.num2gong(self.home_general(ji_style, taiyi_acumyear)):"主將"},  
+                 {config.num2gong(self.home_vgen(ji_style, taiyi_acumyear)):"主參"},
+                 {config.num2gong(self.away_general(ji_style, taiyi_acumyear)):"客將"},  
+                 {config.num2gong(self.away_vgen(ji_style, taiyi_acumyear)):"客參"},
+                 {config.num2gong(config.threewind(taiyi_acumyear)):"三風"},  
+                 {config.num2gong(config.fivewind(taiyi_acumyear)):"五風"},
+                 {config.config.wufu(self.accnum(ji_style, taiyi_acumyear)):"五福"},
+                 {config.num2gong(config.eightwind(taiyi_acumyear)):"八風"},  
+                 {config.num2gong(config.flybird(taiyi_acumyear)):"飛鳥"},
+                 {config.num2gong(config.bigyo(taiyi_acumyear)):"大游"},
+                 {config.num2gong(config.smyo(taiyi_acumyear)):"小游"},  
+                 {config.leigong(self.ty(ji_style, taiyi_acumyear)):"雷公"},  
+                 {config.yangjiu(self.year, self.month, self.day):"陽九"}, 
+                 {config.baliu(self.year, self.month, self.day):"百六"},
+                 {config.lijin(self.year, self.month, self.day, self.hour, self.minute):"臨津"}, 
+                 {config.lion(self.year, self.month, self.day, self.hour, self.minute):"獅子"}, 
+                 {config.cloud(self.home_general(ji_style, taiyi_acumyear)):"白雲"},
+                 {config.tiger(self.ty(ji_style, taiyi_acumyear)):"猛虎"}, 
+                 {config.returnarmy(self.away_general(ji_style, taiyi_acumyear)):"回軍"}, 
+                 {config.num2gong(self.ty(ji_style, taiyi_acumyear)):"太乙"}, 
                  ]
         res = {"巳":"", "午":"", "未":"", "申":"", "坤":"", "酉":"", "戌":"", "乾":"", "亥":"", "子":"", "丑":"", "艮":"","寅":"", "卯":"", "辰":"", "巽":"","中":""}
         for dict in dict1:
@@ -455,8 +455,7 @@ class Taiyi():
         rrres = [re.findall("..", i) for i in rres]
         overall = str(res.keys())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
         return {overall[i]:rrres[i] for i in range(0,17)}
-
-
+           
     def gen_gong(self, ji_style, taiyi_acumyear):
         return chart.gen_chart( list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[-1], self.geteightdoors_text2(ji_style, taiyi_acumyear), list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[:-1])
         
