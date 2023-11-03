@@ -423,7 +423,7 @@ class Taiyi():
                  {config.num2gong(self.away_vgen(ji_style, taiyi_acumyear)):"客參"},
                  {config.num2gong(config.threewind(taiyi_acumyear)):"三風"},  
                  {config.num2gong(config.fivewind(taiyi_acumyear)):"五風"},
-                 {config.config.wufu(self.accnum(ji_style, taiyi_acumyear)):"五福"},
+                 {config.wufu(self.accnum(ji_style, taiyi_acumyear)):"五福"},
                  {config.num2gong(config.eightwind(taiyi_acumyear)):"八風"},  
                  {config.num2gong(config.flybird(taiyi_acumyear)):"飛鳥"},
                  {config.num2gong(config.bigyo(taiyi_acumyear)):"大游"},
