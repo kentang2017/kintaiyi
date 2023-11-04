@@ -55,10 +55,10 @@ def gen_chart(first_layer, second_layer, sixth_layer):
             # Add labels to the pie slices
             label_x = (inner + outer) / 2 * math.cos(math.radians((start_angle + end_angle) / 2))
             label_y = (inner + outer) / 2 * math.sin(math.radians((start_angle + end_angle) / 2))
-            if divisions == 1:
-                label_text = draw.Text(label, 8, label_x, label_y, center=1, fill='black')
-            else:
-                label_text = draw.Text(label, 8, label_x, label_y, center=1, fill='white')
+            #if divisions == 1:
+            #    label_text = draw.Text(label, 8, label_x, label_y, center=1, fill='black')
+            #else:
+            label_text = draw.Text(label, 8, label_x, label_y, center=1, fill='white')
             d.append(label_text)
     #center_text = draw.Text("a", 40, center_x, center_y, center=1, fill="#ffffff")
     # Save the SVG file
