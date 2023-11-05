@@ -23,14 +23,14 @@ def gen_chart(first_layer, second_layer, sixth_layer):
     # Set the donut's radii and number of divisions for each layer
     inner_radius = 20
     layer_gap = 35  # Gap between layers
-    num_divisions = [1, 8, 16, 16, 16, 16]
+    num_divisions = [1, 8, 16, 16, 16]
     # Define the data for each layer
     data = [
         [first_layer],
         second_layer,
         ['巳', '午', '未', '坤', '申', '酉', '戌', '乾', '亥', '子', '丑', '艮', '寅', '卯', '辰', '巽'],
         ['大神', '大威', '天道', '大武', '武德', '太簇', '陰主', '陰德', '大義', '地主', '陽德', '和德', '呂申', '高叢', '太陽', '大炅'],
-        ['楚', '荊州', '秦', '梁州', '晉', '趙雍', '魯', '冀州', '衛', '齊兗', '吳', '青州', '燕', '徐州', '鄭', '揚州'],
+        #['楚', '荊州', '秦', '梁州', '晉', '趙雍', '魯', '冀州', '衛', '齊兗', '吳', '青州', '燕', '徐州', '鄭', '揚州'],
         sixth_layer
     ]
     rotation_angle = 248
