@@ -480,9 +480,10 @@ def kingfu(taiyi_acumyear):
     kingfu_num = taiyi_acumyear % 20
     if kingfu_num == 0:
        king_fu = divide(taiyi_acumyear, 20)
-       if king_fu > 20:
-          king_fu = king_fu - 20
-       return dict(zip(list(range(1,17)),gong1)).get(king_fu)
+       king_fu_v = king_fu % 20
+       if king_fu_v > 16:
+           king_fu_v = king_fu_v - 16
+       return dict(zip(list(range(1,17)),gong1)).get(king_fu_v)
     else:
        return dict(zip(range(1,17), new_list(gong1, "戌"))).get(int(kingfu_num))
 #天皇
