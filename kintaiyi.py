@@ -405,7 +405,7 @@ class Taiyi():
                  {self.hegod(ji_style):"合神"},
                  {self.jigod(ji_style):"計神"},
                  {self.sf(ji_style, taiyi_acumyear):"始擊"},
-                 {self.se(ji_style, taiyi_acumyear):"定目"}, 
+                 {self.se(ji_style, taiyi_acumyear):"定計"}, 
                  {self.kingbase(ji_style, taiyi_acumyear):"君基"}, 
                  {self.officerbase(ji_style, taiyi_acumyear):"臣基"}, 
                  {self.pplbase(ji_style, taiyi_acumyear):"民基"},
