@@ -240,6 +240,13 @@ def find_gua(year):
     yao_index = yao_list2.index(closest(yao_list2, year_diff))
     return year_gua + "之" + yao[yao_index]
 
+def divide(num, division_num):
+    if not isinstance(num, int) or num <= 0:
+        return "請輸入一個正整數"
+    while num % division_num == 0:
+        num = num // division_num
+    return num
+
 def change(g, yao):
     g = list(g)
     y = {6: 5, 5: 4, 4: 3, 3: 2, 2: 1, 1: 0}.get(yao)
@@ -461,36 +468,54 @@ def starhouse(year, month, day, hour, minute):
 #五行
 def wuxing(taiyi_acumyear):
     #f = self.accnum(ji_style, taiyi_acumyear) // 5
-    f = taiyi_acumyear // 5
-    f = f % 5
-    fv =  dict(zip(range(1,6), list("乾子艮巽坤"))).get(int(f))
-    if fv == 0 or fv is None:
-        fv = "坤"
+    f = taiyi_acumyear % 5
+    if f == 0:
+       fv = divide(taiyi_acumyear, 5)
+    else:
+       fv = dict(zip(range(1,6), list("乾子艮巽坤"))).get(int(f))
     return fv
 #帝符
 def kingfu(taiyi_acumyear):
     #f = self.accnum(ji_style, taiyi_acumyear) % 20
     kingfu_num = taiyi_acumyear % 20
-    if kingfu_num > 16:
-        kingfu_num = kingfu_num - 16
-    king_fu = dict(zip(range(1,17), new_list(gong1, "戌"))).get(int(kingfu_num))
+    if kingfu_num == 0:
+       king_fu = divide(taiyi_acumyear, 20)
+    else:
+       king_fu = dict(zip(range(1,17), new_list(gong1, "戌"))).get(int(kingfu_num))
     return king_fu
+#天皇
+def tian_wang(taiyi_acumyear):
+    tw = taiyi_acumyear % 20
+    if tw == 0:
+       tw = divide(taiyi_acumyear, 20)
+       return dict(zip(list(range(1,17)),gong1))).get(tw)
+    else:
+       return dict(zip(list(range(1,17)),new_list(gong1, "申"))).get(tw)
+#天時
+def tian_shi(taiyi_acumyear):
+    tw = taiyi_acumyear % 12
+    if tw == 0:
+       tw = divide(taiyi_acumyear, 12)
+       return dict(zip(list(range(1,17)),gong1))).get(tw)
+    else:
+       return dict(zip(list(range(1,17)),new_list(gong1, "寅"))).get(tw)
 #太尊
 def taijun(taiyi_acumyear):
     f = taiyi_acumyear % 4
-    #f = self.accnum(ji_style, taiyi_acumyear) % 4
-    fv = dict(zip(range(1,5), list("子午卯酉"))).get(int(f))
-    if fv == 0  or fv is None:
-        fv = "子"
-    return fv
+    if f == 0:
+       f = divide(taiyi_acumyear, 4)
+       return dict(zip(list(range(1,17)),gong1))).get(f)
+    else:
+       fv = dict(zip(range(1,5), list("子午卯酉"))).get(int(f))
+       return fv
 #飛鳥
 def flybird(taiyi_acumyear):
     f = taiyi_acumyear % 9
-    #f = self.accnum(ji_style, taiyi_acumyear) % 9
-    fv = dict(zip(range(1,10), [1,8,3,4,9,2,7,6])).get(int(f))
-    if fv == 0 or fv is None:
-        fv = 1
-    return fv
+    if f == 0:
+       fv = divide(taiyi_acumyear, 9)
+    else:
+       fv = dict(zip(range(1,10), [1,8,3,4,9,2,7,6])).get(int(f))
+       return fv
 #推太乙風雲飛鳥助戰法
 def flybird_wl(taiyi_acumyear, fb, hg, ag, hvg, avg, ty, wc, sj):
     #fb = flybird(taiyi_acumyear)
@@ -517,27 +542,28 @@ def flybird_wl(taiyi_acumyear, fb, hg, ag, hvg, avg, ty, wc, sj):
 def threewind(taiyi_acumyear):
     #f = self.accnum(ji_style, taiyi_acumyear) % 9
     f = taiyi_acumyear % 9
-    fv = dict(zip(range(1,9), [7,2,6,1,3,9,4,8])).get(int(f))
-    if fv == 0 or fv is None:
-        fv = 5
+    if f == 0:
+       fv = divide(taiyi_acumyear, 9)
+    else:
+       fv = dict(zip(range(1,9), [7,2,6,1,3,9,4,8])).get(int(f))
     return fv
 #五風
 def fivewind(taiyi_acumyear):
     f = taiyi_acumyear % 29
-    #f = self.accnum(ji_style, taiyi_acumyear) % 29
-    if f > 10:
-        f = f - 9
-    fv = dict(zip(range(1,10), [1,3,5,7,9,2,4,6,8])).get(int(f))
+    if f == 0:
+       fv = divide(taiyi_acumyear, 29)
+    else:
+       fv = dict(zip(range(1,10), [1,3,5,7,9,2,4,6,8])).get(int(f))
     return fv
 #八風
 def eightwind(taiyi_acumyear):
     f = taiyi_acumyear % 9
-    #f = self.accnum(ji_style, taiyi_acumyear) % 9
-    fv = dict(zip(range(1,9), [2,3,4,6,7,8,9,1])).get(int(f))
-    if fv == 0 or fv is None:
-        fv = 5
+    if f == 0:    
+       fv = divide(taiyi_acumyear, 9)
+    else:
+       fv = dict(zip(range(1,9), [2,3,4,6,7,8,9,1])).get(int(f))
+      #f = self.accnum(ji_style, taiyi_acumyear) % 9
     return fv
-
 #五福
 def wufu(taiyi_acumyear):
     f = (taiyi_acumyear + 250) % 225 / 45
@@ -546,7 +572,6 @@ def wufu(taiyi_acumyear):
     if fv == 0 or fv is None:
         fv = 5
     return fv
-
 #陽九
 def yangjiu(year, month, day):
     year = lunar_date_d(year, month, day).get("年")
@@ -591,6 +616,7 @@ def smyo(taiyi_acumyear):
             small_yo = small_yo % 3
     syv = dict(zip([1,2,3,4,6,7,8,9],range(1,9))).get(int(small_yo))
     return syv
+
 #%% 三門五將
 #八門值事
 def eight_door(taiyi_acumyear):
