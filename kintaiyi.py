@@ -587,7 +587,7 @@ class Taiyi():
         k = [an2cn(i) for i in list(self.geteightdoors(ji_style, taiyi_acumyear).keys())]
         v = list(self.geteightdoors(ji_style, taiyi_acumyear).values())
         eightdoors = dict(zip(k,v))
-        return [[i,eightdoors.get(i)] for i in new_list(list(eightdoors.keys()), "二")]
+        return [[i,eightdoors.get(i)+"門"] for i in new_list(list(eightdoors.keys()), "二")]
         
     def pan(self, ji_style, taiyi_acumyear):
         """起盤詳細內容"""
