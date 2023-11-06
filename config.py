@@ -463,9 +463,9 @@ def wuxing(taiyi_acumyear):
     #f = self.accnum(ji_style, taiyi_acumyear) // 5
     f = taiyi_acumyear // 5
     f = f % 5
-    fv =  dict(zip(range(1,10), [1,3,5,7,9,2,4,6,8])).get(int(f))
+    fv =  dict(zip(range(1,6), list("乾子艮巽坤"))).get(int(f))
     if fv == 0 or fv is None:
-        fv = 5
+        fv = "坤"
     return fv
 #帝符
 def kingfu(taiyi_acumyear):
