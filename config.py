@@ -502,7 +502,10 @@ def tian_shi(taiyi_acumyear):
     tw = taiyi_acumyear % 12
     if tw == 0:
        tw = divide(taiyi_acumyear, 12)
-       return dict(zip(list(range(1,17)),gong1)).get(tw)
+       tw_v = tw % 12
+       if tw_v > 16:
+           tw_v = tw_v - 16
+       return dict(zip(list(range(1,17)),gong1)).get(tw_v)
     else:
        return dict(zip(list(range(1,17)),new_list(gong1, "寅"))).get(tw)
 #太尊
