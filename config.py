@@ -555,23 +555,30 @@ def threewind(taiyi_acumyear):
     f = taiyi_acumyear % 9
     if f == 0:
        fv = divide(taiyi_acumyear, 9)
-       return dict(zip(list(range(1,17)),gong1)).get(fv)
+       return fv % 9 
     else:
+       if f >9:
+         f = f - 9
        return dict(zip(range(1,9), [7,2,6,1,3,9,4,8])).get(int(f))
 #五風
 def fivewind(taiyi_acumyear):
     f = taiyi_acumyear % 29
     if f == 0:
        fv = divide(taiyi_acumyear, 29)
-       return dict(zip(list(range(1,17)),gong1)).get(fv)
+       return fv % 29
     else:
+       if f >9:
+           f = f - 9
        return dict(zip(range(1,10), [1,3,5,7,9,2,4,6,8])).get(int(f))
 #八風
 def eightwind(taiyi_acumyear):
     f = taiyi_acumyear % 9
     if f == 0:    
        fv = divide(taiyi_acumyear, 9)
+       return fv % 9
     else:
+       if f >9:
+            f = f - 9
        fv = dict(zip(range(1,9), [2,3,4,6,7,8,9,1])).get(int(f))
       #f = self.accnum(ji_style, taiyi_acumyear) % 9
     return fv
