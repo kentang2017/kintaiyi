@@ -279,7 +279,7 @@ class Taiyi():
         if self.home_cal(ji_style, taiyi_acumyear) < 10:
             return self.home_cal(ji_style, taiyi_acumyear)
         if self.home_cal(ji_style, taiyi_acumyear) % 10 == 0:
-            return 5
+            return 1
         if self.home_cal(ji_style, taiyi_acumyear) > 10 and self.home_cal(ji_style, taiyi_acumyear) < 20 :
             return self.home_cal(ji_style, taiyi_acumyear) - 10
         if self.home_cal(ji_style, taiyi_acumyear) > 20 and self.home_cal(ji_style, taiyi_acumyear) < 30 :
