@@ -474,8 +474,6 @@ def kingfu(taiyi_acumyear):
     if kingfu_num > 16:
         kingfu_num = kingfu_num - 16
     king_fu = dict(zip(range(1,17), new_list(gong1, "戌"))).get(int(kingfu_num))
-    if king_fu == 0 or king_fu is None:
-        king_fu = "中"
     return king_fu
 #太尊
 def taijun(taiyi_acumyear):
