@@ -513,7 +513,10 @@ def taijun(taiyi_acumyear):
     f = taiyi_acumyear % 4
     if f == 0:
        f = divide(taiyi_acumyear, 4)
-       return dict(zip(list(range(1,17)),gong1)).get(f)
+       f_v = f % 4
+       if f_v > 16:
+           f_v = f_v - 16
+       return dict(zip(list(range(1,17)),gong1)).get(f_v)
     else:
        return dict(zip(range(1,5), list("子午卯酉"))).get(int(f))
 #飛鳥
