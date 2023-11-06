@@ -491,7 +491,7 @@ def flybird(taiyi_acumyear):
     #f = self.accnum(ji_style, taiyi_acumyear) % 9
     fv = dict(zip(range(1,10), [1,8,3,4,9,2,7,6])).get(int(f))
     if fv == 0 or fv is None:
-        fv = 5
+        fv = 1
     return fv
 #推太乙風雲飛鳥助戰法
 def flybird_wl(taiyi_acumyear, fb, hg, ag, hvg, avg, ty, wc, sj):
