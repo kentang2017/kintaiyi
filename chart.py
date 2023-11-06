@@ -19,7 +19,7 @@ import math
 #第一層中間, 第二層八門
 def gen_chart(first_layer, second_layer, sixth_layer):
     # Create an SVG drawing canvas
-    d = draw.Drawing(390, 390, origin='center')
+    d = draw.Drawing(400, 400, origin='left')
     # Set the donut's radii and number of divisions for each layer
     inner_radius = 20
     layer_gap = 35  # Gap between layers
@@ -44,7 +44,7 @@ def gen_chart(first_layer, second_layer, sixth_layer):
             # Calculate the layer's inner and outer radius
             inner = inner_radius + layer_index * layer_gap
             outer = inner_radius + (layer_index + 1) * layer_gap
-            path = draw.Path(stroke='white', stroke_width=2.2, fill='black')
+            path = draw.Path(stroke='white', stroke_width=1.88, fill='black')
             path.M(inner * math.cos(math.radians(start_angle)), inner * math.sin(math.radians(start_angle)))  # Move to the start point on the inner radius
             path.L(outer * math.cos(math.radians(start_angle)), outer * math.sin(math.radians(start_angle)))  # Line to the start point on the outer radius
             path.A(outer, outer, 0, 0, 1, outer * math.cos(math.radians(end_angle)), outer * math.sin(math.radians(end_angle)))  # Arc to the end point on the outer radius
@@ -58,9 +58,9 @@ def gen_chart(first_layer, second_layer, sixth_layer):
             #if divisions == 1:
             #    label_text = draw.Text(label, 8, label_x, label_y, center=1, fill='black')
             #else:
-            label_text = draw.Text(label, 10, label_x, label_y, center=1, fill='white')
+            label_text = draw.Text(label, 11, label_x, label_y, center=1, fill='white')
             d.append(label_text)
     #center_text = draw.Text("a", 40, center_x, center_y, center=1, fill="#ffffff")
     # Save the SVG file
       # Change this angle to the desired rotation
-    return d.as_svg().replace('''<path d="M-7.492131868318246,-18.543677091335745 L-20.603362637875176,-50.995112001173304 A55,55,0,0,1,-20.603362637875144,-50.99511200117331 L-7.492131868318234,-18.543677091335752 Z" stroke="white" stroke-width="2.2" fill="black" />''', "")
+    return d.as_svg().replace('''<path d="M-7.492131868318246,-18.543677091335745 L-20.603362637875176,-50.995112001173304 A55,55,0,0,1,-20.603362637875144,-50.99511200117331 L-7.492131868318234,-18.543677091335752 Z" stroke="white" stroke-width="1.88" fill="black" />''', "")
