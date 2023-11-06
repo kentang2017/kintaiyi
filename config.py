@@ -471,7 +471,7 @@ def wuxing(taiyi_acumyear):
     f = taiyi_acumyear % 5
     if f == 0:
        fv = divide(taiyi_acumyear, 5)
-       return dict(zip(list(range(1,17)),gong1)).get(fv)
+       return dict(zip(list(range(1,17)),gong1)).get(fv % 5) 
     else:
        return dict(zip(range(1,6), list("乾子艮巽坤"))).get(int(f))
 #帝符
