@@ -483,7 +483,7 @@ def taijun(taiyi_acumyear):
     #f = self.accnum(ji_style, taiyi_acumyear) % 4
     fv = dict(zip(range(1,5), list("子午卯酉"))).get(int(f))
     if fv == 0  or fv is None:
-        fv = "中"
+        fv = "子"
     return fv
 #飛鳥
 def flybird(taiyi_acumyear):
