@@ -526,7 +526,7 @@ def flybird_wl(taiyi_acumyear, fb, hg, ag, hvg, avg, ty, wc, sj):
 def threewind(taiyi_acumyear):
     #f = self.accnum(ji_style, taiyi_acumyear) % 9
     f = taiyi_acumyear % 9
-    fv = dict(zip(range(1,9), [7,2,6,1,5,9,4,8])).get(int(f))
+    fv = dict(zip(range(1,9), [7,2,6,1,3,9,4,8])).get(int(f))
     if fv == 0 or fv is None:
         fv = 5
     return fv
@@ -536,7 +536,7 @@ def fivewind(taiyi_acumyear):
     #f = self.accnum(ji_style, taiyi_acumyear) % 29
     if f > 10:
         f = f - 9
-    fv = dict(zip(range(1,10), [1,3,5,7,9,2,4,6,8])).get(int(f))
+    fv = dict(zip(range(1,9), [1,3,7,9,2,4,6,8])).get(int(f))
     if fv == 0 or fv is None:
         fv = 5
     return fv
@@ -544,7 +544,7 @@ def fivewind(taiyi_acumyear):
 def eightwind(taiyi_acumyear):
     f = taiyi_acumyear % 9
     #f = self.accnum(ji_style, taiyi_acumyear) % 9
-    fv = dict(zip(range(1,10), [2,3,4,5,6,7,8,9,1])).get(int(f))
+    fv = dict(zip(range(1,9), [2,3,4,6,7,8,9,1])).get(int(f))
     if fv == 0 or fv is None:
         fv = 5
     return fv
