@@ -248,8 +248,7 @@ def change(g, yao):
     if g[y] == "8":
         a = "7"
     return "".join([a if i == y else g[i] for i in range(len(g))])
-
-
+      
 def wanji_four_gua(year, month, day, hour, minute):
     ygz = gangzhi(year, month, day, hour, minute)[0]
     if year < 0:
@@ -281,7 +280,6 @@ def wanji_four_gua(year, month, day, hour, minute):
         close_jiazi_year = closest1(jiazi_years, year)
     yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(year)
     return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua } 
-
 
 def multi_key_dict_get(d, k):
     for keys, v in d.items():
@@ -321,7 +319,6 @@ def cal_des(num):
         tnum.append("無人，口舌妖言更相殘賊，疾疫、遷移、流亡")
     tnum.append(numdict.get(num, None))
     return [i for i in tnum if i is not None]
-
 #%% 甲子平支
 def jiazi():
     Gan, Zhi = '甲乙丙丁戊己庚辛壬癸', '子丑寅卯辰巳午未申酉戌亥'
@@ -382,7 +379,6 @@ def find_lunar_hour(day):
     else:
         result = multi_key_dict_get(fiverats, day[0])
     return dict(zip(list(di_zhi), new_list(jiazi(), result)[:12]))
-
 #分干支
 def minutes_jiazi_d():
 
@@ -442,8 +438,6 @@ def kingyear(year):
         pn = "{}{}年".format(preiodname[idx-1],cyear)
         kn = "{}{}{}".format(period[idx-1], king[idx-1], king_realname[idx-1])
         return  "{} {}".format(kn, pn)
-
-
 #%% 二十八宿
 #推二十八星宿
 def starhouse(year, month, day, hour, minute):
@@ -463,7 +457,6 @@ def starhouse(year, month, day, hour, minute):
         return new_list(gensulist, njq_list.get(currentjq)[0])[new_num]
     else:
         return gensulist[num]
-    
 #%% 太乙十精
 #五行
 def wuxing(taiyi_acumyear):
