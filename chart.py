@@ -21,8 +21,8 @@ def gen_chart(first_layer, second_layer, sixth_layer):
     # Create an SVG drawing canvas
     d = draw.Drawing(370, 400, origin="center")
     # Set the donut's radii and number of divisions for each layer
-    inner_radius = 20
-    layer_gap = 35  # Gap between layers
+    inner_radius = 30
+    layer_gap = 5  # Gap between layers
     num_divisions = [1, 8, 16, 16]
     # Define the data for each layer
     data = [
