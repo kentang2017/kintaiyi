@@ -480,14 +480,18 @@ def kingfu(taiyi_acumyear):
     kingfu_num = taiyi_acumyear % 20
     if kingfu_num == 0:
        king_fu = divide(taiyi_acumyear, 20)
+       if king_fu > 20:
+          king_fu = king_fu - 20
+       return dict(zip(list(range(1,17)),gong1))).get(king_fu)
     else:
-       king_fu = dict(zip(range(1,17), new_list(gong1, "戌"))).get(int(kingfu_num))
-    return king_fu
+       return dict(zip(range(1,17), new_list(gong1, "戌"))).get(int(kingfu_num))
 #天皇
 def tian_wang(taiyi_acumyear):
     tw = taiyi_acumyear % 20
     if tw == 0:
        tw = divide(taiyi_acumyear, 20)
+       if tw > 20:
+          tw = tw - 20
        return dict(zip(list(range(1,17)),gong1))).get(tw)
     else:
        return dict(zip(list(range(1,17)),new_list(gong1, "申"))).get(tw)
@@ -506,16 +510,15 @@ def taijun(taiyi_acumyear):
        f = divide(taiyi_acumyear, 4)
        return dict(zip(list(range(1,17)),gong1))).get(f)
     else:
-       fv = dict(zip(range(1,5), list("子午卯酉"))).get(int(f))
-       return fv
+       return dict(zip(range(1,5), list("子午卯酉"))).get(int(f))
 #飛鳥
 def flybird(taiyi_acumyear):
     f = taiyi_acumyear % 9
     if f == 0:
        fv = divide(taiyi_acumyear, 9)
+       return dict(zip(list(range(1,17)),gong1))).get(fv)
     else:
-       fv = dict(zip(range(1,10), [1,8,3,4,9,2,7,6])).get(int(f))
-       return fv
+       return dict(zip(range(1,10), [1,8,3,4,9,2,7,6])).get(int(f))
 #推太乙風雲飛鳥助戰法
 def flybird_wl(taiyi_acumyear, fb, hg, ag, hvg, avg, ty, wc, sj):
     #fb = flybird(taiyi_acumyear)
@@ -544,17 +547,17 @@ def threewind(taiyi_acumyear):
     f = taiyi_acumyear % 9
     if f == 0:
        fv = divide(taiyi_acumyear, 9)
+       return dict(zip(list(range(1,17)),gong1))).get(fv)
     else:
-       fv = dict(zip(range(1,9), [7,2,6,1,3,9,4,8])).get(int(f))
-    return fv
+       return dict(zip(range(1,9), [7,2,6,1,3,9,4,8])).get(int(f))
 #五風
 def fivewind(taiyi_acumyear):
     f = taiyi_acumyear % 29
     if f == 0:
        fv = divide(taiyi_acumyear, 29)
+       return dict(zip(list(range(1,17)),gong1))).get(fv)
     else:
-       fv = dict(zip(range(1,10), [1,3,5,7,9,2,4,6,8])).get(int(f))
-    return fv
+       return dict(zip(range(1,10), [1,3,5,7,9,2,4,6,8])).get(int(f))
 #八風
 def eightwind(taiyi_acumyear):
     f = taiyi_acumyear % 9
