@@ -567,9 +567,7 @@ def fivewind(taiyi_acumyear):
        fv = divide(taiyi_acumyear, 29)
        return fv % 29
     else:
-       if f >9:
-           f = f - 9
-       return dict(zip(range(1,10), [1,3,5,7,9,2,4,6,8])).get(int(f))
+       return dict(zip(range(1,10), [1,3,5,7,9,2,4,6,8])).get(int(f % 9 ))
 #八風
 def eightwind(taiyi_acumyear):
     f = taiyi_acumyear % 9
