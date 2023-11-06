@@ -438,7 +438,7 @@ class Taiyi():
                  {config.returnarmy(self.away_general(ji_style, taiyi_acumyear)):"回軍"}, 
                  {config.num2gong(self.ty(ji_style, taiyi_acumyear)):"太乙"}, 
                  ]
-        res = {"巳":"", "午":"", "未":"", "申":"", "坤":"", "酉":"", "戌":"", "乾":"", "亥":"", "子":"", "丑":"", "艮":"","寅":"", "卯":"", "辰":"", "巽":"","中":""}
+        res = {"巳":"", "午":"", "未":"", "坤":"", "申":"", "酉":"", "戌":"", "乾":"", "亥":"", "子":"", "丑":"", "艮":"","寅":"", "卯":"", "辰":"", "巽":"","中":""}
         for dict in dict1:
             for list in dict:
                 if list in res:
