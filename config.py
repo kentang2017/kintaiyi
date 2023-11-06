@@ -527,9 +527,7 @@ def fivewind(taiyi_acumyear):
     #f = self.accnum(ji_style, taiyi_acumyear) % 29
     if f > 10:
         f = f - 9
-    fv = dict(zip(range(1,9), [1,3,5,7,9,2,4,6,8])).get(int(f))
-    if fv == 0 or fv is None:
-        fv = 5
+    fv = dict(zip(range(1,10), [1,3,5,7,9,2,4,6,8])).get(int(f))
     return fv
 #八風
 def eightwind(taiyi_acumyear):
