@@ -580,8 +580,6 @@ def bigyo(taiyi_acumyear):
     if big_yo > 36:
         big_yo = big_yo / 36
     byv = dict(zip([7,8,9,1,2,3,4,6],range(1,9))).get(int(big_yo))
-    if byv == 0 or byv is None:
-        byv = 5
     return byv
 #小游
 def smyo(taiyi_acumyear):
@@ -594,8 +592,6 @@ def smyo(taiyi_acumyear):
         if small_yo > 3:
             small_yo = small_yo % 3
     syv = dict(zip([1,2,3,4,6,7,8,9],range(1,9))).get(int(small_yo))
-    if syv == 0 or syv is None:
-        syv = 5
     return syv
 #%% 三門五將
 #八門值事
