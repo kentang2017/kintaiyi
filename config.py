@@ -490,10 +490,11 @@ def kingfu(taiyi_acumyear):
 def tian_wang(taiyi_acumyear):
     tw = taiyi_acumyear % 20
     if tw == 0:
-       tw = divide(taiyi_acumyear, 20)
-       if tw > 20:
-          tw = tw - 20
-       return dict(zip(list(range(1,17)),gong1)).get(tw)
+        tw = divide(taiyi_acumyear, 20)
+        tw_v = tw % 20 
+        if tw_v > 16:
+            tw_v = tw_v - 16
+        return dict(zip(list(range(1,17)),gong1)).get(tw_v)
     else:
        return dict(zip(list(range(1,17)),new_list(gong1, "申"))).get(tw)
 #天時
