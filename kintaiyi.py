@@ -349,8 +349,8 @@ class Taiyi():
             tiany = self.skyyi(ji_style, taiyi_acumyear).replace("兌", "酉").replace("坎", "子").replace("震","卯").replace("離","午").replace("艮", "丑")
             kook = self.kook(ji_style, taiyi_acumyear).get("文")[0]
             if kook == "陽":
-                return dict(zip(config.new_list(gong3, tiany) , general))
-            return dict(zip(config.new_list(list(reversed(gong3)), tiany), general))
+                return dict(zip(config.new_list(di_zhi, tiany) , general))
+            return dict(zip(config.new_list(list(reversed(di_zhi)), tiany), general))
         return "太乙時計才顯示"
 
     def set_cal(self, ji_style, taiyi_acumyear):
