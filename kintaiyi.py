@@ -347,7 +347,7 @@ class Taiyi():
         if ji_style ==3:
             general = "貴人,螣蛇,朱雀,六合,勾陳,青龍,天空,白虎,太常,玄武,太陰,天后".split(",")
             #tiany = self.skyyi(ji_style, taiyi_acumyear).replace("兌", "酉").replace("坎", "子").replace("震","卯").replace("離","午").replace("艮", "丑")
-            tiany = self.ty_gong(ji_style, taiyi_acumyear)
+            tiany = self.ty_gong(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥")
             kook = self.kook(ji_style, taiyi_acumyear).get("文")[0]
             if kook == "陽":
                 return dict(zip(config.new_list(di_zhi, tiany) , general))
