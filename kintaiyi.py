@@ -585,6 +585,7 @@ class Taiyi():
         if relation in ["比和","生我","我生"]:
             return guan + relation + "，和"
 
+    
     def geteightdoors(self, ji_style, taiyi_acumyear):
         """推八門分佈"""
         tai_yi = self.ty(ji_style, taiyi_acumyear)
@@ -602,12 +603,14 @@ class Taiyi():
                 num = accu_num % 120 % 30
                 if num > 8:
                     num = num -8
-                return dict(zip(config.new_list(new_ty_order, num), doors)) 
+                new_num = dict(zip(range(1,9), new_ty_order)).get(num)
+                return dict(zip(config.new_list(new_ty_order, new_num), doors)) 
             if dun == "冬至":
                 num = accu_num % 240 % 30
                 if num > 8:
                     num = num -8
-                return dict(zip(config.new_list(new_ty_order, num), doors))
+                new_num = dict(zip(range(1,9), new_ty_order)).get(num)
+                return dict(zip(config.new_list(new_ty_order, new_num), doors)) 
 
     def geteightdoors_text(self, ji_style, taiyi_acumyear):
         k = [an2cn(i) for i in list(self.geteightdoors(ji_style, taiyi_acumyear).keys())]
