@@ -467,7 +467,7 @@ class Taiyi():
             d = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]
             h = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]
             m = config.lunar_date_d(self.year, self.month, self.day).get("月")
-            sg = [ kinliuren.Liuren(j_q, m, d, h).result(0).get("地轉天盤").get(i) for i in list("巳午未申酉戌亥子丑寅卯辰")]
+            sg = [ kinliuren.Liuren(j_q, m, d, h).result(0).get("地轉天將").get(i) for i in list("巳午未申酉戌亥子丑寅卯辰")]
             return chart.gen_chart_hour( list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[-1], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg,list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[:-1])
         
     def year_chin(self):
