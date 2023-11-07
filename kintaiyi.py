@@ -590,7 +590,24 @@ class Taiyi():
         tai_yi = self.ty(ji_style, taiyi_acumyear)
         new_ty_order = config.new_list([8,3,4,9,2,7,6,1], tai_yi)
         doors  = config.new_list(self.door, config.eight_door(self.accnum(ji_style, taiyi_acumyear)))
-        return dict(zip(new_ty_order, doors))
+        if ji_style != 3:
+            return dict(zip(new_ty_order, doors))
+        if ji_style == 3:
+            alljq = jieqi_name
+            j_q = jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)
+            jqmap = {tuple(config.new_list(alljq, "冬至")[0:12]):"冬至", tuple(config.new_list(alljq, "夏至")[0:12]):"夏至"}
+            accu_num = self.accnum(ji_style, taiyi_acumyear)
+            dun = multi_key_dict_get(jqmap, j_q)
+            if dun == "夏至":    
+                num = accu_num % 120 % 30
+                if num > 8:
+                    num = num -8
+                return dict(zip(config.new_list(new_ty_order, num), doors)) 
+            if dun == "冬至":
+                num = accu_num % 240 % 30
+                if num > 8:
+                    num = num -8
+                return dict(zip(config.new_list(new_ty_order, num), doors))
 
     def geteightdoors_text(self, ji_style, taiyi_acumyear):
         k = [an2cn(i) for i in list(self.geteightdoors(ji_style, taiyi_acumyear).keys())]
