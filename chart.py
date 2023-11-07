@@ -68,7 +68,7 @@ def gen_chart(first_layer, second_layer, sixth_layer):
 #第一層中間, 第二層八門
 def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer):
     # Create an SVG drawing canvas
-    d = draw.Drawing(370, 370, origin="center")
+    d = draw.Drawing(390, 450, origin="center")
     # Set the donut's radii and number of divisions for each layer
     inner_radius = 12
     layer_gap = 35  # Gap between layers
