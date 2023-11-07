@@ -460,7 +460,16 @@ class Taiyi():
         return {overall[i]:rrres[i] for i in range(0,17)}
            
     def gen_gong(self, ji_style, taiyi_acumyear):
-        return chart.gen_chart( list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[-1], self.geteightdoors_text2(ji_style, taiyi_acumyear), list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[:-1])
+        if ji_style !=3:
+            return chart.gen_chart( list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[-1], self.geteightdoors_text2(ji_style, taiyi_acumyear), list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[:-1])
+        if ji_style == 3:
+            j_q = jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)
+            d = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]
+            h = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]
+            m = config.lunar_date_d(self.year, self.month, self.day).get("月")
+            sg = kinliuren.Liuren(j_q, m, d, h).result(0).get("地轉天盤")
+            return chart.gen_chart_hour( list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[-1], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg,list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[:-1])
+        
         
     def year_chin(self):
         """太歲禽星"""
