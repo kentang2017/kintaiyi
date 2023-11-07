@@ -115,5 +115,5 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer):
     #center_text = draw.Text("a", 40, center_x, center_y, center=1, fill="#ffffff")
     # Save the SVG file
       # Change this angle to the desired rotation
-    return d.as_svg().replace('''<path d="M-4.86988571440686,-12.053390109368236 L-21.72718241812291,-53.776663564873665 A58,58,0,0,1,-21.727182418122876,-53.77666356487368 L-4.869885714406852,-12.053390109368237 Z" stroke="white" stroke-width="1.88" fill="black" />''', "")
+    return d.as_svg().replace('''<path d="M-4.495279120990947,-11.126206254801447 L-17.606509890547876,-43.577641164639005 A47,47,0,0,1,-17.606509890547848,-43.57764116463901 L-4.49527912099094,-11.12620625480145 Z" stroke="white" stroke-width="1.88" fill="black" />''', "")
 
