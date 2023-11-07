@@ -16,7 +16,7 @@ import jieqi
 from jieqi import jieqi_name
 from config import *
 import chart
-
+from kinliuren import kinliuren
 
 class Taiyi():
     """太乙起盤主要函數"""
