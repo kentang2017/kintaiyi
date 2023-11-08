@@ -605,12 +605,16 @@ class Taiyi():
                 num = accu_num % 120 % 30
                 if num > 8:
                     num = num -8
+                if num ==0
+                    num =8
                 new_num = dict(zip(range(1,9), new_ty_order)).get(num)
                 return dict(zip(config.new_list(new_ty_order, new_num), doors)) 
             if dun == "冬至":
                 num = accu_num % 240 % 30
                 if num > 8:
                     num = num -8
+                if num ==0
+                    num =8
                 new_num = dict(zip(range(1,9), new_ty_order)).get(num)
                 return dict(zip(config.new_list(new_ty_order, new_num), doors)) 
 
