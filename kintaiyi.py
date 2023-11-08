@@ -265,9 +265,10 @@ class Taiyi():
             return sum(wc_order[: wc_order.index(taiyi)])
         if wc_jc ==1 and ty_jc ==1 and wc_jc1 !=1 :
             return sum(wc_order[: wc_order.index(taiyi)])+1
-        if wc_jc !=1 and ty_jc ==1 and wc_jc1 ==1 :
-            #return wc_order[wc_jc]
-            return sum(wc_order[: wc_order.index(taiyi)])
+        if wc_jc !=1 and ty_jc ==1 and wc_jc1 ==1 and taiyi != wc_order[wc_jc]:
+            return wc_order[wc_jc]
+        if wc_jc !=1 and ty_jc ==1 and wc_jc1 ==1 and taiyi == wc_order[wc_jc]:
+            return taiyi
         if wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and taiyi != wc_num:
             return sum(wc_order[: wc_order.index(taiyi)])
         if wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and taiyi == wc_num:
