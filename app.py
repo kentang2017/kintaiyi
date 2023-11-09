@@ -117,9 +117,6 @@ with pan:
                 render_svg(genchart)
                 confirmationEdit = Modal("Test", key= "popUp_edit")
                 
-                st.markdown(config.gendatetime(my,mm,md,mh))
-                    
-                #    "{} | \n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) |\n積{}數︰{} | \n紀元︰{} | 主筭︰{} 客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n ".format(config.gendatetime(my,mm,md,mh), lunard, jieqi.jq(my,mm,md,mh,mmin),gz, config.kingyear(my), config.ty_method(tn), config.taiyi_name(num), ty.kook(num, tn).get("文") ,ttext.get("局式").get("年"),  config.taiyi_name(num)[0],tynum, ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(my, mm, md).get("年"))  ))
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
                 st.title("史事記載︰")
@@ -143,7 +140,7 @@ with pan:
                 st.markdown("推太乙風雲飛鳥助戰︰"+ home_vs_away3)
                 #st.title("九宮分野︰")
                 #st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
-                #print("{} | \n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) |\n積{}數︰{} | \n紀元︰{} | 主筭︰{} 客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n ".format(config.gendatetime(my,mm,md,mh), lunard, jieqi.jq(my,mm,md,mh,mmin),gz, config.kingyear(my), config.ty_method(tn), config.taiyi_name(num), ty.kook(num, tn).get("文") ,ttext.get("局式").get("年"),  config.taiyi_name(num)[0],tynum, ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(my, mm, md).get("年"))  ))
+                print("{} | \n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) |\n積{}數︰{} | \n紀元︰{} | 主筭︰{} 客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n ".format(config.gendatetime(my,mm,md,mh), lunard, jieqi.jq(my,mm,md,mh,mmin),gz, config.kingyear(my), config.ty_method(tn), config.taiyi_name(num), ty.kook(num, tn).get("文") ,ttext.get("局式").get("年"),  config.taiyi_name(num)[0],tynum, ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(my, mm, md).get("年"))  ))
             else:
                 output5 = st.empty()
         except ValueError:
