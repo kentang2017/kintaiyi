@@ -123,10 +123,6 @@ with pan:
                     with confirmationEdit.container():
                         st.markdown(""" ### ¿Deseas guardar los cambios? """)
 
-
-                if open_modal:
-                    with modal.container():
-                        st.markdown('testtesttesttesttesttesttesttest')
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
                 st.title("史事記載︰")
