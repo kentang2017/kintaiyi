@@ -129,7 +129,7 @@ with pan:
                         </script>
                         '''
                         components.html(html_string)
-                        st.write("Some fancy text")
+        
                 render_svg(genchart)
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
