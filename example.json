@@ -88,6 +88,7 @@
         },
         "start_date": {
           "year": "11",
+          "month":""
         },
         "text": {
           "headline": "王莽篡漢",
@@ -100,6 +101,7 @@
         },
         "start_date": {
           "year": "123",
+          "month":""
         },
         "text": {
           "headline": "漢安帝時宦官專政",
