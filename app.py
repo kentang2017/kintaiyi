@@ -65,21 +65,17 @@ with st.sidebar:
     instant = st.button('即時盤')
 
 with pan:
-    button1 = st.empty()
-    text1 = st.empty()
-    button2 = st.empty()
-    text2 = st.empty()
-    
-    ss = st.session_state.get(button1 = False)
-    
-    if button1.button('1') :
-        ss.button1 = True
-    
-    if ss.button1:
-        text1.write('you clicked the first button')
-        if button2.button('2'):
-            text2.write('you clicked the second button')
-    output5 = st.empty()
+    button1 = st.button('Check 1')
+
+    if st.session_state.get('button') != True:
+        st.session_state['button'] = button1
+    if st.session_state['button'] == True:
+        st.write("button1 is True")
+        if st.button('Check 2'):
+            st.write("Hello, it's working")
+            st.session_state['button'] = False
+            st.checkbox('Reload')
+            
     with st_capture(output5.code):
         try:
             if manual:
