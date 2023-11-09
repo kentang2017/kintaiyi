@@ -128,7 +128,6 @@ with pan:
                     yy = "yin"
                 #st.image("https://raw.githubusercontent.com/kentang2017/kintaiyi/a76abf4958ea48accb1f3b8b8c7cfd96710ea67f/kook/"+yy+str(ttext.get("局式").get("數"))+".svg")
                 render_svg(genchart)
-
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
                 st.title("史事記載︰")
@@ -141,7 +140,6 @@ with pan:
                 #st.markdown("推猛虎相拒︰"+ttext.get("推猛虎相拒"))
                 #st.markdown("推白龍得雲︰"+ttext.get("推白龍得雲"))
                 #st.markdown("推回軍無言︰"+ttext.get("推回軍無言"))
-                
                 st.markdown("太歲值宿斷事︰"+ year_predict)
                 st.markdown("始擊值宿斷事︰"+ sj_su_predict)
                 st.markdown("十天干歲始擊落宮預測︰"+ tg_sj_su_predict)
@@ -202,9 +200,6 @@ with pan:
                 yy = "yin"
             render_svg(genchart)
             # Create a button to trigger the pop-up
-            pop = st.button("Show Pop-up")
-            if pop:
-                st.text("This is a pop-up message.")
             #st.image("https://raw.githubusercontent.com/kentang2017/kintaiyi/a76abf4958ea48accb1f3b8b8c7cfd96710ea67f/kook/"+yy+str(ttext.get("局式").get("數"))+".svg")
             st.title("《太乙秘書》︰")
             st.markdown(ts)
