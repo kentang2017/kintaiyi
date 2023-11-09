@@ -116,13 +116,10 @@ with pan:
                 #st.image("https://raw.githubusercontent.com/kentang2017/kintaiyi/a76abf4958ea48accb1f3b8b8c7cfd96710ea67f/kook/"+yy+str(ttext.get("局式").get("數"))+".svg")
                 render_svg(genchart)
                 confirmationEdit = Modal("Test", key= "popUp_edit")
-                submitted = st.button("Enviar")
-                if submitted:
-                    confirmationEdit.open()
-                if confirmationEdit.is_open():
-                    with confirmationEdit.container():
-                        st.markdown(""" ### ¿Deseas guardar los cambios? """)
-                st.markdown("{} | \n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) |\n積{}數︰{} | \n紀元︰{} | 主筭︰{} 客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n ".format(config.gendatetime(my,mm,md,mh), lunard, jieqi.jq(my,mm,md,mh,mmin),gz, config.kingyear(my), config.ty_method(tn), config.taiyi_name(num), ty.kook(num, tn).get("文") ,ttext.get("局式").get("年"),  config.taiyi_name(num)[0],tynum, ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(my, mm, md).get("年"))  ))
+                
+                st.markdown(config.gendatetime(my,mm,md,mh))
+                    
+                #    "{} | \n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) |\n積{}數︰{} | \n紀元︰{} | 主筭︰{} 客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n ".format(config.gendatetime(my,mm,md,mh), lunard, jieqi.jq(my,mm,md,mh,mmin),gz, config.kingyear(my), config.ty_method(tn), config.taiyi_name(num), ty.kook(num, tn).get("文") ,ttext.get("局式").get("年"),  config.taiyi_name(num)[0],tynum, ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(my, mm, md).get("年"))  ))
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
                 st.title("史事記載︰")
