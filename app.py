@@ -18,8 +18,29 @@ import os, urllib
 import config
 import jieqi
 from streamlit_modal import Modal
-from streamlit_timeline import timeline
+#from streamlit_timeline import timeline
 
+def timeline(data, height=800):
+    if isinstance(data, str):
+        data = json.loads(data)
+    json_text = json.dumps(data) 
+    source_param = 'timeline_json'
+    source_block = f'var {source_param} = {json_text};'
+    cdn_path = 'https://cdn.knightlab.com/libs/timeline3/latest'
+    css_block = f'<link title="timeline-styles" rel="stylesheet" href="{cdn_path}/css/timeline.css">'
+    js_block  = f'<script src="{cdn_path}/js/timeline.js"></script>'
+    htmlcode = css_block + ''' 
+    ''' + js_block + '''
+        <div id='timeline-embed' style="width: 95%; height: '''+str(height)+'''px; margin: 1px;"></div>
+        <script type="text/javascript">
+            var additionalOptions = {
+                start_at_end: false, is_embed:true,
+            }
+            '''+source_block+'''
+            timeline = new TL.Timeline('timeline-embed', '''+source_param+''', additionalOptions);
+        </script>'''
+    static_component = components.html(htmlcode, height=height,)
+    return static_component
 
 def render_svg(svg):
     """Renders the given svg string."""
