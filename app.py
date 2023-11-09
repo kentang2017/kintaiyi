@@ -17,7 +17,7 @@ from taiyimishu import taiyi_yingyang
 import os, urllib
 import config
 import jieqi
-from streamlit_modal import Modal
+
 
 
 def render_svg(svg):
@@ -114,43 +114,6 @@ with pan:
                 else:
                     yy = "yin"
                 #st.image("https://raw.githubusercontent.com/kentang2017/kintaiyi/a76abf4958ea48accb1f3b8b8c7cfd96710ea67f/kook/"+yy+str(ttext.get("局式").get("數"))+".svg")
-                pop_up_width = 600
-                st.markdown(
-                    f"""
-                    <style>
-                        div[data-modal-container='true'][key='sidebar-modal'] > div:first-child {{
-                            width: {pop_up_width}px;
-                        }}
-                        div[data-modal-container='true'][key='sidebar-modal'] > div:first-child > div:first-child > div:first-child {{
-                            width: {pop_up_width}px;
-                            overflow-y: scroll;
-                            max-height: 600px;
-                            overflow-x: hidden;
-                        }}
-                        div[data-modal-container='true'][key='sidebar-modal'] > div > div:nth-child(2) > div {{
-                            width: {pop_up_width}px !important;
-                        }}
-                    </style>
-                    """,
-                    unsafe_allow_html=True,
-                )
-                
-                modal = Modal(key="Demo Key", title="This is Modal")
-                open_modal = st.button("Open")
-                if open_modal:
-                    modal.open()
-                
-                if modal.is_open():
-                    with modal.container():
-                        html_string = '''
-                        <h1>HTML string in RED</h1>
-                
-                        <script language="javascript">
-                          document.querySelector("h1").style.color = "red";
-                        </script>
-                        '''
-                        components.html(html_string)
-        
                 render_svg(genchart)
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
@@ -223,7 +186,6 @@ with pan:
             else:
                 yy = "yin"
             render_svg(genchart)
-            explain = st.button("解釋")
             #st.image("https://raw.githubusercontent.com/kentang2017/kintaiyi/a76abf4958ea48accb1f3b8b8c7cfd96710ea67f/kook/"+yy+str(ttext.get("局式").get("數"))+".svg")
             st.title("《太乙秘書》︰")
             st.markdown(ts)
