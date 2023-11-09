@@ -18,7 +18,7 @@
         },
         "start_date": {
           "year": "-202",
-          "month":"2"
+          "month":""
         },
         "text": {
           "headline": "漢高祖大破楚軍",
@@ -32,7 +32,7 @@
         },
         "start_date": {
           "year": "-200",
-          "month":"3"
+          "month":""
         },
         "text": {
           "headline": "漢高祖長樂宮殿建成",
@@ -46,7 +46,7 @@
         },
         "start_date": {
           "year": "-194",
-          "month":"7"
+          "month":""
         },
         "text": {
           "headline": "漢惠帝即位，呂后干政",
@@ -60,7 +60,7 @@
         },
         "start_date": {
           "year": "-179",
-          "month":"1"
+          "month":""
         },
         "text": {
           "headline": "漢文帝在位，下開文景之治",
@@ -74,7 +74,7 @@
         },
         "start_date": {
           "year": "-24",
-          "month":"6"
+          "month":""
         },
         "text": {
           "headline": "漢成帝即位，母后王政君專政",
