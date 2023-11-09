@@ -32,7 +32,7 @@ def timeline(data, height=800):
     js_block  = f'<script src="{cdn_path}/js/timeline.js"></script>'
     htmlcode = css_block + ''' 
     ''' + js_block + '''
-        <div class'tl-timeline tl-medium tl-layout-landscape' id='timeline-embed' style="width: 95%; height: '''+str(height)+'''px; margin: 1px;"></div>
+        <div class'tl-timeline tl-medium tl-layout-landscape' id='timeline-embed' style="width: 95%; background-color='black'; height: '''+str(height)+'''px; margin: 1px;" ></div>
         <script type="text/javascript">
             var additionalOptions = {
                 start_at_end: false, is_embed:true,
