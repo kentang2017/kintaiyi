@@ -88,12 +88,12 @@
         },
         "start_date": {
           "year": "11",
-          "month":"6"
+          "month":""
         },
         "text": {
           "headline": "王莽篡漢",
           "text": "<p>《太乙淘金歌》新莽建國三年辛未，係第三戊子元四十四局，太乙在八宮，天目在陽德，主筭得二十三，是年王莽修飾太廟，追贈伊祖尊號，緣主大將宮迫太乙，迫後宗廟，遂廢毀也。三為正徵，四為比徵，有變在宗廟筭，和則有增飾，遷神主，加尊號，不和更囚迫掩擊，則主廢陷。</p>"
-        }
+        },
         {
          "media": {
           "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang12.svg",
@@ -101,7 +101,7 @@
         },
         "start_date": {
           "year": "123",
-          "month":"5"
+          "month":""
         },
         "text": {
           "headline": "漢安帝時宦官專政",
