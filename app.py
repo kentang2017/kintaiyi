@@ -189,6 +189,80 @@ with pan:
             else:
                 yy = "yin"
             render_svg(genchart)
+            # Initialize a boolean variable to control the pop-up
+            is_popup_shown = False
+            
+            # Create a button to trigger the pop-up
+            if st.button("Show Pop-up"):
+                is_popup_shown = True
+            
+            # Create a container for the pop-up content and set it initially empty
+            popup_container = st.empty()
+            
+            # Define the content of the pop-up
+            if is_popup_shown:
+                with popup_container:
+                    st.title("Pop-up Window")
+                    st.write("This is a pop-up window.")
+                    st.text_input("Enter your name:")
+                    if st.button("Submit"):
+                        st.write("Name submitted!")
+            
+            # Apply custom CSS to style the pop-up and make it look like a dialog box
+            if is_popup_shown:
+                st.markdown(
+                    """
+                    <style>
+                    .stApp {
+                        z-index: 9999;
+                    }
+                    .stDialog {
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        padding: 20px;
+                        background-color: white;
+                        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+                        border-radius: 10px;
+                    }
+                    </style>
+                    """,
+                    unsafe_allow_html=True,
+                )
+            
+            # Create a close button for the pop-up
+            if is_popup_shown:
+                with popup_container:
+                    st.write("This is a pop-up window.")
+                    st.text_input("Enter your name:")
+                    if st.button("Submit"):
+                        st.write("Name submitted!")
+                    if st.button("Close Pop-up"):
+                        is_popup_shown = False
+            
+            # Create a background overlay to dim the main content when the pop-up is displayed
+            if is_popup_shown:
+                st.markdown(
+                    """
+                    <style>
+                    .stApp {
+                        position: relative;
+                    }
+                    .stOverlay {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-color: rgba(0, 0, 0, 0.3);
+                        z-index: 9998;
+                    }
+                    </style>
+                    """,
+                    unsafe_allow_html=True,
+                )
+                st.markdown('<div class="stOverlay"></div>', unsafe_allow_html=True)
             #st.image("https://raw.githubusercontent.com/kentang2017/kintaiyi/a76abf4958ea48accb1f3b8b8c7cfd96710ea67f/kook/"+yy+str(ttext.get("局式").get("數"))+".svg")
             st.title("《太乙秘書》︰")
             st.markdown(ts)
