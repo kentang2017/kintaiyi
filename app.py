@@ -122,7 +122,14 @@ with pan:
                 
                 if modal.is_open():
                     with modal.container():
-                        st.write("Text goes here")
+                        html_string = '''
+                        <h1>HTML string in RED</h1>
+                
+                        <script language="javascript">
+                          document.querySelector("h1").style.color = "red";
+                        </script>
+                        '''
+                        components.html(html_string)
                         st.write("Some fancy text")
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
