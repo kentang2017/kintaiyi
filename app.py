@@ -37,7 +37,7 @@ def timeline(data, height=800):
 
         <script type="text/javascript">
             var additionalOptions = {
-                start_at_end: false, is_embed:true,
+                start_at_end: false, is_embed:false,
             }
             '''+source_block+'''
             timeline = new TL.Timeline('timeline-embed', '''+source_param+''', additionalOptions);
