@@ -33,7 +33,7 @@ def timeline(data, height=800):
     htmlcode = css_block + ''' 
     ''' + js_block + '''
 
-        <div id='timeline-embed' style="width: 95%; height: '''+str(height)+'''px; margin: 1px;"></div>
+        <div id='timeline-embed' style="width: 95%; height: '''+str(height)+'''px; margin: 1px; tl-timenav: black"></div>
 
         <script type="text/javascript">
             var additionalOptions = {
