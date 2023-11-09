@@ -70,7 +70,7 @@ with pan:
     button2 = st.empty()
     text2 = st.empty()
     
-    ss = SessionState.get(button1 = False)
+    ss = st.session_state.get(button1 = False)
     
     if button1.button('1') :
         ss.button1 = True
