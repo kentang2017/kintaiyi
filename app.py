@@ -34,13 +34,13 @@ def timeline(data, height=800):
     ''' + js_block + '''
         <style>
             body {
-                background-color: #ABBAEA;
+                background-color: #000000;
             }
             .child {
                 height: 200px;
                 margin: 20px;
                 border: 5px solid;
-                background-color: #FBD603;
+                background-color: #000000;
             }
         </style>
         <div id='timeline-embed' style="width: 95%; height: '''+str(height)+'''px; margin: 1px;"></div>
