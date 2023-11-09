@@ -114,6 +114,27 @@ with pan:
                 else:
                     yy = "yin"
                 #st.image("https://raw.githubusercontent.com/kentang2017/kintaiyi/a76abf4958ea48accb1f3b8b8c7cfd96710ea67f/kook/"+yy+str(ttext.get("局式").get("數"))+".svg")
+                pop_up_width = 600
+                st.markdown(
+                    f"""
+                    <style>
+                        div[data-modal-container='true'][key='sidebar-modal'] > div:first-child {{
+                            width: {pop_up_width}px;
+                        }}
+                        div[data-modal-container='true'][key='sidebar-modal'] > div:first-child > div:first-child > div:first-child {{
+                            width: {pop_up_width}px;
+                            overflow-y: scroll;
+                            max-height: 600px;
+                            overflow-x: hidden;
+                        }}
+                        div[data-modal-container='true'][key='sidebar-modal'] > div > div:nth-child(2) > div {{
+                            width: {pop_up_width}px !important;
+                        }}
+                    </style>
+                    """,
+                    unsafe_allow_html=True,
+                )
+                
                 modal = Modal(key="Demo Key", title="This is Modal")
                 open_modal = st.button("Open")
                 if open_modal:
