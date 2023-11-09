@@ -18,6 +18,7 @@ import os, urllib
 import config
 import jieqi
 from streamlit_modal import Modal
+from streamlit_timeline import timeline
 
 
 def render_svg(svg):
@@ -222,7 +223,11 @@ with connect:
             
 with example:
     st.header('史例')
-    st.markdown(get_file_content_as_string("example.md"))
+    with open('example.json', "r") as f:
+        data = f.read()
+    # render timeline
+    timeline(data, height=800)
+    #st.markdown(get_file_content_as_string("example.md"))
 
 with tutorial:
     st.header('教學')
