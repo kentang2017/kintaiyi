@@ -32,6 +32,17 @@ def timeline(data, height=800):
     js_block  = f'<script src="{cdn_path}/js/timeline.js"></script>'
     htmlcode = css_block + ''' 
     ''' + js_block + '''
+        <style>
+            body {
+                background-color: #ABBAEA;
+            }
+            .child {
+                height: 200px;
+                margin: 20px;
+                border: 5px solid;
+                background-color: #FBD603;
+            }
+        </style>
         <div id='timeline-embed' style="width: 95%; height: '''+str(height)+'''px; margin: 1px;"></div>
         <script type="text/javascript">
             var additionalOptions = {
