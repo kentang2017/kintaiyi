@@ -33,11 +33,11 @@ def timeline(data, height=800):
     htmlcode = css_block + ''' 
     ''' + js_block + '''
 
-        <div id='timeline-embed' style="width: 95%; height: '''+str(height)+'''px; margin: 1px; tl-timenav: black"></div>
+        <div id='timeline-embed' style="width: 95%; height: '''+str(height)+'''px; margin: 1px"></div>
 
         <script type="text/javascript">
             var additionalOptions = {
-                start_at_end: false, is_embed:false,
+                start_at_end: false, is_embed:false, tl-timenav: black,
             }
             '''+source_block+'''
             timeline = new TL.Timeline('timeline-embed', '''+source_param+''', additionalOptions);
