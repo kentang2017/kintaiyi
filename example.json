@@ -26,18 +26,17 @@
         }
       },
       {
-        "media": {
-          "url": "https://www.youtube.com/watch?v=CmSKVW1v0xM",
-          "caption": "Streamlit Components (<a target=\"_blank\" href='https://streamlit.io/'>credits</a>)"
+         "media": {
+          "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang50.svg",
+          "caption": "五十局"
         },
         "start_date": {
-          "year": "2020",
-          "month":"7",
-          "day":"13"
+          "year": "-200",
+          "month":"3"
         },
         "text": {
-          "headline": "Streamlit Components<br>version 0.63.0",
-          "text": "Streamlit lets you turn data scripts into sharable web apps in minutes, not weeks. It's all Python, open-source, and free! And once you've created an app you can use our free sharing platform to deploy, manage, and share your app with the world."
+          "headline": "漢高祖長樂宮殿建成",
+          "text": "<p>《太乙淘金歌》高祖七年辛丑，係第五壬子元五十局，其年太乙在一宮，天目在六，主筭得十六，是年長樂宮成，四海偃戈，人民安樂，禮樂初興，知皇帝之貴也。《筭》得十六、二十六、三十六、十七、二十七、十八、二十八、三十八、十九、二十九、三十九歲計，遇此即有禎祥，民安年豐，為三才俱足之筭。若無關囚、掩迫、格對、提、挾等，則應禎祥也。</p>"
         }
       },
       {
