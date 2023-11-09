@@ -189,7 +189,8 @@ with pan:
                 yy = "yin"
             render_svg(genchart)
             # Create a button to trigger the pop-up
-            if st.button("Show Pop-up"):
+            pop = st.button("Show Pop-up")
+            if pop:
                 st.text("This is a pop-up message.")
             #st.image("https://raw.githubusercontent.com/kentang2017/kintaiyi/a76abf4958ea48accb1f3b8b8c7cfd96710ea67f/kook/"+yy+str(ttext.get("局式").get("數"))+".svg")
             st.title("《太乙秘書》︰")
