@@ -75,7 +75,7 @@ with pan:
             st.write("Hello, it's working")
             st.session_state['button'] = False
             st.checkbox('Reload')
-            
+    output5 = st.empty()  
     with st_capture(output5.code):
         try:
             if manual:
