@@ -115,7 +115,7 @@ with pan:
                     yy = "yin"
                 #st.image("https://raw.githubusercontent.com/kentang2017/kintaiyi/a76abf4958ea48accb1f3b8b8c7cfd96710ea67f/kook/"+yy+str(ttext.get("局式").get("數"))+".svg")
                 render_svg(genchart)
-                modal = Modal("Demo Modal")
+                modal = Modal(key="Demo Key", title="This is Modal")
                 open_modal = st.button("Open")
                 if open_modal:
                     modal.open()
