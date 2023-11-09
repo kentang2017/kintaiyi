@@ -6,8 +6,8 @@
           "credit": ""
         },
         "text": {
-          "headline": "Welcome to<br>Streamlit Timeline",
-          "text": "<p>A Streamlit Timeline component by integrating TimelineJS from Knightlab</p>"
+          "headline": "太乙史例",
+          "text": "<p>所有公元前至近代有關太乙數的歷史案例呈現在眼前。</p>"
         }
     },
     "events": [
