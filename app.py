@@ -17,7 +17,7 @@ from taiyimishu import taiyi_yingyang
 import os, urllib
 import config
 import jieqi
-
+from streamlit_modal import Modal
 
 
 def render_svg(svg):
@@ -115,6 +115,10 @@ with pan:
                     yy = "yin"
                 #st.image("https://raw.githubusercontent.com/kentang2017/kintaiyi/a76abf4958ea48accb1f3b8b8c7cfd96710ea67f/kook/"+yy+str(ttext.get("局式").get("數"))+".svg")
                 render_svg(genchart)
+                open_modal = st.button(label='解釋')
+                if open_modal:
+                    with modal.container():
+                        st.markdown('testtesttesttesttesttesttesttest')
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
                 st.title("史事記載︰")
