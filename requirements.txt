@@ -9,3 +9,4 @@ bidict==0.22.1
 drawsvg==2.3.0
 kinliuren==0.1.2.6
 streamlit-modal==0.1.0
+streamlit-timeline==0.0.2
