@@ -288,6 +288,32 @@
           "headline": "<p style='color:white'>桓溫廢帝</p>",
           "text": "<p style='color:white'>《太乙淘金歌》晉簡文帝咸安元年辛未，係第三戊子元四十四局，太乙在八宮，陽德為天目，外辰迫，主筭三十三，主大將三宮，外宮迫，是年桓溫廢帝。</p>"
         }
+      },{
+         "media": {
+          "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang70.svg",
+          "caption": "<p style='color:white'>七十局</p>"
+        },
+        "start_date": {
+          "year": "397",
+          "month":""
+        },
+        "text": {
+          "headline": "<p style='color:white'>安帝登位，文臣專權</p>",
+          "text": "<p style='color:white'>《太乙淘金歌》晉安帝隆安元年丁酉，係第三戊子元七十局，太乙在九宮，天目在天道。主算得三十，主大將三宮，計神在大神，「始擊臨高叢。客算單四，客大將四宮，太乙與主將挾客於四宮，則主勝而客敗也。」 是年，魏主拓跋珪圖中山，破慕容鮮。「提挾」 者，推勢挾持之義。主客二目或一與太乙在正宮為提，在間神為挾，主文臣專權之象，算和凶，不和死。《文昌》與太乙挾客，客凶；《始擊》與太乙挾主，主凶也。</p>"
+        }
+      },{
+         "media": {
+          "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang16.svg",
+          "caption": "<p style='color:white'>十六局</p>"
+        },
+        "start_date": {
+          "year": "403",
+          "month":""
+        },
+        "text": {
+          "headline": "<p style='color:white'>桓玄篡晉</p>",
+          "text": "<p style='color:white'>《南齊書 ‧ 高帝紀》元興二年，太一在七宮，太一為帝，天目為輔佐，迫脅太一，是年安帝為桓玄所逼出宮。大將在一宮，參相在三宮，格太一。經言格者，已立政事，上下格之，不利有為，安居之世，不利舉動。</p>"
+        }
       }
     ]
 }
