@@ -251,7 +251,8 @@ with example:
         data = f.read()
     # render timeline
     timeline(data, height=800)
-    #st.markdown(get_file_content_as_string("example.md"))
+    with st.expander("太乙史例列表"):
+        st.markdown(get_file_content_as_string("example.md"))
 
 with tutorial:
     st.header('教學')
