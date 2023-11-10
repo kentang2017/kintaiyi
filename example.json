@@ -2,12 +2,12 @@
     "title": {
         "media": {
           "url": "http://pic.baike.soso.com/p/20120906/20120906172946-1568936370.jpg",
-          "caption": " <a target=\"_blank\" href=''>credits</a>",
+          "caption": "<p style='color:white; font-size:150%'>史例時序圖</p>",
           "credit": ""
         },
         "text": {
-          "headline": "<p style='color:white; font-size:150%'>史例時序圖</p>",
-          "text": "<p style='color:white'>所有公元前至近代有關太乙數的歷史案例呈現在眼前。</p>"
+          "headline": "",
+          "text": ""
         }
     },
       "events": [
