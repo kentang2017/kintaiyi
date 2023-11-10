@@ -418,6 +418,19 @@
           "headline": "<p style='color:white'>桂陽王劉休范反</p>",
           "text": "<p style='color:white'>《南齊書 ‧ 高帝紀》元徽四年，太一在七宮，先起者客，西北走，其年建平王景素敗。</p>"
         }
+      },{
+         "media": {
+          "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang18.svg",
+          "caption": "<p style='color:white'>十八局</p>"
+        },
+        "start_date": {
+          "year": "477",
+          "month":""
+        },
+        "text": {
+          "headline": "<p style='color:white'>袁粲、沈攸之等反伏誅</p>",
+          "text": "<p style='color:white'>《南齊書 ‧ 高帝紀》昇明元年，太一在七宮，不利為客，安居之世，舉事為主人，應發為客，袁粲、沈攸之等反，伏誅。是歲太一在杜門，臨八宮，宋帝禪位，不利為客，安居之世，舉事為主人，禪代之應也。</p>"
+        }
       }
     ]
 }
