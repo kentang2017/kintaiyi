@@ -366,6 +366,58 @@
           "headline": "<p style='color:white'>到彥之北伐</p>",
           "text": "<p style='color:white'>《南齊書 ‧ 高帝紀》元嘉七年，太一在八宮，關囚惡歲，大小將皆不得立，其年到彥之北伐，初勝後敗，客主俱不利。</p>"
         }
+      },{
+         "media": {
+          "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang54.svg",
+          "caption": "<p style='color:white'>五十四局</p>"
+        },
+        "start_date": {
+          "year": "441",
+          "month":""
+        },
+        "text": {
+          "headline": "<p style='color:white'>仇池國危</p>",
+          "text": "<p style='color:white'>《南齊書 ‧ 高帝紀》元嘉十八年，太一在二宮，客主俱不利，是歲氐楊難當寇梁、益，來年仇池破。</p>"
+        }
+      },{
+         "media": {
+          "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang55.svg",
+          "caption": "<p style='color:white'>五十五局</p>"
+        },
+        "start_date": {
+          "year": "442",
+          "month":""
+        },
+        "text": {
+          "headline": "<p style='color:white'>裴方明攻滅仇池國</p>",
+          "text": "<p style='color:white'>《南齊書 ‧ 高帝紀》元嘉十九年，大小將皆見關不立，凶，其年裴方明伐仇池，剋百頃，明年失之。</p>"
+        }
+      } ,{
+         "media": {
+          "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang15.svg",
+          "caption": "<p style='color:white'>十五局</p>"
+        },
+        "start_date": {
+          "year": "474",
+          "month":""
+        },
+        "text": {
+          "headline": "<p style='color:white'>桂陽王劉休范反</p>",
+          "text": "<p style='color:white'>《南齊書 ‧ 高帝紀》元徽二年，太一在六宮，先起敗，是歲桂陽王休範反，竝伏誅。</p>"
+        }
+      },{
+         "media": {
+          "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang17.svg",
+          "caption": "<p style='color:white'>十七局</p>"
+        },
+        "start_date": {
+          "year": "476",
+          "month":""
+        },
+        "text": {
+          "headline": "<p style='color:white'>桂陽王劉休范反</p>",
+          "text": "<p style='color:white'>《南齊書 ‧ 高帝紀》元徽四年，太一在七宮，先起者客，西北走，其年建平王景素敗。</p>"
+        }
       }
     ]
 }
