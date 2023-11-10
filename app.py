@@ -244,7 +244,7 @@ with connect:
     st.markdown(get_file_content_as_string1("update.md"))
             
 with example:
-    st.header('史例')
+    st.header('太乙局數史例')
     with open('example.json', "r") as f:
         data = f.read()
     # render timeline
