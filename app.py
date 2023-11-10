@@ -250,9 +250,9 @@ with example:
     with open('example.json', "r") as f:
         data = f.read()
     # render timeline
-    timeline(data, height=800)
-    with st.expander("太乙史例列表"):
-        st.markdown(get_file_content_as_string("example.md"))
+    timeline(data, height=600)
+    with st.expander("列表"):
+        get_file_content_as_string("example.md")
 
 with tutorial:
     st.header('教學')
