@@ -14,7 +14,7 @@
       {
        "media": {
           "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang60.svg",
-          "caption": "六十局"
+          "caption": "<p style='color:white'>六十局</p>"
         },
         "start_date": {
           "year": "-202",
@@ -28,7 +28,7 @@
       {
          "media": {
           "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang50.svg",
-          "caption": "五十局"
+          "caption": "<p style='color:white'>五十局</p>"
         },
         "start_date": {
           "year": "-200",
@@ -42,7 +42,7 @@
       {
          "media": {
           "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang56.svg",
-          "caption": "五十六局"
+          "caption": "<p style='color:white'>五十六局</p>"
         },
         "start_date": {
           "year": "-194",
@@ -56,7 +56,7 @@
       {
          "media": {
           "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang11.svg",
-          "caption": "十一局"
+          "caption": "<p style='color:white'>十一局</p>"
         },
         "start_date": {
           "year": "-179",
@@ -70,7 +70,7 @@
        {
          "media": {
           "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang10.svg",
-          "caption": "十局"
+          "caption": "<p style='color:white'>十局</p>"
         },
         "start_date": {
           "year": "-24",
@@ -84,7 +84,7 @@
       {
          "media": {
           "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang44.svg",
-          "caption": "四十四局"
+          "caption": "<p style='color:white'>四十四局</p>"
         },
         "start_date": {
           "year": "11",
@@ -98,7 +98,7 @@
        {
          "media": {
           "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang12.svg",
-          "caption": "十二局"
+          "caption": "<p style='color:white'>十二局</p>"
         },
         "start_date": {
           "year": "123",
@@ -112,7 +112,7 @@
          {
          "media": {
           "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang2.svg",
-          "caption": "二局"
+          "caption": "<p style='color:white'>二局</p>"
         },
         "start_date": {
           "year": "185",
@@ -126,7 +126,7 @@
       {
          "media": {
           "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang15.svg",
-          "caption": "十五局"
+          "caption": "<p style='color:white'>十五局</p>"
         },
         "start_date": {
           "year": "198",
@@ -137,10 +137,10 @@
           "text": "<p style='color:white'>《太乙淘金歌》漢獻帝建安三年戊寅，係第一甲子元十五局，太乙在六宮，天目在大威，計神在地，主始擊臨大武，客算得單七，客大將在七宮，客參將在一宮，乃客挾太乙，不利為客。是年曹操攻呂布殺之，操得為主之道也。大忌挾持太乙宮，為將用之喪其躬。此謂主客將挾太乙宮也。客大將、客參將，或客目挾太乙，則客將死。若主目、主大小將挾太乙，則主將死。如遇提挾，不可興師出戰，戰必敗，為將者慎之。</p>"
         }
       },
-            {
+      {
          "media": {
           "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang21.svg",
-          "caption": "二十一局"
+          "caption": "<p style='color:white'>二十一局</p>"
         },
         "start_date": {
           "year": "204",
@@ -149,6 +149,20 @@
         "text": {
           "headline": "<p style='color:white'>劉惇論丹陽之亂</p>",
           "text": "<p style='color:white'>《三國志 ‧ 吳書 ‧ 劉惇傳》劉惇論丹陽之亂。建安中，孫權在豫章，時有星變，以問惇，惇曰：災在丹楊。權曰：何如？曰：客勝主人，到某日當得問。是時邊鴻作亂，卒如惇言。惇於諸術皆善，尤明太乙，皆能推演其事，窮盡要妙，著書百餘篇，名儒刁玄稱以為奇。惇亦寶愛其術，不以告人，故世莫得而明也。</p>"
+        }
+      }
+       {
+         "media": {
+          "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang42.svg",
+          "caption": "<p style='color:white'>四十二局</p>"
+        },
+        "start_date": {
+          "year": "213",
+          "month":""
+        },
+        "text": {
+          "headline": "<p style='color:white'>諸葛亮算太乙數</p>",
+          "text": "<p style='color:white'>《諸葛亮集 ‧ 高上先帝書》亮算太乙數，今年歲次癸巳，罡星在西方；又觀乾象，太白臨於洛城之分，主於將帥，多凶少吉。</p>"
         }
       }
     ]
