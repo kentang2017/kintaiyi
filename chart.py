@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Nov  2 16:46:02 2023
-
-@author: kentang
-"""
-
-# -*- coding: utf-8 -*-
-"""
 Created on Wed Nov  1 15:03:52 2023
 
 @author: kentang
