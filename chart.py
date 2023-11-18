@@ -5,25 +5,18 @@ Created on Thu Nov  2 16:46:02 2023
 @author: kentang
 """
 
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Nov  1 15:03:52 2023
-
-@author: kentang
-"""
-
 import drawsvg as draw
 import math
 import re
 
 #第一層中間, 第二層八門
-def gen_chart(first_layer, second_layer, qimen_layer, sixth_layer, twentyeight):
+def gen_chart(first_layer, second_layer, qimen_layer, sixth_layer):
     # Create an SVG drawing canvas
-    d = draw.Drawing(450, 450, origin="center")
+    d = draw.Drawing(390, 450, origin="center")
     # Set the donut's radii and number of divisions for each layer
     inner_radius = 13
     layer_gap = 45  # Gap between layers
-    num_divisions = [1, 9, 8, 16, 16, 28]
+    num_divisions = [1, 9, 8, 16, 16]
     # Define the data for each layer
     data = [
         [first_layer],
@@ -32,8 +25,7 @@ def gen_chart(first_layer, second_layer, qimen_layer, sixth_layer, twentyeight):
          [['巳','大神','楚'], ['午','大威','荊州'], ['未','天道','秦'], ['坤','大武','梁州'], ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'], ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'], ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
         #[['巳','大神'], ['午','大威'], ['未','天道'], ['坤','大武'], ['申','武德'], ['酉','太簇'], ['戌','陰主'], ['乾','陰德'], ['亥','大義'], ['子','地主'], ['丑','陽德'], ['艮','和德'], ['寅','呂申'], ['卯','高叢'], ['辰','太陽'], ['巽','大炅']],
         #['楚', '荊州', '秦', '梁州', '晉', '趙雍', '魯', '冀州', '衛', '齊兗', '吳', '青州', '燕', '徐州', '鄭', '揚州'],
-        sixth_layer,
-        twentyeight
+        sixth_layer
     ]
     rotation_angle = 248
     # Draw the donut chart
@@ -68,14 +60,14 @@ def gen_chart(first_layer, second_layer, qimen_layer, sixth_layer, twentyeight):
     return d.as_svg().replace('''<path d="M-4.86988571440686,-12.053390109368236 L-21.72718241812291,-53.776663564873665 A58,58,0,0,1,-21.727182418122876,-53.77666356487368 L-4.869885714406852,-12.053390109368237 Z" stroke="white" stroke-width="1.88" fill="black" />''', "")
 
 #第一層中間, 第二層八門
-def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeight):
+def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer):
     # ... [rest of your setup code remains the same]
     # Create an SVG drawing canvas
-    d = draw.Drawing(450, 450, origin="center")
+    d = draw.Drawing(390, 450, origin="center")
     # Set the donut's radii and number of divisions for each layer
     inner_radius = 12
     layer_gap = 35  # Gap between layers
-    num_divisions = [1, 8, 16, 16, 16,28]
+    num_divisions = [1, 8, 16, 16, 16]
     # Define the data for each layer
     #general = dict(zip(list("貴蛇雀合勾龍空虎常玄陰后"),re.findall('..', '貴人螣蛇朱雀六合勾陳青龍天空白虎常侍玄武太陰太后')))
     #skygeneral = [general.get(i) for i in skygeneral]
@@ -86,8 +78,7 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
          [['巳','大神','楚'], ['午','大威','荊州'], ['未','天道','秦'], ['坤','大武','梁州'], ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'], ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'], ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
         #[['巳','大神'], ['午','大威'], ['未','天道'], ['坤','大武'], ['申','武德'], ['酉','太簇'], ['戌','陰主'], ['乾','陰德'], ['亥','大義'], ['子','地主'], ['丑','陽德'], ['艮','和德'], ['寅','呂申'], ['卯','高叢'], ['辰','太陽'], ['巽','大炅']],
         #['楚', '荊州', '秦', '梁州', '晉', '趙雍', '魯', '冀州', '衛', '齊兗', '吳', '青州', '燕', '徐州', '鄭', '揚州'],
-        sixth_layer,
-        twentyeight
+        sixth_layer
     ]
     rotation_angle = 248
     for layer_index, divisions in enumerate(num_divisions):
