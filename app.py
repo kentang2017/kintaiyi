@@ -10,7 +10,7 @@ import streamlit as st
 import cn2an
 from cn2an import an2cn
 import streamlit.components.v1 as components
-from kintaiyi import Taiyi
+import kintaiyi
 from historytext import chistory
 from taiyidict import tengan_shiji, su_dist
 from taiyimishu import taiyi_yingyang
@@ -101,7 +101,7 @@ with pan:
                 md = int(p[2])
                 mh = int(pp[0])
                 mmin = int(pp[1])
-                ty = Taiyi(my,mm,md,mh,mmin)
+                ty = kintaiyi.Taiyi(my,mm,md,mh,mmin)
                 ttext = ty.pan(num,tn)
                 kook = ty.kook(num,tn)
                 homecal = ty.home_cal(num, tn)
@@ -174,9 +174,9 @@ with pan:
             d = now.day
             h = now.hour
             min = now.minute
-            ty = Taiyi(y,m,d,h,min)
-            ttext = Taiyi(y,m,d,h,min).pan(num,tn)
-            kook = Taiyi(y,m,d,h,min).kook(num,tn)
+            ty = kintaiyi.Taiyi(y,m,d,h,min)
+            ttext = kintaiyi.Taiyi(y,m,d,h,min).pan(num,tn)
+            kook = kintaiyi.Taiyi(y,m,d,h,min).kook(num,tn)
             genchart = ty.gen_gong(num, tn)
             homecal = ty.home_cal(num, tn)
             awaycal = ty.away_cal(num, tn)
