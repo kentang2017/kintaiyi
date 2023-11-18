@@ -222,6 +222,11 @@ class Taiyi():
         """太乙落宮"""
         return dict(zip(range(1,73), config.taiyi_pai)).get(self.kook(ji_style, taiyi_acumyear).get("數"))
 
+    def twenty_eightstar(self, ji_style, taiyi_acumyear):
+        s_f = self.sf( ji_style, taiyi_acumyear)
+        start = self.sf_num( ji_style, taiyi_acumyear)
+        return new_list(su, dict(zip(new_list(di_zhi, s_f), new_list(su, start))).get("巳"))
+
     def sf(self, ji_style, taiyi_acumyear):
         """始擊落宮"""
         return dict(zip(range(1,73),config.sf_list)).get(int(self.kook(ji_style, taiyi_acumyear).get("數")))
