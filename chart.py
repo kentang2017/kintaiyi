@@ -10,7 +10,7 @@ import math
 import re
 
 #第一層中間, 第二層八門
-def gen_chart(first_layer, second_layer, qimen_layer, sixth_layer):
+def gen_chart(first_layer, second_layer,  sixth_layer):
     # Create an SVG drawing canvas
     d = draw.Drawing(390, 450, origin="center")
     # Set the donut's radii and number of divisions for each layer
@@ -20,7 +20,6 @@ def gen_chart(first_layer, second_layer, qimen_layer, sixth_layer):
     # Define the data for each layer
     data = [
         [first_layer],
-        qimen_layer,
         second_layer,
          [['巳','大神','楚'], ['午','大威','荊州'], ['未','天道','秦'], ['坤','大武','梁州'], ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'], ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'], ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
         #[['巳','大神'], ['午','大威'], ['未','天道'], ['坤','大武'], ['申','武德'], ['酉','太簇'], ['戌','陰主'], ['乾','陰德'], ['亥','大義'], ['子','地主'], ['丑','陽德'], ['艮','和德'], ['寅','呂申'], ['卯','高叢'], ['辰','太陽'], ['巽','大炅']],
