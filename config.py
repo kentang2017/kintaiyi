@@ -519,12 +519,11 @@ def taijun(taiyi_acumyear):
        return dict(zip(range(1,5), list("子午卯酉"))).get(int(f))
 #飛鳥
 def flybird(taiyi_acumyear):
-    f = taiyi_acumyear % 9
+    f = taiyi_acumyear % 8
     if f == 0:
-       fv = divide(taiyi_acumyear, 9)
-       return dict(zip(list(range(1,17)),gong1)).get(fv)
+       return dict(zip(list(range(1,17)),gong1)).get(f)
     else:
-       return dict(zip(range(1,10), [1,8,3,4,9,2,7,6])).get(int(f))
+       return dict(zip(range(1,9), [1,8,3,4,9,2,7,6])).get(int(f))
 #推太乙風雲飛鳥助戰法
 def flybird_wl(taiyi_acumyear, fb, hg, ag, hvg, avg, ty, wc, sj):
     #fb = flybird(taiyi_acumyear)
