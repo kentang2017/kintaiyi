@@ -583,12 +583,13 @@ def eightwind(taiyi_acumyear):
           return dict(zip(range(1,9), [2,3,4,6,7,8,9,1])).get(int(f % 9 ))
 #五福
 def wufu(taiyi_acumyear):
-    f = (taiyi_acumyear + 250) % 225 / 45
+    f = (taiyi_acumyear + 250) % 225 % 45
     #f = int(self.accnum(ji_style, taiyi_acumyear) + 250) % 225 / 45
-    fv = dict(zip(range(1,6), [1,3,9,7,5])).get(int(f))
-    if fv == 0 or fv is None:
-        fv = 5
-    return fv
+    if f > 5:
+        return f % 5
+    else:
+        fv = dict(zip(range(1,6), list("13975"))).get(int(f))
+        return fv
 #陽九
 def yangjiu(year, month, day):
     year = lunar_date_d(year, month, day).get("年")
