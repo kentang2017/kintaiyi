@@ -427,6 +427,7 @@ class Taiyi():
                  {config.wuxing(self.accnum(ji_style,taiyi_acumyear)):"五行"},
                  {config.kingfu(self.accnum(ji_style,taiyi_acumyear)):"帝符"},
                  {config.taijun(self.accnum(ji_style,taiyi_acumyear)):"太尊"},
+                 {config.wufu(self.accnum(ji_style,taiyi_acumyear)):"五福"},
                  #{self.ty_gong(ji_style, taiyi_acumyear):"太乙"},
                  {config.num2gong(self.home_general(ji_style, taiyi_acumyear)):"主大"},  
                  {config.num2gong(self.home_vgen(ji_style, taiyi_acumyear)):"主參"},
