@@ -479,13 +479,11 @@ def kingfu(taiyi_acumyear):
     #f = self.accnum(ji_style, taiyi_acumyear) % 20
     kingfu_num = taiyi_acumyear % 20
     if kingfu_num == 0:
-       king_fu = divide(taiyi_acumyear, 20)
-       king_fu_v = king_fu % 20
-       if king_fu_v > 16:
-           king_fu_v = king_fu_v - 16
-       return dict(zip(list(range(1,17)),gong1)).get(king_fu_v)
-    else:
-       return dict(zip(range(1,17), new_list(gong1, "戌"))).get(int(kingfu_num))
+       kingfu_num = divide(taiyi_acumyear, 20)
+       kingfu_num = kingfu_num % 20
+    if kingfu_num > 16:
+        kingfu_num = kingfu_num - 16
+    return dict(zip(range(1,17), new_list(gong1, "戌"))).get(int(kingfu_num))
 #天皇
 def tian_wang(taiyi_acumyear):
     tw = taiyi_acumyear % 20
@@ -557,17 +555,22 @@ def threewind(taiyi_acumyear):
        fv = divide(taiyi_acumyear, 9)
        return fv % 9 
     else:
-       if f >9:
-         f = f - 9
-       return dict(zip(range(1,9), [7,2,6,1,3,9,4,8])).get(int(f))
+       if f % 9 == 0:
+           return dict(zip(range(1,9), [7,2,6,1,3,9,4,8])).get(int(f/9))
+       elif f % 9 != 0:
+           return dict(zip(range(1,9), [7,2,6,1,3,9,4,8])).get(int(f % 9))
+    
 #五風
 def fivewind(taiyi_acumyear):
     f = taiyi_acumyear % 29
     if f == 0:
        fv = divide(taiyi_acumyear, 29)
-       return fv % 29
+       return fv % 29 
     else:
-       return dict(zip(range(1,10), [1,3,5,7,9,2,4,6,8])).get(int(f % 9 ))
+       if f % 9 == 0:
+           return dict(zip(range(1,10), [1,3,5,7,9,2,4,6,8])).get(int(f / 9 ))
+       elif f % 9 != 0:
+           return dict(zip(range(1,10), [1,3,5,7,9,2,4,6,8])).get(int(f % 9 ))
 #八風
 def eightwind(taiyi_acumyear):
     f = taiyi_acumyear % 9
@@ -575,11 +578,10 @@ def eightwind(taiyi_acumyear):
        fv = divide(taiyi_acumyear, 9)
        return fv % 9
     else:
-       if f >9:
-            f = f - 9
-       fv = dict(zip(range(1,9), [2,3,4,6,7,8,9,1])).get(int(f))
-      #f = self.accnum(ji_style, taiyi_acumyear) % 9
-    return fv
+       if f % 9 == 0:
+          return dict(zip(range(1,9), [2,3,4,6,7,8,9,1])).get(int(f / 9 ))
+       elif f % 9 != 0:
+          return dict(zip(range(1,9), [2,3,4,6,7,8,9,1])).get(int(f % 9 ))
 #五福
 def wufu(taiyi_acumyear):
     f = (taiyi_acumyear + 250) % 225 / 45
