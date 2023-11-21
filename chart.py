@@ -11,53 +11,62 @@ import re
 
 #第一層中間, 第二層八門
 def gen_chart(first_layer, second_layer, sixth_layer):
+    # ... [rest of your setup code remains the same]
     # Create an SVG drawing canvas
     d = draw.Drawing(390, 450, origin="center")
     # Set the donut's radii and number of divisions for each layer
-    inner_radius = 13
-    layer_gap = 45  # Gap between layers
+    inner_radius = 3
+    layer_gap = 31.5  # Gap between layers
     num_divisions = [1, 8, 16, 16]
     # Define the data for each layer
+    #general = dict(zip(list("貴蛇雀合勾龍空虎常玄陰后"),re.findall('..', '貴人螣蛇朱雀六合勾陳青龍天空白虎常侍玄武太陰太后')))
+    #skygeneral = [general.get(i) for i in skygeneral]
     data = [
         [first_layer],
         second_layer,
+        skygeneral,
          [['巳','大神','楚'], ['午','大威','荊州'], ['未','天道','秦'], ['坤','大武','梁州'], ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'], ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'], ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
         #[['巳','大神'], ['午','大威'], ['未','天道'], ['坤','大武'], ['申','武德'], ['酉','太簇'], ['戌','陰主'], ['乾','陰德'], ['亥','大義'], ['子','地主'], ['丑','陽德'], ['艮','和德'], ['寅','呂申'], ['卯','高叢'], ['辰','太陽'], ['巽','大炅']],
         #['楚', '荊州', '秦', '梁州', '晉', '趙雍', '魯', '冀州', '衛', '齊兗', '吳', '青州', '燕', '徐州', '鄭', '揚州'],
-        sixth_layer
+        sixth_layer,
+        twentyeight
     ]
     rotation_angle = 248
-    # Draw the donut chart
     for layer_index, divisions in enumerate(num_divisions):
         for division in range(divisions):
             start_angle = (360 / divisions) * division + rotation_angle
             end_angle = (360 / divisions) * (division + 1) + rotation_angle
             label = data[layer_index][division]
-    
-            # Calculate the layer's inner and outer radius
+
             inner = inner_radius + layer_index * layer_gap
             outer = inner_radius + (layer_index + 1) * layer_gap
-            path = draw.Path(stroke='white', stroke_width=1.88, fill='black')
-            path.M(inner * math.cos(math.radians(start_angle)), inner * math.sin(math.radians(start_angle)))  # Move to the start point on the inner radius
-            path.L(outer * math.cos(math.radians(start_angle)), outer * math.sin(math.radians(start_angle)))  # Line to the start point on the outer radius
-            path.A(outer, outer, 0, 0, 1, outer * math.cos(math.radians(end_angle)), outer * math.sin(math.radians(end_angle)))  # Arc to the end point on the outer radius
-            path.L(inner * math.cos(math.radians(end_angle)), inner * math.sin(math.radians(end_angle)))  # Line back to the start point on the inner radius
+
+            # Calculate start and end points for both inner and outer arcs
+            start_outer_x, start_outer_y = outer * math.cos(math.radians(start_angle)), outer * math.sin(math.radians(start_angle))
+            end_outer_x, end_outer_y = outer * math.cos(math.radians(end_angle)), outer * math.sin(math.radians(end_angle))
+            start_inner_x, start_inner_y = inner * math.cos(math.radians(start_angle)), inner * math.sin(math.radians(start_angle))
+            end_inner_x, end_inner_y = inner * math.cos(math.radians(end_angle)), inner * math.sin(math.radians(end_angle))
+
+            path = draw.Path(stroke='white', stroke_width=1.8, fill='black')
+            path.M(start_inner_x, start_inner_y)  # Move to the start point on the inner radius
+            path.L(start_outer_x, start_outer_y)  # Line to the start point on the outer radius
+            path.A(outer, outer, 0, 0, 1, end_outer_x, end_outer_y)  # Outer arc
+            path.L(end_inner_x, end_inner_y)  # Line to the end point on the inner radius
+            path.A(inner, inner, 0, 0, 0, start_inner_x, start_inner_y)  # Inner arc
             path.Z()  # Close the path
             d.append(path)
-    
+
             # Add labels to the pie slices
             label_x = (inner + outer) / 2 * math.cos(math.radians((start_angle + end_angle) / 2))
             label_y = (inner + outer) / 2 * math.sin(math.radians((start_angle + end_angle) / 2))
             #if divisions == 1:
             #    label_text = draw.Text(label, 8, label_x, label_y, center=1, fill='black')
             #else:
-            label_text = draw.Text(label, 9, label_x, label_y, center=1, fill='white')
+            label_text = draw.Text(label, 8, label_x, label_y, center=1, fill='white')
             d.append(label_text)
-    #center_text = draw.Text("a", 40, center_x, center_y, center=1, fill="#ffffff")
-    # Save the SVG file
-      # Change this angle to the desired rotation
-    return d.as_svg().replace('''<path d="M-4.86988571440686,-12.053390109368236 L-21.72718241812291,-53.776663564873665 A58,58,0,0,1,-21.727182418122876,-53.77666356487368 L-4.869885714406852,-12.053390109368237 Z" stroke="white" stroke-width="1.88" fill="black" />''', "")
+    # ... [rest of your code remains the same]
 
+    return d.as_svg().replace('''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
 
 #第一層中間, 第二層八門
 def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer):
