@@ -629,11 +629,10 @@ def smyo(taiyi_acumyear):
         small_yo = small_yo % 3
     if small_yo > 24:
         small_yo = small_yo % 24
-        if small_yo > 3:
-            small_yo = small_yo % 3
-    syv = dict(zip([1,2,3,4,6,7,8,9],range(1,9))).get(int(small_yo))
-    return syv
-
+    if small_yo % 3 != 0: 
+        return dict(zip([1,2,3,4,6,7,8,9],range(1,9))).get(int(small_yo % 3 ))
+    if small_yo % 3 == 0: 
+        return dict(zip([1,2,3,4,6,7,8,9],range(1,9))).get(int(small_yo / 3 ))
 #%% 三門五將
 #八門值事
 def eight_door(taiyi_acumyear):
