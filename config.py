@@ -585,7 +585,7 @@ def eightwind(taiyi_acumyear):
 def wufu(taiyi_acumyear):
     f = (taiyi_acumyear + 250) % 225 / 45
     #f = int(self.accnum(ji_style, taiyi_acumyear) + 250) % 225 / 45
-    fv = dict(zip(range(1,6), list("13975"))).get(int(f))
+    fv = dict(zip(range(1,6), [1,3,9,7,5])).get(int(f))
     if fv == 0 or fv is None:
         fv = 5
     return fv
