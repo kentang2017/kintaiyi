@@ -10,13 +10,13 @@ import math
 import re
 
 #第一層中間, 第二層八門
-def gen_chart(first_layer, second_layer,  sixth_layer):
+def gen_chart(first_layer, second_layer, sixth_layer):
     # Create an SVG drawing canvas
     d = draw.Drawing(390, 450, origin="center")
     # Set the donut's radii and number of divisions for each layer
     inner_radius = 13
     layer_gap = 45  # Gap between layers
-    num_divisions = [1, 9, 8, 16, 16]
+    num_divisions = [1, 8, 16, 16]
     # Define the data for each layer
     data = [
         [first_layer],
@@ -57,6 +57,7 @@ def gen_chart(first_layer, second_layer,  sixth_layer):
     # Save the SVG file
       # Change this angle to the desired rotation
     return d.as_svg().replace('''<path d="M-4.86988571440686,-12.053390109368236 L-21.72718241812291,-53.776663564873665 A58,58,0,0,1,-21.727182418122876,-53.77666356487368 L-4.869885714406852,-12.053390109368237 Z" stroke="white" stroke-width="1.88" fill="black" />''', "")
+
 
 #第一層中間, 第二層八門
 def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer):
