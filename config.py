@@ -589,7 +589,7 @@ def wufu(taiyi_acumyear):
         if f % 5 !=0:
             return dict(zip(range(1,6), list("13975"))).get(int(f / 5))
         else:
-            return f / 5
+            return int(f / 5)
     else:
         fv = dict(zip(range(1,6), list("13975"))).get(int(f))
         return fv
