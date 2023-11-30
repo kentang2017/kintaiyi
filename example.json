@@ -673,8 +673,8 @@
         }
       },{
          "media": {
-          "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang5.svg",
-          "caption": "<p style='color:white'>五局</p>"
+          "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang27.svg",
+          "caption": "<p style='color:white'>二十七局</p>"
         },
         "start_date": {
           "year": "990",
@@ -683,6 +683,32 @@
         "text": {
           "headline": "<p style='color:white'>楚芝蘭議建太一宮一事</p>",
           "text": "<p style='color:white'>《宋史 ‧ 方技 ‧ 楚芝蘭》楚芝蘭，汝州襄城人，初習《三禮》，忽自言遇有道之士，教以符天、六壬、遁甲之術。屬朝廷博求方技，詣闕自薦，得錄為學生。以占候有據，擢為翰林天文。授樂源縣主簿，遷司天春官正、判司天監事。占者言五福太一臨吳分，當於蘇州建太一祠。芝蘭獨上言：「京師帝王之都，百神所集。且今京城東南一舍地名蘇村，若於此為五福太一建宮，萬乘可以親謁，有司便於祗事，何為遠趨江外，以蘇臺為吳分乎？」輿論不能奪，遂從其議，仍令同定本宮四時祭祀儀及醮法。宮成，特遷尚書工部員外郎，賜五品服。淳化初，與馬韶同判監，俱坐事，芝蘭出為遂平令。卒，年六十。錄其子繼芳為城父縣主簿。 </p>"
+        }
+      },{
+         "media": {
+          "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang33.svg",
+          "caption": "<p style='color:white'>三十三局</p>"
+        },
+        "start_date": {
+          "year": "990",
+          "month":""
+        },
+        "text": {
+          "headline": "<p style='color:white'>苗守信以太乙論安危</p>",
+          "text": "<p style='color:white'>《宋史 ‧ 方技 ‧ 苗訓》子苗守信論安危。至道二年，上以梁、雍宿兵，彌歲凶歉，心憂之，令宰相召守信問以天道咎證所在。守信奏曰：臣仰瞻玄象，及推驗太一經歷宮分，其荊楚、吳越、交廣並皆安寧。自來五緯陵犯、彗星見及水神太一臨井鬼之間，屬秦、雍分及梁、益之地，民罹其災。水神太一來歲入燕分，歲在房心，正當京都之地，自茲朝野有慶。詔付史館。明年，真授少監。咸平三年卒，年四十六。子舜卿，為國子博士。 </p>"
+        }
+      },{
+         "media": {
+          "url": "https://raw.githubusercontent.com/kentang2017/kintaiyi/9b29c15645dd1237408ee51e2790daf7f9ef3d90/kook/yang6.svg",
+          "caption": "<p style='color:white'>六局</p>"
+        },
+        "start_date": {
+          "year": "1041",
+          "month":""
+        },
+        "text": {
+          "headline": "<p style='color:white'>徐復論對西夏用兵</p>",
+          "text": "<p style='color:white'>《浙江通志》徐復論對西夏用兵。徐復，字希顏，本莆田人，久游吳中，因家杭州，精<易>通流衍卦氣之法，遁甲占射諸家之說。宋康定中，元昊叛，詔求有文武材可用者。宋綬，林瑀以復薦。召見，問以天時人事。復舉京房易卦推所配年月日，謂時當<小過>，剛失位而不中，宜在強君德。問西方用兵如何? 復對'太乙守中宮，兵宜內不宜外'。帝善其言。 </p>"
         }
       }
     ]
