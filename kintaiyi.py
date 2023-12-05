@@ -658,7 +658,7 @@ class Taiyi():
         return {
                 "太乙計":config.taiyi_name(ji_style),
                 "太乙公式類別":config.ty_method(taiyi_acumyear),
-                "公元日期":config.gendatetime(self.year, self.month, self.day, self.hour),
+                "公元日期":config.gendatetime(self.year, self.month, self.day, self.hour, self.minute),
                 "干支":gangzhi(self.year, self.month, self.day, self.hour, self.minute),
                 "農曆":config.lunar_date_d(self.year, self.month, self.day),
                 "年號":kingyear(config.lunar_date_d(self.year, self.month, self.day).get("年")),
