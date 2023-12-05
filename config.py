@@ -299,8 +299,8 @@ def new_list(olist, o):
     res1 = olist[a:] + olist[:a]
     return res1
 
-def gendatetime(year, month, day, hour):
-    return "{}年{}月{}日{}時".format(year, month, day, hour)
+def gendatetime(year, month, day, hour, minute):
+    return "{}年{}月{}日{}時{}分".format(year, month, day, hour, minute)
 
 def repeat_list(n, thelist):
     return [repetition for i in thelist for repetition in repeat(i,n)]
