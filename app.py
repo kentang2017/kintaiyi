@@ -120,7 +120,7 @@ with pan:
                 home_vs_away1 = ty.wc_n_sj(num,tn)
                 home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
                 ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
-                gz = "{}年 {}月 {}日 {}時".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3])
+                gz = "{}年 {}月 {}日 {}時 {}分".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3], ttext.get("干支")[4])
                 lunard = "{}{}月{}日".format(  cn2an.transform(str(config.lunar_date_d(my, mm, md).get("年"))+"年", "an2cn"), an2cn(config.lunar_date_d(my, mm, md).get("月")), an2cn(config.lunar_date_d(my, mm, md).get("日")))
                 ch = chistory.get(my)
                 if num == 3:
