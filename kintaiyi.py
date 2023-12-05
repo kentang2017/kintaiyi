@@ -472,11 +472,9 @@ class Taiyi():
                      ]
         if ji_style == 4:
             dict1 = [{self.skyeyes(ji_style, taiyi_acumyear):"文昌"},
-                     {self.taishui(ji_style):"太歲"},
                      {self.hegod(ji_style):"合神"},
                      {self.jigod(ji_style):"計神"},
                      {self.sf(ji_style, taiyi_acumyear):"始擊"},
-                     {self.se(ji_style, taiyi_acumyear):"定計"}, 
                      {self.kingbase(ji_style, taiyi_acumyear):"君基"}, 
                      {self.officerbase(ji_style, taiyi_acumyear):"臣基"}, 
                      {self.pplbase(ji_style, taiyi_acumyear):"民基"},
@@ -486,7 +484,6 @@ class Taiyi():
                      {self.zhifu(ji_style, taiyi_acumyear):"直符"},
                      {self.flyfu(ji_style, taiyi_acumyear):"飛符"},
                      {config.tian_wang(self.accnum(ji_style,taiyi_acumyear)):"天皇"},
-                     {config.tian_shi(self.accnum(ji_style,taiyi_acumyear)):"天時"},
                      {config.wuxing(self.accnum(ji_style,taiyi_acumyear)):"五行"},
                      {config.kingfu(self.accnum(ji_style,taiyi_acumyear)):"帝符"},
                      {config.taijun(self.accnum(ji_style,taiyi_acumyear)):"太尊"},
