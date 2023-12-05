@@ -278,6 +278,8 @@ class Taiyi():
             return sum(wc_order[: wc_order.index(taiyi)])
         if wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and taiyi == wc_num:
             return taiyi
+        else:
+            return taiyi
 
     def home_general(self, ji_style, taiyi_acumyear):
         """主大將"""
