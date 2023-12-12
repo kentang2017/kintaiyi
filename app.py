@@ -80,10 +80,11 @@ with st.sidebar:
     idate = st.text_input('輸入日期(如: 1997/8/8)', '')
     itime = st.text_input('輸入時間(如: 18:30)', '').replace("︰",":")
     #itime=st.time_input("時間",pdlm.now(tz='Asia/Shanghai').time())
-    option = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '))
+    option = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 ', ' 太乙命法 '))
     acum = st.selectbox( '太乙積年數', (' 太乙統宗 ', ' 太乙金鏡 ', ' 太乙淘金歌 ', ' 太乙局 '))
-    num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 '],[0,1,2,3,4])).get(option)
-    tn = dict(zip([' 太乙統宗 ', ' 太乙金鏡 ', ' 太乙淘金歌 ',' 太乙局 '],[0,1,2,3])).get(acum)
+    sex_o = st.selectbox( '太乙命法性別', (' 男 ', ' 女 '))
+    num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 ', ' 太乙命法 '],[0,1,2,3,4,5])).get(option)
+    tn = dict(zip([' 太乙統宗 ', ' 太乙金鏡 ', ' 太乙淘金歌 ',' 太乙局 ' ],[0,1,2,3])).get(acum)
     manual = st.button('手動盤')
     instant = st.button('即時盤')
 
@@ -106,7 +107,10 @@ with pan:
                 kook = ty.kook(num,tn)
                 homecal = ty.home_cal(num, tn)
                 awaycal = ty.away_cal(num, tn)
-                genchart = ty.gen_gong(num, tn)
+                if num != 5:
+                    genchart = ty.gen_gong(num, tn)
+                if num == 5:
+                    genchart = ty.gen_life_gong(sex_o)
                 ed = ttext.get("八門值事")
                 yc = ty.year_chin()
                 yj = ttext.get("陽九")
