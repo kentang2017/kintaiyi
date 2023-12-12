@@ -103,40 +103,40 @@ with pan:
                 mh = int(pp[0])
                 mmin = int(pp[1])
                 ty = kintaiyi.Taiyi(my,mm,md,mh,mmin)
+                ttext = ty.pan(num,tn)
+                kook = ty.kook(num,tn)
+                homecal = ty.home_cal(num, tn)
+                awaycal = ty.away_cal(num, tn)
+                genchart = ty.gen_gong(num, tn)
+                ed = ttext.get("八門值事")
+                yc = ty.year_chin()
+                yj = ttext.get("陽九")
+                bl = ttext.get("百六")
+                g = ty.yeargua(tn)
+                year_predict = "太歲" + yc  +"值宿，"+ su_dist.get(yc)
+                sj_su_predict = "始擊落"+ ty.sf_num(num,tn)+ "宿，"+ su_dist.get(ty.sf_num(num,tn))
+                tg_sj_su_predict = config.multi_key_dict_get (tengan_shiji, config.gangzhi(my,mm,md,mh,min)[0][0]).get(config.Ganzhiwuxing(ty.sf(num,tn)))
+                three_door = ty.threedoors(num,tn)
+                five_generals = ty.fivegenerals(num,tn)
+                home_vs_away1 = ty.wc_n_sj(num,tn)
+                home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
+                ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
+                gz = "{}年 {}月 {}日 {}時 {}分".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3], ttext.get("干支")[4])
+                lunard = "{}{}月{}日".format(  cn2an.transform(str(config.lunar_date_d(my, mm, md).get("年"))+"年", "an2cn"), an2cn(config.lunar_date_d(my, mm, md).get("月")), an2cn(config.lunar_date_d(my, mm, md).get("日")))
+                ch = chistory.get(my)
+                if num == 3:
+                   tynum = ty.accnum(num,tn)
+                else: 
+                   tynum = ty.accnum(num,tn)
+                if ch == None:
+                   ch = ""
+                r = list(map(lambda x:[x, x+25]  ,list(range(0,3000)[0::25])))
+                tys = "".join([ts[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ts) / 25+1))])
+                if ttext.get("局式").get("文")[0] == "陽":
+                    yy = "yang"
+                else:
+                    yy = "yin"
                 if num != 5:
-                    ttext = ty.pan(num,tn)
-                    kook = ty.kook(num,tn)
-                    homecal = ty.home_cal(num, tn)
-                    awaycal = ty.away_cal(num, tn)
-                    genchart = ty.gen_gong(num, tn)
-                    ed = ttext.get("八門值事")
-                    yc = ty.year_chin()
-                    yj = ttext.get("陽九")
-                    bl = ttext.get("百六")
-                    g = ty.yeargua(tn)
-                    year_predict = "太歲" + yc  +"值宿，"+ su_dist.get(yc)
-                    sj_su_predict = "始擊落"+ ty.sf_num(num,tn)+ "宿，"+ su_dist.get(ty.sf_num(num,tn))
-                    tg_sj_su_predict = config.multi_key_dict_get (tengan_shiji, config.gangzhi(my,mm,md,mh,min)[0][0]).get(config.Ganzhiwuxing(ty.sf(num,tn)))
-                    three_door = ty.threedoors(num,tn)
-                    five_generals = ty.fivegenerals(num,tn)
-                    home_vs_away1 = ty.wc_n_sj(num,tn)
-                    home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
-                    ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
-                    gz = "{}年 {}月 {}日 {}時 {}分".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3], ttext.get("干支")[4])
-                    lunard = "{}{}月{}日".format(  cn2an.transform(str(config.lunar_date_d(my, mm, md).get("年"))+"年", "an2cn"), an2cn(config.lunar_date_d(my, mm, md).get("月")), an2cn(config.lunar_date_d(my, mm, md).get("日")))
-                    ch = chistory.get(my)
-                    if num == 3:
-                       tynum = ty.accnum(num,tn)
-                    else: 
-                       tynum = ty.accnum(num,tn)
-                    if ch == None:
-                       ch = ""
-                    r = list(map(lambda x:[x, x+25]  ,list(range(0,3000)[0::25])))
-                    tys = "".join([ts[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ts) / 25+1))])
-                    if ttext.get("局式").get("文")[0] == "陽":
-                        yy = "yang"
-                    else:
-                        yy = "yin"
                     #st.image("https://raw.githubusercontent.com/kentang2017/kintaiyi/a76abf4958ea48accb1f3b8b8c7cfd96710ea67f/kook/"+yy+str(ttext.get("局式").get("數"))+".svg")
                     render_svg(genchart)
                     with st.expander("解釋"):
@@ -181,40 +181,40 @@ with pan:
             h = now.hour
             min = now.minute
             ty = kintaiyi.Taiyi(y,m,d,h,min)
+            ttext = kintaiyi.Taiyi(y,m,d,h,min).pan(num,tn)
+            kook = kintaiyi.Taiyi(y,m,d,h,min).kook(num,tn)
+            genchart = ty.gen_gong(num, tn)
+            homecal = ty.home_cal(num, tn)
+            awaycal = ty.away_cal(num, tn)
+            ed = ttext.get("八門值事")
+            yc = ty.year_chin()
+            g = ty.yeargua(tn)
+            year_predict = "太歲" + yc  +"值宿，"+ su_dist.get(yc)
+            sj_su_predict = "始擊落"+ ty.sf_num(num,tn)+ "宿，"+ su_dist.get(ty.sf_num(num,tn))
+            tg_sj_su_predict = config.multi_key_dict_get (tengan_shiji, config.gangzhi(y,m,d,h,min)[0][0]).get(config.Ganzhiwuxing(ty.sf(num,tn)))
+            three_door = ty.threedoors(num,tn)
+            five_generals = ty.fivegenerals(num,tn)
+            home_vs_away1 = ty.wc_n_sj(num,tn)
+            home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
+            if num == 3:
+               tynum = ty.accnum(num,tn)
+            else: 
+               tynum = ty.accnum(num,tn)
+            yj = ttext.get("陽九")
+            bl = ttext.get("百六")
+            ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
+            gz = "{}年 {}月 {}日 {}時 {}分".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3], ttext.get("干支")[4])
+            lunard = "{}{}月{}日".format(  cn2an.transform(str(config.lunar_date_d(y, m, d).get("年"))+"年", "an2cn"), an2cn(config.lunar_date_d(y, m, d).get("月")), an2cn(config.lunar_date_d(y, m, d).get("日")))
+            ch = chistory.get(y)
+            if ch == None:
+               ch = ""
+            r = list(map(lambda x:[x, x+25]  ,list(range(0,3000)[0::25])))
+            tys = "".join([ts[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ts) / 25+1))])
+            if ttext.get("局式").get("文")[0] == "陽":
+                yy = "yang"
+            else:
+                yy = "yin"
             if num != 5:
-                ttext = kintaiyi.Taiyi(y,m,d,h,min).pan(num,tn)
-                kook = kintaiyi.Taiyi(y,m,d,h,min).kook(num,tn)
-                genchart = ty.gen_gong(num, tn)
-                homecal = ty.home_cal(num, tn)
-                awaycal = ty.away_cal(num, tn)
-                ed = ttext.get("八門值事")
-                yc = ty.year_chin()
-                g = ty.yeargua(tn)
-                year_predict = "太歲" + yc  +"值宿，"+ su_dist.get(yc)
-                sj_su_predict = "始擊落"+ ty.sf_num(num,tn)+ "宿，"+ su_dist.get(ty.sf_num(num,tn))
-                tg_sj_su_predict = config.multi_key_dict_get (tengan_shiji, config.gangzhi(y,m,d,h,min)[0][0]).get(config.Ganzhiwuxing(ty.sf(num,tn)))
-                three_door = ty.threedoors(num,tn)
-                five_generals = ty.fivegenerals(num,tn)
-                home_vs_away1 = ty.wc_n_sj(num,tn)
-                home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
-                if num == 3:
-                   tynum = ty.accnum(num,tn)
-                else: 
-                   tynum = ty.accnum(num,tn)
-                yj = ttext.get("陽九")
-                bl = ttext.get("百六")
-                ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
-                gz = "{}年 {}月 {}日 {}時 {}分".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3], ttext.get("干支")[4])
-                lunard = "{}{}月{}日".format(  cn2an.transform(str(config.lunar_date_d(y, m, d).get("年"))+"年", "an2cn"), an2cn(config.lunar_date_d(y, m, d).get("月")), an2cn(config.lunar_date_d(y, m, d).get("日")))
-                ch = chistory.get(y)
-                if ch == None:
-                   ch = ""
-                r = list(map(lambda x:[x, x+25]  ,list(range(0,3000)[0::25])))
-                tys = "".join([ts[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ts) / 25+1))])
-                if ttext.get("局式").get("文")[0] == "陽":
-                    yy = "yang"
-                else:
-                    yy = "yin"
                 render_svg(genchart)
                 with st.expander("解釋"):
                 # Create a button to trigger the pop-up
