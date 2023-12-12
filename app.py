@@ -82,7 +82,7 @@ with st.sidebar:
     #itime=st.time_input("時間",pdlm.now(tz='Asia/Shanghai').time())
     option = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 ', ' 太乙命法 '))
     acum = st.selectbox( '太乙積年數', (' 太乙統宗 ', ' 太乙金鏡 ', ' 太乙淘金歌 ', ' 太乙局 '))
-    sex_o = st.selectbox( '太乙命法性別', (' 男 ', ' 女 '))
+    sex_o = st.selectbox( '太乙命法性別', ('男', '女'))
     num = dict(zip([' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 ', ' 太乙命法 '],[0,1,2,3,4,5])).get(option)
     tn = dict(zip([' 太乙統宗 ', ' 太乙金鏡 ', ' 太乙淘金歌 ',' 太乙局 ' ],[0,1,2,3])).get(acum)
     manual = st.button('手動盤')
