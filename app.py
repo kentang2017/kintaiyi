@@ -181,7 +181,10 @@ with pan:
             ty = kintaiyi.Taiyi(y,m,d,h,min)
             ttext = kintaiyi.Taiyi(y,m,d,h,min).pan(num,tn)
             kook = kintaiyi.Taiyi(y,m,d,h,min).kook(num,tn)
-            genchart = ty.gen_gong(num, tn)
+            if num != 5:
+                genchart = ty.gen_gong(num, tn)
+            if num == 5:
+                genchart = ty.gen_life_gong(sex_o)
             homecal = ty.home_cal(num, tn)
             awaycal = ty.away_cal(num, tn)
             ed = ttext.get("八門值事")
