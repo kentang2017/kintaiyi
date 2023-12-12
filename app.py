@@ -166,7 +166,7 @@ with pan:
                 if num == 5:
                     genchart = ty.gen_life_gong(sex_o)
                     render_svg(genchart)
-                    print("{} | 積{}數︰{} | \n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | \n紀元︰{} | 主筭︰{} 客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n ".format(config.gendatetime(my,mm,md,mh,mmin), config.taiyi_name(num)[0],tynum, lunard, jieqi.jq(my,mm,md,mh,mmin),gz, config.kingyear(my), config.ty_method(tn), config.taiyi_name(num), ty.kook(num, tn).get("文") ,ttext.get("局式").get("年"),   ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(my, mm, md).get("年"))  ))
+                    print("{} | 積{}數︰{} | \n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | \n | 主筭︰{} 客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 |".format(config.gendatetime(my,mm,md,mh,mmin), config.taiyi_name(num)[0],tynum, lunard, jieqi.jq(my,mm,md,mh,mmin),gz, config.kingyear(my), config.ty_method(tn), config.taiyi_name(num), ty.kook(num, tn).get("文"),ttext.get("局式").get("年"),    homecal, awaycal, yc, ed, g  ))
                 else:
                     output5 = st.empty()
         except ValueError:
@@ -247,7 +247,7 @@ with pan:
             if num == 5:
                 genchart = ty.gen_life_gong(sex_o)
                 render_svg(genchart)
-                print("{} | 積{}數︰{} |\n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) |\n紀元︰{} | 主筭︰{} 客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n".format(config.gendatetime(y,m,d,h,min),config.taiyi_name(num)[0],tynum, lunard, jieqi.jq(y,m,d,h,min), gz, config.kingyear(y), config.ty_method(tn), config.taiyi_name(num), ty.kook(num, tn).get("文"), ttext.get("局式").get("年"),  ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(y, m, d).get("年")) ))
+                print("{} | 積{}數︰{} | \n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | \n | 主筭︰{} 客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 |".format(config.gendatetime(my,mm,md,mh,mmin), config.taiyi_name(num)[0],tynum, lunard, jieqi.jq(my,mm,md,mh,mmin),gz, config.kingyear(my), config.ty_method(tn), config.taiyi_name(num), ty.kook(num, tn).get("文"),ttext.get("局式").get("年"),    homecal, awaycal, yc, ed, g  ))
                 
             
       
