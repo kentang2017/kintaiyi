@@ -685,7 +685,59 @@ class Taiyi():
         eightdoors = dict(zip(k,v))
         eightddors_status = dict(zip(k, list(jieqi.gong_wangzhuai().values())))
         return [[i,eightdoors.get(i)+"門", eightddors_status.get(i)] for i in new_list(list(eightdoors.keys()), "二")]
-        
+
+    def taiyi_life(self, sex):
+        twelve_gongs = "命宮,兄弟,妻妾,子孫,財帛,田宅,官祿,奴僕,疾厄,福德,相貌,父母".split(",")
+        gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
+        yz = gz[0][1]
+        mz = gz[1][1]
+        num = di_zhi.index(yz)
+        yy = multi_key_dict_get({tuple(di_zhi[0::2]):"陽", tuple(di_zhi[1::2]):"陰"}, yz)
+        direction =  multi_key_dict_get({("男陽","女陰"):"順", ("男陰", "女陽"):"逆"}, sex+yy)
+        arrangelist = {"順":new_list(new_list(di_zhi,yz), mz), "逆":new_list(list(reversed(new_list(di_zhi,yz))), mz)}.get(direction)
+        pan = {
+                "性別":"{}{}".format(yy,sex),
+                "出生日期":config.gendatetime(self.year, self.month, self.day, self.hour, self.minute),
+                "出生干支":gangzhi(self.year, self.month, self.day, self.hour, self.minute),
+                "農曆":config.lunar_date_d(self.year, self.month, self.day),
+                "紀元":self.jiyuan(0,0),
+                "太歲":self.taishui(0),
+                "命局":self.kook(0,0),
+                "十二命宮排列":dict(zip(arrangelist, twelve_gongs)),
+                "陽九":config.yangjiu(self.year, self.month, self.day),
+                "百六":config.baliu(self.year, self.month, self.day),
+                "太乙落宮":self.ty(0,0),
+                "太乙":self.ty_gong(0,0),
+                "天乙":self.skyyi(0,0),
+                "地乙":self.earthyi(0,0),
+                "四神":self.fgd(0,0),
+                "直符":self.zhifu(0,0),
+                "文昌":[self.skyeyes(0,0), self.skyeyes_des(0,0)],
+                "始擊":self.sf(0,0),
+                "主算":[self.home_cal(0,0), config.cal_des(self.home_cal(0,0))],
+                "主將":self.home_general(0,0),
+                "主參":self.home_vgen(0,0),
+                "客算":[self.away_cal(0,0), config.cal_des(self.away_cal(0,0))],
+                "客將":self.away_general(0,0),
+                "客參":self.away_vgen(0,0),
+                "定算":[self.set_cal(0,0), config.cal_des(self.set_cal(0,0))],
+                "合神":self.hegod(0),
+                "計神":self.jigod(0),
+                "定目":self.se(0,0),
+                "君基":self.kingbase(0,0),
+                "臣基":self.officerbase(0,0),
+                "民基":self.pplbase(0,0),
+                "五福":config.wufu(self.accnum(0,0)),
+                "帝符":config.kingfu(self.accnum(0,0)),
+                "太尊":config.taijun(self.accnum(0,0)),
+                "飛鳥":config.flybird(self.accnum(0,0)),
+                "三風":config.threewind(self.accnum(0,0)),
+                "五風":config.fivewind(self.accnum(0,0)),
+                "八風":config.eightwind(self.accnum(0,0)),
+                "大游":config.bigyo(self.accnum(0,0)),
+                "小游":config.smyo(self.accnum(0,0))}
+        return pan
+    
     def pan(self, ji_style, taiyi_acumyear):
         """起盤詳細內容"""
         return {
