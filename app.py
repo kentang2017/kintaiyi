@@ -125,6 +125,7 @@ with pan:
                     three_door = ty.threedoors(0, 0)
                     five_generals = ty.fivegenerals(0, 0)
                     home_vs_away1 = ty.wc_n_sj(0, 0)
+                    zhao = {"男":"乾造","女":"坤造"}.get(sex_o)
                 ed = ttext.get("八門值事")
                 yc = ty.year_chin()
                 yj = ttext.get("陽九")
@@ -180,7 +181,7 @@ with pan:
                 if num != 5:
                     print("{} | 積{}數︰{} | \n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | \n紀元︰{} | 主筭︰{} 客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n ".format(config.gendatetime(my,mm,md,mh,mmin), config.taiyi_name(num)[0],tynum, lunard, jieqi.jq(my,mm,md,mh,mmin),gz, config.kingyear(my), config.ty_method(tn), config.taiyi_name(num), ty.kook(num, tn).get("文") ,ttext.get("局式").get("年"),   ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(my, mm, md).get("年"))  ))
                 if num == 5:
-                    print("{} {} | 積{}數︰{} | \n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | \n紀元︰{} | 主筭︰{} 客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n ".format(config.gendatetime(my,mm,md,mh,mmin), ty.taiyi_life(sex_o).get("性別") ,config.taiyi_name(0)[0],tynum, lunard, jieqi.jq(my,mm,md,mh,mmin),gz, config.kingyear(my), config.ty_method(0), config.taiyi_name(0), ty.kook(0,0).get("文") ,ttext.get("局式").get("年"),   ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(my, mm, md).get("年"))  ))
+                    print("{} {}-{} | 積{}數︰{} | \n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | \n紀元︰{} | 主筭︰{} 客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n ".format(config.gendatetime(my,mm,md,mh,mmin), zhao,ty.taiyi_life(sex_o).get("性別") ,config.taiyi_name(0)[0],tynum, lunard, jieqi.jq(my,mm,md,mh,mmin),gz, config.kingyear(my), config.ty_method(0), config.taiyi_name(0), ty.kook(0,0).get("文") ,ttext.get("局式").get("年"),   ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(my, mm, md).get("年"))  ))
             else:
                 output5 = st.empty()
         except ValueError:
@@ -217,6 +218,7 @@ with pan:
                 three_door = ty.threedoors(0, 0)
                 five_generals = ty.fivegenerals(0, 0)
                 home_vs_away1 = ty.wc_n_sj(0, 0)
+                zhao = {"男":"乾造","女":"坤造"}.get(sex_o)
             ed = ttext.get("八門值事")
             yc = ty.year_chin()
             g = ty.yeargua(tn)
@@ -274,7 +276,7 @@ with pan:
             if num != 5:
                 print("{} | 積{}數︰{} |\n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) |\n紀元︰{} | 主筭︰{} 客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n".format(config.gendatetime(y,m,d,h,min),config.taiyi_name(num)[0],tynum, lunard, jieqi.jq(y,m,d,h,min), gz, config.kingyear(y), config.ty_method(tn), config.taiyi_name(num), ty.kook(num, tn).get("文"), ttext.get("局式").get("年"),  ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(y, m, d).get("年")) ))
             if num == 5:
-                print("{} {} | 積{}數︰{} |\n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) |\n紀元︰{} | 主筭︰{} 客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n".format(config.gendatetime(y,m,d,h,min),config.taiyi_name(0)[0], ty.taiyi_life(sex_o).get("性別") ,tynum, lunard, jieqi.jq(y,m,d,h,min), gz, config.kingyear(y), config.ty_method(0), config.taiyi_name(0), ty.kook(0, 0).get("文"), ttext.get("局式").get("年"),  ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(y, m, d).get("年")) ))
+                print("{} {}-{}| 積{}數︰{} |\n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) |\n紀元︰{} | 主筭︰{} 客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n".format(config.gendatetime(y,m,d,h,min),config.taiyi_name(0)[0], zhao,ty.taiyi_life(sex_o).get("性別") ,tynum, lunard, jieqi.jq(y,m,d,h,min), gz, config.kingyear(y), config.ty_method(0), config.taiyi_name(0), ty.kook(0, 0).get("文"), ttext.get("局式").get("年"),  ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(y, m, d).get("年")) ))
 
         
 with connect:
