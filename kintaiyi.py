@@ -598,12 +598,11 @@ class Taiyi():
 
     def kingbase(self, ji_style, taiyi_acumyear):
         """君基"""
-        king_base = (self.accnum(ji_style, taiyi_acumyear) +250) % 360
-        if king_base > 12:
-            king_base = king_base - 12 
-        kb_v = dict(zip(range(1,13), config.new_list(di_zhi, "午"))).get(int(king_base))
-        return kb_v
-
+        king_base = (self.accnum(ji_style, taiyi_acumyear) +250) % 360 // 30
+        if king_base == 0:
+            king_base = 1
+        return  dict(zip(range(1,13), config.new_list(di_zhi, "午"))).get(int(king_base))
+        
     def officerbase(self, ji_style, taiyi_acumyear):
         """臣基"""
         return dict(zip(range(1,73), cycle(config.officer_base))).get(self.kook(ji_style, taiyi_acumyear).get("數"))
