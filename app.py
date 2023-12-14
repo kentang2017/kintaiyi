@@ -178,6 +178,8 @@ with pan:
                     st.markdown("推太乙風雲飛鳥助戰︰"+ home_vs_away3)
                     if num == 5:
                         st.markdown("太乙人道命法各宮︰"+str(ty.gongs_discription(sex_o)))
+                    if num != 5:
+                        st.markdown("")
                     #st.title("九宮分野︰")
                     #st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
                 if num != 5:
@@ -275,6 +277,8 @@ with pan:
                 st.markdown("推太乙風雲飛鳥助戰︰"+ home_vs_away3)
                 if num == 5:
                     st.markdown("太乙人道命法各宮︰"+str(ty.gongs_discription(sex_o)))
+                if num != 5:
+                    st.markdown("")
                 #st.title("九宮分野︰")
                 #st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
             if num != 5:
