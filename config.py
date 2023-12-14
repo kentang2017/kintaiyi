@@ -637,6 +637,7 @@ def smyo(taiyi_acumyear):
         small_yo = small_yo % 3
     if small_yo > 24:
         small_yo = small_yo % 24
+        return small_yo
     if small_yo % 3 != 0: 
         return dict(zip([1,2,3,4,6,7,8,9],range(1,9))).get(int(small_yo % 3 ))
     if small_yo % 3 == 0: 
