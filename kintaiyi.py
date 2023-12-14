@@ -527,7 +527,7 @@ class Taiyi():
                  {self.fgd(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"四神"},
                  {self.skyyi(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"天乙"},
                  {self.earthyi(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"地乙"},
-                 {self.flyfu(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"飛符"},
+                 {self.flyfu1(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"飛符"},
                  {config.num2gong_life(config.wufu(self.accnum(ji_style,taiyi_acumyear))).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"五福"},
                  {config.num2gong_life(self.home_general(ji_style, taiyi_acumyear)).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"主大"},  
                  {config.num2gong_life(self.home_vgen(ji_style, taiyi_acumyear)).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"主參"},
@@ -633,6 +633,14 @@ class Taiyi():
         fly_fu = dict(zip(range(1,13), config.new_list(di_zhi, "辰"))).get(int(fly))
         if fly_fu == 0 or fly_fu is None:
             fly_fu = "中"
+        return fly_fu
+
+    def flyfu1(self, ji_style, taiyi_acumyear):
+        """飛符"""
+        fly = self.accnum(ji_style, taiyi_acumyear) % 360 % 36 / 3
+        fly_fu = dict(zip(range(1,13), config.new_list(di_zhi, "辰"))).get(int(fly))
+        if fly_fu == 0 or fly_fu is None:
+            fly_fu = "辰"
         return fly_fu
 
     def ty_gong_dist(self, ji_style, taiyi_acumyear):
