@@ -575,6 +575,21 @@ class Taiyi():
         sg = list(res.values())
         return chart.gen_chart_life( list(self.sixteen_gong1(4,0).values())[-1], sg, list(self.sixteen_gong1(4,0).values())[:-1])
 
+    def gongs_discription(self, sex):
+        sixteengongs = self.sixteen_gong1(4,0)
+        t = self.gen_life_gong1(sex)[1]
+        stars = self.gen_life_gong1(sex)[2]
+        graph_gongs = ['巳', '午', '未', '申', '酉', '戌', '亥', '子', '丑', '寅','卯', '辰']
+        alld =  dict(zip(t, stars))
+        #cc = [twelve_gong_stars.get(i) for i in t]
+        combined_dict = {}
+        for category, subcategories in alld.items():
+            combined_dict[category] = []
+            for subcategory in subcategories:
+                if subcategory in twelve_gong_stars[category]:
+                    combined_dict[category].append(twelve_gong_stars[category][subcategory])
+        return combined_dict
+            
     def year_chin(self):
         """太歲禽星"""
         chin_28_stars_code = dict(zip(range(1,29), su))
