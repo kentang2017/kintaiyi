@@ -551,7 +551,7 @@ class Taiyi():
         rres = str(res.values())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
         rrres = [re.findall("..", i) for i in rres]
         overall = str(res.keys())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
-        return {overall[i]:rrres[i] for i in range(0,17)}
+        return {overall[i]:rrres[i] for i in range(0,13)}
            
     def gen_gong(self, ji_style, taiyi_acumyear):
         if ji_style !=3:
