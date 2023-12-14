@@ -573,9 +573,8 @@ class Taiyi():
         dict1 = self.taiyi_life(sex).get("十二命宮排列")
         res.update(dict1)
         sg = list(res.values())
-        return chart.gen_chart_life( list(self.sixteen_gong1(0,0).values())[-1], sg, list(self.sixteen_gong1( 0,0).values())[:-1])
+        return chart.gen_chart_life( list(self.sixteen_gong1(3,0).values())[-1], sg, list(self.sixteen_gong1(3,0).values())[:-1])
 
-    
     def year_chin(self):
         """太歲禽星"""
         chin_28_stars_code = dict(zip(range(1,29), su))
