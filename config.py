@@ -307,6 +307,9 @@ def repeat_list(n, thelist):
 
 def num2gong(num):
     return dict(zip(range(1,10), list("乾午艮卯中酉坤子巽"))).get(num)
+      
+def num2gong_life(num):
+    return dict(zip(range(1,10), list("乾午艮卯辰酉坤子巽"))).get(num)
 
 def taiyi_name(ji_style):
     return {0:"年計", 1:"月計", 2:"日計", 3:"時計", 4:"分計"}.get(ji_style)
