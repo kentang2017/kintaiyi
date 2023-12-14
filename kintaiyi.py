@@ -515,6 +515,43 @@ class Taiyi():
         rrres = [re.findall("..", i) for i in rres]
         overall = str(res.keys())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
         return {overall[i]:rrres[i] for i in range(0,17)}
+
+    def sixteen_gong1(self, ji_style, taiyi_acumyear):
+        """十六星分佈"""
+        dict1 = [{self.skyeyes(ji_style, taiyi_acumyear):"文昌"},
+                 {self.jigod(ji_style):"計神"},
+                 {self.sf(ji_style, taiyi_acumyear):"始擊"},
+                 {self.kingbase(ji_style, taiyi_acumyear):"君基"}, 
+                 {self.officerbase(ji_style, taiyi_acumyear):"臣基"}, 
+                 {self.pplbase(ji_style, taiyi_acumyear):"民基"},
+                 {self.fgd(ji_style, taiyi_acumyear):"四神"},
+                 {self.skyyi(ji_style, taiyi_acumyear):"天乙"},
+                 {self.earthyi(ji_style, taiyi_acumyear):"地乙"},
+                 {self.flyfu(ji_style, taiyi_acumyear):"飛符"},
+                 {config.num2gong(config.wufu(self.accnum(ji_style,taiyi_acumyear))):"五福"},
+                 {config.num2gong(self.home_general(ji_style, taiyi_acumyear)):"主大"},  
+                 {config.num2gong(self.home_vgen(ji_style, taiyi_acumyear)):"主參"},
+                 {config.num2gong(self.away_general(ji_style, taiyi_acumyear)):"客大"},  
+                 {config.num2gong(self.away_vgen(ji_style, taiyi_acumyear)):"客參"},
+                 {config.num2gong(config.smyo(self.accnum(ji_style,taiyi_acumyear))):"小游"},  
+                 ]
+        res = {"巳":"", "午":"", "未":"", "坤":"", "申":"", "酉":"", "戌":"", "乾":"", "亥":"", "子":"", "丑":"", "艮":"","寅":"", "卯":"", "辰":"", "巽":"","中":""}
+        for dict in dict1:
+            for list in dict:
+                if list in res:
+                    try:
+                        res[list] += (dict[list])
+                    except TypeError:
+                        pass
+                else:
+                    try:
+                        res[list] = dict[list]
+                    except TypeError:
+                        pass
+        rres = str(res.values())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
+        rrres = [re.findall("..", i) for i in rres]
+        overall = str(res.keys())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
+        return {overall[i]:rrres[i] for i in range(0,17)}
            
     def gen_gong(self, ji_style, taiyi_acumyear):
         if ji_style !=3:
@@ -536,7 +573,7 @@ class Taiyi():
         dict1 = self.taiyi_life(sex).get("十二命宮排列")
         res.update(dict1)
         sg = list(res.values())
-        return chart.gen_chart_life( list(self.sixteen_gong(0,0).values())[-1], self.geteightdoors_text2(0, 0), sg, list(self.sixteen_gong( 0,0).values())[:-1])
+        return chart.gen_chart_life( list(self.sixteen_gong1(0,0).values())[-1], self.geteightdoors_text2(0, 0), sg, list(self.sixteen_gong1( 0,0).values())[:-1])
 
     
     def year_chin(self):
