@@ -580,7 +580,6 @@ class Taiyi():
         sixteengongs = self.sixteen_gong1(4,0)
         t = self.gen_life_gong(sex)[1]
         stars = self.gen_life_gong(sex)[2]
-        graph_gongs = ['巳', '午', '未', '申', '酉', '戌', '亥', '子', '丑', '寅','卯', '辰']
         alld =  dict(zip(t, stars))
         #cc = [twelve_gong_stars.get(i) for i in t]
         combined_dict = {}
