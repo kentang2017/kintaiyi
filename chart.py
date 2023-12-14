@@ -67,7 +67,7 @@ def gen_chart(first_layer, second_layer, sixth_layer):
     return d.as_svg().replace('''<path d="M-4.86988571440686,-12.053390109368236 L-21.72718241812291,-53.776663564873665 A58,58,0,0,1,-21.727182418122876,-53.77666356487368 L-4.869885714406852,-12.053390109368237 A13,13,0,0,0,-4.86988571440686,-12.053390109368236 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
 
 #太乙命法盤
-def gen_chart_life(first_layer, second_layer, twelve, sixth_layer):
+def gen_chart_life(second_layer, twelve, sixth_layer):
     # ... [rest of your setup code remains the same]
     # Create an SVG drawing canvas
     d = draw.Drawing(390, 450, origin="center")
@@ -79,7 +79,6 @@ def gen_chart_life(first_layer, second_layer, twelve, sixth_layer):
     #general = dict(zip(list("貴蛇雀合勾龍空虎常玄陰后"),re.findall('..', '貴人螣蛇朱雀六合勾陳青龍天空白虎常侍玄武太陰太后')))
     #skygeneral = [general.get(i) for i in skygeneral]
     data = [
-        [first_layer],
         second_layer,
         twelve,
          ['巳', '午', '未', '申', '酉', '戌', '亥', '子', '丑', '寅','卯', '辰'],
