@@ -127,12 +127,7 @@ with pan:
                     home_vs_away1 = ty.wc_n_sj(0, 0)
                     zhao = {"男":"乾造","女":"坤造"}.get(sex_o)
                     lifedisc = str(ty.gongs_discription(sex_o))
-                    formatted_text = ""
-                    for key, value in lifedisc.items():
-                        formatted_text += f"{key}:\n"
-                        if value:
-                            formatted_text += "\n".join([f"{line}\n" for line in value])
-                        formatted_text += "\n"
+
                 ed = ttext.get("八門值事")
                 yc = ty.year_chin()
                 yj = ttext.get("陽九")
@@ -231,12 +226,7 @@ with pan:
                 home_vs_away1 = ty.wc_n_sj(0, 0)
                 zhao = {"男":"乾造","女":"坤造"}.get(sex_o)
                 lifedisc = str(ty.gongs_discription(sex_o))
-                formatted_text = ""
-                for key, value in lifedisc.items():
-                    formatted_text += f"{key}:\n"
-                    if value:
-                        formatted_text += "\n".join([f"{line}\n" for line in value])
-                    formatted_text += "\n"
+
             ed = ttext.get("八門值事")
             yc = ty.year_chin()
             g = ty.yeargua(tn)
