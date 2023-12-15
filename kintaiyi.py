@@ -588,6 +588,9 @@ class Taiyi():
         t = self.gen_life_gong_list(sex)[1]
         stars = self.gen_life_gong_list(sex)[2]
         alld =  dict(zip(t, stars))
+        for key, value in alld.items():
+            if not value:
+                alld[key] = "空格"
         #cc = [twelve_gong_stars.get(i) for i in t]
         combined_dict = {}
         for category, subcategories in alld.items():
@@ -608,6 +611,9 @@ class Taiyi():
         t = self.gen_life_gong_list(sex)[1]
         stars = self.gen_life_gong_list(sex)[2]
         alld =  dict(zip(t, stars))
+        for key, value in alld.items():
+            if not value:
+                alld[key] = "空格"
         #cc = [twelve_gong_stars.get(i) for i in t]
         combined_dict = {}
         for category, subcategories in alld.items():
