@@ -127,6 +127,12 @@ with pan:
                     home_vs_away1 = ty.wc_n_sj(0, 0)
                     zhao = {"男":"乾造","女":"坤造"}.get(sex_o)
                     lifedisc = str(ty.gongs_discription(sex_o))
+                    formatted_text = ""
+                    for key, value in lifedisc.items():
+                        formatted_text += f"{key}:\n"
+                        if value:
+                            formatted_text += "\n".join([f"{line}\n" for line in value])
+                        formatted_text += "\n"
                 ed = ttext.get("八門值事")
                 yc = ty.year_chin()
                 yj = ttext.get("陽九")
@@ -154,6 +160,8 @@ with pan:
                     yy = "yin"
                 render_svg(genchart)
                 with st.expander("解釋"):
+                    if num == 5:
+                        st.markdown("太乙命法︰\n"lifedisc)
                     st.title("《太乙秘書》︰")
                     st.markdown(ts)
                     st.title("史事記載︰")
@@ -177,9 +185,7 @@ with pan:
                     st.markdown("推主客相關︰"+ home_vs_away1)
                     st.markdown("推多少以占勝負︰"+ ttext.get("推多少以占勝負"))
                     st.markdown("推太乙風雲飛鳥助戰︰"+ home_vs_away3)
-                    if num == 5:
-                        st.markdown(lifedisc)
-
+  
                     #st.title("九宮分野︰")
                     #st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
                 if num != 5:
@@ -224,6 +230,12 @@ with pan:
                 home_vs_away1 = ty.wc_n_sj(0, 0)
                 zhao = {"男":"乾造","女":"坤造"}.get(sex_o)
                 lifedisc = str(ty.gongs_discription(sex_o))
+                    formatted_text = ""
+                    for key, value in lifedisc.items():
+                        formatted_text += f"{key}:\n"
+                        if value:
+                            formatted_text += "\n".join([f"{line}\n" for line in value])
+                        formatted_text += "\n"
             ed = ttext.get("八門值事")
             yc = ty.year_chin()
             g = ty.yeargua(tn)
@@ -253,6 +265,8 @@ with pan:
             with st.expander("解釋"):
             # Create a button to trigger the pop-up
             #st.image("https://raw.githubusercontent.com/kentang2017/kintaiyi/a76abf4958ea48accb1f3b8b8c7cfd96710ea67f/kook/"+yy+str(ttext.get("局式").get("數"))+".svg")
+                if num == 5:
+                   st.markdown("太乙命法︰\n"lifedisc)
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
                 st.title("史事記載︰")
@@ -276,8 +290,7 @@ with pan:
                 st.markdown("推主客相關︰"+ home_vs_away1)
                 st.markdown("推多少以占勝負︰"+ ttext.get("推多少以占勝負"))
                 st.markdown("推太乙風雲飛鳥助戰︰"+ home_vs_away3)
-                if num == 5:
-                   st.markdown(lifedisc)
+                
 
                 #st.title("九宮分野︰")
                 #st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
