@@ -646,7 +646,7 @@ def smyo(taiyi_acumyear):
                return a
                if a == None:
                   return 1
-     return  dict(zip([1,2,3,4,6,7,8,9],range(1,9))).get(int(sm % 3 ))
+        return dict(zip([1,2,3,4,6,7,8,9],range(1,9))).get(int(sm % 3 ))
 #%% 三門五將
 #八門值事
 def eight_door(taiyi_acumyear):
