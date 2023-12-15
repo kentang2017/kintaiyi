@@ -583,7 +583,7 @@ class Taiyi():
         sg = list(res.values())
         return  list(self.sixteen_gong1(4,0).values())[-1], sg, list(self.sixteen_gong1(4,0).values())[:-1]
 
-    def gongs_discription1_text(self, sex):
+    def gongs_discription_text(self, sex):
         sixteengongs = self.sixteen_gong1(4,0)
         t = self.gen_life_gong_list(sex)[1]
         stars = self.gen_life_gong_list(sex)[2]
