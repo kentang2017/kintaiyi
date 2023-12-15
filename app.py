@@ -126,7 +126,7 @@ with pan:
                     five_generals = ty.fivegenerals(0, 0)
                     home_vs_away1 = ty.wc_n_sj(0, 0)
                     zhao = {"男":"乾造","女":"坤造"}.get(sex_o)
-                    lifedisc = str(ty.gongs_discription(sex_o))
+                    #lifedisc = str(ty.gongs_discription(sex_o))
                 ed = ttext.get("八門值事")
                 yc = ty.year_chin()
                 yj = ttext.get("陽九")
@@ -177,8 +177,8 @@ with pan:
                     st.markdown("推主客相關︰"+ home_vs_away1)
                     st.markdown("推多少以占勝負︰"+ ttext.get("推多少以占勝負"))
                     st.markdown("推太乙風雲飛鳥助戰︰"+ home_vs_away3)
-                    if num == 5:
-                        st.markdown(lifedisc)
+                    #if num == 5:
+                        #st.markdown(lifedisc)
 
                     #st.title("九宮分野︰")
                     #st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
@@ -223,7 +223,7 @@ with pan:
                 five_generals = ty.fivegenerals(0, 0)
                 home_vs_away1 = ty.wc_n_sj(0, 0)
                 zhao = {"男":"乾造","女":"坤造"}.get(sex_o)
-                lifedisc = str(ty.gongs_discription(sex_o))
+                #lifedisc = str(ty.gongs_discription(sex_o))
             ed = ttext.get("八門值事")
             yc = ty.year_chin()
             g = ty.yeargua(tn)
@@ -276,8 +276,8 @@ with pan:
                 st.markdown("推主客相關︰"+ home_vs_away1)
                 st.markdown("推多少以占勝負︰"+ ttext.get("推多少以占勝負"))
                 st.markdown("推太乙風雲飛鳥助戰︰"+ home_vs_away3)
-                if num == 5:
-                   st.markdown(lifedisc)
+                #if num == 5:
+                   #st.markdown(lifedisc)
 
                 #st.title("九宮分野︰")
                 #st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
