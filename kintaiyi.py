@@ -584,13 +584,7 @@ class Taiyi():
         return  list(self.sixteen_gong1(4,0).values())[-1], sg, list(self.sixteen_gong1(4,0).values())[:-1]
 
     def gongs_discription_text(self, sex):
-        sixteengongs = self.sixteen_gong1(4,0)
-        t = self.gen_life_gong_list(sex)[1]
-        stars = self.gen_life_gong_list(sex)[2]
-        alld =  dict(zip(t, stars))
-        for key, value in alld.items():
-            if not value:
-                alld[key] = "空格"
+        alld = self.gongs_discription_list(sex)
         #cc = [twelve_gong_stars.get(i) for i in t]
         combined_dict = {}
         for category, subcategories in alld.items():
@@ -606,7 +600,7 @@ class Taiyi():
             formatted_text += "\n"
         return formatted_text
     
-    def gongs_discription(self, sex):
+    def gongs_discription_list(self, sex):
         sixteengongs = self.sixteen_gong1(4,0)
         t = self.gen_life_gong_list(sex)[1]
         stars = self.gen_life_gong_list(sex)[2]
@@ -614,7 +608,10 @@ class Taiyi():
         for key, value in alld.items():
             if not value:
                 alld[key] = "空格"
-        #cc = [twelve_gong_stars.get(i) for i in t]
+        return alld
+
+    def gongs_discription(self, sex):
+        alld = self.gongs_discription_list(sex)
         combined_dict = {}
         for category, subcategories in alld.items():
             combined_dict[category] = []
