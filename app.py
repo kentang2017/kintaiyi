@@ -126,7 +126,7 @@ with pan:
                     five_generals = ty.fivegenerals(0, 0)
                     home_vs_away1 = ty.wc_n_sj(0, 0)
                     zhao = {"男":"乾造","女":"坤造"}.get(sex_o)
-                    lifedisc = str(ty.gongs_discription(sex_o))
+                    lifedisc = ty.gongs_discription_text(sex_o)
 
                 ed = ttext.get("八門值事")
                 yc = ty.year_chin()
@@ -225,7 +225,7 @@ with pan:
                 five_generals = ty.fivegenerals(0, 0)
                 home_vs_away1 = ty.wc_n_sj(0, 0)
                 zhao = {"男":"乾造","女":"坤造"}.get(sex_o)
-                lifedisc = str(ty.gongs_discription(sex_o))
+                lifedisc = ty.gongs_discription_text(sex_o)
 
             ed = ttext.get("八門值事")
             yc = ty.year_chin()
