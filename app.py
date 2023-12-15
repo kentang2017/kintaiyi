@@ -127,6 +127,7 @@ with pan:
                     home_vs_away1 = ty.wc_n_sj(0, 0)
                     zhao = {"男":"乾造","女":"坤造"}.get(sex_o)
                     lifedisc = ty.gongs_discription_text(sex_o)
+                    lifedisc2 = ty.stars_descriptions_text(4,0)
 
                 ed = ttext.get("八門值事")
                 yc = ty.year_chin()
@@ -158,6 +159,7 @@ with pan:
                     if num == 5:
                         st.title("《太乙命法》︰")
                         st.markdown(lifedisc)
+                        st.markdown(lifedisc2)
                     st.title("《太乙秘書》︰")
                     st.markdown(ts)
                     st.title("史事記載︰")
@@ -226,7 +228,7 @@ with pan:
                 home_vs_away1 = ty.wc_n_sj(0, 0)
                 zhao = {"男":"乾造","女":"坤造"}.get(sex_o)
                 lifedisc = ty.gongs_discription_text(sex_o)
-
+                lifedisc2 = ty.stars_descriptions_text(4,0)
             ed = ttext.get("八門值事")
             yc = ty.year_chin()
             g = ty.yeargua(tn)
@@ -259,6 +261,7 @@ with pan:
                 if num == 5:
                     st.title("《太乙命法》︰")
                     st.markdown(lifedisc)
+                    st.markdown(lifedisc2)
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
                 st.title("史事記載︰")
