@@ -583,6 +583,26 @@ class Taiyi():
         sg = list(res.values())
         return  list(self.sixteen_gong1(4,0).values())[-1], sg, list(self.sixteen_gong1(4,0).values())[:-1]
 
+    def gongs_discription1_text(self, sex):
+        sixteengongs = self.sixteen_gong1(4,0)
+        t = self.gen_life_gong_list(sex)[1]
+        stars = self.gen_life_gong_list(sex)[2]
+        alld =  dict(zip(t, stars))
+        #cc = [twelve_gong_stars.get(i) for i in t]
+        combined_dict = {}
+        for category, subcategories in alld.items():
+            combined_dict[category] = []
+            for subcategory in subcategories:
+                if subcategory in twelve_gong_stars[category]:
+                    combined_dict[category].append(twelve_gong_stars[category][subcategory])
+        formatted_text = ""
+        for key, value in combined_dict.items():
+            formatted_text += f"{key}:\n"
+            if value:
+                formatted_text += "\n".join([f"{line}\n" for line in value])
+            formatted_text += "\n"
+        return formatted_text
+    
     def gongs_discription(self, sex):
         sixteengongs = self.sixteen_gong1(4,0)
         t = self.gen_life_gong_list(sex)[1]
