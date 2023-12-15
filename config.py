@@ -632,7 +632,8 @@ def bigyo(taiyi_acumyear):
 #小游
 def smyo(taiyi_acumyear):
     small_yo = taiyi_acumyear % 360
-    
+    sm = 0  # Initialize sm here
+
     if small_yo < 24:
         sm = small_yo % 3
     elif small_yo > 24:
