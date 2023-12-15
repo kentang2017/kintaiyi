@@ -631,11 +631,18 @@ def bigyo(taiyi_acumyear):
     return byv
 #小游
 def smyo(taiyi_acumyear):
-    small_yo = taiyi_acumyear % 360
-    if small_yo % 3 != 0: 
-        return dict(zip([1, 2, 3, 4, 6, 7, 8, 9], range(1, 9))).get(int(small_yo % 3))
-    if small_yo % 3 == 0: 
-        return dict(zip([1, 2, 3, 4, 6, 7, 8, 9], range(1, 9))).get(int(small_yo / 3))
+    small_yo = taiyi_acumyear  % 360
+    #sy = int(self.accnum(ji_style, taiyi_acumyear)  % 360)
+    if small_yo < 24:
+        sm = small_yo % 3
+    if small_yo > 24:
+        sm = small_yo % 24
+        if small_yo > 10:
+            sm = small_yo - 9
+    if sm % 3 != 0: 
+       return dict(zip([1,2,3,4,6,7,8,9],range(1,9))).get(int(small_yo % 3 ))
+    if sm % 3 == 0: 
+       return dict(zip([1,2,3,4,6,7,8,9],range(1,9))).get(int(small_yo / 3 ))
 #%% 三門五將
 #八門值事
 def eight_door(taiyi_acumyear):
