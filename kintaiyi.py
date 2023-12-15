@@ -576,10 +576,17 @@ class Taiyi():
         sg = list(res.values())
         return chart.gen_chart_life( list(self.sixteen_gong1(4,0).values())[-1], sg, list(self.sixteen_gong1(4,0).values())[:-1])
 
+    def gen_life_gong_list(self, sex):
+        res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
+        dict1 = self.taiyi_life(sex).get("十二命宮排列")
+        res.update(dict1)
+        sg = list(res.values())
+        return  list(self.sixteen_gong1(4,0).values())[-1], sg, list(self.sixteen_gong1(4,0).values())[:-1]
+
     def gongs_discription(self, sex):
         sixteengongs = self.sixteen_gong1(4,0)
-        t = self.gen_life_gong(sex)[1]
-        stars = self.gen_life_gong(sex)[2]
+        t = self.gen_life_gong_list[1]
+        stars = self.gen_life_gong_list(sex)[2]
         alld =  dict(zip(t, stars))
         #cc = [twelve_gong_stars.get(i) for i in t]
         combined_dict = {}
@@ -589,7 +596,7 @@ class Taiyi():
                 if subcategory in twelve_gong_stars[category]:
                     combined_dict[category].append(twelve_gong_stars[category][subcategory])
         return combined_dict
-            
+        
     def year_chin(self):
         """太歲禽星"""
         chin_28_stars_code = dict(zip(range(1,29), su))
