@@ -574,14 +574,14 @@ class Taiyi():
         dict1 = self.taiyi_life(sex).get("十二命宮排列")
         res.update(dict1)
         sg = list(res.values())
-        return chart.gen_chart_life( list(self.sixteen_gong1(4,0).values())[-1], sg, list(self.sixteen_gong1(4,0).values())[:-1])
+        return chart.gen_chart_life( list(self.sixteen_gong1(3,0).values())[-1], sg, list(self.sixteen_gong1(3,0).values())[:-1])
 
     def gen_life_gong_list(self, sex):
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
         dict1 = self.taiyi_life(sex).get("十二命宮排列")
         res.update(dict1)
         sg = list(res.values())
-        return  list(self.sixteen_gong1(4,0).values())[-1], sg, list(self.sixteen_gong1(4,0).values())[:-1]
+        return  list(self.sixteen_gong1(3,0).values())[-1], sg, list(self.sixteen_gong1(3,0).values())[:-1]
 
     def gongs_discription_text(self, sex):
         alld = self.gongs_discription_list(sex)
@@ -601,7 +601,7 @@ class Taiyi():
         return formatted_text
     
     def gongs_discription_list(self, sex):
-        sixteengongs = self.sixteen_gong1(4,0)
+        sixteengongs = self.sixteen_gong1(3,0)
         t = self.gen_life_gong_list(sex)[1]
         stars = self.gen_life_gong_list(sex)[2]
         alld =  dict(zip(t, stars))
