@@ -619,7 +619,41 @@ class Taiyi():
                 if subcategory in twelve_gong_stars[category]:
                     combined_dict[category].append(twelve_gong_stars[category][subcategory])
         return combined_dict
-        
+
+    def sixteen_gong2(self, ji_style, taiyi_acumyear):
+        original_dict = self.sixteen_gong1(ji_style, taiyi_acumyear)
+        c = "五福,君基,臣基,民基,文昌,計神,小游,主大,客大,主參,客參,始擊,飛符,四神,天乙,地乙".split(",")
+        a = {star: key for key, values in original_dict.items() for star in values if star in c}
+        d = dict(zip(di_zhi, range(0,13)))
+        for star, gong_value in a.items():
+            a[star] = d[gong_value]
+        return  a
+    
+    def stars_descriptions(self, ji_style, taiyi_acumyear):
+        starszhi = self.sixteen_gong2(ji_style, taiyi_acumyear)
+        c = "五福,君基,臣基,民基,文昌,計神,小游,主大,客大,主參,客參,始擊,飛符,四神,天乙,地乙".split(",")
+        allstar = {}
+        for i in c:
+            a = {i:stars_twelve.get(i)[starszhi.get(i)]}
+            allstar.update(a)
+        return allstar
+
+    def stars_descriptions_text(self, ji_style, taiyi_acumyear):
+        alld = self.stars_descriptions(ji_style, taiyi_acumyear)
+        combined_dict = {}
+        for category, subcategories in alld.items():
+            combined_dict[category] = []
+            for subcategory in subcategories:
+                if subcategory in twelve_gong_stars[category]:
+                    combined_dict[category].append(twelve_gong_stars[category][subcategory])
+        formatted_text = ""
+        for key, value in combined_dict.items():
+            formatted_text += f"{key}:\n"
+            if value:
+                formatted_text += "\n".join([f"{line}\n" for line in value])
+            formatted_text += "\n"
+        return formatted_text
+    
     def year_chin(self):
         """太歲禽星"""
         chin_28_stars_code = dict(zip(range(1,29), su))
