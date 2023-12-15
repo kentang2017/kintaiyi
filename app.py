@@ -161,7 +161,8 @@ with pan:
                 render_svg(genchart)
                 with st.expander("解釋"):
                     if num == 5:
-                        st.markdown("太乙命法︰\n"lifedisc)
+                        st.title("《太乙命法》︰")
+                        st.markdown(lifedisc)
                     st.title("《太乙秘書》︰")
                     st.markdown(ts)
                     st.title("史事記載︰")
@@ -266,7 +267,8 @@ with pan:
             # Create a button to trigger the pop-up
             #st.image("https://raw.githubusercontent.com/kentang2017/kintaiyi/a76abf4958ea48accb1f3b8b8c7cfd96710ea67f/kook/"+yy+str(ttext.get("局式").get("數"))+".svg")
                 if num == 5:
-                   st.markdown("太乙命法︰\n"lifedisc)
+                    st.title("《太乙命法》︰")
+                    st.markdown(lifedisc)
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
                 st.title("史事記載︰")
