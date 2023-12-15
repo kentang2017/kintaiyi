@@ -585,7 +585,7 @@ class Taiyi():
 
     def gongs_discription(self, sex):
         sixteengongs = self.sixteen_gong1(4,0)
-        t = self.gen_life_gong_list[1]
+        t = self.gen_life_gong_list(sex)[1]
         stars = self.gen_life_gong_list(sex)[2]
         alld =  dict(zip(t, stars))
         #cc = [twelve_gong_stars.get(i) for i in t]
