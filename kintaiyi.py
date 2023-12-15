@@ -607,7 +607,7 @@ class Taiyi():
         alld =  dict(zip(t, stars))
         for key, value in alld.items():
             if not value:
-                alld[key] = "空格"
+                alld[key] = ["空格"]
         return alld
 
     def gongs_discription(self, sex):
