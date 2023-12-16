@@ -160,9 +160,9 @@ with pan:
                 with st.expander("解釋"):
                     if num == 5:
                         st.title("《太乙命法》︰")
-                        st.markdown("十二宮分析")
+                        st.markdown("【十二宮分析】")
                         st.markdown(lifedisc)
-                        st.markdown("太乙十六神落宮")
+                        st.markdown("【太乙十六神落宮】")
                         st.markdown(lifedisc2)
                     st.title("《太乙秘書》︰")
                     st.markdown(ts)
@@ -266,9 +266,9 @@ with pan:
             #st.image("https://raw.githubusercontent.com/kentang2017/kintaiyi/a76abf4958ea48accb1f3b8b8c7cfd96710ea67f/kook/"+yy+str(ttext.get("局式").get("數"))+".svg")
                 if num == 5:
                     st.title("《太乙命法》︰")
-                    st.markdown("十二宮分析")
+                    st.markdown("【十二宮分析】")
                     st.markdown(lifedisc)
-                    st.markdown("太乙十六神落宮")
+                    st.markdown("【太乙十六神落宮】")
                     st.markdown(lifedisc2)
                 st.title("《太乙秘書》︰")
                 st.markdown(ts)
