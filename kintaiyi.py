@@ -615,7 +615,7 @@ class Taiyi():
             if value:
                 formatted_text += "\n".join([f"{line}\n" for line in value])
             formatted_text += "\n"
-        return formatted_text
+        return formatted_text.replace('[', '').replace(']', '').replace(',', '')
         
     def twostar_disc(self, sex):
         a = twostars
