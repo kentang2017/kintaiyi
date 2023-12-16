@@ -673,7 +673,7 @@ class Taiyi():
         alld = self.stars_descriptions(ji_style, taiyi_acumyear)
         text = ""
         for key, value in alld.items():
-            text += f"{key}\n{value}\n\n"
+            text += f"【{key}】\n{value}\n\n"
         return text
     
     def year_chin(self):
