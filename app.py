@@ -130,7 +130,7 @@ with pan:
                     life2 = ty.twostar_disc(sex_o)
                     cc = life1.copy()  
                     cc.update(life2)
-                    lifedisc = ty.change_to_text(cc)
+                    lifedisc = ty.change_dictonary_to_text(cc)
                     lifedisc2 = ty.stars_descriptions_text(3,0)
                     
                 ed = ttext.get("八門值事")
@@ -235,7 +235,7 @@ with pan:
                 life2 = ty.twostar_disc(sex_o)
                 cc = life1.copy()  
                 cc.update(life2)
-                lifedisc = ty.change_to_text(cc)
+                lifedisc = ty.change_dictonary_to_text(cc)
                 lifedisc2 = ty.stars_descriptions_text(3,0)
             ed = ttext.get("八門值事")
             yc = ty.year_chin()
