@@ -599,6 +599,20 @@ class Taiyi():
                 formatted_text += "\n".join([f"{line}\n" for line in value])
             formatted_text += "\n"
         return formatted_text
+        
+    def twostar_disc(self, sex):
+        a = twostars
+        b = self.gongs_discription_list(sex)
+        b = {key: [''.join(value)] for key, value in b.items()}
+        c = {}
+        for key, values in b.items():
+            c[key] = []
+            for val in values:
+                sub_dict = [ a[k] for k in a if k in val]
+                c[key].append(sub_dict)
+        for key, values in c.items():
+            c[key] = [item for item in values[0] if item]  # Remove empty lists
+        return c
     
     def gongs_discription_list(self, sex):
         sixteengongs = self.sixteen_gong1(3,0)
