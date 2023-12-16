@@ -599,7 +599,7 @@ class Taiyi():
                 text_output += f"【{key}】\n{value_str}\n\n"
             else:
                 text_output += f"【{key}】\n{value}\n\n"
-        return text_output
+        return text_output.replace('[', '').replace(']', '').replace(',', '')
 
     def gongs_discription_text(self, sex):
         alld = self.gongs_discription_list(sex)
@@ -615,7 +615,7 @@ class Taiyi():
             if value:
                 formatted_text += "\n".join([f"{line}\n" for line in value])
             formatted_text += "\n"
-        return formatted_text.replace('[', '').replace(']', '').replace(',', '')
+        return formatted_text
         
     def twostar_disc(self, sex):
         a = twostars
