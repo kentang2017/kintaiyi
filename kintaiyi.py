@@ -599,7 +599,7 @@ class Taiyi():
                 text_output += f"【{key}】\n{value_str}\n\n"
             else:
                 text_output += f"【{key}】\n{value}\n\n"
-        return text_output.replace('[', '').replace(']', '').replace(',', '')
+        return text_output.replace('[', '').replace(']', '').replace(',', '').replace("'","")
 
     def gongs_discription_text(self, sex):
         alld = self.gongs_discription_list(sex)
