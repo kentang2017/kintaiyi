@@ -582,12 +582,11 @@ class Taiyi():
         res.update(dict1)
         sg = list(res.values())
         return  list(self.sixteen_gong1(3,0).values())[-1], sg, list(self.sixteen_gong1(3,0).values())[:-1]
-
-    def gongs_discription_text(self, sex):
-        alld = self.gongs_discription_list(sex)
+    #twelve gongs text
+    def change_to_text(self, dictionary):
         #cc = [twelve_gong_stars.get(i) for i in t]
         combined_dict = {}
-        for category, subcategories in alld.items():
+        for category, subcategories in dictionary.items():
             combined_dict[category] = []
             for subcategory in subcategories:
                 if subcategory in twelve_gong_stars[category]:
