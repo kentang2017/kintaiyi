@@ -583,17 +583,26 @@ class Taiyi():
         sg = list(res.values())
         return  list(self.sixteen_gong1(3,0).values())[-1], sg, list(self.sixteen_gong1(3,0).values())[:-1]
 
-    def change_dictonary_to_text(self, dictionary):
-        formatted_text = ""
-        for key, values in dictionary.items():
-            formatted_text += f"【{key}】\n"
-            formatted_text += "\n".join(values)
-            formatted_text += "\n\n"
-        return formatted_text
+    def convert_gongs_text(self, a, b):
+        c = {}
+        for key in set(a.keys()).union(b.keys()):
+            value_a = a.get(key, [])
+            value_b = b.get(key, [])
+            if isinstance(value_a, list) and isinstance(value_b, list):
+                c[key] = value_a + [value_b]
+            else:
+                c[key] = value_a if value_a else value_b
+        text_output = ""
+        for key, value in c.items():
+            if isinstance(value, list):
+                value_str = ', '.join(map(str, value))
+                text_output += f"【{key}】\n{value_str}\n\n"
+            else:
+                text_output += f"【{key}】\n{value}\n\n"
+        return text_output
 
     def gongs_discription_text(self, sex):
         alld = self.gongs_discription_list(sex)
-        #cc = [twelve_gong_stars.get(i) for i in t]
         combined_dict = {}
         for category, subcategories in alld.items():
             combined_dict[category] = []
