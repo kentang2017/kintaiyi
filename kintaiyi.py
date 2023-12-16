@@ -625,7 +625,7 @@ class Taiyi():
         for key, values in b.items():
             c[key] = []
             for val in values:
-                sub_dict = [ a[k] for k in a if k in val]
+                sub_dict = [ k+"同宮。" + a[k] for k in a if k in val]
                 c[key].append(sub_dict)
         for key, values in c.items():
             c[key] = [item for item in values[0] if item]  # Remove empty lists
