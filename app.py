@@ -74,7 +74,7 @@ def st_capture(output_func):
         yield
        
 st.set_page_config(layout="wide",page_title="堅太乙 - 太鳦排盘")
-pan,ins,example,disaster,guji,update,tutorial,connect = st.tabs([' 排盤 ', ' 使用說明 ', ' 局數史例 ', ' 災異統計 ' ,' 古籍書目 ',' 更新日誌 ',' 看盤要領 ', ' 連結 '  ])
+pan,ins,example,disaster,guji,update,tutorial,connect = st.tabs([' 太乙排盤 ', ' 使用說明 ', ' 局數史例 ', ' 災異統計 ' ,' 古籍書目 ',' 更新日誌 ',' 看盤要領 ', ' 連結 '  ])
 
 with st.sidebar:
     idate = st.text_input('輸入日期(如: 1997/8/8)', '')
