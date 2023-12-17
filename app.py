@@ -74,7 +74,7 @@ def st_capture(output_func):
         yield
        
 st.set_page_config(layout="wide",page_title="堅太乙 - 太鳦排盘")
-pan,example,disaster,guji,update,ins,tutorial,connect = st.tabs([' 排盤 ', ' 史例 ', ' 災異 ' ,' 古籍 ',' 更新 ', ' 說明 ', ' 教學 ', ' 連結 '  ])
+pan,example,disaster,guji,update,ins,tutorial,connect = st.tabs([' 排盤 ', ' 局數史例 ', ' 災異統計 ' ,' 古籍書目 ',' 更新日誌 ', ' 使用說明 ', ' 看盤要領 ', ' 連結 '  ])
 
 with st.sidebar:
     idate = st.text_input('輸入日期(如: 1997/8/8)', '')
@@ -317,11 +317,11 @@ with example:
         get_file_content_as_string("example.md")
 
 with tutorial:
-    st.header('教學')
+    st.header('教學要領')
     st.markdown(get_file_content_as_string("tutorial.md"))
     
 with guji:
-    st.header('古籍')
+    st.header('古籍書目')
     st.markdown(get_file_content_as_string("guji.md"))
   
 with update:
@@ -329,7 +329,7 @@ with update:
     st.markdown(get_file_content_as_string("update.md"))
 
 with disaster:
-    st.header('災害')
+    st.header('災害統計')
     st.markdown(get_file_content_as_string("disaster.md"))
    
 with ins:
