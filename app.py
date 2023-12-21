@@ -317,7 +317,7 @@ with example:
         get_file_content_as_string("example.md")
 
 with tutorial:
-    st.header('教學要領')
+    st.header('看盤要領')
     st.markdown(get_file_content_as_string("tutorial.md"))
     
 with guji:
