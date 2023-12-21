@@ -176,7 +176,13 @@ year_rep_gua = dict(zip(year_for_gua,tygua))
 #太乙人道命法的積年數
 jiazi_accum =  dict(zip(jiazi(), [i*3652425 for i in list(range(1,61))]))
 jq_accum = dict(zip(new_list(jieqi_name, "冬至"), [3652425,152184.37,304368.75,456553.12,608727.50,760921.87,913106.25,1065290.62,1217475,1369659.37,1522843.75,1674028.12,1826212.50,1978396.87,2130581.25,2282765.62,2434950,2587134.37,2739318.75,2891503.12,3043687.50,3195871.87,3348056.25,3500240.62]))
-
+#計算三元甲子積年
+def calculate_value_for_year(year):
+    initial_value = 126944450
+    increment_per_60_years = 3145500
+    cycles = (year - 1564) // 60
+    value = initial_value + cycles * increment_per_60_years
+    return value
 
 #%% 基本功能函數
 def sumlist(list1):
