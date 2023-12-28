@@ -138,6 +138,13 @@ class Taiyi():
         jie_qi = jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)
         return  (jiazi_accum(gz[0]) + y + jq_accum(jie_qi) + (jieqi.jq_count_days(self.year, self.month, self.day, self.hour, self.minute) *10000)) // 10000
 
+    def three_cai_num(self):
+        accum_num = self.taiyi_life_accum()
+        sky = accum_num % 720
+        earth = sky % 72
+        ppl = earth % 72
+        return sky, earth, ppl
+    
     def yeargua(self, taiyi_acumyear):
         """值年卦"""
         tynum = self.accnum(0, taiyi_acumyear) % 64
