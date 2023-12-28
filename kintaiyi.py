@@ -131,6 +131,13 @@ class Taiyi():
             return acchr
         return None
 
+    #太乙命數積年數
+    def taiyi_life_accum(self):
+        y = calculate_value_for_year(self.year)
+        gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
+        jie_qi = jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)
+        return  jiazi_accum(gz[0]) + y + jq_accum(jie_qi) + jieqi.jq_count_days(self.year, self.month, self.day, self.hour, self.minute)
+
     def yeargua(self, taiyi_acumyear):
         """值年卦"""
         tynum = self.accnum(0, taiyi_acumyear) % 64
