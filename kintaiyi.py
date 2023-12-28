@@ -131,7 +131,7 @@ class Taiyi():
             return acchr
         return None
 
-    #太乙命數積年數
+    #太乙命數積日數
     def taiyi_life_accum(self):
         y = calculate_value_for_year(self.year)
         gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
