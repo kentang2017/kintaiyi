@@ -106,6 +106,33 @@ def xzdistance(year, month, day, hour):
 def distancejq(year, month, day, hour, minute, jq):
     return int( Date("{}/{}/{} {}:{}:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2), str(minute).zfill(2))) - find_jq_date(year-1, month, day, hour, minute, jq) )
 
+def jq_count_days(year, month, day, hour, minute):#从当前时间开始连续输出未来n个节气的时间
+    #current =  datetime.strptime("{}/{}/{} {}:{}:00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2),str(hour).zfill(2), str(minute).zfill(2)), '%Y/%m/%d %H:%M:%S')
+    current = Date("{}/{}/{} {}:{}:00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2),str(hour).zfill(2), str(minute).zfill(2)))
+    jd = change(year, month, day, hour, minute)
+    #jd = Date("{}/{}/{} {}:{}:00.00".format(str(b.year).zfill(4), str(b.month).zfill(2), str(b.day).zfill(2), str(b.hour).zfill(2), str(b.minute).zfill(2)  ))
+    result = []
+    e=ecliptic_lon(jd)
+    n=int(e*180.0/math.pi/15)+1
+    for i in range(3):
+        if n>=24:
+            n-=24
+        jd=iteration(jd,sta)
+        d=Date(jd+1/3).tuple()
+        dt = Date("{}/{}/{} {}:{}:00.00".format(d[0],d[1],d[2],d[3],d[4]).split(".")[0])
+        time_info = {  dt:jieqi_name[n]}
+        n+=1    
+        result.append(time_info)
+    j = [list(i.keys())[0] for i in result]
+    if current > j[0] and current > j[1] and current > j[2]:
+        return list(result[2].values())[0],  int(current - list(result[2].keys())[0] )
+    if current > j[0] and current > j[1] and current <= j[2]:
+        return int(current - list(result[1].keys())[0] )+1
+    if current >= j[1] and current < j[2]:
+        return list(result[1].values())[0], int(current - list(result[1].keys())[0] )
+    if current < j[1] and current < j[2]:
+        return list(result[0].values())[0], int(current - list(result[0].keys())[0] )
+
 def fjqs(year, month, day, hour):
     jd_format = Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
     n= int(ecliptic_lon(jd_format)*180.0/pi/15)+1
