@@ -197,7 +197,86 @@ with pan:
             else:
                 output5 = st.empty()
         except ValueError:
-            st.empty()
+            output5 = st.empty()
+            now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
+            y = now.year
+            m = now.month
+            d = now.day
+            h = now.hour
+            min = now.minute
+            ty = kintaiyi.Taiyi(y,m,d,h,min)
+            num = 0
+            ttext = ty.pan(num,tn)
+            kook = ty.kook(num,tn)
+            homecal = ty.home_cal(num, tn)
+            awaycal = ty.away_cal(num, tn)
+            genchart = ty.gen_gong(num, tn)
+            sj_su_predict = "始擊落"+ ty.sf_num(num,tn)+ "宿，"+ su_dist.get(ty.sf_num(num,tn))
+            tg_sj_su_predict = config.multi_key_dict_get (tengan_shiji, config.gangzhi(y,m,d,h,min)[0][0]).get(config.Ganzhiwuxing(ty.sf(num,tn)))
+            three_door = ty.threedoors(num,tn)
+            five_generals = ty.fivegenerals(num,tn)
+            home_vs_away1 = ty.wc_n_sj(num,tn)
+            ed = ttext.get("八門值事")
+            yc = ty.year_chin()
+            g = ty.yeargua(tn)
+            year_predict = "太歲" + yc  +"值宿，"+ su_dist.get(yc)
+            home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
+            if num == 3:
+               tynum = ty.accnum(num,tn)
+            if num == 5:
+               tynum = ty.accnum(0,0)
+            else: 
+               tynum = ty.accnum(num,tn)
+            yj = ttext.get("陽九")
+            bl = ttext.get("百六")
+            ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
+            gz = "{}年 {}月 {}日 {}時 {}分".format(ttext.get("干支")[0], ttext.get("干支")[1], ttext.get("干支")[2], ttext.get("干支")[3], ttext.get("干支")[4])
+            lunard = "{}{}月{}日".format(  cn2an.transform(str(config.lunar_date_d(y, m, d).get("年"))+"年", "an2cn"), an2cn(config.lunar_date_d(y, m, d).get("月")), an2cn(config.lunar_date_d(y, m, d).get("日")))
+            ch = chistory.get(y)
+            if ch == None:
+               ch = ""
+            r = list(map(lambda x:[x, x+25]  ,list(range(0,3000)[0::25])))
+            tys = "".join([ts[r[i][0]:r[i][1]]+"\n" for i in range(0, int(len(ts) / 25+1))])
+            if ttext.get("局式").get("文")[0] == "陽":
+                yy = "yang"
+            else:
+                yy = "yin"
+            render_svg(genchart)
+            with st.expander("解釋"):
+            # Create a button to trigger the pop-up
+            #st.image("https://raw.githubusercontent.com/kentang2017/kintaiyi/a76abf4958ea48accb1f3b8b8c7cfd96710ea67f/kook/"+yy+str(ttext.get("局式").get("數"))+".svg")
+                st.title("《太乙秘書》︰")
+                st.markdown(ts)
+                st.title("史事記載︰")
+                st.markdown(ch)
+                st.title("太乙盤局分析︰")
+                #st.markdown("推雷公入水︰"+ttext.get("推雷公入水"))
+                #st.markdown("推臨津問道︰"+ttext.get("推臨津問道"))
+                #st.markdown("推獅子反擲︰"+ttext.get("推獅子反擲"))
+                #st.markdown("推白雲捲空︰"+ttext.get("推白雲捲空"))
+                #st.markdown("推猛虎相拒︰"+ttext.get("推猛虎相拒"))
+                #st.markdown("推白龍得雲︰"+ttext.get("推白龍得雲"))
+                #st.markdown("推回軍無言︰"+ttext.get("推回軍無言"))
+                st.markdown("太歲值宿斷事︰"+ year_predict)
+                st.markdown("始擊值宿斷事︰"+ sj_su_predict)
+                st.markdown("十天干歲始擊落宮預測︰"+ tg_sj_su_predict)
+                if num == 5:
+                    st.markdown("推太乙在天外地內法︰"+ty.ty_gong_dist(0, 0))
+                if num != 5:
+                    st.markdown("推太乙在天外地內法︰"+ty.ty_gong_dist(num, tn))
+                st.markdown("三門五將︰"+ three_door+five_generals )
+                st.markdown("推主客相關︰"+ home_vs_away1)
+                st.markdown("推多少以占勝負︰"+ ttext.get("推多少以占勝負"))
+                st.markdown("推太乙風雲飛鳥助戰︰"+ home_vs_away3)
+                
+
+                #st.title("九宮分野︰")
+                #st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
+            if num != 5:
+                print("{} | 積{}數︰{} |\n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) |\n紀元︰{} | 主筭︰{} 客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n".format(config.gendatetime(y,m,d,h,min),config.taiyi_name(num)[0],tynum, lunard, jieqi.jq(y,m,d,h,min), gz, config.kingyear(y), config.ty_method(tn), config.taiyi_name(num), ty.kook(num, tn).get("文"), ttext.get("局式").get("年"),  ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(y, m, d).get("年")) ))
+            if num == 5:
+                print("{} {}-{}| \n積{}數︰{} |\n農曆︰{} | {} |\n{} |\n{} |\n太乙人道命法 - {} ({}) |\n紀元︰{} | 主筭︰{} 客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n{}".format(config.gendatetime(y,m,d,h,min),config.taiyi_name(0)[0], zhao,ty.taiyi_life(sex_o).get("性別") ,tynum, lunard, jieqi.jq(y,m,d,h,min), gz, config.kingyear(y), ty.kook(0, 0).get("文"), ttext.get("局式").get("年"),  ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(y, m, d).get("年"))))
+
         
         if instant:
             output5 = st.empty()
