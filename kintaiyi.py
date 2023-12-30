@@ -352,17 +352,32 @@ class Taiyi():
         ty_jc = list(map(lambda x: x == taiyi, tyjc)).count(True)
         sf_jc1 = list(map(lambda x: x == shiji, jc1)).count(True)
         sf_order = config.new_list(num, sf_num)
-        if sf_jc == 1 and ty_jc != 1 and sf_jc1 !=1 :
+        if sf_jc == 1 and ty_jc != 1 and sf_jc1 !=1 and sf_jc == ty_jc:
             return sum(sf_order[: sf_order.index(taiyi)])+1
-        if sf_jc !=1 and ty_jc != 1 and sf_jc1 ==1:
+        if sf_jc == 1 and ty_jc != 1 and sf_jc1 !=1 and sf_jc != ty_jc:
+            return sum(sf_order[: sf_jc+1])+1
+        
+        if sf_jc !=1 and ty_jc != 1 and sf_jc1 ==1 and sf_jc != ty_jc:
             return sum(sf_order[: sf_order.index(taiyi)])
-        if sf_jc != 1 and ty_jc ==1 and sf_jc1 !=1:
+        if sf_jc !=1 and ty_jc != 1 and sf_jc1 ==1 and sf_jc == ty_jc and taiyi >5 and taiyi <7:
+            return sum(sf_order[taiyi-2:]) 
+        if sf_jc !=1 and ty_jc != 1 and sf_jc1 ==1 and sf_jc == ty_jc and taiyi >5:
+            return sum(sf_order[: sf_order.index(taiyi)])
+        if sf_jc !=1 and ty_jc != 1 and sf_jc1 ==1 and sf_jc == ty_jc and taiyi <5:
+            return sum(sf_order[:taiyi+1])
+        if sf_jc != 1 and ty_jc ==1 and sf_jc1 !=1 and ty_jc == sf_jc:
             return sum(sf_order[sf_order.index(taiyi): ])
+        if sf_jc != 1 and ty_jc ==1 and sf_jc1 !=1 and ty_jc != sf_jc and sf_jc1 != sf_jc:
+            return sum(sf_order[: sf_order.index(ty_jc)])
+        if sf_jc != 1 and ty_jc ==1 and sf_jc1 !=1 and ty_jc != sf_jc and sf_jc1 == sf_jc:
+            return sum(sf_order[: sf_order.index(taiyi)])
         if sf_jc ==1 and ty_jc ==1 and sf_jc1 !=1 and sf_jc == ty_jc:
-            return sum(sf_order[: sf_order.index(sf_jc)])+1
+            return sum(sf_order[: sf_order.index(taiyi)])+1
         if sf_jc ==1 and ty_jc ==1 and sf_jc1 !=1 and sf_jc != ty_jc:
             return sum(sf_order[:taiyi ])
-        if sf_jc !=1 and ty_jc ==1 and sf_jc1 ==1 :
+        if sf_jc !=1 and ty_jc ==1 and sf_jc1 ==1 and sf_jc != ty_jc:
+            return sum(sf_order[:sf_order.index(taiyi)])
+        if sf_jc !=1 and ty_jc ==1 and sf_jc1 ==1 and sf_jc == ty_jc:
             return sum(sf_order[: sf_order.index(taiyi)])
         if sf_jc !=1 and ty_jc !=1 and sf_jc1 !=1 and sf_num != taiyi:
             return sum(sf_order[: sf_order.index(taiyi)])
