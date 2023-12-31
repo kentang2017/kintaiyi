@@ -115,19 +115,19 @@ class Taiyi():
         if ji_style == 4: #分計
             #diff_val_two = int(Date(f"{str(self.year).zfill(4)}/{str(self.month).zfill(2)}/{str(self.day).zfill(2)} {str(self.hour).zfill(2)}:00:00.00") - Date("-1197/02/02 00:00:00.00"))
             #return int(diff_val_two - 1) * 23 + (self.minute + 1 ) // 23 -48
-            diff_val_two = int(Date(f"{str(self.year).zfill(4)}/{str(self.month).zfill(2)}/{str(self.day).zfill(2)} {str(self.hour).zfill(2)}:00:00.00") - Date("1900/12/21 00:00:00.00"))
+            diff_val_two = int(Date(f"{str(self.year).zfill(4)}/{str(self.month).zfill(2)}/{str(self.day).zfill(2)} {str(self.hour).zfill(2)}:{str(self.minute).zfill(2)}:00.00") - Date("1900/12/21 00:00:00.00"))
             if taiyi_acumyear ==0 or taiyi_acumyear ==3:
                 ty_num = 708011105
                 accday = ty_num + diff_val_two
-                acchr = ((accday -1) * 23) + (self.minute+1)
+                acchr = ((accday -1) * 23) + (self.hour * 10500) + (self.minute +1)
             if taiyi_acumyear ==2:
                 ty_num = 708011105 - 10153917 + tn_num
                 accday = ty_num + diff_val_two
-                acchr = ((accday -1) * 23) + (self.minute+1)//23 
+                acchr = ((accday -1) * 23) + (self.hour * 10500) + (self.minute +1)
             if taiyi_acumyear ==1:
                 ty_num = 708011105 - 10153917 + tn_num
                 accday = ty_num + diff_val_two
-                acchr = ((accday -1) * 23) + (self.minute+1)//23 
+                acchr = ((accday -1) * 23) + (self.hour * 10500) + (self.minute +1)
             return acchr
         return None
 
