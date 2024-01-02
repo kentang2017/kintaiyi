@@ -106,8 +106,8 @@ with pan:
                 if num != 5:
                     ttext = ty.pan(num,tn)
                     kook = ty.kook(num,tn)
-                    kook_num = ty.kook.get("數")
-                    yingyang = ty.kook.get("文")[0]
+                    kook_num = kook.get("數")
+                    yingyang = kook.get("文")[0]
                     #homecal = ty.home_cal(num, tn)
                     #awaycal = ty.away_cal(num, tn)
                     homecal = config.find_cal(yingyang, kook_num)[0]
@@ -213,8 +213,8 @@ with pan:
             num = 0
             ttext = ty.pan(num,tn)
             kook = ty.kook(num,tn)
-            kook_num = ty.kook.get("數")
-            yingyang = ty.kook.get("文")[0]
+            kook_num = kook.get("數")
+            yingyang = kook.get("文")[0]
             homecal = config.find_cal(yingyang, kook_num)[0]
             awaycal =  config.find_cal(yingyang, kook_num)[1]
             setcal =  config.find_cal(yingyang, kook_num)[2]
