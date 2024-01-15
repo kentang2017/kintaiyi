@@ -322,18 +322,21 @@ class Taiyi():
 
     def home_general(self, ji_style, taiyi_acumyear):
         """主大將"""
-        if self.home_cal(ji_style, taiyi_acumyear) == 1:
+        num = self.kook(ji_style, taiyi_acumyear).get("數")
+        yy = self.kook(ji_style, taiyi_acumyear).get("文")[0]
+        home_cal = config.find_cal(yy, num)[0]
+        if home_cal == 1:
             return self.ty(ji_style, taiyi_acumyear)
-        if self.home_cal(ji_style, taiyi_acumyear) < 10:
+        if home_cal < 10:
             return self.home_cal(ji_style, taiyi_acumyear)
-        if self.home_cal(ji_style, taiyi_acumyear) % 10 == 0:
+        if home_cal % 10 == 0:
             return 1
-        if self.home_cal(ji_style, taiyi_acumyear) > 10 and self.home_cal(ji_style, taiyi_acumyear) < 20 :
-            return self.home_cal(ji_style, taiyi_acumyear) - 10
-        if self.home_cal(ji_style, taiyi_acumyear) > 20 and self.home_cal(ji_style, taiyi_acumyear) < 30 :
-            return self.home_cal(ji_style, taiyi_acumyear) - 20
-        if self.home_cal(ji_style, taiyi_acumyear) > 30 and self.home_cal(ji_style, taiyi_acumyear) < 40 :
-            return self.home_cal(ji_style, taiyi_acumyear) - 30
+        if home_cal > 10 and home_cal < 20 :
+            return home_cal - 10
+        if home_cal > 20 and home_cal < 30 :
+            return home_cal - 20
+        if home_cal > 30 and home_cal < 40 :
+            return home_cal - 30
 
     def home_vgen(self, ji_style, taiyi_acumyear):
         """主參將"""
@@ -386,18 +389,21 @@ class Taiyi():
 
     def away_general(self, ji_style, taiyi_acumyear):
         """客大將"""
-        if self.away_cal(ji_style, taiyi_acumyear) == 1:
+        num = self.kook(ji_style, taiyi_acumyear).get("數")
+        yy = self.kook(ji_style, taiyi_acumyear).get("文")[0]
+        away_cal = config.find_cal(yy, num)[1]
+        if away_cal == 1:
             return 1
-        if self.away_cal(ji_style, taiyi_acumyear) < 10:
-            return self.away_cal(ji_style, taiyi_acumyear)
-        if self.away_cal(ji_style, taiyi_acumyear) % 10 == 0:
+        if away_cal < 10:
+            return away_cal
+        if away_cal % 10 == 0:
             return 5
-        if self.away_cal(ji_style, taiyi_acumyear) > 10 and self.away_cal(ji_style, taiyi_acumyear) < 20 :
-            return self.away_cal(ji_style, taiyi_acumyear) - 10
-        if self.away_cal(ji_style, taiyi_acumyear) > 20 and self.away_cal(ji_style, taiyi_acumyear) < 30 :
-            return self.away_cal(ji_style, taiyi_acumyear) - 20
-        if self.away_cal(ji_style, taiyi_acumyear) > 30 and self.away_cal(ji_style, taiyi_acumyear) < 40 :
-            return self.away_cal(ji_style, taiyi_acumyear) - 30
+        if away_cal > 10 and away_cal < 20 :
+            return away_cal - 10
+        if away_cal > 20 and away_cal < 30 :
+            return away_cal - 20
+        if away_cal > 30 and away_cal < 40 :
+            return away_cal - 30
 
     def away_vgen(self, ji_style, taiyi_acumyear):
         """客參將"""
