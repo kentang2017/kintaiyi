@@ -721,19 +721,20 @@ class Taiyi():
     def year_chin(self):
         """太歲禽星"""
         chin_28_stars_code = dict(zip(range(1,29), su))
+        year = config.lunar_date_d(self.year, self.month, self.day).get("年")
         if config.lunar_date_d(self.year, self.month, self.day).get("月") == "十二月" or config.lunar_date_d(self.year, self.month, self.day).get("月") == "十一月":
             if jieqi.jq(self.year, self.month, self.day, self.hour, self.minute) == "立春":
-                get_year_chin_number = (int(self.year)+15) % 28 #求年禽之公式為西元年加15除28之餘數
+                get_year_chin_number = (int(year)+15) % 28 #求年禽之公式為西元年加15除28之餘數
                 if get_year_chin_number == int(0):
                     get_year_chin_number = int(28)
                 year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
             else:
-                get_year_chin_number = (int(self.year-1)+15) % 28 #求年禽之公式為西元年加15除28之餘數
+                get_year_chin_number = (int(year-1)+15) % 28 #求年禽之公式為西元年加15除28之餘數
                 if get_year_chin_number == int(0):
                     get_year_chin_number = int(28)
                     year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
         if config.lunar_date_d(self.year, self.month, self.day).get("月") != "十二月" or config.lunar_date_d(self.year, self.month, self.day).get("月") == "十一月":
-            get_year_chin_number = (int(self.year)+15) % 28 #求年禽之公式為西元年加15除28之餘數
+            get_year_chin_number = (int(year)+15) % 28 #求年禽之公式為西元年加15除28之餘數
             if get_year_chin_number == int(0):
                 get_year_chin_number = int(28)
             year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
