@@ -222,8 +222,8 @@ with pan:
             homecal = config.find_cal(yingyang, kook_num)[0]
             awaycal =  config.find_cal(yingyang, kook_num)[1]
             setcal =  config.find_cal(yingyang, kook_num)[2]
-            homecal = ty.home_cal(num, tn)
-            awaycal = ty.away_cal(num, tn)
+            #homecal = ty.home_cal(num, tn)
+            #awaycal = ty.away_cal(num, tn)
             genchart = ty.gen_gong(num, tn)
             sj_su_predict = "始擊落"+ ty.sf_num(num,tn)+ "宿，"+ su_dist.get(ty.sf_num(num,tn))
             tg_sj_su_predict = config.multi_key_dict_get (tengan_shiji, config.gangzhi(y,m,d,h,min)[0][0]).get(config.Ganzhiwuxing(ty.sf(num,tn)))
@@ -304,8 +304,13 @@ with pan:
             if num != 5:
                 ttext = ty.pan(num,tn)
                 kook = ty.kook(num,tn)
-                homecal = ty.home_cal(num, tn)
-                awaycal = ty.away_cal(num, tn)
+                kook_num = kook.get("數")
+                yingyang = kook.get("文")[0]
+                homecal = config.find_cal(yingyang, kook_num)[0]
+                awaycal =  config.find_cal(yingyang, kook_num)[1]
+                setcal =  config.find_cal(yingyang, kook_num)[2]
+                #homecal = ty.home_cal(num, tn)
+                #awaycal = ty.away_cal(num, tn)
                 genchart = ty.gen_gong(num, tn)
                 sj_su_predict = "始擊落"+ ty.sf_num(num,tn)+ "宿，"+ su_dist.get(ty.sf_num(num,tn))
                 tg_sj_su_predict = config.multi_key_dict_get (tengan_shiji, config.gangzhi(y,m,d,h,min)[0][0]).get(config.Ganzhiwuxing(ty.sf(num,tn)))
@@ -315,8 +320,13 @@ with pan:
             if num == 5:
                 ttext = ty.pan(0,0)
                 kook = ty.kook(0,0)
-                homecal = ty.home_cal(0, 0)
-                awaycal = ty.away_cal(0, 0)
+                #homecal = ty.home_cal(0, 0)
+                #awaycal = ty.away_cal(0, 0)
+                kook_num = kook.get("數")
+                yingyang = kook.get("文")[0]
+                homecal = config.find_cal(yingyang, kook_num)[0]
+                awaycal =  config.find_cal(yingyang, kook_num)[1]
+                setcal =  config.find_cal(yingyang, kook_num)[2]
                 genchart = ty.gen_life_gong(sex_o)
                 sj_su_predict = "始擊落"+ ty.sf_num(0, 0)+ "宿，"+ su_dist.get(ty.sf_num(0, 0))
                 tg_sj_su_predict = config.multi_key_dict_get (tengan_shiji, config.gangzhi(y,m,d,h,min)[0][0]).get(config.Ganzhiwuxing(ty.sf(0,0)))
