@@ -766,4 +766,3 @@ def suenwl(homecal, awaycal, home_general, away_general ):
     else:
         return "主客旗鼓相當。"
 
-print(gangzhi(2024, 1, 23, 21, 17))
