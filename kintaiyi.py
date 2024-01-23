@@ -170,6 +170,8 @@ class Taiyi():
         """太乙局數"""
         alljq = jieqi_name
         j_q = jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)
+        dz = new_list(alljq, "冬至")[0:12]
+        hz = new_list(alljq, "夏至")[0:12]
         jqmap = {tuple(config.new_list(alljq, "冬至")[0:12]):"冬至", tuple(config.new_list(alljq, "夏至")[0:12]):"夏至"}
         k = self.accnum(ji_style, taiyi_acumyear)%72
         if k == 0:
@@ -193,7 +195,7 @@ class Taiyi():
                     a =multi_key_dict_get({tuple(list("辰巳午未申酉")):"陰遁", tuple(list("戌亥子丑寅卯")):"陽遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
                 #if test == 0
             if dun == "夏至":
-                if dz.index(j_q) % 2 == 0 and j_q != "夏至":
+                if hz.index(j_q) % 2 == 0 and j_q != "夏至":
                     a = multi_key_dict_get({tuple(list("辰巳午未申酉")):"陰遁", tuple(list("戌亥子丑寅卯")):"陽遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
                 else:
                     a =multi_key_dict_get({tuple(list("辰巳午未申酉")):"陽遁", tuple(list("戌亥子丑寅卯")):"陰遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
