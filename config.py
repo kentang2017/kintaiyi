@@ -353,7 +353,7 @@ def jiazi_accum(gz):
     return dict(zip(jiazi(), [i*3652425 for i in list(range(1,61))])).get(gz)
 
 def jq_accum(jq):
-    return dict(zip(new_list(jieqi_name, "冬至"), [3652425,152184.37,304368.75,456553.12,608727.50,760921.87,913106.25,1065290.62,1217475,1369659.37,1522843.75,1674028.12,1826212.50,1978396.87,2130581.25,2282765.62,2434950,2587134.37,2739318.75,2891503.12,3043687.50,3195871.87,3348056.25,3500240.62])).get(jq)
+    return dict(zip(new_list(jieqi.jieqi_name, "冬至"), [3652425,152184.37,304368.75,456553.12,608727.50,760921.87,913106.25,1065290.62,1217475,1369659.37,1522843.75,1674028.12,1826212.50,1978396.87,2130581.25,2282765.62,2434950,2587134.37,2739318.75,2891503.12,3043687.50,3195871.87,3348056.25,3500240.62])).get(jq)
 
 def Ganzhiwuxing(gangorzhi):
     ganzhiwuxing = dict(zip(list(map(lambda x: tuple(x),"甲寅乙卯震巽,丙巳丁午離,壬亥癸子坎,庚申辛酉乾兌,未丑戊己未辰戌艮坤".split(","))), list("木火水金土")))
@@ -361,6 +361,23 @@ def Ganzhiwuxing(gangorzhi):
 
 def find_wx_relation(zhi1, zhi2):
     return multi_key_dict_get(wuxing_relation_2, Ganzhiwuxing(zhi1) + Ganzhiwuxing(zhi2))
+
+#換算干支
+def gangzhi1(year, month, day, hour, minute):
+    if hour == 23:
+        d = Date(round((Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day+1).zfill(2), str(0).zfill(2)))), 3))
+    else:
+        d = Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
+    dd = list(d.tuple())
+    cdate = fromSolar(dd[0], dd[1], dd[2])
+    yTG,mTG,dTG,hTG = "{}{}".format(tian_gan[cdate.getYearGZ().tg], di_zhi[cdate.getYearGZ().dz]), "{}{}".format(tian_gan[cdate.getMonthGZ().tg],di_zhi[cdate.getMonthGZ().dz]), "{}{}".format(tian_gan[cdate.getDayGZ().tg], di_zhi[cdate.getDayGZ().dz]), "{}{}".format(tian_gan[cdate.getHourGZ(dd[3]).tg], di_zhi[cdate.getHourGZ(dd[3]).dz])
+    if year < 1900:
+        mTG1 = find_lunar_month(yTG).get(lunar_date_d(year, month, day).get("月"))
+    else:
+        mTG1 = mTG
+    hTG1 = find_lunar_hour(dTG).get(hTG[1])
+    return [yTG, mTG1, dTG, hTG1]
+
 #換算干支
 def gangzhi(year, month, day, hour, minute):
     if year == 0:
@@ -379,8 +396,11 @@ def gangzhi(year, month, day, hour, minute):
     else:
         mTG1 = mTG
     hTG1 = find_lunar_hour(dTG).get(hTG[1])
-    gangzhi_minute = minutes_jiazi_d().get(str(hour)+":"+str(minute))
+    zi = gangzhi1(year, month, day, 0, 0)[3]
+    hourminute = str(hour)+":"+str(minute)
+    gangzhi_minute = minutes_jiazi_d(zi).get(hourminute)
     return [yTG, mTG1, dTG, hTG1, gangzhi_minute]
+
 #五虎遁，起正月
 def find_lunar_month(year):
     fivetigers = {
@@ -410,11 +430,24 @@ def find_lunar_hour(day):
     else:
         result = multi_key_dict_get(fiverats, day[0])
     return dict(zip(list(di_zhi), new_list(jiazi(), result)[:12]))
+#五狗遁，起子時
+def find_lunar_minute(hour):
+    fivedogs = {
+    tuple(list('甲己')):'甲戌',
+    tuple(list('乙庚')):'丙戌',
+    tuple(list('丙辛')):'戊戌',
+    tuple(list('丁壬')):'庚戌',
+    tuple(list('戊癸')):'壬戌'
+    }
+    if multi_key_dict_get(fivedogs, hour[0]) == None:
+        result = multi_key_dict_get(fivedogs, hour[1])
+    else:
+        result = multi_key_dict_get(fivedogs, hour[0])
+    return new_list(jiazi(), result)
 #分干支
-def minutes_jiazi_d():
-
+def minutes_jiazi_d(hour):
     t = [f"{h}:{m}" for h in range(24) for m in range(60)]
-    minutelist = dict(zip(t, cycle(repeat_list(2, jiazi()))))
+    minutelist = dict(zip(t, cycle(repeat_list(1, find_lunar_minute(hour)))))
     return minutelist
 #農曆
 def lunar_date_d(year, month, day):
@@ -732,3 +765,5 @@ def suenwl(homecal, awaycal, home_general, away_general ):
         return "雖客以多筭臨少，惟客人不出中門，主客俱不利，和。"
     else:
         return "主客旗鼓相當。"
+
+print(gangzhi(2024, 1, 23, 21, 17))
