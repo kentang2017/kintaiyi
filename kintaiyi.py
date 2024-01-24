@@ -194,10 +194,7 @@ class Taiyi():
                 if dz_num.get(j_q) % 2 == 0:
                         a = multi_key_dict_get({tuple(list("戌亥子丑寅卯")):"陰遁", tuple(list("辰巳午未申酉")):"陽遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
                 if dz_num.get(j_q) % 2 != 0:
-                    if config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1] == "卯":
-                        a = "陽遁"  
-                    else:
-                        a =multi_key_dict_get({tuple(list("辰巳午未申酉")):"陰遁", tuple(list("戌亥子丑寅卯")):"陽遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
+                        a =multi_key_dict_get({tuple(list("申酉戌亥子丑")):"陰遁", tuple(list("寅卯辰巳午未")):"陽遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
             #if test == 0
             if dun == "夏至":
                 if hz_num.get(j_q) % 2 == 0:
