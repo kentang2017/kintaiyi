@@ -190,7 +190,7 @@ class Taiyi():
             #dunk = multi_key_dict_get(dund, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
             if dun == "冬至":
                 if dz.index(j_q) % 2 == 0 and j_q != "冬至":
-                    a = multi_key_dict_get({tuple(list("戌亥子丑寅")):"陰遁", tuple(list("辰巳午未申酉")):"陽遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
+                    a = multi_key_dict_get({tuple(list("戌亥子丑寅卯")):"陰遁", tuple(list("辰巳午未申酉")):"陽遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
                 if dz.index(j_q) % 2 != 0 or j_q == "冬至":
                     a =multi_key_dict_get({tuple(list("辰巳午未申酉")):"陰遁", tuple(list("戌亥子丑寅卯")):"陽遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
                 #if test == 0
