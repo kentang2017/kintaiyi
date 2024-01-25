@@ -468,7 +468,7 @@ class Taiyi():
 
     def shensha(self, ji_style, taiyi_acumyear):
         """推太乙當時法"""
-        if ji_style ==3:
+        if ji_style ==3 or ji_style ==4:
             general = "貴人,螣蛇,朱雀,六合,勾陳,青龍,天空,白虎,太常,玄武,太陰,天后".split(",")
             #tiany = self.skyyi(ji_style, taiyi_acumyear).replace("兌", "酉").replace("坎", "子").replace("震","卯").replace("離","午").replace("艮", "丑")
             tiany = self.ty_gong(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥")
@@ -477,7 +477,7 @@ class Taiyi():
                 return dict(zip(config.new_list(di_zhi, tiany) , general))
             return dict(zip(config.new_list(list(reversed(di_zhi)), tiany), general))
         return "太乙時計才顯示"
-
+        
     def set_cal(self, ji_style, taiyi_acumyear):
         """定算"""
         lnum = [8, 8, 3, 3, 4,4, 9, 9, 2, 2, 7, 7, 6, 6, 1, 1]
