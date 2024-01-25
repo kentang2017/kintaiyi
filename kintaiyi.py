@@ -274,10 +274,47 @@ class Taiyi():
         """太乙落宮"""
         return dict(zip(range(1,73), config.taiyi_pai)).get(self.kook(ji_style, taiyi_acumyear).get("數"))
 
-    def twenty_eightstar(self, ji_style, taiyi_acumyear):
-        s_f = self.sf( ji_style, taiyi_acumyear)
-        start = self.sf_num( ji_style, taiyi_acumyear)
-        return new_list(su, dict(zip(new_list(di_zhi, s_f), new_list(su, start))).get("巳"))
+   def twenty_eightstar(self, ji_style, taiyi_acumyear):
+        s_f = self.sf_num(ji_style, taiyi_acumyear)
+        sf = self.sf(ji_style, taiyi_acumyear)
+        c = dict(zip(new_list(sixteen, sf), new_list(su, s_f)))
+        suu = dict(zip(range(1,29), su))
+        snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") + 2 
+        if sf == "坤":
+           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") - 2
+        if sf == "酉":
+           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") - 3
+        if sf == "亥":
+           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") - 5
+        if sf == "巳":
+           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") + 1
+        if sf == "寅":
+           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +4
+        if sf == "卯":
+           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +3
+        if sf == "子":
+           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +6
+        if sf == "未":
+           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") -1
+        if sf == "申":
+           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") -2
+        if sf == "戌":
+           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") -4
+        if sf == "艮":
+           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +4
+        if sf == "巽":
+           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +1
+        if sf == "丑":
+           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +5
+        if sf == "午":
+           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") 
+        if sf == "乾":
+           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") -5
+        if snum > 28:
+           snum = snum -28
+        if snum < 0:
+           snum = snum +28
+        return new_list(su, suu.get(snum))
 
     def sf(self, ji_style, taiyi_acumyear):
         """始擊落宮"""
