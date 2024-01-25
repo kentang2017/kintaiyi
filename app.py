@@ -113,12 +113,12 @@ with pan:
                     homecal = config.find_cal(yingyang, kook_num)[0]
                     awaycal =  config.find_cal(yingyang, kook_num)[1]
                     setcal =  config.find_cal(yingyang, kook_num)[2]
-                    genchart = ty.gen_gong(num, tn)
                     sj_su_predict = "始擊落"+ ty.sf_num(num,tn)+ "宿，"+ su_dist.get(ty.sf_num(num,tn))
                     tg_sj_su_predict = config.multi_key_dict_get (tengan_shiji, config.gangzhi(my,mm,md,mh,min)[0][0]).get(config.Ganzhiwuxing(ty.sf(num,tn)))
                     three_door = ty.threedoors(num,tn)
                     five_generals = ty.fivegenerals(num,tn)
                     home_vs_away1 = ty.wc_n_sj(num,tn)
+                genchart = ty.gen_gong(num, tn)
                 if num == 5:
                     ttext = ty.pan(0,0)
                     kook = ty.kook(0,0)
@@ -311,12 +311,12 @@ with pan:
                 setcal =  config.find_cal(yingyang, kook_num)[2]
                 #homecal = ty.home_cal(num, tn)
                 #awaycal = ty.away_cal(num, tn)
-                genchart = ty.gen_gong(num, tn)
                 sj_su_predict = "始擊落"+ ty.sf_num(num,tn)+ "宿，"+ su_dist.get(ty.sf_num(num,tn))
                 tg_sj_su_predict = config.multi_key_dict_get (tengan_shiji, config.gangzhi(y,m,d,h,min)[0][0]).get(config.Ganzhiwuxing(ty.sf(num,tn)))
                 three_door = ty.threedoors(num,tn)
                 five_generals = ty.fivegenerals(num,tn)
                 home_vs_away1 = ty.wc_n_sj(num,tn)
+            genchart = ty.gen_gong(num, tn)
             if num == 5:
                 ttext = ty.pan(0,0)
                 kook = ty.kook(0,0)
