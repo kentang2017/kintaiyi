@@ -190,21 +190,32 @@ class Taiyi():
             #dund = dundict.get(dun)
             #dundict = {"夏至":{tuple(list("辰巳午未申酉")):"陽遁", tuple(list("戌亥子丑寅卯")):"陰遁"}, "冬至":{tuple(list("辰巳午未申酉")):"陰遁", tuple(list("戌亥子丑寅卯")):"陽遁"}
             #dunk = multi_key_dict_get(dund, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
-            if dun == "冬至":
-                if dz_num.get(j_q) % 2 == 0:
-                        a = multi_key_dict_get({tuple(list("戌亥子丑寅卯")):"陰遁", tuple(list("辰巳午未申酉")):"陽遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
-                if dz_num.get(j_q) % 2 != 0:
-                        a =multi_key_dict_get({tuple(list("申酉戌亥子丑")):"陰遁", tuple(list("寅卯辰巳午未")):"陽遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
+            #if dun == "冬至":
+            #    if dz_num.get(j_q) % 2 == 0:
+            #            a = multi_key_dict_get({tuple(list("戌亥子丑寅卯")):"陰遁", tuple(list("辰巳午未申酉")):"陽遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
+            #    if dz_num.get(j_q) % 2 != 0:
+            #            a =multi_key_dict_get({tuple(list("申酉戌亥子丑")):"陰遁", tuple(list("寅卯辰巳午未")):"陽遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
             #if test == 0
-            if dun == "夏至":
-                if hz_num.get(j_q) % 2 == 0:
-                    a = multi_key_dict_get({tuple(list("辰巳午未申酉")):"陰遁", tuple(list("戌亥子丑寅卯")):"陽遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
-                if hz_num.get(j_q) % 2 != 0:
-                    a =multi_key_dict_get({tuple(list("辰巳午未申酉")):"陽遁", tuple(list("戌亥子丑寅卯")):"陰遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
-            return  {"文":f"{a}{an2cn(k)}局", "數":k, "年":three_year, "積"+config.taiyi_name(ji_style)[0]+"數":self.accnum(ji_style, taiyi_acumyear) }
+            #if dun == "夏至":
+            #    if hz_num.get(j_q) % 2 == 0:
+            #        a = multi_key_dict_get({tuple(list("辰巳午未申酉")):"陰遁", tuple(list("戌亥子丑寅卯")):"陽遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
+            #    if hz_num.get(j_q) % 2 != 0:
+            #        a =multi_key_dict_get({tuple(list("辰巳午未申酉")):"陽遁", tuple(list("戌亥子丑寅卯")):"陰遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
+            #return  {"文":f"{a}{an2cn(k)}局", "數":k, "年":three_year, "積"+config.taiyi_name(ji_style)[0]+"數":self.accnum(ji_style, taiyi_acumyear) }
             #dund = dundict.get(dun)
             #dunk = multi_key_dict_get(dund, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
-            #return  {"文":f"{dunk}{an2cn(k)}局", "數":k, "年":three_year, "積"+config.taiyi_name(ji_style)[0]+"數":self.accnum(ji_style, taiyi_acumyear) }
+            if dun == "冬至":
+                if config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[4][0] in list("甲丙戊己庚"):
+                    a = "陽遁"
+                else:
+                    a  = "陰遁"
+            #if test == 0
+            if dun == "夏至":
+                if config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[4][0] in list("甲丙戊己庚"):
+                    a = "陰遁"
+                else:
+                    a  = "陽遁"
+            return  {"文":f"{dunk}{an2cn(k)}局", "數":k, "年":three_year, "積"+config.taiyi_name(ji_style)[0]+"數":self.accnum(ji_style, taiyi_acumyear) }
 
     def get_five_yuan_kook(self, ji_style, taiyi_acumyear):
         """太乙五子元局"""
