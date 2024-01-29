@@ -205,13 +205,13 @@ class Taiyi():
             #dund = dundict.get(dun)
             #dunk = multi_key_dict_get(dund, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
             if dun == "冬至":
-                if config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[4][0] in list("甲丙戊庚壬"):
+                if config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][0] in list("甲丙戊庚壬"):
                     a = "陽遁"
                 else:
                     a  = "陰遁"
             #if test == 0
             if dun == "夏至":
-                if config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[4][0] in list("甲丙戊庚壬"):
+                if config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][0] in list("甲丙戊庚壬"):
                     a = "陰遁"
                 else:
                     a  = "陽遁"
