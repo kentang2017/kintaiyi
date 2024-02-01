@@ -19,7 +19,7 @@
 卿士惟月
 師尹惟日
 庶士惟時
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">頂部</a>)</p>
 
 -----
 
@@ -28,7 +28,7 @@
 主單數客偶數為最佳
 彼此筭數大者為佔優
 還要看太乙座落何處
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">頂部</a>)</p>
 
 -----
 
@@ -52,7 +52,7 @@
 10. 提挾：文昌與始擊在太乙左右
 11. 四郭固：文昌、太乙與將同宮
 12. 四郭杜：文昌客參同宮，主參客大同宮
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">頂部</a>)</p>
 
 -----
 
@@ -64,7 +64,7 @@
 陽間至生驚休時，陰杜死傷景門布，
 二門不具休與生，三門不具休門杜，
 太乙不在三門下，名為門具得其助。
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">頂部</a>)</p>
 
 -----
 
@@ -97,7 +97,7 @@
 地乙病死多喪禍，直符旱澇出蝗蟲，
 皆在上元甲子起，三歲移宮周復始，
 三元次第相接連，九宮行盡三宮尾。
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">頂部</a>)</p>
 
 -----
 
@@ -203,4 +203,4 @@
 凡擇日擇時，當審日時之計所利，興兵蔔吉克制，不可從之。
 
 太乙所統神明凡十六神，其年月日時時計，命起武德，隨時計有陰陽，冬至氣應後，用陽局，夏志氣應後，用陰局，皆以陽局所命之對衝，則陰局太乙所在也，行軍攻戰見怪異雜占。
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">頂部</a>)</p>
