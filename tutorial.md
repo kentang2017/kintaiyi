@@ -19,8 +19,8 @@
 卿士惟月
 師尹惟日
 庶士惟時
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 -----
 
 ##《主客筭數要義》
@@ -28,6 +28,7 @@
 主單數客偶數為最佳
 彼此筭數大者為佔優
 還要看太乙座落何處
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 -----
 
