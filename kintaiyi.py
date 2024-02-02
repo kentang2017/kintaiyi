@@ -217,14 +217,14 @@ class Taiyi():
             #return  {"文":f"{a}{an2cn(k)}局", "數":k, "年":three_year, "積"+config.taiyi_name(ji_style)[0]+"數":self.accnum(ji_style, taiyi_acumyear) }
             if dun == "冬至":
                 if config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][0] in list("甲丙戊庚壬"):
-                    a = multi_key_dict_get( {tuple(list("戌亥子丑寅卯")):"陽遁", tuple(list("辰巳午未申酉")):"陰遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1] )
+                    a = multi_key_dict_get( {tuple(list("申酉戌亥子丑")):"陽遁", tuple(list("寅卯辰巳午未")):"陰遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1] )
                 else:
-                    a = multi_key_dict_get( {tuple(list("戌亥子丑寅卯")):"陰遁", tuple(list("辰巳午未申酉")):"陽遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1] )
+                    a = multi_key_dict_get( {tuple(list("申酉戌亥子丑")):"陰遁", tuple(list("寅卯辰巳午未")):"陽遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1] )
             if dun == "夏至":
                 if config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][0] in list("甲丙戊庚壬"):
-                    a = multi_key_dict_get( {tuple(list("戌亥子丑寅卯")):"陰遁", tuple(list("辰巳午未申酉")):"陽遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1] )
+                    a = multi_key_dict_get( {tuple(list("申酉戌亥子丑")):"陰遁", tuple(list("寅卯辰巳午未")):"陽遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1] )
                 else:
-                    a = multi_key_dict_get( {tuple(list("戌亥子丑寅卯")):"陽遁", tuple(list("辰巳午未申酉")):"陰遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1] )
+                    a = multi_key_dict_get( {tuple(list("申酉戌亥子丑")):"陽遁", tuple(list("寅卯辰巳午未")):"陰遁"}, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1] )
             return  {"文":f"{a}{an2cn(k)}局", "數":k, "年":three_year, "積"+config.taiyi_name(ji_style)[0]+"數":self.accnum(ji_style, taiyi_acumyear) }
 
     
