@@ -421,7 +421,7 @@ with example:
 
 with tutorial:
     st.header('看盤要領')
-    st.markdown(get_file_content_as_string("tutorial.md"))
+    st.markdown(get_file_content_as_string("tutorial.md"),  unsafe_allow_html=True)
     
 with guji:
     st.header('古籍書目')
