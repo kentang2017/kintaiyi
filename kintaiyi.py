@@ -865,7 +865,7 @@ class Taiyi():
 
     def gudan(self, ji_style, taiyi_acumyear):
         """推孤單以占成敗"""
-        ty_num = self.ty( ji_style, taiyi_acumyear).
+        ty_num = self.ty( ji_style, taiyi_acumyear)
         ying_yang = {tuple(1,3,7,9):"單陽",  tuple(2,4,6,8):"單陰"}
         #def_ty = multi_key_dict_get({tuple(1,3,7,9):"單陽",  tuple(2,4,6,8):"單陰"}, ty_num)
         #《經》曰：算孤單，以占主客成敗。一、三、七、九為單陽；二、四、六、八為單陰，一十、三十為孤陽；單陽並孤陽為重陽，單陰並孤陰為重陰。單陰算，並不利下，不利客；單陽算，不利上，不利主人也。
