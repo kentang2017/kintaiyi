@@ -865,16 +865,46 @@ class Taiyi():
 
     def gudan(self, ji_style, taiyi_acumyear):
         """推孤單以占成敗"""
-        ty_num = self.ty( ji_style, taiyi_acumyear)
+        ty_num = self.ty( ji_style, taiyi_acumyear).
+        ying_yang = {tuple(1,3,7,9):"單陽",  tuple(2,4,6,8):"單陰"}
         #def_ty = multi_key_dict_get({tuple(1,3,7,9):"單陽",  tuple(2,4,6,8):"單陰"}, ty_num)
         #《經》曰：算孤單，以占主客成敗。一、三、七、九為單陽；二、四、六、八為單陰，一十、三十為孤陽；單陽並孤陽為重陽，單陰並孤陰為重陰。單陰算，並不利下，不利客；單陽算，不利上，不利主人也。
         homecal = str(self.home_cal( ji_style, taiyi_acumyear))
         awaycal = str(self.away_cal( ji_style, taiyi_acumyear) )
         description = {"單陰":"單陰算，並不利下，不利客。", "單陽":"單陽算，不利上，不利主人也。"}
         if len(homecal) == 1:
-            h = multi_key_dict_get({tuple(1,3,7,9):"單陽",  tuple(2,4,6,8):"單陰"}, int(homecal))
-            
-        return 
+            one_digit = multi_key_dict_get(ying_yang, int(homecal))
+            if one_digit == "單陽":
+                h_result = "主筭得單陽，不利上，不利主人也。"
+            if one_digit == "單陰":
+                h_result = "主筭得單陰，沒不利也。"
+        if len(awaycal) == 1:
+            one_digit = multi_key_dict_get(ying_yang, int(awaycal))
+            if one_digit == "單陽":
+                a_result = "客筭得單陽，沒不利也。"
+            if one_digit == "單陰":
+                a_result = "客筭得單陰，不利上，不利客人也。"
+        if len(homecal) == 2:
+            if int(homecal[1]) == 1 or int(homecal[1]) == 3:
+               two_digit = "孤陽"
+            if int(homecal[1]) != 1 and int(homecal[1]) != 3:
+               two_digit = "孤陰"
+            first_digit = multi_key_dict_get(ying_yang, int(homecal[0]))
+        if len(awaycal) == 2:
+            if int(awaycal[1]) == 1 or int(awaycal[1]) == 3:
+               two_digit = "孤陽"
+            if int(awaycal[1]) != 1 and int(awaycal[1]) != 3:
+               two_digit = "孤陰"
+            first_digit = multi_key_dict_get(ying_yang, int(awaycal[0]))
+            if two_digit == "孤陰" and first_digit == "單陰":
+                return "客算為單陰並孤陰，為重陰。"
+            if two_digit == "孤陽" and first_digit == "單陰":
+                return "客算為單陰並孤陽，沒不利。"
+            if two_digit == "孤陰" and first_digit == "單陽":
+                return "客算為單陽並孤陰，沒不利。"
+            if two_digit == "孤陽" and first_digit == "單陽":
+                return "客算為單陽並孤陽，沒不利。"
+
 
     def tui_danger(self, ji_style, taiyi_acumyear):
         """推陰陽以占厄會"""
