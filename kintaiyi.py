@@ -1107,6 +1107,7 @@ class Taiyi():
                 "推三門具不具":self.threedoors(ji_style, taiyi_acumyear),
                 "推五將發不發":self.fivegenerals(ji_style, taiyi_acumyear),
                 "推主客相闗法":self.wc_n_sj(ji_style, taiyi_acumyear),
+                "推陰陽以占厄會":self.tui_danger(ji_style, taiyi_acumyear),
                 "推多少以占勝負":config.suenwl(self.home_cal(ji_style, taiyi_acumyear),
                                         self.away_cal(ji_style, taiyi_acumyear),
                                         self.home_general(ji_style, taiyi_acumyear),
