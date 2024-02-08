@@ -395,6 +395,7 @@ with pan:
                 st.markdown("三門五將︰"+ three_door+five_generals )
                 st.markdown("推主客相關︰"+ home_vs_away1)
                 st.markdown("推多少以占勝負︰"+ ttext.get("推多少以占勝負"))
+                st.markdown("推陰陽以占厄會︰"+ ttext.get("推陰陽以占厄會"))
                 st.markdown("推太乙風雲飛鳥助戰︰"+ home_vs_away3)
                 
 
