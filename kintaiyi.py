@@ -863,6 +863,44 @@ class Taiyi():
             fly_fu = "辰"
         return fly_fu
 
+    def gudan(self, ji_style, taiyi_acumyear):
+        """推孤單以占成敗"""
+        ty_num = self.ty( ji_style, taiyi_acumyear)
+        #def_ty = multi_key_dict_get({tuple(1,3,7,9):"單陽",  tuple(2,4,6,8):"單陰"}, ty_num)
+        #《經》曰：算孤單，以占主客成敗。一、三、七、九為單陽；二、四、六、八為單陰，一十、三十為孤陽；單陽並孤陽為重陽，單陰並孤陰為重陰。單陰算，並不利下，不利客；單陽算，不利上，不利主人也。
+        homecal = str(self.home_cal( ji_style, taiyi_acumyear))
+        awaycal = str(self.away_cal( ji_style, taiyi_acumyear) )
+        description = {"單陰":"單陰算，並不利下，不利客。", "單陽":"單陽算，不利上，不利主人也。"}
+        if len(homecal) == 1:
+            h = multi_key_dict_get({tuple(1,3,7,9):"單陽",  tuple(2,4,6,8):"單陰"}, int(homecal))
+            
+        return 
+
+    def tui_danger(self, ji_style, taiyi_acumyear):
+        """推陰陽以占厄會"""
+        tai_yi = self.ty(ji_style, taiyi_acumyear)
+        tyg = num2gong(self.ty(ji_style, taiyi_acumyear))
+        homecal = self.home_cal( ji_style, taiyi_acumyear) 
+        awaycal = self.away_cal( ji_style, taiyi_acumyear) 
+        tyd = multi_key_dict_get({tuple([8,3,4,9]): "太乙在陽宮。", tuple([1,2,6,7]): "太乙在陰宮。"}, tai_yi)
+        if homecal % 2 != 0 and tyd == "太乙在陽宮。":
+            hr = "太乙在陽宮，主筭得奇，為重陽，厄在火，主厄。"
+        if homecal % 2 != 0 and tyd != "太乙在陽宮。":
+            hr = "太乙在陰宮，主筭得奇，主沒厄。"
+        if homecal % 2 == 0 and tyd != "太乙在陰宮。":
+            hr = "太乙在陽宮，主筭得偶，主沒厄。"
+        if homecal % 2 == 0 and tyd == "太乙在陰宮。":
+            hr = "太乙在陰宮，主筭得偶，為重陰，厄在水，主厄。"
+        if awaycal % 2 != 0 and tyd == "太乙在陽宮。":
+            ar = "太乙在陽宮，客筭得奇，為重陽，厄在火，客厄。"
+        if awaycal % 2 != 0 and tyd != "太乙在陽宮。":
+            ar = "太乙在陰宮，客筭得奇，客沒厄。"
+        if awaycal % 2 == 0 and tyd != "太乙在陰宮。":
+            ar = "太乙在陽宮，客筭得偶，客沒厄。"
+        if awaycal % 2 == 0 and tyd == "太乙在陰宮。":
+            ar = "太乙在陰宮，客筭得偶，為重陰，厄在水，客厄。"
+        return hr + ar
+    
     def ty_gong_dist(self, ji_style, taiyi_acumyear):
         """太乙在天外地內法"""
         tai_yi = self.ty(ji_style, taiyi_acumyear)
