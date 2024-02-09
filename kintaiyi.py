@@ -890,6 +890,14 @@ class Taiyi():
             if int(homecal[1]) != 1 and int(homecal[1]) != 3:
                two_digit = "孤陰"
             first_digit = multi_key_dict_get(ying_yang, int(homecal[0]))
+            if two_digit == "孤陰" and first_digit == "單陰":
+                return "主算為單陰並孤陰，為重陰。"
+            if two_digit == "孤陽" and first_digit == "單陰":
+                return "主算為單陰並孤陽，沒不利。"
+            if two_digit == "孤陰" and first_digit == "單陽":
+                return "主算為單陽並孤陰，沒不利。"
+            if two_digit == "孤陽" and first_digit == "單陽":
+                return "主算為單陽並孤陽，為重陽。"
         if len(awaycal) == 2:
             if int(awaycal[1]) == 1 or int(awaycal[1]) == 3:
                two_digit = "孤陽"
@@ -903,8 +911,15 @@ class Taiyi():
             if two_digit == "孤陰" and first_digit == "單陽":
                 return "客算為單陽並孤陰，沒不利。"
             if two_digit == "孤陽" and first_digit == "單陽":
-                return "客算為單陽並孤陽，沒不利。"
+                return "客算為單陽並孤陽，為重陽。"
 
+    def tui_harmony(self, ji_style, taiyi_acumyear):
+        """推陰遁和不和"""
+        ty_num = self.ty( ji_style, taiyi_acumyear)
+        homecal = self.home_cal( ji_style, taiyi_acumyear)
+        awaycal = self.away_cal( ji_style, taiyi_acumyear) 
+
+        return 
 
     def tui_danger(self, ji_style, taiyi_acumyear):
         """推陰陽以占厄會"""
