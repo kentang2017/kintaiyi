@@ -411,7 +411,7 @@ with pan:
         
 with connect:
     st.header('連結')
-    st.markdown(get_file_content_as_string1("update.md"))
+    st.markdown(get_file_content_as_string1("update.md"), unsafe_allow_html=True)
             
 with example:
     st.header('太乙局數史例')
