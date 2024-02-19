@@ -301,7 +301,7 @@ class Taiyi():
         sf = self.sf(ji_style, taiyi_acumyear)
         su_r = list(reversed(su))
         c = dict(zip(new_list(sixteen, sf), new_list(su_r, s_f)))
-        suu = dict(zip(range(1,29), su_r))
+        suu = dict(zip(list(reversed(range(1,29))), su_r))
         snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") + 2 
         if sf == "坤":
            snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") - 2
