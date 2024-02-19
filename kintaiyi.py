@@ -299,9 +299,9 @@ class Taiyi():
     def twenty_eightstar(self, ji_style, taiyi_acumyear):
         s_f = self.sf_num(ji_style, taiyi_acumyear)
         sf = self.sf(ji_style, taiyi_acumyear)
-        su = list(reversed(su))
-        c = dict(zip(new_list(sixteen, sf), new_list(su, s_f)))
-        suu = dict(zip(range(1,29), su))
+        su_r = list(reversed(su))
+        c = dict(zip(new_list(sixteen, sf), new_list(su_r, s_f)))
+        suu = dict(zip(range(1,29), su_r))
         snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") + 2 
         if sf == "坤":
            snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") - 2
@@ -337,7 +337,7 @@ class Taiyi():
            snum = snum -28
         if snum < 0:
            snum = snum +28
-        return new_list(su, suu.get(snum))
+        return new_list(su_r, suu.get(snum))
 
     def sf(self, ji_style, taiyi_acumyear):
         """始擊落宮"""
