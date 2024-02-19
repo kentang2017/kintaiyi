@@ -304,35 +304,35 @@ class Taiyi():
         suu = dict(zip(range(1,29), su_r))
         snum = su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") + 2 
         if sf == "坤":
-           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") - 2
+           snum = su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") - 2
         if sf == "酉":
-           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") - 3
+           snum = su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") - 3
         if sf == "亥":
-           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") - 5
+           snum = su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") - 5
         if sf == "巳":
-           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") + 1
+           snum = su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") + 1
         if sf == "寅":
-           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +4
+           snum = su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +4
         if sf == "卯":
-           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +3
+           snum = su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +3
         if sf == "子":
-           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +6
+           snum = su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +6
         if sf == "未":
-           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") -1
+           snum = su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") -1
         if sf == "申":
-           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") -2
+           snum = su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") -2
         if sf == "戌":
-           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") -4
+           snum = su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") -4
         if sf == "艮":
-           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +4
+           snum = su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +4
         if sf == "巽":
-           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +1
+           snum = su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +1
         if sf == "丑":
-           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +5
+           snum = su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +5
         if sf == "午":
-           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") 
+           snum = su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") 
         if sf == "乾":
-           snum = su.index(s_f)-sixteen.index(sf)+sixteen.index("巳") -5
+           snum = su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") -5
         if snum > 28:
            snum = snum -28
         if snum < 0:
