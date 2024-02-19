@@ -337,7 +337,7 @@ class Taiyi():
            snum = snum -28
         if snum < 0:
            snum = snum +28
-        return new_list(su, suu.get(snum))
+        return new_list((reversed(new_list(su, suu.get(snum)))), suu.get(snum))
 
     def sf(self, ji_style, taiyi_acumyear):
         """始擊落宮"""
