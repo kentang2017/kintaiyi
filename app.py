@@ -140,7 +140,7 @@ with pan:
                     life1 = ty.gongs_discription(sex_o)
                     life2 = ty.twostar_disc(sex_o)
                     lifedisc = ty.convert_gongs_text(life1, life2)
-                    lifedisc2 = ty.stars_descriptions_text(4,accum_value)
+                    lifedisc2 = ty.stars_descriptions_text(4,0)
                     
                 ed = ttext.get("八門值事")
                 yc = ty.year_chin()
