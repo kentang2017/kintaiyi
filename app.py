@@ -124,6 +124,7 @@ with pan:
                     kook = ty.kook(0,0)
                     kook_num = kook.get("數")
                     yingyang = kook.get("文")[0]
+                    accum_value = ty.accnum(4,0)
                     #homecal = ty.home_cal(num, tn)
                     #awaycal = ty.away_cal(num, tn)
                     homecal = config.find_cal(yingyang, kook_num)[0]
@@ -139,7 +140,7 @@ with pan:
                     life1 = ty.gongs_discription(sex_o)
                     life2 = ty.twostar_disc(sex_o)
                     lifedisc = ty.convert_gongs_text(life1, life2)
-                    lifedisc2 = ty.stars_descriptions_text(3,0)
+                    lifedisc2 = ty.stars_descriptions_text(4,accum_value)
                     
                 ed = ttext.get("八門值事")
                 yc = ty.year_chin()
