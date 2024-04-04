@@ -784,8 +784,11 @@ class Taiyi():
         c = "五福,君基,臣基,民基,文昌,計神,小游,主大,客大,主參,客參,始擊,飛符,四神,天乙,地乙".split(",")
         allstar = {}
         for i in c:
-            a = {i:stars_twelve.get(i)[starszhi.get(i)]}
-            allstar.update(a)
+            try:
+                a = {i:stars_twelve.get(i)[starszhi.get(i)]}
+                allstar.update(a)
+            except IndexError:
+                pass
         return allstar
 
     def stars_descriptions_text(self, ji_style, taiyi_acumyear):
