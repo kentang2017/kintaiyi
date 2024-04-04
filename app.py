@@ -103,6 +103,7 @@ with pan:
                 mh = int(pp[0])
                 mmin = int(pp[1])
                 ty = kintaiyi.Taiyi(my,mm,md,mh,mmin)
+                accum_value = ty.accnum(4,0)
                 if num != 5:
                     ttext = ty.pan(num,tn)
                     kook = ty.kook(num,tn)
@@ -124,7 +125,6 @@ with pan:
                     kook = ty.kook(0,0)
                     kook_num = kook.get("數")
                     yingyang = kook.get("文")[0]
-                    accum_value = ty.accnum(4,0)
                     #homecal = ty.home_cal(num, tn)
                     #awaycal = ty.away_cal(num, tn)
                     homecal = config.find_cal(yingyang, kook_num)[0]
