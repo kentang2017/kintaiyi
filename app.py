@@ -87,6 +87,17 @@ with st.sidebar:
     tn = dict(zip([' 太乙統宗 ', ' 太乙金鏡 ', ' 太乙淘金歌 ',' 太乙局 ' ],[0,1,2,3])).get(acum)
     manual = st.button('手動盤')
     instant = st.button('即時盤')
+    st.markdown("""
+            <style>
+                div[data-testid="column"] {
+                    width: fit-content !important;
+                    flex: unset;
+                }
+                div[data-testid="column"] * {
+                    width: fit-content !important;
+                }
+            </style>
+            """, unsafe_allow_html=True)
     col1, col2, col3 = st.columns([1,1,1])
 
     with col1:
