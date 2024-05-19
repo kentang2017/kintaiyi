@@ -94,17 +94,7 @@ with st.sidebar:
 
 with pan:
     output5 = st.empty()  
-    st.markdown("""
-            <style>
-                div[data-testid="column"] {
-                    width: fit-content !important;
-                    flex: unset;
-                }
-                div[data-testid="column"] * {
-                    width: fit-content !important;
-                }
-            </style>
-            """, unsafe_allow_html=False)
+
     optionscolumns = st.columns(5)
     with optionscolumns[0]:
         st.button("年")
