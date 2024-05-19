@@ -6,6 +6,7 @@ from contextlib import contextmanager, redirect_stdout
 from io import StringIO
 import urllib.request
 import cn2an
+from cn2an import an2cn
 import streamlit.components.v1 as components
 import kintaiyi
 from historytext import chistory
