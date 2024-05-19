@@ -97,15 +97,15 @@ with pan:
 
     optionscolumns = st.columns(5)
     with optionscolumns[0]:
-        st.button("年")
+        st.markdown("年")
     with optionscolumns[1]:
-        st.button("月")
+        st.markdown("月")
     with optionscolumns[2]:
-        st.button("日")
+        st.markdown("日")
     with optionscolumns[3]:
-        st.button("時")
+        st.markdown("時")
     with optionscolumns[4]:
-        st.button("分")
+        st.markdown("分")
         
    
     with st_capture(output5.code):
