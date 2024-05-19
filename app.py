@@ -21,6 +21,7 @@ from streamlit_modal import Modal
 import json
 #from streamlit_timeline import timeline
 from streamlit_date_picker import date_range_picker, date_picker, PickerType
+from datetime import datetime, timedelta
 
 def timeline(data, height=800):
     if isinstance(data, str):
