@@ -87,24 +87,7 @@ with st.sidebar:
     tn = dict(zip([' 太乙統宗 ', ' 太乙金鏡 ', ' 太乙淘金歌 ',' 太乙局 ' ],[0,1,2,3])).get(acum)
     manual = st.button('手動盤')
     instant = st.button('即時盤')
-    st.markdown("""
-            <style>
-                div[data-testid="column"] {
-                    width: fit-content !important;
-                    flex: unset;
-                }
-                div[data-testid="column"] * {
-                    width: fit-content !important;
-                }
-            </style>
-            """, unsafe_allow_html=True)
-    col1, col2, col3 = st.columns([1,1,1])
-    with col1:
-       st.button('1')
-    with col2:
-       st.button('2')
-    with col3:
-       st.button('3')
+
 
 
 with pan:
@@ -221,6 +204,24 @@ with pan:
                     #st.title("九宮分野︰")
                     #st.image("pic/太乙九宮分野圖.jpg", use_column_width=True)
                 if num != 5:
+                    st.markdown("""
+                                <style>
+                                    div[data-testid="column"] {
+                                        width: fit-content !important;
+                                        flex: unset;
+                                    }
+                                    div[data-testid="column"] * {
+                                        width: fit-content !important;
+                                    }
+                                </style>
+                                """, unsafe_allow_html=True)
+                    col1, col2, col3 = st.columns([1,1,1])
+                    with col1:
+                       st.button('1')
+                    with col2:
+                       st.button('2')
+                    with col3:
+                       st.button('3')
                     print("{} | 積{}數︰{} | \n農曆︰{} | {} |\n{} |\n{} |\n{} - {} - {} ({}) | \n紀元︰{} | 主筭︰{} 客筭︰{} 定筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n ".format(config.gendatetime(my,mm,md,mh,mmin), config.taiyi_name(num)[0],tynum, lunard, jieqi.jq(my,mm,md,mh,mmin),gz, config.kingyear(my), config.ty_method(tn), config.taiyi_name(num), ty.kook(num, tn).get("文") ,ttext.get("局式").get("年"),   ttext.get("紀元"), homecal, awaycal, setcal, yc, ed, g, config.find_gua(config.lunar_date_d(my, mm, md).get("年"))  ))
                 if num == 5:
                     print("{} {}-{} | \n積{}數︰{} | \n農曆︰{} | {} |\n{} |\n{} |\n太乙人道命法 - {} ({}) | \n紀元︰{} | 主筭︰{} 客筭︰{} |\n{}禽值年 | {}門值事 | \n{}卦值年 | 太乙統運卦︰{} | \n".format(config.gendatetime(my,mm,md,mh,mmin), zhao,ty.taiyi_life(sex_o).get("性別") ,config.taiyi_name(0)[0],tynum, lunard, jieqi.jq(my,mm,md,mh,mmin),gz, config.kingyear(my), ty.kook(0,0).get("文") ,ttext.get("局式").get("年"),   ttext.get("紀元"), homecal, awaycal, yc, ed, g, config.find_gua(config.lunar_date_d(my, mm, md).get("年")) ))
