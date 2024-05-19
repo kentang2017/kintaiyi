@@ -93,44 +93,25 @@ with st.sidebar:
 
 with pan:
     output5 = st.empty()  
-    # CSS for responsive button styling without padding
-    st.markdown("""
-        <style>
-        .button-container {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px; /* Add space between buttons */
-        }
-        .button-container .button {
-            flex: 1; /* Make buttons responsive */
-            text-align: center;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .button-container .button:hover {
-            background-color: #0056b3;
-        }
-        </style>
-        """, unsafe_allow_html=True)
+    # Create a container for the buttons
+    container = st.container()
     
-    # HTML for the buttons
-    st.markdown("""
-        <div class="button-container">
-            <button class="button">年</button>
-            <button class="button">月</button>
-            <button class="button">日</button>
-            <button class="button">時</button>
-            <button class="button">分</button>
-            <button class="button">命</button>
-        </div>
-        """, unsafe_allow_html=True)
-        
+    # Create 5 equally spaced columns for the buttons inside the container
+    columns = container.columns(6)
+    
+    # Add buttons to each column
+    if columns[0].button("1"):
+        st.write("Button 1 clicked")
+    if columns[1].button("2"):
+        st.write("Button 2 clicked")
+    if columns[2].button("3"):
+        st.write("Button 3 clicked")
+    if columns[3].button("4"):
+        st.write("Button 4 clicked")
+    if columns[4].button("5"):
+        st.write("Button 5 clicked")
+    if columns[5].button("6"):
+        st.write("Button 6 clicked")
    
     with st_capture(output5.code):
         try:
