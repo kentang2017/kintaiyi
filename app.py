@@ -93,14 +93,28 @@ with st.sidebar:
 
 with pan:
     output5 = st.empty()  
+    # CSS for responsive button styling without padding
     st.markdown("""
         <style>
         .button-container {
             display: flex;
             justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px; /* Add space between buttons */
         }
         .button-container .button {
-            margin: 5px;
+            flex: 1; /* Make buttons responsive */
+            text-align: center;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .button-container .button:hover {
+            background-color: #0056b3;
         }
         </style>
         """, unsafe_allow_html=True)
