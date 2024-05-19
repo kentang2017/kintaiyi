@@ -130,17 +130,7 @@ with pan:
                 mm = int(p[1])
                 md = int(p[2])
                 mh = int(pp[0])
-                mmin = int(pp[1])st.markdown("""
-            <style>
-                div[data-testid="column"] {
-                    width: fit-content !important;
-                    flex: unset;
-                }
-                div[data-testid="column"] * {
-                    width: fit-content !important;
-                }
-            </style>
-            """, unsafe_allow_html=True)
+                mmin = int(pp[1])
                 ty = kintaiyi.Taiyi(my,mm,md,mh,mmin)
                 accum_value = ty.accnum(4,0)
                 if num != 5:
