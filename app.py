@@ -94,8 +94,31 @@ with st.sidebar:
 
 with pan:
     output5 = st.empty()  
-    default_value = datetime.now()
-    select_date = date_picker(picker_type=PickerType.time, value=default_value, key='date_picker')
+    st.markdown("""
+            <style>
+                div[data-testid="column"] {
+                    width: fit-content !important;
+                    flex: unset;
+                }
+                div[data-testid="column"] * {
+                    width: fit-content !important;
+                }
+            </style>
+            """, unsafe_allow_html=True)
+    col1, col2, col3, col4, col5 = st.columns([1,1,1,1,1])
+    with col1:
+        st.button("年")
+    with col2:
+        st.button("月")
+    with col3:
+        st.button("日")
+    with col4:
+        st.button("時")
+    with col5:
+        st.button("分")
+
+    
+   
     with st_capture(output5.code):
         try:
             if manual:
@@ -107,7 +130,17 @@ with pan:
                 mm = int(p[1])
                 md = int(p[2])
                 mh = int(pp[0])
-                mmin = int(pp[1])
+                mmin = int(pp[1])st.markdown("""
+            <style>
+                div[data-testid="column"] {
+                    width: fit-content !important;
+                    flex: unset;
+                }
+                div[data-testid="column"] * {
+                    width: fit-content !important;
+                }
+            </style>
+            """, unsafe_allow_html=True)
                 ty = kintaiyi.Taiyi(my,mm,md,mh,mmin)
                 accum_value = ty.accnum(4,0)
                 if num != 5:
