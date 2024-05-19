@@ -121,16 +121,16 @@ with pan:
         """, unsafe_allow_html=True)
     
     # HTML for the buttons
-    st.markdown("""
-        <div class="button-container">
-            <button class="button" onclick="window.location.href='/page1'">年</button>
-            <button class="button" onclick="window.location.href='/page2'">月</button>
-            <button class="button" onclick="window.location.href='/page3'">日</button>
-            <button class="button" onclick="window.location.href='/page4'">時</button>
-            <button class="button" onclick="window.location.href='/page5'">分</button>
-            <button class="button" onclick="window.location.href='/page5'">命</button>
-        </div>
-        """, unsafe_allow_html=True)
+    #st.markdown("""
+     #   <div class="button-container">
+     #       <button class="button" onclick="window.location.href='/page1'">年</button>
+     #       <button class="button" onclick="window.location.href='/page2'">月</button>
+     #       <button class="button" onclick="window.location.href='/page3'">日</button>
+     #       <button class="button" onclick="window.location.href='/page4'">時</button>
+     #       <button class="button" onclick="window.location.href='/page5'">分</button>
+     #       <button class="button" onclick="window.location.href='/page5'">命</button>
+     #   </div>
+     #   """, unsafe_allow_html=True)
    
     with st_capture(output5.code):
         try:
