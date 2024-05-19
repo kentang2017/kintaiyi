@@ -105,19 +105,18 @@ with pan:
                 }
             </style>
             """, unsafe_allow_html=False)
-    col1, col2, col3, col4, col5 = st.columns([1,1,1,1,1])
-    with col1:
+    optionscolumns = st.columns(5)
+    with optionscolumns[0]:
         st.button("年")
-    with col2:
+    with optionscolumns[1]:
         st.button("月")
-    with col3:
+    with optionscolumns[2]:
         st.button("日")
-    with col4:
+    with optionscolumns[3]:
         st.button("時")
-    with col5:
+    with optionscolumns[4]:
         st.button("分")
-
-    
+        
    
     with st_capture(output5.code):
         try:
