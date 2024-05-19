@@ -108,11 +108,12 @@ with pan:
     # HTML for the buttons
     st.markdown("""
         <div class="button-container">
-            <button class="button">Button 1</button>
-            <button class="button">Button 2</button>
-            <button class="button">Button 3</button>
-            <button class="button">Button 4</button>
-            <button class="button">Button 5</button>
+            <button class="button">年</button>
+            <button class="button">月</button>
+            <button class="button">日</button>
+            <button class="button">時</button>
+            <button class="button">分</button>
+            <button class="button">命</button>
         </div>
         """, unsafe_allow_html=True)
         
