@@ -20,6 +20,7 @@ import jieqi
 from streamlit_modal import Modal
 import json
 #from streamlit_timeline import timeline
+from streamlit_date_picker import date_range_picker, date_picker, PickerType
 
 def timeline(data, height=800):
     if isinstance(data, str):
@@ -80,6 +81,8 @@ with st.sidebar:
     idate = st.text_input('輸入日期(如: 1997/8/8)', '')
     itime = st.text_input('輸入時間(如: 18:30)', '').replace("︰",":")
     #itime=st.time_input("時間",pdlm.now(tz='Asia/Shanghai').time())
+    default_value = datetime.now()
+    select_date = date_picker(picker_type=PickerType.time, value=default_value, key='date_picker')
     option = st.selectbox( '起盤方式', (' 年計太乙 ', ' 月計太乙 ', ' 日計太乙 ', ' 時計太乙 ', ' 分計太乙 ', ' 太乙命法 '))
     acum = st.selectbox( '太乙積年數', (' 太乙統宗 ', ' 太乙金鏡 ', ' 太乙淘金歌 ', ' 太乙局 '))
     sex_o = st.selectbox( '太乙命法性別', ('男', '女'))
