@@ -104,7 +104,7 @@ with pan:
                     width: fit-content !important;
                 }
             </style>
-            """, unsafe_allow_html=True)
+            """, unsafe_allow_html=False)
     col1, col2, col3, col4, col5 = st.columns([1,1,1,1,1])
     with col1:
         st.button("年")
