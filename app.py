@@ -20,8 +20,7 @@ import jieqi
 from streamlit_modal import Modal
 import json
 #from streamlit_timeline import timeline
-from streamlit_date_picker import date_range_picker, date_picker, PickerType
-from datetime import datetime, timedelta
+
 
 def timeline(data, height=800):
     if isinstance(data, str):
@@ -94,18 +93,28 @@ with st.sidebar:
 
 with pan:
     output5 = st.empty()  
-
-    optionscolumns = st.columns(5)
-    with optionscolumns[0]:
-        st.markdown("年")
-    with optionscolumns[1]:
-        st.markdown("月")
-    with optionscolumns[2]:
-        st.markdown("日")
-    with optionscolumns[3]:
-        st.markdown("時")
-    with optionscolumns[4]:
-        st.markdown("分")
+    st.markdown("""
+        <style>
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .button-container .button {
+            margin: 5px;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+    
+    # HTML for the buttons
+    st.markdown("""
+        <div class="button-container">
+            <button class="button">Button 1</button>
+            <button class="button">Button 2</button>
+            <button class="button">Button 3</button>
+            <button class="button">Button 4</button>
+            <button class="button">Button 5</button>
+        </div>
+        """, unsafe_allow_html=True)
         
    
     with st_capture(output5.code):
