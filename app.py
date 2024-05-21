@@ -92,7 +92,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
         tn = 0
         tynum = ty.accnum(0, 0)
     if num != 5:
-        sex_o = 0
+        sex_o = '男'
     ttext = ty.pan(num, tn)
     kook = ty.kook(num, tn)
     kook_num = kook.get("數")
@@ -165,7 +165,7 @@ with tabs[0]:
     with st_capture(output5.code):
         try:
             if num != 5:
-                sex_o = 0
+                sex_o = '男'
             if manual:
                 if num == 0 and len(idate) <= 4:
                     idate += "/3/3"
