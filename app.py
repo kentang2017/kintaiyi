@@ -90,7 +90,6 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     if num == 5:
         num = 0
         tn = 0
-    if num != 5:
     genchart1 = ty.gen_life_gong(sex_o)
     genchart2 = ty.gen_gong(num, tn)
     ttext = ty.pan(num, tn)
