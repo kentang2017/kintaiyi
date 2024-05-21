@@ -144,7 +144,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown(f"太歲值宿斷事︰{year_predict}")
             st.markdown(f"始擊值宿斷事︰{sj_su_predict}")
             st.markdown(f"十天干歲始擊落宮預測︰{tg_sj_su_predict}")
-            st.markdown(f"推太乙在天外地內法︰{ty.ty_gong_dist(num, tn)}")
+            st.markdown(f"推太乙在天外地內法︰{ty.ty_gong_dist(3, 0)}")
             st.markdown(f"三門五將︰{three_door + five_generals}")
             st.markdown(f"推主客相關︰{home_vs_away1}")
             st.markdown(f"推多少以占勝負︰{ttext.get('推多少以占勝負')}")
