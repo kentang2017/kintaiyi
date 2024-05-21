@@ -173,7 +173,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     
  with tabs[0]:
     output5 = st.empty()
-    with st.capture(output5.code):
+     with st.capture(output5.code):
         try:
             if num != 5:
                 sex_o = '男'
