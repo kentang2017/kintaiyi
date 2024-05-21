@@ -85,10 +85,10 @@ with st.sidebar:
     manual = st.button('手動盤')
     instant = st.button('即時盤')
 
+
 def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
     if num == 5:
-        num = 0
         tn = 0
     genchart1 = ty.gen_life_gong(sex_o)
     genchart2 = ty.gen_gong(num, tn)
