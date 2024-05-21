@@ -90,10 +90,9 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     if num == 5:
         num = 0
         tn = 0
-        genchart = ty.gen_life_gong(sex_o)
     if num != 5:
-        sex_o = '男'
-        genchart = ty.gen_gong(num, tn)
+    genchart1 = ty.gen_life_gong(sex_o)
+    genchart2 = ty.gen_gong(num, tn)
     ttext = ty.pan(num, tn)
     kook = ty.kook(num, tn)
     kook_num = kook.get("數")
@@ -123,7 +122,10 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     r = [(x, x + 25) for x in range(0, 3000, 25)]
     tys = "".join([ts[r[i][0]:r[i][1]] + "\n" for i in range((len(ts) // 25) + 1)])
     yy = "yang" if ttext.get("局式").get("文")[0] == "陽" else "yin"
-    render_svg(genchart)
+    if num == 5:
+        render_svg(genchart1)
+    if num != 5:
+        render_svg(genchart2)
     with st.expander("解釋"):
         if num == 5:
             st.title("《太乙命法》︰")
