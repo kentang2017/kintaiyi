@@ -175,75 +175,25 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
 
 # Tab Content
 with tabs[0]:
-    output5 = st.empty()
-    st.markdown("""
-    <style>
-    .button-container {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        margin-bottom: 20px;
-    }
-    .button {
-        background-color: #4CAF50;
-        border: none;
-        color: white;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 4px 2px;
-        cursor: pointer;
-        padding: 10px 24px;
-        border-radius: 12px;
-    }
-    </style>
-    <div class="button-container">
-        <button class="button" onclick="window.location.href='?mode=year'">年</button>
-        <button class="button" onclick="window.location.href='?mode=month'">月</button>
-        <button class="button" onclick="window.location.href='?mode=day'">日</button>
-        <button class="button" onclick="window.location.href='?mode=hour'">時</button>
-        <button class="button" onclick="window.location.href='?mode=minute'">分</button>
-        <button class="button" onclick="window.location.href='?mode=life'">命</button>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    query_params = st.experimental_get_query_params()
-    mode = query_params.get('mode', ['year'])[0]
-    if mode == 'year':
-        gen_results(datetime.datetime.now().year, 1, 1, 0, 0, 0, tn, '男')
-    elif mode == 'month':
-        gen_results(datetime.datetime.now().year, datetime.datetime.now().month, 1, 0, 0, 1, tn, '男')
-    elif mode == 'day':
-        gen_results(datetime.datetime.now().year, datetime.datetime.now().month, datetime.datetime.now().day, 0, 0, 2, tn, '男')
-    elif mode == 'hour':
-        gen_results(datetime.datetime.now().year, datetime.datetime.now().month, datetime.datetime.now().day, datetime.datetime.now().hour, 0, 3, tn, '男')
-    elif mode == 'minute':
-        gen_results(datetime.datetime.now().year, datetime.datetime.now().month, datetime.datetime.now().day, datetime.datetime.now().hour, datetime.datetime.now().minute, 4, tn, '男')
-    elif mode == 'life':
-        gen_results(datetime.datetime.now().year, datetime.datetime.now().month, datetime.datetime.now().day, datetime.datetime.now().hour, datetime.datetime.now().minute, 5, tn, sex_o)
-        
-
-    with st_capture(output5.code):
-        output0 = st.empty()
-        with output0:
-            try:
-                if manual or instant:
-                    if manual:
-                        if len(idate.split("/")) == 1:
-                            idate += "/3/3"
-                        p = [int(x) for x in idate.split("/")]
-                        pp = [int(x) for x in itime.split(":")]
-                        my, mm, md = p
-                        mh, mmin = pp
-                        gen_results(my, mm, md, mh, mmin, 0, tn, '男')  # Always 年計 when manual is clicked
-                    if instant:
-                        now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-                        y, m, d, h, min = now.year, now.month, now.day, now.hour, now.minute
-                        gen_results(y, m, d, h, min, 0, tn, '男')  # Always 年計 when instant is clicked
-            except ValueError:
-                output0.empty()
-                
+    output0 = st.empty()
+    with output0:
+        try:
+            if manual or instant:
+                if manual:
+                    if len(idate.split("/")) == 1:
+                        idate += "/3/3"
+                    p = [int(x) for x in idate.split("/")]
+                    pp = [int(x) for x in itime.split(":")]
+                    my, mm, md = p
+                    mh, mmin = pp
+                    gen_results(my, mm, md, mh, mmin, 0, tn, '男')  # Always 年計 when manual is clicked
+                if instant:
+                    now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
+                    y, m, d, h, min = now.year, now.month, now.day, now.hour, now.minute
+                    gen_results(y, m, d, h, min, 0, tn, '男')  # Always 年計 when instant is clicked
+        except ValueError:
+            output0.empty()
+            
 
 
 # Additional Tabs Content
