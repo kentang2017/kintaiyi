@@ -88,12 +88,15 @@ with st.sidebar:
 
 def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
+    if num != 5:
+        ttext = ty.pan(num, tn)
+        kook = ty.kook(num, tn)
     if num == 5:
         tn = 0
+        ttext = ty.pan(0, 0)
+        kook = ty.kook(0, 0)
     genchart1 = ty.gen_life_gong(sex_o)
     genchart2 = ty.gen_gong(num, tn)
-    ttext = ty.pan(num, tn)
-    kook = ty.kook(num, tn)
     kook_num = kook.get("數")
     yingyang = kook.get("文")[0]
     homecal, awaycal, setcal = config.find_cal(yingyang, kook_num)
