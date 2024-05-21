@@ -177,10 +177,10 @@ with tabs[0]:
     try:
         if num != 5:
             sex_o = '男'
-        if num == 0 and len(default_idate) <= 4:
-            default_idate += "/3/3"
-        p = [int(x) for x in default_idate.split("/")]
-        pp = [int(x) for x in default_ntime.split(":")]
+        if num == 0 and len(idate) <= 4:
+            idate += "/3/3"
+        p = [int(x) for x in idate.split("/")]
+        pp = [int(x) for x in itime.split(":")]
         my, mm, md = p
         mh, mmin = pp
         gen_results(my, mm, md, mh, mmin, num, tn, sex_o)
