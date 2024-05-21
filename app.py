@@ -174,29 +174,27 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
         
 with tabs[0]:
     output5 = st.empty()
-    with st.capture(output5.code):
-        try:
-            if num != 5:
-                sex_o = '男'
-            if num == 0 and len(default_idate) <= 4:
-                default_idate += "/3/3"
-            p = [int(x) for x in default_idate.split("/")]
-            pp = [int(x) for x in default_ntime.split(":")]
-            my, mm, md = p
-            mh, mmin = pp
-            gen_results(my, mm, md, mh, mmin, num, tn, sex_o)
-        except ValueError:
-            now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-            y, m, d, h, min = now.year, now.month, now.day, now.hour, now.minute
-            gen_results(y, m, d, h, min, 0, 0, "男")
+    try:
+        if num != 5:
+            sex_o = '男'
+        if num == 0 and len(default_idate) <= 4:
+            default_idate += "/3/3"
+        p = [int(x) for x in default_idate.split("/")]
+        pp = [int(x) for x in default_ntime.split(":")]
+        my, mm, md = p
+        mh, mmin = pp
+        gen_results(my, mm, md, mh, mmin, num, tn, sex_o)
+    except ValueError:
+        now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
+        y, m, d, h, min = now.year, now.month, now.day, now.hour, now.minute
+        gen_results(y, m, d, h, min, 0, 0, "男")
 
 # Ensure the result is generated only once
-if st.session_state.get("generated", False) == False:
+if "generated" not in st.session_state:
     st.session_state["generated"] = True
     now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
     y, m, d, h, min = now.year, now.month, now.day, now.hour, now.minute
     gen_results(y, m, d, h, min, 0, 0, "男")
-            
 
 
 # Additional Tabs Content
