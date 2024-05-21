@@ -192,6 +192,10 @@ with tabs[0]:
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
                 y, m, d, h, min = now.year, now.month, now.day, now.hour, now.minute
                 gen_results(y, m, d, h, min, num, tn, sex_o)
+            else:
+                now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
+                y, m, d, h, min = now.year, now.month, now.day, now.hour, now.minute
+                gen_results(y, m, d, h, min, 0, 0, "男")
         except ValueError:
            gen_results(y, m, d, h, min, 0, 0, "男") 
 
