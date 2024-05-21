@@ -172,33 +172,30 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
         print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(num)[0]}數︰{ty.accnum(num, tn)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{config.ty_method(tn)} - {config.taiyi_name(num)} - {ty.kook(num, tn).get('文')} ({ttext.get('局式').get('年')}) | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} 定筭︰{setcal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))} |")
     
         
-
-# Tab Content
 with tabs[0]:
     output5 = st.empty()
-    with st_capture(output5.code):
+    with st.capture(output5.code):
         try:
             if num != 5:
                 sex_o = '男'
-            if manual:
-                if num == 0 and len(idate) <= 4:
-                    idate += "/3/3"
-                p = [int(x) for x in idate.split("/")]
-                pp = [int(x) for x in itime.split(":")]
-                my, mm, md = p
-                mh, mmin = pp
-                gen_results(my, mm, md, mh, mmin, num, tn, sex_o)
-            if instant:
-                now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-                y, m, d, h, min = now.year, now.month, now.day, now.hour, now.minute
-                gen_results(y, m, d, h, min, num, tn, sex_o)
-            else:
-                now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-                y, m, d, h, min = now.year, now.month, now.day, now.hour, now.minute
-                gen_results(y, m, d, h, min, 0, 0, "男")
+            if num == 0 and len(default_idate) <= 4:
+                default_idate += "/3/3"
+            p = [int(x) for x in default_idate.split("/")]
+            pp = [int(x) for x in default_ntime.split(":")]
+            my, mm, md = p
+            mh, mmin = pp
+            gen_results(my, mm, md, mh, mmin, num, tn, sex_o)
         except ValueError:
-           gen_results(y, m, d, h, min, 0, 0, "男") 
+            now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
+            y, m, d, h, min = now.year, now.month, now.day, now.hour, now.minute
+            gen_results(y, m, d, h, min, 0, 0, "男")
 
+# Ensure the result is generated only once
+if st.session_state.get("generated", False) == False:
+    st.session_state["generated"] = True
+    now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
+    y, m, d, h, min = now.year, now.month, now.day, now.hour, now.minute
+    gen_results(y, m, d, h, min, 0, 0, "男")
             
 
 
