@@ -197,7 +197,7 @@ with tabs[0]:
             }
         </script>
         """, unsafe_allow_html=True)
-        display_chart_and_explanation(0, 0, manual=False)
+    display_chart_and_explanation(0, 0, manual=False)
     
 # Additional Tabs Content
 with tabs[7]:
