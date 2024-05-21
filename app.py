@@ -177,7 +177,7 @@ with tabs[0]:
             if instant:
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
                 y, m, d, h, min = now.year, now.month, now.day, now.hour, now.minute
-                gen_results(my, mm, md, mh, mmin, num, tn, sex_o)
+                gen_results(y, m, d, h, min, num, tn, sex_o)
         except ValueError:
             output5 = st.empty()   
 
