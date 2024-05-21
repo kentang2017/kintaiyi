@@ -192,7 +192,9 @@ with tabs[0]:
                     y, m, d, h, min = now.year, now.month, now.day, now.hour, now.minute
                     gen_results(y, m, d, h, min, 0, tn, '男')  # Always 年計 when instant is clicked
         except ValueError:
-            output0.empty()
+            now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
+            y, m, d, h, min = now.year, now.month, now.day, now.hour, now.minute
+            gen_results(y, m, d, h, min, 0, tn, '男')  # Always 年計 when instant is clicked
             
 
 
