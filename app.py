@@ -38,6 +38,73 @@ def timeline(data, height=800):
         </script>
     '''
     components.html(htmlcode, height=height)
+
+def display_chart_and_explanation(num, tn, manual, sex_o=None):
+    try:
+        now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
+        y, m, d, h, min = now.year, now.month, now.day, now.hour, now.minute
+        ty = kintaiyi.Taiyi(y, m, d, h, min)
+        
+        if num != 5:
+            ttext = ty.pan(num, tn)
+            kook = ty.kook(num, tn)
+            kook_num = kook.get("數")
+            yingyang = kook.get("文")[0]
+            homecal, awaycal, setcal = config.find_cal(yingyang, kook_num)
+            sj_su_predict = f"始擊落{ty.sf_num(num, tn)}宿，{su_dist.get(ty.sf_num(num, tn))}"
+            tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(y, m, d, h, min)[0][0]).get(config.Ganzhiwuxing(ty.sf(num, tn)))
+            three_door = ty.threedoors(num, tn)
+            five_generals = ty.fivegenerals(num, tn)
+            home_vs_away1 = ty.wc_n_sj(num, tn)
+        else:
+            ttext = ty.pan(0, 0)
+            kook = ty.kook(0, 0)
+            kook_num = kook.get("數")
+            yingyang = kook.get("文")[0]
+            homecal, awaycal, setcal = config.find_cal(yingyang, kook_num)
+            sj_su_predict = f"始擊落{ty.sf_num(0, 0)}宿，{su_dist.get(ty.sf_num(0, 0))}"
+            tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(y, m, d, h, min)[0][0]).get(config.Ganzhiwuxing(ty.sf(0, 0)))
+            three_door = ty.threedoors(0, 0)
+            five_generals = ty.fivegenerals(0, 0)
+            home_vs_away1 = ty.wc_n_sj(0, 0)
+
+        genchart = ty.gen_gong(num, tn) if num != 5 else ty.gen_life_gong(sex_o)
+        ed = ttext.get("八門值事")
+        yc = ty.year_chin()
+        g = ty.yeargua(tn)
+        year_predict = f"太歲{yc}值宿，{su_dist.get(yc)}"
+        home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
+        ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
+        gz = f"{ttext.get('干支')[0]}年 {ttext.get('干支')[1]}月 {ttext.get('干支')[2]}日 {ttext.get('干支')[3]}時 {ttext.get('干支')[4]}分"
+        lunard = f"{cn2an.transform(str(config.lunar_date_d(y, m, d).get('年')) + '年', 'an2cn')}{an2cn(config.lunar_date_d(y, m, d).get('月'))}月{an2cn(config.lunar_date_d(y, m, d).get('日'))}日"
+        ch = chistory.get(y, "")
+        tys = "".join([ts[i:i+25] + "\n" for i in range(0, len(ts), 25)])
+        yy = "yang" if ttext.get("局式").get("文")[0] == "陽" else "yin"
+        render_svg(genchart)
+        with st.expander("解釋"):
+            if num == 5:
+                st.title("《太乙命法》︰")
+                st.markdown("【十二宮分析】")
+                st.markdown(ty.convert_gongs_text(ty.gongs_discription(sex_o), ty.twostar_disc(sex_o)))
+                st.markdown("【太乙十六神落宮】")
+                st.markdown(ty.stars_descriptions_text(4, 0))
+            st.title("《太乙秘書》︰")
+            st.markdown(ts)
+            st.title("史事記載︰")
+            st.markdown(ch)
+            st.title("太乙盤局分析︰")
+            st.markdown(f"太歲值宿斷事︰{year_predict}")
+            st.markdown(f"始擊值宿斷事︰{sj_su_predict}")
+            st.markdown(f"十天干歲始擊落宮預測︰{tg_sj_su_predict}")
+            st.markdown(f"推太乙在天外地內法︰{ty.ty_gong_dist(0, 0) if num == 5 else ty.ty_gong_dist(num, tn)}")
+            st.markdown(f"三門五將︰{three_door + five_generals}")
+            st.markdown(f"推主客相關︰{home_vs_away1}")
+            st.markdown(f"推多少以占勝負︰{ttext.get('推多少以占勝負')}")
+            st.markdown(f"推陰陽以占厄會︰{ttext.get('推陰陽以占厄會')}")
+            st.markdown(f"推太乙風雲飛鳥助戰︰{home_vs_away3}")
+        print(f"{config.gendatetime(y, m, d, h, min)} | 積{config.taiyi_name(num if num != 5 else 0)[0]}數︰{ty.accnum(num, tn) if num != 5 else ty.accnum(0, 0)} | \n農曆︰{lunard} | {jieqi.jq(y, m, d, h, min)} |\n{gz} |\n{config.kingyear(y)} |\n{config.ty_method(tn)} - {config.taiyi_name(num)} - {ty.kook(num, tn).get('文')} ({ttext.get('局式').get('年')}) | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} 定筭︰{setcal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(y, m, d).get('年'))} |")
+    except ValueError as e:
+        st.error(f"An error occurred: {e}")
     
 def render_svg(svg):
     b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
@@ -88,7 +155,7 @@ with st.sidebar:
 # Tab Content
 with tabs[0]:
     output5 = st.empty()
-
+    # HTML for the buttons
     st.markdown("""
         <style>
         .button-container {
@@ -112,18 +179,23 @@ with tabs[0]:
             background-color: #0056b3;
         }
         </style>
-    """, unsafe_allow_html=True)
-        
-    # HTML for the buttons
-    st.markdown("""
         <div class="button-container">
-            <button class="button" onclick="window.location.href='/page1'">年</button>
-            <button class="button" onclick="window.location.href='/page2'">月</button>
-            <button class="button" onclick="window.location.href='/page3'">日</button>
-            <button class="button" onclick="window.location.href='/page4'">時</button>
-            <button class="button" onclick="window.location.href='/page5'">分</button>
-            <button class="button" onclick="window.location.href='/page5'">命</button>
+            <button class="button" onclick="executeFunction(0)">年</button>
+            <button class="button" onclick="executeFunction(1)">月</button>
+            <button class="button" onclick="executeFunction(2)">日</button>
+            <button class="button" onclick="executeFunction(3)">時</button>
+            <button class="button" onclick="executeFunction(4)">分</button>
+            <button class="button" onclick="executeFunction(5)">命</button>
         </div>
+        <script>
+            function executeFunction(num) {
+                fetch(`/${num}`).then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    }
+                });
+            }
+        </script>
         """, unsafe_allow_html=True)
 
     with st_capture(output5.code):
