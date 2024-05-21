@@ -175,26 +175,26 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
 
 # Tab Content
 with tabs[0]:
-    output0 = st.empty()
-    with output0:
+    output5 = st.empty()
+    with st_capture(output5.code):
         try:
-            if manual or instant:
-                if manual:
-                    if len(idate.split("/")) == 1:
-                        idate += "/3/3"
-                    p = [int(x) for x in idate.split("/")]
-                    pp = [int(x) for x in itime.split(":")]
-                    my, mm, md = p
-                    mh, mmin = pp
-                    gen_results(my, mm, md, mh, mmin, 0, tn, '男')  # Always 年計 when manual is clicked
-                if instant:
-                    now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-                    y, m, d, h, min = now.year, now.month, now.day, now.hour, now.minute
-                    gen_results(y, m, d, h, min, 0, tn, '男')  # Always 年計 when instant is clicked
+            if num != 5:
+                sex_o = '男'
+            if manual:
+                if num == 0 and len(idate) <= 4:
+                    idate += "/3/3"
+                p = [int(x) for x in idate.split("/")]
+                pp = [int(x) for x in itime.split(":")]
+                my, mm, md = p
+                mh, mmin = pp
+                gen_results(my, mm, md, mh, mmin, num, tn, sex_o)
+            if instant:
+                now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
+                y, m, d, h, min = now.year, now.month, now.day, now.hour, now.minute
+                gen_results(y, m, d, h, min, num, tn, sex_o)
         except ValueError:
-            now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-            y, m, d, h, min = now.year, now.month, now.day, now.hour, now.minute
-            gen_results(y, m, d, h, min, 0, tn, '男')  # Always 年計 when instant is clicked
+           gen_results(y, m, d, h, min, 0, 0, "男") 
+
             
 
 
