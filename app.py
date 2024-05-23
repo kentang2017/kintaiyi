@@ -145,8 +145,6 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown(lifedisc)
             st.markdown("【太乙十六神落宮】")
             st.markdown(lifedisc2)
-            st.title("《太乙Here is an optimized version of your `app.py` code with performance improvements:
-
 
 # Define custom components
 def timeline(data, height=800):
