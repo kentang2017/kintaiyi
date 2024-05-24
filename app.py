@@ -6,11 +6,12 @@ import urllib.request
 import base64
 import json
 import kintaiyi
-from taiyidict import tengan_shiji, su_dist
-from taiyimishu import taiyi_yingyang
 import config
 import cn2an
 from cn2an import an2cn
+from taiyidict import tengan_shiji, su_dist
+from taiyimishu import taiyi_yingyang
+from historytext import chistory
 import streamlit.components.v1 as components
 
 # Define custom components
