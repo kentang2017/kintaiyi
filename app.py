@@ -1,23 +1,27 @@
 import streamlit as st
-import pendulum as pdlm
-import base64
 import datetime, pytz
 from contextlib import contextmanager, redirect_stdout
 from io import StringIO
 import urllib.request
-import cn2an
+import base64
+import json
+import kintaiyi
+import config
 from cn2an import an2cn
 import streamlit.components.v1 as components
-import kintaiyi
-from historytext import chistory
-from taiyidict import tengan_shiji, su_dist
-from taiyimishu import taiyi_yingyang
-import config
-import jieqi
-import json
-from streamlit_modal import Modal
 
 # Define custom components
+@st.cache_data
+def get_file_content_as_string(base_url, path):
+    url = base_url + path
+    response = urllib.request.urlopen(url)
+    return response.read().decode("utf-8")
+
+def render_svg(svg):
+    b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
+    html = f'<img src="data:image/svg+xml;base64,{b64}"/>'
+    st.write(html, unsafe_allow_html=True)
+
 def timeline(data, height=800):
     if isinstance(data, str):
         data = json.loads(data)
@@ -26,7 +30,7 @@ def timeline(data, height=800):
     source_block = f'var {source_param} = {json_text};'
     cdn_path = 'https://cdn.knightlab.com/libs/timeline3/latest'
     css_block = f'<link title="timeline-styles" rel="stylesheet" href="{cdn_path}/css/timeline.css">'
-    js_block  = f'<script src="{cdn_path}/js/timeline.js"></script>'
+    js_block = f'<script src="{cdn_path}/js/timeline.js"></script>'
     htmlcode = f'''
         {css_block}
         {js_block}
@@ -38,19 +42,6 @@ def timeline(data, height=800):
         </script>
     '''
     components.html(htmlcode, height=height)
-    
-def render_svg(svg):
-    b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
-    html = f'<img src="data:image/svg+xml;base64,{b64}"/>'
-    st.write(html, unsafe_allow_html=True)
-    
-def get_file_content_as_string(base_url, path):
-    url = base_url + path
-    response = urllib.request.urlopen(url)
-    return response.read().decode("utf-8")
-
-def render_svg_example(html):
-    render_svg(html)
 
 @contextmanager
 def st_capture(output_func):
@@ -85,7 +76,6 @@ with st.sidebar:
     manual = st.button('手動盤')
     instant = st.button('即時盤')
 
-
 def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
     if num != 5:
@@ -96,7 +86,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
         three_door = ty.threedoors(num, tn)
         five_generals = ty.fivegenerals(num, tn)
         home_vs_away1 = ty.wc_n_sj(num, tn)
-    if num == 5:
+    else:
         tn = 0
         ttext = ty.pan(3, 0)
         kook = ty.kook(3, 0)
@@ -105,6 +95,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
         three_door = ty.threedoors(3, 0)
         five_generals = ty.fivegenerals(3, 0)
         home_vs_away1 = ty.wc_n_sj(3, 0)
+    
     genchart1 = ty.gen_life_gong(sex_o)
     genchart2 = ty.gen_gong(num, tn)
     kook_num = kook.get("數")
@@ -126,9 +117,9 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     gz = f"{ttext.get('干支')[0]}年 {ttext.get('干支')[1]}月 {ttext.get('干支')[2]}日 {ttext.get('干支')[3]}時 {ttext.get('干支')[4]}分"
     lunard = f"{cn2an.transform(str(config.lunar_date_d(my, mm, md).get('年')) + '年', 'an2cn')}{an2cn(config.lunar_date_d(my, mm, md).get('月'))}月{an2cn(config.lunar_date_d(my, mm, md).get('日'))}日"
     ch = chistory.get(my, "")
-    r = [(x, x + 25) for x in range(0, 3000, 25)]
-    tys = "".join([ts[r[i][0]:r[i][1]] + "\n" for i in range((len(ts) // 25) + 1)])
+    tys = "".join([ts[i:i+25] + "\n" for i in range(0, len(ts), 25)])
     yy = "yang" if ttext.get("局式").get("文")[0] == "陽" else "yin"
+    
     if num == 5:
         render_svg(genchart1)
         with st.expander("解釋"):
@@ -152,7 +143,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown(f"推陰陽以占厄會︰{ttext.get('推陰陽以占厄會')}")
             st.markdown(f"推太乙風雲飛鳥助戰︰{home_vs_away3}")
         print(f"{config.gendatetime(my, mm, md, mh, mmin)} {zhao} - {ty.taiyi_life(sex_o).get('性別')} - {config.taiyi_name(0)[0]} - {ty.accnum(0, 0)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{ty.kook(0, 0).get('文')} ({ttext.get('局式').get('年')}) | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))}")
-    if num != 5:
+    else:
         render_svg(genchart2)
         with st.expander("解釋"):
             st.title("《太乙秘書》︰")
@@ -170,7 +161,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown(f"推陰陽以占厄會︰{ttext.get('推陰陽以占厄會')}")
             st.markdown(f"推太乙風雲飛鳥助戰︰{home_vs_away3}")
         print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(num)[0]}數︰{ty.accnum(num, tn)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{config.ty_method(tn)} - {config.taiyi_name(num)} - {ty.kook(num, tn).get('文')} ({ttext.get('局式').get('年')}) | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} 定筭︰{setcal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))} |")
-    
+
 with tabs[0]:
     output5 = st.empty()
     with st_capture(output5.code):
@@ -191,15 +182,12 @@ with tabs[0]:
                 gen_results(y, m, d, h, min, num, tn, sex_o)
         except ValueError:
             st.empty()
-            
-
-
 
 # Additional Tabs Content
 with tabs[7]:
     st.header('連結')
     st.markdown(get_file_content_as_string(BASE_URL_KINLIUREN, "update.md"), unsafe_allow_html=True)
-            
+
 with tabs[2]:
     st.header('太乙局數史例')
     with open('example.json', "r") as f:
