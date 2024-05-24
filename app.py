@@ -5,6 +5,7 @@ from io import StringIO
 import urllib.request
 import base64
 import json
+import jieqi
 import kintaiyi
 import config
 import cn2an
