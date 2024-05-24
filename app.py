@@ -6,6 +6,7 @@ import urllib.request
 import base64
 import json
 import kintaiyi
+from taiyidict import tengan_shiji, su_dist
 import config
 from cn2an import an2cn
 import streamlit.components.v1 as components
