@@ -153,7 +153,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown(f"三門五將︰{three_door + five_generals}")
             st.markdown(f"推主客相關︰{home_vs_away1}")
             st.markdown(f"推多少以占勝負︰{ttext.get('推多少以占勝負')}")
-            st.markdonw(f"推孤單以占成敗:{ttext.get('推孤單以占成敗')}")
+            st.markdown(f"推孤單以占成敗:{ttext.get('推孤單以占成敗')}")
             st.markdown(f"推陰陽以占厄會︰{ttext.get('推陰陽以占厄會')}")
             st.markdown(f"推太乙風雲飛鳥助戰︰{home_vs_away3}")
         print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(num)[0]}數︰{ty.accnum(num, tn)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{config.ty_method(tn)} - {config.taiyi_name(num)} - {ty.kook(num, tn).get('文')} ({ttext.get('局式').get('年')}) | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} 定筭︰{setcal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))} |")
