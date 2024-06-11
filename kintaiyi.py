@@ -866,7 +866,7 @@ class Taiyi():
         if fly_fu == 0 or fly_fu is None:
             fly_fu = "辰"
         return fly_fu
-
+        
     def gudan(self, ji_style, taiyi_acumyear):
         """推孤單以占成敗"""
         ty_num = self.ty( ji_style, taiyi_acumyear)
@@ -1002,7 +1002,6 @@ class Taiyi():
         if relation in ["比和","生我","我生"]:
             return guan + relation + "，和"
 
-    
     def geteightdoors(self, ji_style, taiyi_acumyear):
         """推八門分佈"""
         tai_yi = self.ty(ji_style, taiyi_acumyear)
@@ -1170,6 +1169,7 @@ class Taiyi():
                                       self.ty(ji_style, taiyi_acumyear),
                                       gong2.get(self.skyeyes(ji_style, taiyi_acumyear)),
                                       gong2.get(self.sf(ji_style, taiyi_acumyear)) ),
+                "推孤單以占成敗":self.gudan(ji_style, taiyi_acumyear), 
                 "推雷公入水":config.leigong(self.ty(ji_style, taiyi_acumyear)),
                 "推臨津問道":config.lijin(self.year, self.month, self.day, self.hour, self.minute),
                 "推獅子反擲":config.lion(self.year, self.month, self.day, self.hour, self.minute),
