@@ -866,7 +866,16 @@ class Taiyi():
         if fly_fu == 0 or fly_fu is None:
             fly_fu = "辰"
         return fly_fu
+
+    def tianzi_go(self,  ji_style, taiyi_acumyear):
+        """明天子巡狩之期術"""
+        wan_c = self.skyeyes(self, ji_style, taiyi_acumyear)
+        return {"坤":"天目在大武坤，出北方。",
+                "乾":"天目在陰德乾，出東方。",
+                "艮":"天目在和德艮，出南方。",
+                "巽":"天目在大靈巽，出西方。"}.get(wan_c)
         
+    
     def gudan(self, ji_style, taiyi_acumyear):
         """推孤單以占成敗"""
         ty_num = self.ty( ji_style, taiyi_acumyear)
