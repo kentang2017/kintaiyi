@@ -147,6 +147,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown(f"推多少以占勝負︰{ttext.get('推多少以占勝負')}")
             st.markdown(f"推陰陽以占厄會︰{ttext.get('推陰陽以占厄會')}")
             st.markdown(f"推太乙風雲飛鳥助戰︰{home_vs_away3}")
+            st.markdonw(f"推孤單以占成敗:{ttext.get('推孤單以占成敗')}")
         print(f"{config.gendatetime(my, mm, md, mh, mmin)} {zhao} - {ty.taiyi_life(sex_o).get('性別')} - {config.taiyi_name(0)[0]} - {ty.accnum(0, 0)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{ty.kook(0, 0).get('文')} ({ttext.get('局式').get('年')}) | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))}")
     else:
         render_svg(genchart2)
