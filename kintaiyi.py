@@ -869,7 +869,7 @@ class Taiyi():
 
     def tianzi_go(self,  ji_style, taiyi_acumyear):
         """明天子巡狩之期術"""
-        wan_c = self.skyeyes(self, ji_style, taiyi_acumyear)
+        wan_c = self.skyeyes(ji_style, taiyi_acumyear)
         return {"坤":"天目在大武坤，出北方。",
                 "乾":"天目在陰德乾，出東方。",
                 "艮":"天目在和德艮，出南方。",
