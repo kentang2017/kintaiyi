@@ -931,8 +931,41 @@ class Taiyi():
         ty_num = self.ty( ji_style, taiyi_acumyear)
         homecal = self.home_cal( ji_style, taiyi_acumyear)
         awaycal = self.away_cal( ji_style, taiyi_acumyear) 
-
         return 
+
+    def ming_kingbase(self, ji_style, taiyi_acumyear):
+        """明君基太乙所主術"""
+        kingb = self.kingbase(ji_style, taiyi_acumyear)
+        officerb = self.officerbase(ji_style, taiyi_acumyear)
+        pplb =  self.pplbase(ji_style, taiyi_acumyear)
+        wufu = config.num2gong(config.wufu(self.accnum(ji_style, taiyi_acumyear)))
+        ty = self.ty_gong(ji_style, taiyi_acumyear)
+        tiany = self.skyyi(ji_style, taiyi_acumyear)
+        earthy = self.earthyi(ji_style, taiyi_acumyear)
+        fgod = self.fgd(ji_style, taiyi_acumyear)
+        zhifu = self.zhifu(ji_style, taiyi_acumyear)
+        big = config.num2gong(config.bigyo(self.accnum(ji_style, taiyi_acumyear)))
+        small = config.num2gong(config.smyo(self.accnum(ji_style, taiyi_acumyear)))
+        result = []
+        if kingb == wufu:
+            result.append("與五福同宮，皇國鞏固，宇內清寧，家有祥瑞，福祿並慶。")
+        if kingb == officerb:
+            result.append("與臣基同宮，君臣際會，國富民殷。")
+        if kingb == pplb:
+            result.append("與民基同宮，務農桑安，百姓五穀豐。有巡狩，不失序，視民之象。")          
+        if kingb == ty:
+            result.append("與太乙同宮，敷德宣命練兵，敵眾以征不義，古者天子伏鉞，以征不道，所以止暴。其黷武好戰則變異，而火災口舌興也。")
+        if kingb == earthy:
+            result.append("與地乙同宮，人民宜愛君，勸穡稼，則德永昌，而天下風和命維新矣，如若淫慢，則地生妖言，異物病疫傷民而喪亡也。")
+        if kingb == zhifu:
+            result.append("與值符同宮，人君定典章，別忠佞，明嫡庶，重功勛，則風化熙而嘉祥至矣，若寵奸佞，邪營建，吏酷民愁，則火早、災荒而不利於君。")
+        if kingb == fgod:
+            result.append("與四神同宮，人君宜抵肅，以奉宗廟祭祀先王，所以順陰陽而和神人也。其若廢祀失時，而傷穡稼，則潼川溺咎自君也。")
+        if kingb == big:
+            result.append("與大游同宮，其神凶惡也。所臨主兵革、水旱、疾病、君宜修政，明刑、宣文、治化，施恩者，賦命將率師以弱災患，其若與甲兵危士臣，則國耗民竭，喪無日也。")
+        if kingb == small:
+            result.append("與小游同宮，人君宜修德，布恩，明刑，修武，以御奸寇。")
+        return "".join(result)
 
     def tui_danger(self, ji_style, taiyi_acumyear):
         """推陰陽以占厄會"""
@@ -1165,6 +1198,7 @@ class Taiyi():
                 "推五將發不發":self.fivegenerals(ji_style, taiyi_acumyear),
                 "推主客相闗法":self.wc_n_sj(ji_style, taiyi_acumyear),
                 "推陰陽以占厄會":self.tui_danger(ji_style, taiyi_acumyear),
+                "明君基太乙所主術":self.ming_kingbase(self, ji_style, taiyi_acumyear),
                 "推多少以占勝負":config.suenwl(self.home_cal(ji_style, taiyi_acumyear),
                                         self.away_cal(ji_style, taiyi_acumyear),
                                         self.home_general(ji_style, taiyi_acumyear),
