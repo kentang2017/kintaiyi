@@ -966,6 +966,40 @@ class Taiyi():
             result.append("與小游同宮，人君宜修德，布恩，明刑，修武，以御奸寇。")
         return "".join(result)
 
+    def ming_officerbase(self, ji_style, taiyi_acumyear):
+        """明臣基太乙所主術"""
+        kingb = self.kingbase(ji_style, taiyi_acumyear)
+        officerb = self.officerbase(ji_style, taiyi_acumyear)
+        pplb =  self.pplbase(ji_style, taiyi_acumyear)
+        wufu = config.num2gong(config.wufu(self.accnum(ji_style, taiyi_acumyear)))
+        ty = self.ty_gong(ji_style, taiyi_acumyear)
+        tiany = self.skyyi(ji_style, taiyi_acumyear)
+        earthy = self.earthyi(ji_style, taiyi_acumyear)
+        fgod = self.fgd(ji_style, taiyi_acumyear)
+        zhifu = self.zhifu(ji_style, taiyi_acumyear)
+        big = config.num2gong(config.bigyo(self.accnum(ji_style, taiyi_acumyear)))
+        small = config.num2gong(config.smyo(self.accnum(ji_style, taiyi_acumyear)))
+        result = []
+        if officerb == wufu:
+            result.append("與五福同宮，利於輔宰，貴極人臣，常親帝座，能大任以定治亂，所以臨於分野之方，人民豐稔，其出英俊。")
+        if officerb == pplb:
+            result.append("與民基同宮，賢者在位，民安其業，政正訟息，而民殷庶。")
+        if officerb == tiany:
+            result.append("與天乙同宮，有橫逆不義，侵君之位，其分盜賊兵起。")
+        if kingb == ty:
+            result.append("與太乙同宮，敷德宣命練兵，敵眾以征不義，古者天子伏鉞，以征不道，所以止暴。其黷武好戰則變異，而火災口舌興也。")
+        if officerb  == earthy:
+            result.append("與地乙同宮，其分土工興，而民失務。")
+        if officerb == zhifu:
+            result.append("與值符同宮，其分禮法不明，民無所止，而有火旱。")
+        if officerb == fgod:
+            result.append("與四神同宮，其分賦紫稅重，以奪民時而水湧。")
+        if officerb == big:
+            result.append("與大游同宮，訟政不平，農夫不務，水旱，民力竭而兵荒疫病。")
+        if officerb == small:
+            result.append("與小游同宮，下侵上，君囚臣，輔宰不利，其分上下不協。")
+        return "".join(result)
+
     def tui_danger(self, ji_style, taiyi_acumyear):
         """推陰陽以占厄會"""
         tai_yi = self.ty(ji_style, taiyi_acumyear)
@@ -1199,6 +1233,7 @@ class Taiyi():
                 "推陰陽以占厄會":self.tui_danger(ji_style, taiyi_acumyear),
                 "明天子巡狩之期術":self.tianzi_go(ji_style, taiyi_acumyear),
                 "明君基太乙所主術":self.ming_kingbase(ji_style, taiyi_acumyear),
+                "明臣基太乙所主術":self.ming_officerbase(ji_style, taiyi_acumyear),
                 "推多少以占勝負":config.suenwl(self.home_cal(ji_style, taiyi_acumyear),
                                         self.away_cal(ji_style, taiyi_acumyear),
                                         self.home_general(ji_style, taiyi_acumyear),
