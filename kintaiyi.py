@@ -875,7 +875,6 @@ class Taiyi():
                 "艮":"天目在和德艮，出南方。",
                 "巽":"天目在大靈巽，出西方。"}.get(wan_c)
         
-    
     def gudan(self, ji_style, taiyi_acumyear):
         """推孤單以占成敗"""
         ty_num = self.ty( ji_style, taiyi_acumyear)
@@ -1198,7 +1197,8 @@ class Taiyi():
                 "推五將發不發":self.fivegenerals(ji_style, taiyi_acumyear),
                 "推主客相闗法":self.wc_n_sj(ji_style, taiyi_acumyear),
                 "推陰陽以占厄會":self.tui_danger(ji_style, taiyi_acumyear),
-                "明君基太乙所主術":self.ming_kingbase(self, ji_style, taiyi_acumyear),
+                "明天子巡狩之期術":self.tianzi_go(ji_style, taiyi_acumyear),
+                "明君基太乙所主術":self.ming_kingbase(ji_style, taiyi_acumyear),
                 "推多少以占勝負":config.suenwl(self.home_cal(ji_style, taiyi_acumyear),
                                         self.away_cal(ji_style, taiyi_acumyear),
                                         self.home_general(ji_style, taiyi_acumyear),
