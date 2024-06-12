@@ -156,6 +156,9 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown(f"推孤單以占成敗:{ttext.get('推孤單以占成敗')}")
             st.markdown(f"推陰陽以占厄會︰{ttext.get('推陰陽以占厄會')}")
             st.markdown(f"推太乙風雲飛鳥助戰︰{home_vs_away3}")
+            st.markdown(f"明天子巡狩之期術︰{ttext.get('明天子巡狩之期術')}")
+            st.markdown(f"明君基太乙所主︰{ttext.get('明君基太乙所主術')}")
+            
         print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(num)[0]}數︰{ty.accnum(num, tn)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{config.ty_method(tn)} - {config.taiyi_name(num)} - {ty.kook(num, tn).get('文')} ({ttext.get('局式').get('年')}) | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} 定筭︰{setcal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))} |")
 
 with tabs[0]:
