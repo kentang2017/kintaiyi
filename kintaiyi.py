@@ -1055,7 +1055,7 @@ class Taiyi():
         if wufu == small:
             result.append("五福與小游同宮，有德者昌，無德者殃。")
         return "".join(result)
-
+        
     def wufu_gb(self, ji_style, taiyi_acumyear):
         """明五福吉算所主術"""
         homecal = self.home_cal( ji_style, taiyi_acumyear)
@@ -1097,6 +1097,30 @@ class Taiyi():
             result.append("天乙與大游同宮，其分兵喪禍亂，飢兵流亡。")
         if tiany == small:
             result.append("天乙與小游同宮，其分下凌於上，不利其事。")
+        return "".join(result)
+
+    def ming_earthy(self, ji_style, taiyi_acumyear):
+        """明地乙太乙所主術"""
+        kingb = self.kingbase(ji_style, taiyi_acumyear)
+        officerb = self.officerbase(ji_style, taiyi_acumyear)
+        pplb =  self.pplbase(ji_style, taiyi_acumyear)
+        wufu = config.num2gong(config.wufu(self.accnum(ji_style, taiyi_acumyear)))
+        ty = self.ty_gong(ji_style, taiyi_acumyear)
+        tiany = self.skyyi(ji_style, taiyi_acumyear)
+        earthy = self.earthyi(ji_style, taiyi_acumyear)
+        fgod = self.fgd(ji_style, taiyi_acumyear)
+        zhifu = self.zhifu(ji_style, taiyi_acumyear)
+        big = config.num2gong(config.bigyo(self.accnum(ji_style, taiyi_acumyear)))
+        small = config.num2gong(config.smyo(self.accnum(ji_style, taiyi_acumyear)))
+        result = []
+        if earthy == zhifu:
+            result.append("地乙與值符同宮，其分大旱、兵盜，土工興，人民受病，五穀不成，農人受困。")
+        if earthy == fgod:
+            result.append("地乙與四神同宮，其分水旱不調，民多病困，而地中生妖異。")
+        if earthy == big:
+            result.append("地乙與大游同宮，其分兵喪大作，荒民流，盜賊蜂起。")
+        if earthy == small:
+            result.append("地乙與小游同宮，其分土木土工興，法令暴虐，主兵盜。")
         return "".join(result)
     
     def tui_danger(self, ji_style, taiyi_acumyear):
