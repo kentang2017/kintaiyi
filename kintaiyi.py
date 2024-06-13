@@ -1071,6 +1071,34 @@ class Taiyi():
                  tuple([10,20,30,40]): "福利於士卒。"}
         return multi_key_dict_get(wufu_good, homecal)
 
+    def ming_tiany(self, ji_style, taiyi_acumyear):
+        """明天乙太乙所主術"""
+        kingb = self.kingbase(ji_style, taiyi_acumyear)
+        officerb = self.officerbase(ji_style, taiyi_acumyear)
+        pplb =  self.pplbase(ji_style, taiyi_acumyear)
+        wufu = config.num2gong(config.wufu(self.accnum(ji_style, taiyi_acumyear)))
+        ty = self.ty_gong(ji_style, taiyi_acumyear)
+        tiany = self.skyyi(ji_style, taiyi_acumyear)
+        earthy = self.earthyi(ji_style, taiyi_acumyear)
+        fgod = self.fgd(ji_style, taiyi_acumyear)
+        zhifu = self.zhifu(ji_style, taiyi_acumyear)
+        big = config.num2gong(config.bigyo(self.accnum(ji_style, taiyi_acumyear)))
+        small = config.num2gong(config.smyo(self.accnum(ji_style, taiyi_acumyear)))
+        result = []
+        if tiany == ty:
+            result.append("天乙與太乙同宮，即有勝負，以金能決斷也。其神經行之分，兵戈大起，多主暴。金兵戮，人民流血千里及霜雪而肅物也。")
+        if tiany == earthy:
+            result.append("天乙與地乙同宮，其分兵戈發土工興廢農桑傷百姓，交兵結雙仇，盜賊凶攘人民愁困。")
+        if tiany == zhifu:
+            result.append("天乙與值符同宮，其分火旱刀兵飢饉疾困。")
+        if tiany == fgod:
+            result.append("天乙與四神同宮，其分水澇、霜雪、兵喪，舟車不通，盜賊四起。")
+        if tiany == big:
+            result.append("天乙與大游同宮，其分兵喪禍亂，飢兵流亡。")
+        if tiany == small:
+            result.append("天乙與小游同宮，其分下凌於上，不利其事。")
+        return "".join(result)
+    
     def tui_danger(self, ji_style, taiyi_acumyear):
         """推陰陽以占厄會"""
         tai_yi = self.ty(ji_style, taiyi_acumyear)
@@ -1308,6 +1336,7 @@ class Taiyi():
                 "明民基太乙所主術":self.ming_pplbase(ji_style, taiyi_acumyear),
                 "明五福太乙所主術":self.ming_wufu(ji_style, taiyi_acumyear),
                 "明五福吉算所主術":self.wufu_gb(ji_style, taiyi_acumyear),
+                "明天乙太乙所主術":self.ming_tiany(ji_style, taiyi_acumyear),
                 "推多少以占勝負":config.suenwl(self.home_cal(ji_style, taiyi_acumyear),
                                         self.away_cal(ji_style, taiyi_acumyear),
                                         self.home_general(ji_style, taiyi_acumyear),
