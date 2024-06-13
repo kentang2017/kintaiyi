@@ -1122,7 +1122,29 @@ class Taiyi():
         if earthy == small:
             result.append("地乙與小游同宮，其分土木土工興，法令暴虐，主兵盜。")
         return "".join(result)
-    
+
+    def ming_zhifu(self, ji_style, taiyi_acumyear):
+        """明值符太乙所主術"""
+        kingb = self.kingbase(ji_style, taiyi_acumyear)
+        officerb = self.officerbase(ji_style, taiyi_acumyear)
+        pplb =  self.pplbase(ji_style, taiyi_acumyear)
+        wufu = config.num2gong(config.wufu(self.accnum(ji_style, taiyi_acumyear)))
+        ty = self.ty_gong(ji_style, taiyi_acumyear)
+        tiany = self.skyyi(ji_style, taiyi_acumyear)
+        earthy = self.earthyi(ji_style, taiyi_acumyear)
+        fgod = self.fgd(ji_style, taiyi_acumyear)
+        zhifu = self.zhifu(ji_style, taiyi_acumyear)
+        big = config.num2gong(config.bigyo(self.accnum(ji_style, taiyi_acumyear)))
+        small = config.num2gong(config.smyo(self.accnum(ji_style, taiyi_acumyear)))
+        result = []
+        if zhifu == fgod:
+            result.append("值符與四神同宮，其分旱涸乾不均，四時失節，民飢疾疫多生，兵盜溺於水火刀兵之厄。")
+        if zhifu == big:
+            result.append("值符與大游同宮，其分兵喪民流，五穀不成，突橫暴起。")
+        if zhifu == small:
+            result.append("值符與小游同宮，其分火炎、兵革，人民不安。")
+        return "".join(result)
+
     def tui_danger(self, ji_style, taiyi_acumyear):
         """推陰陽以占厄會"""
         tai_yi = self.ty(ji_style, taiyi_acumyear)
@@ -1147,7 +1169,7 @@ class Taiyi():
         if awaycal % 2 == 0 and tyd == "太乙在陰宮。":
             ar = "太乙在陰宮，客筭得偶，為重陰，厄在水，客厄。"
         return hr + ar
-    
+
     def ty_gong_dist(self, ji_style, taiyi_acumyear):
         """太乙在天外地內法"""
         tai_yi = self.ty(ji_style, taiyi_acumyear)
