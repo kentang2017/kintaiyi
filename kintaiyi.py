@@ -1058,7 +1058,7 @@ class Taiyi():
 
     def wufu_gb(self, ji_style, taiyi_acumyear):
         """明五福吉算所主術"""
-        homecal = str(self.home_cal( ji_style, taiyi_acumyear))
+        homecal = self.home_cal( ji_style, taiyi_acumyear)
         wufu_good = {tuple([1,11,21,31,41]): "福利於君主。",
                  tuple([2,12,22,32,42]): "福利於王候臣宰。",
                  tuple([3,13,23,33,43]): "福利於后妃。",
@@ -1306,6 +1306,8 @@ class Taiyi():
                 "明君基太乙所主術":self.ming_kingbase(ji_style, taiyi_acumyear),
                 "明臣基太乙所主術":self.ming_officerbase(ji_style, taiyi_acumyear),
                 "明民基太乙所主術":self.ming_pplbase(ji_style, taiyi_acumyear),
+                "明五福太乙所主術":self.ming_wufu(ji_style, taiyi_acumyear),
+                "明五福吉算所主術":self.wufu_gb(ji_style, taiyi_acumyear),
                 "推多少以占勝負":config.suenwl(self.home_cal(ji_style, taiyi_acumyear),
                                         self.away_cal(ji_style, taiyi_acumyear),
                                         self.home_general(ji_style, taiyi_acumyear),
@@ -1336,7 +1338,7 @@ if __name__ == '__main__':
     day = 24
     hour = 0
     minute = 0
-    print(Taiyi(year, month, day, hour, minute).kook(2, 1))
+    print(Taiyi(year, month, day, hour, minute).wufu_gb(0, 0))
     print(config.gangzhi(year, month, day, hour, minute))
     print(Taiyi(year, month, day, hour, minute).pan(0, 1))
     #print(config.gangzhi(-1197, 2, 2, 0, 0))
