@@ -947,24 +947,25 @@ class Taiyi():
         small = config.num2gong(config.smyo(self.accnum(ji_style, taiyi_acumyear)))
         result = []
         if kingb == wufu:
-            result.append("與五福同宮，皇國鞏固，宇內清寧，家有祥瑞，福祿並慶。")
+            result.append("君基與五福同宮，皇國鞏固，宇內清寧，家有祥瑞，福祿並慶。")
         if kingb == officerb:
-            result.append("與臣基同宮，君臣際會，國富民殷。")
+            result.append("君基與臣基同宮，君臣際會，國富民殷。")
         if kingb == pplb:
-            result.append("與民基同宮，務農桑安，百姓五穀豐。有巡狩，不失序，視民之象。")          
+            result.append("君基與民基同宮，務農桑安，百姓五穀豐。有巡狩，不失序，視民之象。")          
         if kingb == ty:
-            result.append("與太乙同宮，敷德宣命練兵，敵眾以征不義，古者天子伏鉞，以征不道，所以止暴。其黷武好戰則變異，而火災口舌興也。")
+            result.append("君基與太乙同宮，敷德宣命練兵，敵眾以征不義，古者天子伏鉞，以征不道，所以止暴。其黷武好戰則變異，而火災口舌興也。")
         if kingb == earthy:
-            result.append("與地乙同宮，人民宜愛君，勸穡稼，則德永昌，而天下風和命維新矣，如若淫慢，則地生妖言，異物病疫傷民而喪亡也。")
+            result.append("君基與地乙同宮，人民宜愛君，勸穡稼，則德永昌，而天下風和命維新矣，如若淫慢，則地生妖言，異物病疫傷民而喪亡也。")
         if kingb == zhifu:
-            result.append("與值符同宮，人君定典章，別忠佞，明嫡庶，重功勛，則風化熙而嘉祥至矣，若寵奸佞，邪營建，吏酷民愁，則火早、災荒而不利於君。")
+            result.append("君基與值符同宮，人君定典章，別忠佞，明嫡庶，重功勛，則風化熙而嘉祥至矣，若寵奸佞，邪營建，吏酷民愁，則火早、災荒而不利於君。")
         if kingb == fgod:
-            result.append("與四神同宮，人君宜抵肅，以奉宗廟祭祀先王，所以順陰陽而和神人也。其若廢祀失時，而傷穡稼，則潼川溺咎自君也。")
+            result.append("君基與四神同宮，人君宜抵肅，以奉宗廟祭祀先王，所以順陰陽而和神人也。其若廢祀失時，而傷穡稼，則潼川溺咎自君也。")
         if kingb == big:
-            result.append("與大游同宮，其神凶惡也。所臨主兵革、水旱、疾病、君宜修政，明刑、宣文、治化，施恩者，賦命將率師以弱災患，其若與甲兵危士臣，則國耗民竭，喪無日也。")
+            result.append("君基與大游同宮，其神凶惡也。所臨主兵革、水旱、疾病、君宜修政，明刑、宣文、治化，施恩者，賦命將率師以弱災患，其若與甲兵危士臣，則國耗民竭，喪無日也。")
         if kingb == small:
-            result.append("與小游同宮，人君宜修德，布恩，明刑，修武，以御奸寇。")
+            result.append("君基與小游同宮，人君宜修德，布恩，明刑，修武，以御奸寇。")
         return "".join(result)
+        
     def ming_officerbase(self, ji_style, taiyi_acumyear):
         """明臣基太乙所主術"""
         kingb = self.kingbase(ji_style, taiyi_acumyear)
@@ -980,21 +981,21 @@ class Taiyi():
         small = config.num2gong(config.smyo(self.accnum(ji_style, taiyi_acumyear)))
         result = []
         if officerb == wufu:
-            result.append("與五福同宮，利於輔宰，貴極人臣，常親帝座，能大任以定治亂，所以臨於分野之方，人民豐稔，其出英俊。")
+            result.append("臣基與五福同宮，利於輔宰，貴極人臣，常親帝座，能大任以定治亂，所以臨於分野之方，人民豐稔，其出英俊。")
         if officerb == pplb:
-            result.append("與民基同宮，賢者在位，民安其業，政正訟息，而民殷庶。")
+            result.append("臣基與民基同宮，賢者在位，民安其業，政正訟息，而民殷庶。")
         if officerb == tiany:
-            result.append("與天乙同宮，有橫逆不義，侵君之位，其分盜賊兵起。")
+            result.append("臣基與天乙同宮，有橫逆不義，侵君之位，其分盜賊兵起。")
         if officerb  == earthy:
-            result.append("與地乙同宮，其分土工興，而民失務。")
+            result.append("臣基與地乙同宮，其分土工興，而民失務。")
         if officerb == zhifu:
-            result.append("與值符同宮，其分禮法不明，民無所止，而有火旱。")
+            result.append("臣基與值符同宮，其分禮法不明，民無所止，而有火旱。")
         if officerb == fgod:
-            result.append("與四神同宮，其分賦紫稅重，以奪民時而水湧。")
+            result.append("臣基與四神同宮，其分賦紫稅重，以奪民時而水湧。")
         if officerb == big:
-            result.append("與大游同宮，訟政不平，農夫不務，水旱，民力竭而兵荒疫病。")
+            result.append("臣基與大游同宮，訟政不平，農夫不務，水旱，民力竭而兵荒疫病。")
         if officerb == small:
-            result.append("與小游同宮，下侵上，君囚臣，輔宰不利，其分上下不協。")
+            result.append("臣基與小游同宮，下侵上，君囚臣，輔宰不利，其分上下不協。")
         return "".join(result)
         
     def ming_pplbase(self, ji_style, taiyi_acumyear):
@@ -1012,20 +1013,53 @@ class Taiyi():
         small = config.num2gong(config.smyo(self.accnum(ji_style, taiyi_acumyear)))
         result = []
         if pplb == wufu:
-            result.append("與五福同宮，民富而壽家，出賢良。")
+            result.append("民基與五福同宮，民富而壽家，出賢良。")
         if pplb == tiany:
-            result.append("與天乙同宮，其分無盜荒，雨雪穀物。")
+            result.append("民基與天乙同宮，其分無盜荒，雨雪穀物。")
         if pplb ==earthy:
-            result.append("與地乙同宮，其分土工役作，妨農禾不收，民多疫災。")
+            result.append("民基與地乙同宮，其分土工役作，妨農禾不收，民多疫災。")
         if pplb ==zhifu:
-            result.append("與值符同宮，其分火旱傷，飛蝗，兵盜。")
+            result.append("民基與值符同宮，其分火旱傷，飛蝗，兵盜。")
         if pplb ==fgod:
-            result.append("與四神同宮，其分水旱飢荒，民多流徙。")
+            result.append("民基與四神同宮，其分水旱飢荒，民多流徙。")
         if pplb == big:
-            result.append("與大游同宮，其分兵火、水旱，人民勞苦。")
+            result.append("民基與大游同宮，其分兵火、水旱，人民勞苦。")
         if pplb == small:
-            result.append("與小游同宮，其分禾稼半收，兵役民苦。")
+            result.append("民基與小游同宮，其分禾稼半收，兵役民苦。")
         return "".join(result)
+
+    def ming_wufu(self, ji_style, taiyi_acumyear):
+        """明五福太乙所主術"""
+        kingb = self.kingbase(ji_style, taiyi_acumyear)
+        officerb = self.officerbase(ji_style, taiyi_acumyear)
+        pplb =  self.pplbase(ji_style, taiyi_acumyear)
+        wufu = config.num2gong(config.wufu(self.accnum(ji_style, taiyi_acumyear)))
+        ty = self.ty_gong(ji_style, taiyi_acumyear)
+        tiany = self.skyyi(ji_style, taiyi_acumyear)
+        earthy = self.earthyi(ji_style, taiyi_acumyear)
+        fgod = self.fgd(ji_style, taiyi_acumyear)
+        zhifu = self.zhifu(ji_style, taiyi_acumyear)
+        big = config.num2gong(config.bigyo(self.accnum(ji_style, taiyi_acumyear)))
+        small = config.num2gong(config.smyo(self.accnum(ji_style, taiyi_acumyear)))
+        result = []
+        if wufu == kingb:
+            result.append("五福與君基同宮，人君福壽祚享，如同宮在初爻之始合，生賢儲。如遇君基相衝之所，乃生草寇之君。")
+        if wufu == officerb:
+            result.append("五福與臣基同宮，福利輔宰，如同宮在初爻之始，賢相當生貴人之家。")
+        if wufu == pplb:
+            result.append("五福與民基同宮，四民樂業，天下熙和，如同宮在初交之始，其分富貴人生於白屋之家。")
+        if wufu == fgod:
+            result.append("五福與四神同宮，為福減損，有兵盜，主有疫，厲民災火，有旱蝗水湧，兩川潰。")
+        if wufu == big:
+            result.append("五福與大游同宮，為福減半，兵盜水旱不免有之。")
+        if wufu == small:
+            result.append("五福與小游同宮，有德者昌，無德者殃。")
+        return "".join(result)
+
+    def wufu_gb(self, ji_style, taiyi_acumyear):
+        """明五福吉算所主術"""
+        
+        return 
 
     def tui_danger(self, ji_style, taiyi_acumyear):
         """推陰陽以占厄會"""
