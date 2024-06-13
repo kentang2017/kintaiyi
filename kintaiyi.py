@@ -1058,8 +1058,18 @@ class Taiyi():
 
     def wufu_gb(self, ji_style, taiyi_acumyear):
         """明五福吉算所主術"""
-        
-        return 
+        homecal = str(self.home_cal( ji_style, taiyi_acumyear))
+        wufu_good = {tuple([1,11,21,31,41]): "福利於君主。",
+                 tuple([2,12,22,32,42]): "福利於王候臣宰。",
+                 tuple([3,13,23,33,43]): "福利於后妃。",
+                 tuple([4,14,24,34,44]): "福利於太子。",
+                 tuple([5,15,25,35,45]): "福利於太子。",
+                 tuple([6,16,26,36,46]): "福利於師帥。",
+                 tuple([7,17,27,37]): "福利於上將軍。",
+                 tuple([8,18,28,38]): "福利於中將軍。",
+                 tuple([9,19,29,39]): "福利於下將軍。",
+                 tuple([10,20,30,40]): "福利於士卒。"}
+        return multi_key_dict_get(wufu_good, homecal)
 
     def tui_danger(self, ji_style, taiyi_acumyear):
         """推陰陽以占厄會"""
