@@ -825,7 +825,7 @@ class Taiyi():
         king_base = (self.accnum(ji_style, taiyi_acumyear) +250) % 360 // 30
         if king_base == 0:
             king_base = 1
-        return  dict(zip(range(1,13), config.new_list(di_zhi, "午"))).get(int(king_base))
+        return  dict(zip(range(1,13), config.new_list(di_zhi, "戌"))).get(int(king_base))
         
     def officerbase(self, ji_style, taiyi_acumyear):
         """臣基"""
