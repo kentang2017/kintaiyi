@@ -360,6 +360,12 @@ def Ganzhiwuxing(gangorzhi):
     ganzhiwuxing = dict(zip(list(map(lambda x: tuple(x),"甲寅乙卯震巽,丙巳丁午離,壬亥癸子坎,庚申辛酉乾兌,未丑戊己未辰戌艮坤".split(","))), list("木火水金土")))
     return multi_key_dict_get(ganzhiwuxing, gangorzhi)
 
+def Ganzhi_num(gangorzhi):
+    return dict(zip("金木水火土", [4,3,1,2,5])).get(Ganzhiwuxing(gangorzhi))
+
+def Ganzhi_num2(gangorzhi):
+    return dict(zip("金木水火土", [13,11,7,9,15])).get(Ganzhiwuxing(gangorzhi))
+
 def find_wx_relation(zhi1, zhi2):
     return multi_key_dict_get(wuxing_relation_2, Ganzhiwuxing(zhi1) + Ganzhiwuxing(zhi2))
 
