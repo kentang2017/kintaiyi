@@ -1269,15 +1269,8 @@ class Taiyi():
     def yangjiu_xingxian(self):
         mg = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[1][0]
         num = config.Ganzhi_num(mg)
-        ranges = []
-        start = 1
-        limit = 100
-        while start < limit:
-            end = start + num - 1
-            ranges.append(f"{start}-{end}")
-            start += num
-        return ranges
-
+        place = config.Ganzhi_place(mg)
+        return num, dict(zip(config.generate_ranges(num, 10, 11),config.new_list(config.di_zhi, place)))
 
     def taiyi_life(self, sex):
         twelve_gongs = "命宮,兄弟,妻妾,子孫,財帛,田宅,官祿,奴僕,疾厄,福德,相貌,父母".split(",")

@@ -360,8 +360,22 @@ def Ganzhiwuxing(gangorzhi):
     ganzhiwuxing = dict(zip(list(map(lambda x: tuple(x),"甲寅乙卯震巽,丙巳丁午離,壬亥癸子坎,庚申辛酉乾兌,未丑戊己未辰戌艮坤".split(","))), list("木火水金土")))
     return multi_key_dict_get(ganzhiwuxing, gangorzhi)
 
-def Ganzhi_num(gangorzhi):
-    return dict(zip("金木水火土", [4,3,1,2,5])).get(Ganzhiwuxing(gangorzhi))
+def Ganzhi_num(gang):
+    place = dict(zip(list(map(lambda x: tuple(x),"甲己,乙庚,丙辛,丁壬,戊癸".split(","))), [5,4,1,3,2]))
+    return multi_key_dict_get(place, gang)
+
+def Ganzhi_place(gang):
+    place = dict(zip(list(map(lambda x: tuple(x),"甲己,乙庚,丙辛,丁壬,戊癸".split(","))), list("午巳申亥寅")))
+    return multi_key_dict_get(place, gang)
+
+def generate_ranges(start, n, num_ranges):
+    ranges = []
+    a = start
+    for i in range(num_ranges):
+        end = start + n - 1
+        ranges.append(f"{start+1}-{end+1}")
+        start = end + 1  # The next range starts right after the current end
+    return ["1-{}".format(a)]+ranges
 
 def Ganzhi_num2(gangorzhi):
     return dict(zip("金木水火土", [13,11,7,9,15])).get(Ganzhiwuxing(gangorzhi))
