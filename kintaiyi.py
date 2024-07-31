@@ -1265,15 +1265,19 @@ class Taiyi():
         eightddors_status = dict(zip(k, list(jieqi.gong_wangzhuai().values())))
         return [[i,eightdoors.get(i)+"門", eightddors_status.get(i)] for i in new_list(list(eightdoors.keys()), "二")]
 
-    #起歲
-    def generate_ranges(n, limit=100):
+    #陽九行限
+    def yangjiu_xingxian(self):
+        mg = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[1][0]
+        num = config.Ganzhi_num(mg)
         ranges = []
         start = 1
+        limit = 100
         while start < limit:
-            end = start + n - 1
+            end = start + num - 1
             ranges.append(f"{start}-{end}")
-            start += n
+            start += num
         return ranges
+
 
     def taiyi_life(self, sex):
         twelve_gongs = "命宮,兄弟,妻妾,子孫,財帛,田宅,官祿,奴僕,疾厄,福德,相貌,父母".split(",")
@@ -1295,6 +1299,7 @@ class Taiyi():
                 "十二命宮排列":dict(zip(arrangelist, twelve_gongs)),
                 "陽九":config.yangjiu(self.year, self.month, self.day),
                 "百六":config.baliu(self.year, self.month, self.day),
+                "陽九行限": self.yangjiu_xingxian(),
                 "太乙落宮":self.ty(0,0),
                 "太乙":self.ty_gong(0,0),
                 "天乙":self.skyyi(0,0),
@@ -1423,9 +1428,8 @@ if __name__ == '__main__':
     day = 24
     hour = 0
     minute = 0
-    print(Taiyi(year, month, day, hour, minute).wufu_gb(0, 0))
     print(config.gangzhi(year, month, day, hour, minute))
-    print(Taiyi(year, month, day, hour, minute).pan(0, 1))
+    print(Taiyi(year, month, day, hour, minute).taiyi_life("男"))
     #print(config.gangzhi(-1197, 2, 2, 0, 0))
     #
     #print(Taiyi(year, month, day, hour, minute).kook(0, 0))
