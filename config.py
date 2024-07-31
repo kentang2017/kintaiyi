@@ -6,17 +6,18 @@ Created on Tue May  9 14:14:13 2023
 """
 
 import re
+import os
+import pickle
 import itertools
+from itertools import cycle, repeat
+from datetime import date
 from ruler import ruler_data
 import cn2an
 from cn2an import an2cn
 from ephem import Date
 from sxtwl import fromSolar
-from itertools import cycle, repeat
 import jieqi
 from bidict import bidict
-import os
-import pickle
 
 base = os.path.abspath(os.path.dirname(__file__))
 path = os.path.join(base, 'data.pkl')
@@ -361,6 +362,11 @@ def jq_accum(jq):
 def Ganzhiwuxing(gangorzhi):
     ganzhiwuxing = dict(zip(list(map(lambda x: tuple(x),"甲寅乙卯震巽,丙巳丁午離,壬亥癸子坎,庚申辛酉乾兌,未丑戊己未辰戌艮坤".split(","))), list("木火水金土")))
     return multi_key_dict_get(ganzhiwuxing, gangorzhi)
+
+def calculateAge(birthDate):
+    today = date.today()
+    age = today.year - birthDate.year -((today.month, today.day) <(birthDate.month, birthDate.day))
+    return age
 
 def Ganzhi_num(gang):
     num = dict(zip(list(map(lambda x: tuple(x),"甲己,乙庚,丙辛,丁壬,戊癸".split(","))), [5,4,1,3,2]))
