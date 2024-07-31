@@ -130,7 +130,6 @@ class Taiyi():
                 acchr = ((accday -1) * 23) + (self.hour * 10500) + (self.minute +1)
             return acchr
         return None
-
     #太乙命數積日數
     def taiyi_life_accum(self):
         y = calculate_value_for_year(self.year)
@@ -1266,11 +1265,37 @@ class Taiyi():
         return [[i,eightdoors.get(i)+"門", eightddors_status.get(i)] for i in new_list(list(eightdoors.keys()), "二")]
 
     #陽九行限
-    def yangjiu_xingxian(self):
+    def yangjiu_xingxian(self, sex):
         mg = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[1][0]
         num = config.Ganzhi_num(mg)
         place = config.Ganzhi_place(mg)
-        return num, dict(zip(config.generate_ranges(num, 10, 11),config.new_list(config.di_zhi, place)))
+        return dict(zip(config.generate_ranges(num, 10, 11),{"男":config.new_list(config.di_zhi, place), "女":config.new_list(list(reversed(config.di_zhi)), place)}.get(sex)))
+    #百六行限
+    def bailiu_xingxian(self, sex):
+        sqn = self.souqi_num()
+        sqn_gua = dict(zip(range(1,65), config.jiazi())).get(sqn)
+        place = config.cheungsun.get(config.Ganzhiwuxing(sqn_gua[1]))
+        num = dict(zip(list("土金水木火"),[5,4,1,3,2])).get(config.Ganzhiwuxing(place))
+        return dict(zip(config.generate_ranges(num, 10, 11),{"男":config.new_list(config.di_zhi, place), "女":config.new_list(list(reversed(config.di_zhi)), place)}.get(sex)))
+
+    def souqi_num(self):
+        gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
+        dg = config.gangzhi_to_num(gz[2][0])
+        dz = config.gangzhi_to_num(gz[2][1])
+        hg = config.gangzhi_to_num(gz[3][0])
+        hz = config.gangzhi_to_num(gz[3][1])
+        dny = config.element_to_num(multi_key_dict_get(nayin_wuxing, gz[2]))
+        hny = config.element_to_num(multi_key_dict_get(nayin_wuxing, gz[3]))
+        return (dg + dz + hg + hz + dny + hny + 55) % 60 
+
+    #出身卦
+    def life_start_gua(self):
+        gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
+        y = config.gangzhi_to_num(gz[0][0]) + config.gangzhi_to_num(gz[0][1]) + config.element_to_num(config.multi_key_dict_get(config.nayin_wuxing, gz[0]))
+        m = config.gangzhi_to_num(gz[1][0]) + config.gangzhi_to_num(gz[1][1]) + config.element_to_num(config.multi_key_dict_get(config.nayin_wuxing, gz[1]))
+        d = config.gangzhi_to_num(gz[2][0]) + config.gangzhi_to_num(gz[2][1]) + config.element_to_num(config.multi_key_dict_get(config.nayin_wuxing, gz[2]))
+        h = config.gangzhi_to_num(gz[3][0]) + config.gangzhi_to_num(gz[3][1]) + config.element_to_num(config.multi_key_dict_get(config.nayin_wuxing, gz[3]))
+        return gua.get((y + m + d + h + 55) % 64)
 
     def taiyi_life(self, sex):
         twelve_gongs = "命宮,兄弟,妻妾,子孫,財帛,田宅,官祿,奴僕,疾厄,福德,相貌,父母".split(",")
@@ -1292,8 +1317,10 @@ class Taiyi():
                 "十二命宮排列":dict(zip(arrangelist, twelve_gongs)),
                 "陽九":config.yangjiu(self.year, self.month, self.day),
                 "百六":config.baliu(self.year, self.month, self.day),
-                "陽九行限": self.yangjiu_xingxian(),
+                "陽九行限": self.yangjiu_xingxian(sex),
+                "百六行限": self.bailiu_xingxian(sex),
                 "太乙落宮":self.ty(0,0),
+                "出身卦":self.life_start_gua(),
                 "太乙":self.ty_gong(0,0),
                 "天乙":self.skyyi(0,0),
                 "地乙":self.earthyi(0,0),
@@ -1416,15 +1443,15 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    year = 1552
-    month = 9
-    day = 24
-    hour = 0
-    minute = 0
+    year = 2024
+    month = 7
+    day = 30
+    hour = 2
+    minute = 55
     print(config.gangzhi(year, month, day, hour, minute))
-    print(Taiyi(year, month, day, hour, minute).taiyi_life("男"))
-    #print(config.gangzhi(-1197, 2, 2, 0, 0))
-    #
+    print(Taiyi(year, month, day, hour, minute).life_start_gua())
+    #print(Taiyi(year, month, day, hour, minute).bailiu_xingxian("男"))
+    #print(Taiyi(year, month, day, hour, minute).yangjiu_xingxian("男"))
     #print(Taiyi(year, month, day, hour, minute).kook(0, 0))
     #print(Taiyi(year, month, day, hour, minute).kook(1, 0))
     #print(Taiyi(year, month, day, hour, minute).kook(2, 0))

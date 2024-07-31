@@ -54,6 +54,8 @@ tyjc = [1,3,7,9]
 sixteen = "子丑艮寅卯辰巽巳午未坤申酉戌乾亥"
 sixteengod = dict(zip(re.findall("..", "地主陽德和德呂申高叢太陽大炅大神大威天道大武武德太簇陰主陰德大義"), "子丑艮寅卯辰巽巳午未坤申酉戌乾亥"))
 #陰陽遁定制
+
+cheungsun = dict(zip(list("木火金水土"),list("亥寅巳申申")))
 five_elements = dict(zip(re.findall('..', '太乙天乙地乙始擊文昌主將主參客將客參'), list("木火土火土金水水木")))
 gong = dict(zip(list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥"), range(1,17)))
 gong1 = list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥")
@@ -361,8 +363,8 @@ def Ganzhiwuxing(gangorzhi):
     return multi_key_dict_get(ganzhiwuxing, gangorzhi)
 
 def Ganzhi_num(gang):
-    place = dict(zip(list(map(lambda x: tuple(x),"甲己,乙庚,丙辛,丁壬,戊癸".split(","))), [5,4,1,3,2]))
-    return multi_key_dict_get(place, gang)
+    num = dict(zip(list(map(lambda x: tuple(x),"甲己,乙庚,丙辛,丁壬,戊癸".split(","))), [5,4,1,3,2]))
+    return multi_key_dict_get(num, gang)
 
 def Ganzhi_place(gang):
     place = dict(zip(list(map(lambda x: tuple(x),"甲己,乙庚,丙辛,丁壬,戊癸".split(","))), list("午巳申亥寅")))
@@ -377,8 +379,11 @@ def generate_ranges(start, n, num_ranges):
         start = end + 1  # The next range starts right after the current end
     return ["1-{}".format(a)]+ranges
 
-def Ganzhi_num2(gangorzhi):
+def gangzhi_to_num(gangorzhi):
     return dict(zip("金木水火土", [13,11,7,9,15])).get(Ganzhiwuxing(gangorzhi))
+
+def element_to_num(element):
+    return dict(zip("金木水火土", [13,11,7,9,15])).get(element)
 
 def find_wx_relation(zhi1, zhi2):
     return multi_key_dict_get(wuxing_relation_2, Ganzhiwuxing(zhi1) + Ganzhiwuxing(zhi2))
