@@ -1298,7 +1298,47 @@ class Taiyi():
         return [(y + m + d + h + 55) % 64 ,gua.get((y + m + d + h + 55) % 64)]
 
     def year_gua(self):
-        return gua.get((self.life_start_gua()[0] + config.calculateAge(date(self.year, self.month, self.day))) % 64)
+        num = self.life_start_gua()[0] + config.calculateAge(date(self.year, self.month, self.day))
+        if num > 64:
+            return [num, gua.get(num % 64)]
+        else:
+            return [num, gua.get(num)]
+        
+    def month_gua(self):
+        year = self.year_gua()[0]
+        month = config.lunar_date_d(self.year, self.month, self.day).get("月")
+        num = year + 2 + month
+        if num > 64:
+            return [num, gua.get(num % 64)]
+        else:
+            return [num, gua.get(num)]
+        
+    def day_gua(self):
+        month  = self.month_gua()[0]
+        day = dict(zip(jiazi(), range(1,61))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2])
+        num = month + day
+        if num > 64:
+            return [num, gua.get(num % 64)]
+        else:
+            return [num, gua.get(num)]
+        
+    def hour_gua(self):
+        day = self.day_gua()[0]
+        hour = dict(zip(di_zhi, range(1,13))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
+        num = day + hour
+        if num > 64:
+            return [num, gua.get(num % 64)]
+        else:
+            return [num, gua.get(num)]
+        
+    def minute_gua(self):
+        hour = self.hour_gua()[0]
+        minute = dict(zip(jiazi(), range(1,61))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[4])
+        num = hour + minute
+        if num > 64:
+            return [num, gua.get(num % 64)]
+        else:
+            return [num, gua.get(num)]
         
     def taiyi_life(self, sex):
         twelve_gongs = "命宮,兄弟,妻妾,子孫,財帛,田宅,官祿,奴僕,疾厄,福德,相貌,父母".split(",")
@@ -1324,7 +1364,11 @@ class Taiyi():
                 "百六行限": self.bailiu_xingxian(sex),
                 "太乙落宮":self.ty(0,0),
                 "出身卦":self.life_start_gua()[1],
-                "年卦":self.year_gua(), 
+                "年卦":self.year_gua()[1], 
+                "月卦":self.month_gua()[1], 
+                "日卦":self.day_gua()[1], 
+                "時卦":self.hour_gua()[1], 
+                "分卦":self.minute_gua()[1], 
                 "太乙":self.ty_gong(0,0),
                 "天乙":self.skyyi(0,0),
                 "地乙":self.earthyi(0,0),
