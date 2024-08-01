@@ -124,6 +124,13 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     ch = chistory.get(my, "")
     tys = "".join([ts[i:i+25] + "\n" for i in range(0, len(ts), 25)])
     yy = "yang" if ttext.get("局式").get("文")[0] == "陽" else "yin"
+    yjxx = ty.yangjiu_xingxian(sex_o)
+    blxx = ty.bailiu_xingxian(sex_o)
+    ygua = ty.year_gua()[1]
+    mgua = ty.month_gua()[1]
+    dgua = ty.day_gua()[1]
+    hgua = ty.hour_gua()[1]
+    mingua = ty.minute_gua()[1]
     
     if num == 5:
         render_svg(genchart1)
@@ -133,6 +140,16 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown(lifedisc)
             st.markdown("【太乙十六神落宮】")
             st.markdown(lifedisc2)
+            st.markdown("【值卦】")
+            st.markdown("年卦：{}".format(ygua))
+            st.markdown("月卦：{}".format(mgua))
+            st.markdown("日卦：{}".format(dgua))
+            st.markdown("時卦：{}".format(hgua))
+            st.markdown("分卦：{}".format(mingua))
+            st.markdown("【陽九行限】")
+            st.markdown(yjxx)
+            st.markdown("【百六行限】")
+            st.markdown(blxx)
             st.title("《太乙秘書》︰")
             st.markdown(ts)
             st.title("史事記載︰")
