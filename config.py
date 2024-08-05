@@ -713,6 +713,8 @@ def bigyo(taiyi_acumyear):
         big_yo = big_yo
     if big_yo > 36:
         big_yo = big_yo / 36
+    if big_yo < 6:
+        big_yo = 6
     byv = dict(zip([7,8,9,1,2,3,4,6],range(1,9))).get(int(big_yo))
     return byv
 #小游
@@ -797,4 +799,5 @@ def suenwl(homecal, awaycal, home_general, away_general ):
         return "雖客以多筭臨少，惟客人不出中門，主客俱不利，和。"
     else:
         return "主客旗鼓相當。"
+
 
