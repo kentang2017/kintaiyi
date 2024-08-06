@@ -692,7 +692,7 @@ class Taiyi():
         dict1 = self.taiyi_life(sex).get("十二命宮排列")
         res.update(dict1)
         sg = list(res.values())
-        return chart.gen_chart_life( list(self.sixteen_gong1(3,0).values())[-1], sg, list(self.sixteen_gong1(3,0).values())[:-1])
+        return chart.gen_chart_life( list(self.sixteen_gong1(4,0).values())[-1], sg, list(self.sixteen_gong1(4,0).values())[:-1])
 
     def gen_life_gong_list(self, sex):
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
