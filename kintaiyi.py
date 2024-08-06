@@ -776,7 +776,7 @@ class Taiyi():
         original_dict = self.sixteen_gong1(ji_style, taiyi_acumyear)
         c = "五福,君基,臣基,民基,文昌,計神,大游,小游,主大,客大,主參,客參,始擊,飛符,四神,天乙,地乙".split(",")
         a = {star: key for key, values in original_dict.items() for star in values if star in c}
-        d = dict(zip(di_zhi, range(0,13)))
+        d = dict(zip(di_zhi, range(1,13)))
         for star, gong_value in a.items():
             a[star] = d[gong_value]
         return  a
@@ -1499,9 +1499,10 @@ if __name__ == '__main__':
     day = 6
     hour = 2
     minute = 55
-    print(config.gangzhi(year, month, day, hour, minute))
-    print(Taiyi(year, month, day, hour, minute).taiyi_life("男"))
-    print(Taiyi(year, month, day, hour, minute).gongs_discription_list("男"))
+    #print(config.gangzhi(year, month, day, hour, minute))
+    #print(Taiyi(year, month, day, hour, minute).taiyi_life("男"))
+    
+    print(Taiyi(year, month, day, hour, minute).sixteen_gong2(4,0))
     #print(Taiyi(year, month, day, hour, minute).(4,0))
     #print(Taiyi(year, month, day, hour, minute).bailiu_xingxian("男"))
     #print(Taiyi(year, month, day, hour, minute).yangjiu_xingxian("男"))
