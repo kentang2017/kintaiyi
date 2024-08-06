@@ -800,4 +800,5 @@ def suenwl(homecal, awaycal, home_general, away_general ):
     else:
         return "主客旗鼓相當。"
 
-
+if __name__ == '__main__':
+    print(num2gong_life(bigyo(10155909)))

@@ -654,7 +654,7 @@ class Taiyi():
                  {config.num2gong_life(self.home_vgen(ji_style, taiyi_acumyear)).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"主參"},
                  {config.num2gong_life(self.away_general(ji_style, taiyi_acumyear)).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"客大"},  
                  {config.num2gong_life(self.away_vgen(ji_style, taiyi_acumyear)).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"客參"},
-                 {config.num2gong_life(config.bigyo(self.accnum(ji_style,taiyi_acumyear))).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"大游"},  
+                 {config.num2gong_life(config.bigyo(self.accnum(ji_style,taiyi_acumyear))):"大游"},  
                  {config.num2gong_life(config.smyo(self.accnum(ji_style,taiyi_acumyear))).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"小游"},  
                  ]
         res = {"巳":"", "午":"", "未":"", "申":"", "酉":"", "戌":"", "亥":"", "子":"", "丑":"", "寅":"", "卯":"", "辰":"","中":""}
@@ -1494,13 +1494,15 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    year = 2023
+    year = 1992
     month = 4
     day = 6
     hour = 2
     minute = 55
     print(config.gangzhi(year, month, day, hour, minute))
-    print(Taiyi(year, month, day, hour, minute).sixteen_gong(4,0))
+    print(Taiyi(year, month, day, hour, minute).taiyi_life("男"))
+    print(Taiyi(year, month, day, hour, minute).gongs_discription_list("男"))
+    #print(Taiyi(year, month, day, hour, minute).(4,0))
     #print(Taiyi(year, month, day, hour, minute).bailiu_xingxian("男"))
     #print(Taiyi(year, month, day, hour, minute).yangjiu_xingxian("男"))
     #print(Taiyi(year, month, day, hour, minute).kook(0, 0))
