@@ -616,8 +616,6 @@ class Taiyi():
                      {config.num2gong(config.eightwind(self.accnum(ji_style,taiyi_acumyear))):"八風"},  
                      {config.num2gong(config.flybird(self.accnum(ji_style,taiyi_acumyear))):"飛鳥"},
                      {config.num2gong(self.ty(ji_style, taiyi_acumyear)):"太乙"}, 
-                     {config.num2gong(config.bigyo(self.accnum(ji_style,taiyi_acumyear))):"大游"},
-                     {config.num2gong(config.smyo(self.accnum(ji_style,taiyi_acumyear))):"小游"},  
                      ]
         res = {"巳":"", "午":"", "未":"", "坤":"", "申":"", "酉":"", "戌":"", "乾":"", "亥":"", "子":"", "丑":"", "艮":"","寅":"", "卯":"", "辰":"", "巽":"","中":""}
         for dict in dict1:
@@ -654,7 +652,6 @@ class Taiyi():
                  {config.num2gong_life(self.home_vgen(ji_style, taiyi_acumyear)).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"主參"},
                  {config.num2gong_life(self.away_general(ji_style, taiyi_acumyear)).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"客大"},  
                  {config.num2gong_life(self.away_vgen(ji_style, taiyi_acumyear)).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"客參"},
-                 {config.num2gong_life(config.bigyo(self.accnum(ji_style,taiyi_acumyear))):"大游"},  
                  {config.num2gong_life(config.smyo(self.accnum(ji_style,taiyi_acumyear))).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"小游"},  
                  ]
         res = {"巳":"", "午":"", "未":"", "申":"", "酉":"", "戌":"", "亥":"", "子":"", "丑":"", "寅":"", "卯":"", "辰":"","中":""}
@@ -774,16 +771,16 @@ class Taiyi():
 
     def sixteen_gong2(self, ji_style, taiyi_acumyear):
         original_dict = self.sixteen_gong1(ji_style, taiyi_acumyear)
-        c = "五福,君基,臣基,民基,文昌,計神,大游,小游,主大,客大,主參,客參,始擊,飛符,四神,天乙,地乙".split(",")
+        c = "五福,君基,臣基,民基,文昌,計神,小游,主大,客大,主參,客參,始擊,飛符,四神,天乙,地乙".split(",")
         a = {star: key for key, values in original_dict.items() for star in values if star in c}
-        d = dict(zip(di_zhi, range(1,13)))
+        d = dict(zip(di_zhi, range(0,13)))
         for star, gong_value in a.items():
             a[star] = d[gong_value]
         return  a
     
     def stars_descriptions(self, ji_style, taiyi_acumyear):
         starszhi = self.sixteen_gong2(ji_style, taiyi_acumyear)
-        c = "五福,君基,臣基,民基,文昌,計神,大游,小游,主大,客大,主參,客參,始擊,飛符,四神,天乙,地乙".split(",")
+        c = "五福,君基,臣基,民基,文昌,計神,小游,主大,客大,主參,客參,始擊,飛符,四神,天乙,地乙".split(",")
         allstar = {}
         for i in c:
             try:
@@ -1494,16 +1491,13 @@ class Taiyi():
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    year = 1992
-    month = 4
-    day = 6
-    hour = 2
+    year = 2020
+    month = 6
+    day = 10
+    hour = 4
     minute = 55
-    #print(config.gangzhi(year, month, day, hour, minute))
-    #print(Taiyi(year, month, day, hour, minute).taiyi_life("男"))
-    
-    print(Taiyi(year, month, day, hour, minute).sixteen_gong2(4,0))
-    #print(Taiyi(year, month, day, hour, minute).(4,0))
+    print(config.gangzhi(year, month, day, hour, minute))
+    print(Taiyi(year, month, day, hour, minute).taiyi_life("男"))
     #print(Taiyi(year, month, day, hour, minute).bailiu_xingxian("男"))
     #print(Taiyi(year, month, day, hour, minute).yangjiu_xingxian("男"))
     #print(Taiyi(year, month, day, hour, minute).kook(0, 0))
