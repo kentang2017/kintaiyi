@@ -427,6 +427,7 @@ def gpan(year, month, day, hour, minute):
     dh = multi_key_dict_get({tuple(new_list(jieqi.jieqi_name, "冬至")[0:12]):"冬至",
                              tuple(new_list(jieqi.jieqi_name, "夏至")[0:12]):"夏至"},j_q)
     eg = "坎坤震巽乾兌艮離"
+    eight_gua = list("坎坤震巽中乾兌艮離")
     yy = {"冬至":"陽遁", "夏至":"陰遁"}.get(dh)
     ty_doors = {"冬至": dict(zip(jiazi(),itertools.cycle(list("艮離坎坤震巽中乾兌")))), 
             "夏至": dict(zip(jiazi(),itertools.cycle(list("坤坎離艮兌乾中巽震"))))}
