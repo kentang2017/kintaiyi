@@ -178,8 +178,7 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
             label_text = draw.Text(label, 9, label_x, label_y, center=1, fill='white')
             d.append(label_text)
     # ... [rest of your code remains the same]
-    return d.as_svg().replace('''<path d="M-4.86988571440686,-12.053390109368236 L-21.72718241812291,-53.776663564873665 A58,58,0,0,1,-21.727182418122876,-53.77666356487368 L-4.869885714406852,-12.053390109368237 A13,13,0,0,0,-4.86988571440686,-12.053390109368236 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
-
+    return d.as_svg().replace('''<path d="M-4.495279120990947,-11.126206254801447 L-17.606509890547876,-43.577641164639005 A47,47,0,0,1,-17.606509890547848,-43.57764116463901 L-4.49527912099094,-11.12620625480145 A12,12,0,0,0,-4.495279120990947,-11.126206254801447 Z" stroke="white" stroke-width="1.88" fill="black" />''', "")
 
 
 #第一層中間, 第二層八門
