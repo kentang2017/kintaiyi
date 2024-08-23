@@ -401,8 +401,6 @@ class Taiyi():
         num = self.kook(ji_style, taiyi_acumyear).get("數")
         yy = self.kook(ji_style, taiyi_acumyear).get("文")[0]
         home_cal = config.find_cal(yy, num)[0]
-        if home_cal == 1:
-            return self.ty(ji_style, taiyi_acumyear)
         if home_cal < 10:
             return self.home_cal(ji_style, taiyi_acumyear)
         if home_cal % 10 == 0:
