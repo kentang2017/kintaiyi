@@ -1445,6 +1445,7 @@ class Taiyi():
                 "八風":config.eightwind(self.accnum(ji_style, taiyi_acumyear)),
                 "大游":config.bigyo(self.accnum(ji_style, taiyi_acumyear)),
                 "小游":config.smyo(self.accnum(ji_style, taiyi_acumyear)),
+                "金函玉鏡":config.gpan(self.year, self.month, self.day, self.hour, self.minute),
                 "二十八宿值日":config.starhouse(self.year, self.month, self.day, self.hour, self.minute),
                 "太歲二十八宿":self.year_chin(),
                 "太歲值宿斷事": su_dist.get(self.year_chin()),
