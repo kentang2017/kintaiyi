@@ -430,6 +430,8 @@ def gpan(year, month, day, hour, minute):
                              tuple(new_list(jieqi.jieqi_name, "夏至")[0:12]):"夏至"},j_q)
     eg = "坎坤震巽乾兌艮離"
     eight_gua = list("坎坤震巽中乾兌艮離")
+    clockwise_eightgua = list("坎艮震巽離坤兌乾")
+    door_r = list("休生傷杜景死驚開")
     yy = {"冬至":"陽遁", "夏至":"陰遁"}.get(dh)
     ty_doors = {"冬至": dict(zip(jiazi(),itertools.cycle(list("艮離坎坤震巽中乾兌")))), 
             "夏至": dict(zip(jiazi(),itertools.cycle(list("坤坎離艮兌乾中巽震"))))}
@@ -441,11 +443,11 @@ def gpan(year, month, day, hour, minute):
     b = list(starmap(lambda start, end: tuple(jiazi()[start:end]),  zip(triple_list[:-1], triple_list[1:])))
     rest_door_settings = {"陽遁":dict(zip(b, itertools.cycle(eg))),
                           "陰遁":dict(zip(b, itertools.cycle(list(reversed(eg)))))}.get(yy)
-    rest = config.multi_key_dict_get(rest_door_settings, dgz)
+    rest = multi_key_dict_get(rest_door_settings, dgz)
     doors_pai = {"陽遁":dict(zip(b, itertools.cycle(eg))),
                   "陰遁":dict(zip(b, itertools.cycle(list(reversed(eg)))))}.get(yy)
-    the_doors = {"陽遁": dict(zip(new_list(kconfig.clockwise_eightgua, rest), door_r)), 
-                 "陰遁": dict(zip(new_list(list(reversed(kconfig.clockwise_eightgua)), rest), door_r))}.get(yy)
+    the_doors = {"陽遁": dict(zip(new_list(clockwise_eightgua, rest), door_r)), 
+                 "陰遁": dict(zip(new_list(list(reversed(clockwise_eightgua)), rest), door_r))}.get(yy)
     return {"門":the_doors, "星":star_pai}
 
 #換算干支
