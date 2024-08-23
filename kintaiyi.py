@@ -679,7 +679,7 @@ class Taiyi():
             dict1 = config.gpan1(self.year, self.month, self.day, self.hour, self.minute)
             middle = dict1[0][1]
             ng = dict1[1]
-            return chart.gen_chart_day( list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[-1] + middle, self.geteightdoors_text2(ji_style, taiyi_acumyear), ng, list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[:-1])
+            return chart.gen_chart_day( list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[-1] + [middle], self.geteightdoors_text2(ji_style, taiyi_acumyear), ng, list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[:-1])
 
         if ji_style in [3,4]:
             #j_q = jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)
