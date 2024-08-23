@@ -129,8 +129,8 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
     # Create an SVG drawing canvas
     d = draw.Drawing(390, 450, origin="center")
     # Set the donut's radii and number of divisions for each layer
-    inner_radius = 13
-    layer_gap = 45  # Gap between layers
+    inner_radius = 12
+    layer_gap = 35 # Gap between layers
     num_divisions = [1, 8, 8, 16, 16]
     # Define the data for each layer
     #general = dict(zip(list("貴蛇雀合勾龍空虎常玄陰后"),re.findall('..', '貴人螣蛇朱雀六合勾陳青龍天空白虎常侍玄武太陰太后')))
