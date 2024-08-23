@@ -123,14 +123,14 @@ def gen_chart_life(second_layer, twelve, sixth_layer):
     return d.as_svg().replace('''<path d="M-4.495279120990947,-11.126206254801447 L-17.606509890547876,-43.577641164639005 A47,47,0,0,1,-17.606509890547848,-43.57764116463901 L-4.49527912099094,-11.12620625480145 A12,12,0,0,0,-4.495279120990947,-11.126206254801447 Z" stroke="white" stroke-width="1.88" fill="black" />''', "")
 
 
-#第一層中間, 第二層八門
+#日家太乙盤
 def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
     # ... [rest of your setup code remains the same]
     # Create an SVG drawing canvas
     d = draw.Drawing(390, 450, origin="center")
     # Set the donut's radii and number of divisions for each layer
-    inner_radius = 3
-    layer_gap = 31.5  # Gap between layers
+    inner_radius = 13
+    layer_gap = 45  # Gap between layers
     num_divisions = [1, 8, 8, 16, 16]
     # Define the data for each layer
     #general = dict(zip(list("貴蛇雀合勾龍空虎常玄陰后"),re.findall('..', '貴人螣蛇朱雀六合勾陳青龍天空白虎常侍玄武太陰太后')))
@@ -175,11 +175,11 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
             #if divisions == 1:
             #    label_text = draw.Text(label, 8, label_x, label_y, center=1, fill='black')
             #else:
-            label_text = draw.Text(label, 8, label_x, label_y, center=1, fill='white')
+            label_text = draw.Text(label, 9, label_x, label_y, center=1, fill='white')
             d.append(label_text)
     # ... [rest of your code remains the same]
+    return d.as_svg().replace('''<path d="M-4.86988571440686,-12.053390109368236 L-21.72718241812291,-53.776663564873665 A58,58,0,0,1,-21.727182418122876,-53.77666356487368 L-4.869885714406852,-12.053390109368237 A13,13,0,0,0,-4.86988571440686,-12.053390109368236 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
 
-    return d.as_svg().replace('''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
 
 
 #第一層中間, 第二層八門
