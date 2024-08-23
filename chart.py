@@ -124,13 +124,15 @@ def gen_chart_life(second_layer, twelve, sixth_layer):
 
 
 #日家太乙盤
+
+#第一層中間, 第二層八門
 def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
     # ... [rest of your setup code remains the same]
     # Create an SVG drawing canvas
     d = draw.Drawing(390, 450, origin="center")
     # Set the donut's radii and number of divisions for each layer
-    inner_radius = 12
-    layer_gap = 35 # Gap between layers
+    inner_radius = 3
+    layer_gap = 31.5  # Gap between layers
     num_divisions = [1, 8, 8, 16, 16]
     # Define the data for each layer
     #general = dict(zip(list("貴蛇雀合勾龍空虎常玄陰后"),re.findall('..', '貴人螣蛇朱雀六合勾陳青龍天空白虎常侍玄武太陰太后')))
@@ -160,7 +162,7 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
             start_inner_x, start_inner_y = inner * math.cos(math.radians(start_angle)), inner * math.sin(math.radians(start_angle))
             end_inner_x, end_inner_y = inner * math.cos(math.radians(end_angle)), inner * math.sin(math.radians(end_angle))
 
-            path = draw.Path(stroke='white', stroke_width=1.88, fill='black')
+            path = draw.Path(stroke='white', stroke_width=1.8, fill='black')
             path.M(start_inner_x, start_inner_y)  # Move to the start point on the inner radius
             path.L(start_outer_x, start_outer_y)  # Line to the start point on the outer radius
             path.A(outer, outer, 0, 0, 1, end_outer_x, end_outer_y)  # Outer arc
@@ -175,11 +177,9 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
             #if divisions == 1:
             #    label_text = draw.Text(label, 8, label_x, label_y, center=1, fill='black')
             #else:
-            label_text = draw.Text(label, 9, label_x, label_y, center=1, fill='white')
+            label_text = draw.Text(label, 8, label_x, label_y, center=1, fill='white')
             d.append(label_text)
-    # ... [rest of your code remains the same]
-    return d.as_svg().replace('''<path d="M-4.495279120990947,-11.126206254801447 L-17.606509890547876,-43.577641164639005 A47,47,0,0,1,-17.606509890547848,-43.57764116463901 L-4.49527912099094,-11.12620625480145 A12,12,0,0,0,-4.495279120990947,-11.126206254801447 Z" stroke="white" stroke-width="1.88" fill="black" />''', "")
-
+    return d.as_svg().replace('''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
 
 #第一層中間, 第二層八門
 def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeight):
