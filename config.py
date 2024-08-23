@@ -409,6 +409,41 @@ def gangzhi1(year, month, day, hour, minute):
         mTG1 = mTG
     hTG1 = find_lunar_hour(dTG).get(hTG[1])
     return [yTG, mTG1, dTG, hTG1]
+#金函玉鏡
+def gpan(year, month, day, hour, minute):
+    j_q = jieqi.jq(year,
+                month,
+                day,
+                hour,
+                minute)
+    start_jia = jiazi()[0::10]
+    dgz = gangzhi(year,
+                     month,
+                     day,
+                     hour,
+                     minute)[2]
+    dd = [tuple(new_list(jiazi(), i)[0:10]) for i in start_jia]
+    shun = multi_key_dict_get(dict(zip(dd, start_jia)), dgz)
+    dh = multi_key_dict_get({tuple(new_list(jieqi.jieqi_name, "冬至")[0:12]):"冬至",
+                             tuple(new_list(jieqi.jieqi_name, "夏至")[0:12]):"夏至"},j_q)
+    eg = "坎坤震巽乾兌艮離"
+    yy = {"冬至":"陽遁", "夏至":"陰遁"}.get(dh)
+    ty_doors = {"冬至": dict(zip(jiazi(),itertools.cycle(list("艮離坎坤震巽中乾兌")))), 
+            "夏至": dict(zip(jiazi(),itertools.cycle(list("坤坎離艮兌乾中巽震"))))}
+    gong = ty_doors.get(dh).get(dgz)
+    rotate_order = {"陽遁":eight_gua, "陰遁":list(reversed(eight_gua))}.get(yy)
+    a_gong = new_list(rotate_order, gong)
+    star_pai = dict(zip(a_gong, golden_d))
+    triple_list = list(map(lambda x: x + x + x, list(range(0,21))))
+    b = list(starmap(lambda start, end: tuple(jiazi()[start:end]),  zip(triple_list[:-1], triple_list[1:])))
+    rest_door_settings = {"陽遁":dict(zip(b, itertools.cycle(eg))),
+                          "陰遁":dict(zip(b, itertools.cycle(list(reversed(eg)))))}.get(yy)
+    rest = config.multi_key_dict_get(rest_door_settings, dgz)
+    doors_pai = {"陽遁":dict(zip(b, itertools.cycle(eg))),
+                  "陰遁":dict(zip(b, itertools.cycle(list(reversed(eg)))))}.get(yy)
+    the_doors = {"陽遁": dict(zip(new_list(kconfig.clockwise_eightgua, rest), door_r)), 
+                 "陰遁": dict(zip(new_list(list(reversed(kconfig.clockwise_eightgua)), rest), door_r))}.get(yy)
+    return {"門":the_doors, "星":star_pai}
 
 #換算干支
 def gangzhi(year, month, day, hour, minute):
