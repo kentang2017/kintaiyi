@@ -131,7 +131,7 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
     # Set the donut's radii and number of divisions for each layer
     inner_radius = 3
     layer_gap = 31.5  # Gap between layers
-    num_divisions = [1, 8, 16, 16, 16,28]
+    num_divisions = [1, 8, 8, 16, 16]
     # Define the data for each layer
     #general = dict(zip(list("貴蛇雀合勾龍空虎常玄陰后"),re.findall('..', '貴人螣蛇朱雀六合勾陳青龍天空白虎常侍玄武太陰太后')))
     #skygeneral = [general.get(i) for i in skygeneral]
