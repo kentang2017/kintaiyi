@@ -240,3 +240,4 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
     # ... [rest of your code remains the same]
 
     return d.as_svg().replace('''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
+

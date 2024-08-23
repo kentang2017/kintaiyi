@@ -418,14 +418,11 @@ def gpan(year, month, day, hour, minute):
                 day,
                 hour,
                 minute)
-    start_jia = jiazi()[0::10]
     dgz = gangzhi(year,
                      month,
                      day,
                      hour,
                      minute)[2]
-    dd = [tuple(new_list(jiazi(), i)[0:10]) for i in start_jia]
-    shun = multi_key_dict_get(dict(zip(dd, start_jia)), dgz)
     dh = multi_key_dict_get({tuple(new_list(jieqi.jieqi_name, "冬至")[0:12]):"冬至",
                              tuple(new_list(jieqi.jieqi_name, "夏至")[0:12]):"夏至"},j_q)
     eg = "坎坤震巽乾兌艮離"
@@ -444,11 +441,17 @@ def gpan(year, month, day, hour, minute):
     rest_door_settings = {"陽遁":dict(zip(b, itertools.cycle(eg))),
                           "陰遁":dict(zip(b, itertools.cycle(list(reversed(eg)))))}.get(yy)
     rest = multi_key_dict_get(rest_door_settings, dgz)
-    doors_pai = {"陽遁":dict(zip(b, itertools.cycle(eg))),
-                  "陰遁":dict(zip(b, itertools.cycle(list(reversed(eg)))))}.get(yy)
     the_doors = {"陽遁": dict(zip(new_list(clockwise_eightgua, rest), door_r)), 
                  "陰遁": dict(zip(new_list(list(reversed(clockwise_eightgua)), rest), door_r))}.get(yy)
     return {"門":the_doors, "星":star_pai}
+
+def gpan1(year, month, day, hour, minute):
+    d = gpan(year, month, day, hour, minute)
+    pan_eg = new_list( list("坎艮震巽離坤兌乾"), "離")
+    door = [d.get("門").get(i) for i in pan_eg]
+    star = [d.get("星").get(i) for i in pan_eg]
+    middle = ["中",d.get("星").get("中")]
+    return [middle, [[a, b, f'{c}門'] for a, b, c in zip(pan_eg, star, door)]]
 
 #換算干支
 def gangzhi(year, month, day, hour, minute):
@@ -842,3 +845,5 @@ def suenwl(homecal, awaycal, home_general, away_general ):
 
 if __name__ == '__main__':
     print(num2gong_life(bigyo(10155909)))
+    print(gpan(2024,8,23,10,7))
+    print(gpan1(2024,8,23,10,7))

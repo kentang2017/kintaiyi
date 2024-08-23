@@ -676,11 +676,10 @@ class Taiyi():
         if ji_style in [0,1]:
             return chart.gen_chart( list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[-1], self.geteightdoors_text2(ji_style, taiyi_acumyear), list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[:-1])
         if ji_style in [2]:
-            dict1 = self.shensha(ji_style, taiyi_acumyear)
-            res = {"巳":" ", "午":" ", "未":" ", "坤":" ", "申":" ", "酉":" ", "戌":" ", "乾":" ", "亥":" ", "子":" ", "丑":" ", "艮":" ","寅":" ", "卯":" ", "辰":" ", "巽":" "}
-            res.update(dict1)
-            sg = list(res.values())
-            return chart.gen_chart_hour( list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[-1], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg, list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear))
+            dict1 = self.gpan1(self.year, self.month, self.day, self.hour, self.minute)
+            middle = dict1[0]
+            ng = dict1[1]
+            return chart.gen_chart_hour( list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[-1] + middle, self.geteightdoors_text2(ji_style, taiyi_acumyear), ng, list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear))
 
         if ji_style in [3,4]:
             #j_q = jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)
@@ -1505,8 +1504,8 @@ if __name__ == '__main__':
     hour = 4
     minute = 55
     print(config.gangzhi(year, month, day, hour, minute))
-    print(Taiyi(year, month, day, hour, minute).taiyi_life("男"))
-    #print(Taiyi(year, month, day, hour, minute).bailiu_xingxian("男"))
+    #print(Taiyi(year, month, day, hour, minute).gen_gong(3,0))
+    print(Taiyi(year, month, day, hour, minute).geteightdoors_text2(2,0))
     #print(Taiyi(year, month, day, hour, minute).yangjiu_xingxian("男"))
     #print(Taiyi(year, month, day, hour, minute).kook(0, 0))
     #print(Taiyi(year, month, day, hour, minute).kook(1, 0))
