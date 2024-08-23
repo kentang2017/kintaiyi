@@ -6,18 +6,17 @@ Created on Tue May  9 14:14:13 2023
 """
 
 import re
-import os
-import pickle
 import itertools
-from itertools import cycle, repeat
-from datetime import date
 from ruler import ruler_data
 import cn2an
 from cn2an import an2cn
 from ephem import Date
 from sxtwl import fromSolar
+from itertools import cycle, repeat
 import jieqi
 from bidict import bidict
+import os
+import pickle
 
 base = os.path.abspath(os.path.dirname(__file__))
 path = os.path.join(base, 'data.pkl')
@@ -55,8 +54,6 @@ tyjc = [1,3,7,9]
 sixteen = "子丑艮寅卯辰巽巳午未坤申酉戌乾亥"
 sixteengod = dict(zip(re.findall("..", "地主陽德和德呂申高叢太陽大炅大神大威天道大武武德太簇陰主陰德大義"), "子丑艮寅卯辰巽巳午未坤申酉戌乾亥"))
 #陰陽遁定制
-
-cheungsun = dict(zip(list("木火金水土"),list("亥寅巳申申")))
 five_elements = dict(zip(re.findall('..', '太乙天乙地乙始擊文昌主將主參客將客參'), list("木火土火土金水水木")))
 gong = dict(zip(list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥"), range(1,17)))
 gong1 = list("子丑艮寅卯辰巽巳午未坤申酉戌乾亥")
@@ -102,7 +99,6 @@ numdict = {1: "雜陰", 2: "純陰", 3: "純陽", 4: "雜陽", 6: "純陰", 7: "
            22: "純陰", 23: "次和", 24: "雜重陰", 26: "純陰", 27: "下和",
            28: "雜重陰", 29: "次和", 31: "雜重陽", 32: "次和", 33: "純陽",
            34: "下和", 37: "雜重陽", 38: "下和", 39: "純陽"}
-
 #找主客定算
 def find_cal(yingyang, num):
     yangcal =[[7,13,13],[6,1,1],[1,40,32],[25,17,10],[25,14,1],[25,10,12],[8,25,9],[1,22,3],[3,15,33],[1,12,25],[4,4,13],[37,1,4],[18,19,19],[10,9,9],[9,7,6],[1,33,26],[7,27,16],[7,26,11],[8,32,14],[7,26,2],[2,17,33],[16,30,1],[16,23,32],[16,17,23],[39,40,40],[32,31,31],[31,28,31],[14,9,38],[13,39,26],[10,32,17],[33,10,34],[25,8,24],[24,3,15],[26,4,11],[25,28,1],[25,27,36],[1,7,7],[6,35,35],[35,34,26],[27,19,12],[27,16,3],[27,12,34],[8,17,1],[23,14,32],[32,7,25],[5,16,29],[4,8,17],[1,5,8],[24,25,25],[16,15,15],[15,13,6],[39,31,24],[38,25,14],[38,24,9],[16,3,22],[15,34,10],[10,25,10],[12,26,27],[12,19,28],[12,13,19],[33,34,34],[26,25,25],[25,22,18],[16,11,7],[15,1,28],[12,34,19],[25,2,26],[17,8,16],[16,32,7],[30,4,15],[29,32,5],[29,31,9]]
@@ -241,6 +237,25 @@ def closest1(lst, K):
 def closest2(lst, K):
     return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))+1]
 
+def minute_gu(year, month, day, hour, minute):
+    gz=gangzhi(year, month, day, hour, minute)
+    g4 = multi_key_dict_get(liujiashun_dict(), gz[4])
+    guxu = {'甲子':{'孤':'乾坎'}, #戌亥
+            '甲戌':{'孤':'坤兌'}, #申酉
+            '甲申':{'孤':'離坤'}, #午未
+            '甲午':{'孤':'巽離'}, #辰巳
+            '甲辰':{'孤':'震巽'}, #寅卯
+            '甲寅':{'孤':'坎艮'}} #子丑
+    shikong = multi_key_dict_get(guxu, g4).get("孤")
+    get_yy = multi_key_dict_get({tuple(list("子寅辰午申戌")):"陽", tuple(list("丑卯巳未酉亥")):"陰"}, g4[1])
+    gong =  shikong[{"陽":0, "陰":1}.get(get_yy)]
+    return gong
+
+def minute_bs(year, month, day, hour, minute):
+    gong = minute_gu(year, month, day, hour, minute)
+    gx = multi_key_dict_get({tuple(list("乾坤艮巽")):"大", tuple(list("坎震兌離")):"小"}, gong)
+    return gx
+
 def find_gua(year):
     a = closest(year_for_gua, year)
     b = closest1(year_for_gua, year)
@@ -363,34 +378,6 @@ def Ganzhiwuxing(gangorzhi):
     ganzhiwuxing = dict(zip(list(map(lambda x: tuple(x),"甲寅乙卯震巽,丙巳丁午離,壬亥癸子坎,庚申辛酉乾兌,未丑戊己未辰戌艮坤".split(","))), list("木火水金土")))
     return multi_key_dict_get(ganzhiwuxing, gangorzhi)
 
-def calculateAge(birthDate):
-    today = date.today()
-    age = today.year - birthDate.year -((today.month, today.day) <(birthDate.month, birthDate.day))
-    return age
-
-def Ganzhi_num(gang):
-    num = dict(zip(list(map(lambda x: tuple(x),"甲己,乙庚,丙辛,丁壬,戊癸".split(","))), [5,4,1,3,2]))
-    return multi_key_dict_get(num, gang)
-
-def Ganzhi_place(gang):
-    place = dict(zip(list(map(lambda x: tuple(x),"甲己,乙庚,丙辛,丁壬,戊癸".split(","))), list("午巳申亥寅")))
-    return multi_key_dict_get(place, gang)
-
-def generate_ranges(start, n, num_ranges):
-    ranges = []
-    a = start
-    for i in range(num_ranges):
-        end = start + n - 1
-        ranges.append(f"{start+1}-{end+1}")
-        start = end + 1  # The next range starts right after the current end
-    return ["1-{}".format(a)]+ranges
-
-def gangzhi_to_num(gangorzhi):
-    return dict(zip("金木水火土", [13,11,7,9,15])).get(Ganzhiwuxing(gangorzhi))
-
-def element_to_num(element):
-    return dict(zip("金木水火土", [13,11,7,9,15])).get(element)
-
 def find_wx_relation(zhi1, zhi2):
     return multi_key_dict_get(wuxing_relation_2, Ganzhiwuxing(zhi1) + Ganzhiwuxing(zhi2))
 
@@ -409,41 +396,6 @@ def gangzhi1(year, month, day, hour, minute):
         mTG1 = mTG
     hTG1 = find_lunar_hour(dTG).get(hTG[1])
     return [yTG, mTG1, dTG, hTG1]
-#金函玉鏡
-def gpan(year, month, day, hour, minute):
-    j_q = jieqi.jq(year,
-                month,
-                day,
-                hour,
-                minute)
-    start_jia = jiazi()[0::10]
-    dgz = gangzhi(year,
-                     month,
-                     day,
-                     hour,
-                     minute)[2]
-    dd = [tuple(new_list(jiazi(), i)[0:10]) for i in start_jia]
-    shun = multi_key_dict_get(dict(zip(dd, start_jia)), dgz)
-    dh = multi_key_dict_get({tuple(new_list(jieqi.jieqi_name, "冬至")[0:12]):"冬至",
-                             tuple(new_list(jieqi.jieqi_name, "夏至")[0:12]):"夏至"},j_q)
-    eg = "坎坤震巽乾兌艮離"
-    yy = {"冬至":"陽遁", "夏至":"陰遁"}.get(dh)
-    ty_doors = {"冬至": dict(zip(jiazi(),itertools.cycle(list("艮離坎坤震巽中乾兌")))), 
-            "夏至": dict(zip(jiazi(),itertools.cycle(list("坤坎離艮兌乾中巽震"))))}
-    gong = ty_doors.get(dh).get(dgz)
-    rotate_order = {"陽遁":eight_gua, "陰遁":list(reversed(eight_gua))}.get(yy)
-    a_gong = new_list(rotate_order, gong)
-    star_pai = dict(zip(a_gong, golden_d))
-    triple_list = list(map(lambda x: x + x + x, list(range(0,21))))
-    b = list(starmap(lambda start, end: tuple(jiazi()[start:end]),  zip(triple_list[:-1], triple_list[1:])))
-    rest_door_settings = {"陽遁":dict(zip(b, itertools.cycle(eg))),
-                          "陰遁":dict(zip(b, itertools.cycle(list(reversed(eg)))))}.get(yy)
-    rest = config.multi_key_dict_get(rest_door_settings, dgz)
-    doors_pai = {"陽遁":dict(zip(b, itertools.cycle(eg))),
-                  "陰遁":dict(zip(b, itertools.cycle(list(reversed(eg)))))}.get(yy)
-    the_doors = {"陽遁": dict(zip(new_list(kconfig.clockwise_eightgua, rest), door_r)), 
-                 "陰遁": dict(zip(new_list(list(reversed(kconfig.clockwise_eightgua)), rest), door_r))}.get(yy)
-    return {"門":the_doors, "星":star_pai}
 
 #換算干支
 def gangzhi(year, month, day, hour, minute):
@@ -748,8 +700,6 @@ def bigyo(taiyi_acumyear):
         big_yo = big_yo
     if big_yo > 36:
         big_yo = big_yo / 36
-    if big_yo < 6:
-        big_yo = 6
     byv = dict(zip([7,8,9,1,2,3,4,6],range(1,9))).get(int(big_yo))
     return byv
 #小游
@@ -836,4 +786,10 @@ def suenwl(homecal, awaycal, home_general, away_general ):
         return "主客旗鼓相當。"
 
 if __name__ == '__main__':
-    print(num2gong_life(bigyo(10155909)))
+    year = 2024
+    month = 8
+    day = 17
+    hour = 19
+    minute = 30
+    print(minute_gu(year, month, day, hour, minute))
+    #print(minute_bs(year, month, day, hour, minute))
