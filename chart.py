@@ -160,7 +160,7 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
             start_inner_x, start_inner_y = inner * math.cos(math.radians(start_angle)), inner * math.sin(math.radians(start_angle))
             end_inner_x, end_inner_y = inner * math.cos(math.radians(end_angle)), inner * math.sin(math.radians(end_angle))
 
-            path = draw.Path(stroke='white', stroke_width=1.8, fill='black')
+            path = draw.Path(stroke='white', stroke_width=1.88, fill='black')
             path.M(start_inner_x, start_inner_y)  # Move to the start point on the inner radius
             path.L(start_outer_x, start_outer_y)  # Line to the start point on the outer radius
             path.A(outer, outer, 0, 0, 1, end_outer_x, end_outer_y)  # Outer arc
