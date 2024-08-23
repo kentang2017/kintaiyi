@@ -673,8 +673,15 @@ class Taiyi():
         return {overall[i]:rrres[i] for i in range(0,13)}
            
     def gen_gong(self, ji_style, taiyi_acumyear):
-        if ji_style in [0,1,2]:
+        if ji_style in [0,1]:
             return chart.gen_chart( list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[-1], self.geteightdoors_text2(ji_style, taiyi_acumyear), list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[:-1])
+        if ji_style in [2]:
+            dict1 = self.shensha(ji_style, taiyi_acumyear)
+            res = {"巳":" ", "午":" ", "未":" ", "坤":" ", "申":" ", "酉":" ", "戌":" ", "乾":" ", "亥":" ", "子":" ", "丑":" ", "艮":" ","寅":" ", "卯":" ", "辰":" ", "巽":" "}
+            res.update(dict1)
+            sg = list(res.values())
+            return chart.gen_chart_hour( list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[-1], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg, list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear))
+
         if ji_style in [3,4]:
             #j_q = jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)
             #d = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]
