@@ -24,6 +24,8 @@
 
 庶士惟時
 
+投機惟分
+
 <p align="right">(<a href="#readme-top">頂部</a>)</p>
 
 -----
