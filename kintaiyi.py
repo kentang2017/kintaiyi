@@ -1471,6 +1471,8 @@ class Taiyi():
                 "明五福太乙所主術":self.ming_wufu(ji_style, taiyi_acumyear),
                 "明五福吉算所主術":self.wufu_gb(ji_style, taiyi_acumyear),
                 "明天乙太乙所主術":self.ming_tiany(ji_style, taiyi_acumyear),
+                "明地乙太乙所主術":self.ming_earthy(ji_style, taiyi_acumyear),
+                "明值符太乙所主術":self.ming_zhifu(ji_style, taiyi_acumyear),
                 "推多少以占勝負":config.suenwl(self.home_cal(ji_style, taiyi_acumyear),
                                         self.away_cal(ji_style, taiyi_acumyear),
                                         self.home_general(ji_style, taiyi_acumyear),
