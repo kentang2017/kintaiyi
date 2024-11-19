@@ -336,6 +336,8 @@ class Taiyi():
            snum = snum -28
         if snum < 0:
            snum = snum +28
+        if snum == 0:
+            snum = 28
         return new_list(su_r, suu.get(snum))
 
     def sf(self, ji_style, taiyi_acumyear):
