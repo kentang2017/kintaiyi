@@ -14,6 +14,19 @@ from taiyidict import tengan_shiji, su_dist
 from taiyimishu import taiyi_yingyang
 from historytext import chistory
 import streamlit.components.v1 as components
+import ast
+
+def format_text(d, parent_key=""):
+    items = []
+    for k, v in d.items():
+        new_key = f"{parent_key}{k}" if parent_key else k
+        if isinstance(v, dict):
+            items.extend(format_text(v, new_key + ":").splitlines())
+        elif isinstance(v, list):
+            items.append(f"{new_key}: {', '.join(map(str, v))}")
+        else:
+            items.append(f"{new_key}: {v}")
+    return "\n".join(items)
 
 # Define custom components
 @st.cache_data
@@ -147,9 +160,9 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown("時卦：{}".format(hgua))
             st.markdown("分卦：{}".format(mingua))
             st.markdown("【陽九行限】")
-            st.markdown(yjxx)
+            st.markdown(format_text(ast.literal_eval(yjxx)))
             st.markdown("【百六行限】")
-            st.markdown(blxx)
+            st.markdown(format_text(ast.literal_eval(blxx)))
             st.title("《太乙秘書》︰")
             st.markdown(ts)
             st.title("史事記載︰")
