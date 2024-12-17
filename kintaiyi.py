@@ -1306,9 +1306,9 @@ class Taiyi():
         d = date(self.year, self.month, self.day)
         num= self.life_start_gua()[0] + config.calculateAge(d)
         if num> 64:
-            return [num, gua.get(num% 64)]
+            return [num, config.gua.get(num% 64)]
         else:
-            return [num, gua.get(num)]
+            return [num, config.gua.get(num)]
         
     def month_gua(self):
         year = self.year_gua()[0]
