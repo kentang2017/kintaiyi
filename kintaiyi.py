@@ -7,7 +7,7 @@ import re
 import time
 import itertools
 from itertools import cycle
-from ephem import Date
+from datetime import date
 import numpy as np
 from cn2an import an2cn
 from taiyidict import tengan_shiji, su_dist
@@ -1303,7 +1303,7 @@ class Taiyi():
         return [(y + m + d + h + 55) % 64, config.gua.get((y + m + d + h + 55) % 64)]
 
     def year_gua(self):
-        d = Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2)))
+        d = date(self.year, self.month, self.day)
         num= self.life_start_gua()[0] + config.calculateAge(d)
         if num> 64:
             return [num, gua.get(num% 64)]
