@@ -1350,7 +1350,7 @@ class Taiyi():
         gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
         yz = gz[0][1]
         mz = gz[1][1]
-        num= di_zhi.index(yz)
+        num= config.di_zhi.index(yz)
         yy = config.multi_key_dict_get({tuple(di_zhi[0::2]):"陽", tuple(di_zhi[1::2]):"陰"}, yz)
         direction =  config.multi_key_dict_get({("男陽","女陰"):"順", ("男陰", "女陽"):"逆"}, sex+yy)
         arrangelist = {"順":config.new_list(config.new_list(di_zhi,yz), mz), "逆":config.new_list(list(reversed(config.new_list(di_zhi,yz))), mz)}.get(direction)
