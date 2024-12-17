@@ -1340,7 +1340,7 @@ class Taiyi():
         
     def minute_gua(self):
         hour = self.hour_gua()[0]
-        minute = dict(zip(jiazi(), range(1,61))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[4])
+        minute = dict(zip(config.jiazi(), range(1,61))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[4])
         num= hour + minute
         if num> 64:
             return [num, config.gua.get(num% 64)]
