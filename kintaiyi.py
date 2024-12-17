@@ -8,6 +8,7 @@ import time
 import itertools
 from itertools import cycle
 from datetime import date
+from ephem import Date
 import numpy as np
 from cn2an import an2cn
 from taiyidict import tengan_shiji, su_dist
