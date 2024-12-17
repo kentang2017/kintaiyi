@@ -366,7 +366,7 @@ def Ganzhiwuxing(gangorzhi):
     return multi_key_dict_get(ganzhiwuxing, gangorzhi)
 
 def calculateAge(birthDate):
-    today = date.today()
+    today = Date.today()
     age = today.year - birthDate.year -((today.month, today.day) <(birthDate.month, birthDate.day))
     return age
 
