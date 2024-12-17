@@ -1303,45 +1303,45 @@ class Taiyi():
         return [(y + m + d + h + 55) % 64 ,gua.get((y + m + d + h + 55) % 64)]
 
     def year_gua(self):
-        config.num= self.life_start_gua()[0] + config.calculateAge(date(self.year, self.month, self.day))
-        if config.num> 64:
-            return [num, gua.get(config.num% 64)]
+        num= self.life_start_gua()[0] + config.calculateAge(date(self.year, self.month, self.day))
+        if num> 64:
+            return [num, gua.get(num% 64)]
         else:
             return [num, gua.get(num)]
         
     def month_gua(self):
         year = self.year_gua()[0]
         month = config.lunar_date_d(self.year, self.month, self.day).get("月")
-        config.num= year + 2 + month
-        if config.num> 64:
-            return [num, gua.get(config.num% 64)]
+        num= year + 2 + month
+        if num> 64:
+            return [num, gua.get(num% 64)]
         else:
             return [num, gua.get(num)]
         
     def day_gua(self):
         month  = self.month_gua()[0]
         day = dict(zip(jiazi(), range(1,61))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2])
-        config.num= month + day
-        if config.num> 64:
-            return [num, gua.get(config.num% 64)]
+        num= month + day
+        if num> 64:
+            return [num, gua.get(num% 64)]
         else:
             return [num, gua.get(num)]
         
     def hour_gua(self):
         day = self.day_gua()[0]
         hour = dict(zip(di_zhi, range(1,13))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
-        config.num= day + hour
-        if config.num> 64:
-            return [num, gua.get(config.num% 64)]
+        num= day + hour
+        if num> 64:
+            return [num, gua.get(num% 64)]
         else:
             return [num, gua.get(num)]
         
     def minute_gua(self):
         hour = self.hour_gua()[0]
         minute = dict(zip(jiazi(), range(1,61))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[4])
-        config.num= hour + minute
-        if config.num> 64:
-            return [num, gua.get(config.num% 64)]
+        num= hour + minute
+        if num> 64:
+            return [num, gua.get(num% 64)]
         else:
             return [num, gua.get(num)]
         
