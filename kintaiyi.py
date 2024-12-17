@@ -1243,20 +1243,20 @@ class Taiyi():
             num= self.accnum(ji_style, taiyi_acumyear)
             dun = config.multi_key_dict_get(jqmap, j_q)
             if dun == "夏至":    
-                config.num= num% 120 % 30
-                if config.num> 8:
-                    config.num= config.num%8
-                if config.num==0:
-                    config.num=8
-                new_config.num= dict(zip(range(1,9), new_ty_order)).get(num)
+                num= num% 120 % 30
+                if num> 8:
+                    num= num%8
+                if num==0:
+                    num=8
+                num= dict(zip(range(1,9), new_ty_order)).get(num)
                 return dict(zip(config.new_list(new_ty_order, new_num), doors)) 
             if dun == "冬至":
-                config.num= num% 240 % 30
-                if config.num> 8:
-                    config.num= config.num%8
-                if config.num==0:
-                    config.num=8
-                new_config.num= dict(zip(range(1,9), new_ty_order)).get(num)
+                num= num% 240 % 30
+                if num> 8:
+                    num= num%8
+                if num==0:
+                    num=8
+                num= dict(zip(range(1,9), new_ty_order)).get(num)
                 return dict(zip(config.new_list(new_ty_order, new_num), doors)) 
 
     def geteightdoors_text(self, ji_style, taiyi_acumyear):
