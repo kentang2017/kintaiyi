@@ -1240,10 +1240,10 @@ class Taiyi():
             alljq = jieqi_name
             j_q = jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)
             jqmap = {tuple(config.new_list(alljq, "冬至")[0:12]):"冬至", tuple(config.new_list(alljq, "夏至")[0:12]):"夏至"}
-            accu_config.num= self.accnum(ji_style, taiyi_acumyear)
+            num= self.accnum(ji_style, taiyi_acumyear)
             dun = config.multi_key_dict_get(jqmap, j_q)
             if dun == "夏至":    
-                config.num= accu_config.num% 120 % 30
+                config.num= num% 120 % 30
                 if config.num> 8:
                     config.num= config.num%8
                 if config.num==0:
@@ -1251,7 +1251,7 @@ class Taiyi():
                 new_config.num= dict(zip(range(1,9), new_ty_order)).get(num)
                 return dict(zip(config.new_list(new_ty_order, new_num), doors)) 
             if dun == "冬至":
-                config.num= accu_config.num% 240 % 30
+                config.num= num% 240 % 30
                 if config.num> 8:
                     config.num= config.num%8
                 if config.num==0:
