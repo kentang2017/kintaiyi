@@ -1179,7 +1179,7 @@ class Taiyi():
     def ty_gong_dist(self, ji_style, taiyi_acumyear):
         """太乙在天外地內法"""
         tai_yi = self.ty(ji_style, taiyi_acumyear)
-        tyg = num2gong(self.ty(ji_style, taiyi_acumyear))
+        tyg = config.num2gong(self.ty(ji_style, taiyi_acumyear))
         return config.multi_key_dict_get({tuple([1,8,3,4]): "太乙在"+tyg+"，助主。", tuple([9,2,6,7]): "太乙在"+tyg+"，助客。"}, tai_yi)
 
     def threedoors(self, ji_style, taiyi_acumyear):
