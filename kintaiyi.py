@@ -232,7 +232,7 @@ class Taiyi():
         """太乙五子元局"""
         gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
         try:
-            if ji_style != 4 or ji_style != 5:
+            if ji_style != 4:
                 k = self.kook(ji_style, taiyi_acumyear).get("文")[0:2] + config.five_zi_yuan(self.kook(ji_style, taiyi_acumyear).get("數"), gz[ji_style])
             if ji_style == 4:
                 k = self.kook(ji_style, taiyi_acumyear).get("文")[0:2] + config.min_five_zi_yuan(self.kook(ji_style, taiyi_acumyear).get("數"), gz[ji_style])
