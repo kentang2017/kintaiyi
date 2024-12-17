@@ -537,6 +537,14 @@ def five_zi_yuan(taiyiju, gangzhi):
     c = [(new_list(jiazi(),i)*2)[0:72] for  i in a]
     d = [new_list(list(range(i, i+72)), i) for i in b]
     return an2cn(dict(zip([c[i][taiyiju-1] for i in range(0,5)], [d[i][taiyiju-1] for i in range(0,5)])).get(gangzhi)) + "局"
+#分計五子元
+def min_five_zi_yuan(taiyiju, gangzhi):
+    gz = gangzhi.replace("戌","子")
+    a =["甲子","丙子","戊子","庚子","壬子"]
+    b = [1,73,145,217,289]
+    c = [(new_list(jiazi(),i)*2)[0:72] for  i in a]
+    d = [new_list(list(range(i, i+72)), i) for i in b]
+    return an2cn(dict(zip([c[i][taiyiju-2] for i in range(0,5)], [d[i][taiyiju-2] for i in range(0,5)])).get(gz)) + "局"
 
 def five_zi_yuan1(taiyiju):
     a =["甲子","丙子","戊子","庚子","壬子"]
