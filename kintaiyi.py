@@ -1289,8 +1289,8 @@ class Taiyi():
         dz = config.gangzhi_to_num(gz[2][1])
         hg = config.gangzhi_to_num(gz[3][0])
         hz = config.gangzhi_to_num(gz[3][1])
-        dny = config.element_to_num(config.multi_key_dict_get(nayin_wuxing, gz[2]))
-        hny = config.element_to_num(config.multi_key_dict_get(nayin_wuxing, gz[3]))
+        dny = config.element_to_num(config.multi_key_dict_get(config.nayin_wuxing, gz[2]))
+        hny = config.element_to_num(config.multi_key_dict_get(config.nayin_wuxing, gz[3]))
         return (dg + dz + hg + hz + dny + hny + 55) % 60 
 
     #出身卦
