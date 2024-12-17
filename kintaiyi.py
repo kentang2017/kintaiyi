@@ -261,12 +261,12 @@ class Taiyi():
         """求太乙的元"""
         acc_num= self.accnum(ji_style, taiyi_acumyear)
         if round(acc_num% 360) == 1:
-            find_ji_config.num= 1
+            find_ji_num= 1
         else:
-            find_ji_config.num= int(round((acc_num% 360) / 72, 0))
+            find_ji_num= int(round((acc_num% 360) / 72, 0))
         fiveyuen_d = dict(zip(range(1,6), jiazi()[0::12]))
-        if find_ji_config.num== 0:
-            find_ji_config.num= 1
+        if find_ji_num== 0:
+            find_ji_num= 1
         jiyuan = fiveyuen_d.get(find_ji_num)
         return jiyuan
 
