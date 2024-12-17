@@ -1272,7 +1272,7 @@ class Taiyi():
     #陽九行限
     def yangjiu_xingxian(self, sex):
         mg = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[1][0]
-        config.num= config.Ganzhi_num(mg)
+        num= config.Ganzhi_num(mg)
         place = config.Ganzhi_place(mg)
         return dict(zip(config.generate_ranges(num, 10, 11),{"男":config.new_list(config.di_zhi, place), "女":config.new_list(list(reversed(config.di_zhi)), place)}.get(sex)))
     #百六行限
@@ -1280,7 +1280,7 @@ class Taiyi():
         sqn = self.souqi_num()
         sqn_gua = dict(zip(range(1,65), config.jiazi())).get(sqn)
         place = config.cheungsun.get(config.Ganzhiwuxing(sqn_gua[1]))
-        config.num= dict(zip(list("土金水木火"),[5,4,1,3,2])).get(config.Ganzhiwuxing(place))
+        num= dict(zip(list("土金水木火"),[5,4,1,3,2])).get(config.Ganzhiwuxing(place))
         return dict(zip(config.generate_ranges(num, 10, 11),{"男":config.new_list(config.di_zhi, place), "女":config.new_list(list(reversed(config.di_zhi)), place)}.get(sex)))
 
     def souqi_num(self):
