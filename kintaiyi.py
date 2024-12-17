@@ -150,21 +150,21 @@ class Taiyi():
         num= self.accnum(0, taiyi_acumyear) % 64
         if num== 0:
             num= 64
-        return config.gua.get(tynum)
+        return config.gua.get(num)
 
     def daygua(self, taiyi_acumyear):
         """值日卦"""
         num= self.accnum(1, taiyi_acumyear) % 646464 % 20
         if num== 0:
             num= 64
-        return config.gua.get(tynum)
+        return config.gua.get(num)
 
     def hourgua(self, taiyi_acumyear):
         """值時卦"""
         num= self.accnum(3, taiyi_acumyear) % 64 
         if num== 0:
             num= 64
-        return config.gua.get(tynum)
+        return config.gua.get(num)
 
     def kook(self, ji_style, taiyi_acumyear):
         """太乙局數"""
