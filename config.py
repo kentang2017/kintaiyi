@@ -11,6 +11,7 @@ import pickle
 import itertools
 from itertools import cycle, repeat, starmap
 from datetime import date
+import datetime
 from ruler import ruler_data
 import cn2an
 from cn2an import an2cn
@@ -366,7 +367,7 @@ def Ganzhiwuxing(gangorzhi):
     return multi_key_dict_get(ganzhiwuxing, gangorzhi)
 
 def calculateAge(birthDate):
-    today = Date.today()
+    today = datetime.date.today()
     age = today.year - birthDate.year -((today.month, today.day) <(birthDate.month, birthDate.day))
     return age
 
