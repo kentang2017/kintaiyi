@@ -1249,7 +1249,7 @@ class Taiyi():
                 if num==0:
                     num=8
                 num= dict(zip(range(1,9), new_ty_order)).get(num)
-                return dict(zip(config.new_list(new_ty_order, new_num), doors)) 
+                return dict(zip(config.new_list(new_ty_order, num), doors)) 
             if dun == "冬至":
                 num= num% 240 % 30
                 if num> 8:
@@ -1257,7 +1257,7 @@ class Taiyi():
                 if num==0:
                     num=8
                 num= dict(zip(range(1,9), new_ty_order)).get(num)
-                return dict(zip(config.new_list(new_ty_order, new_num), doors)) 
+                return dict(zip(config.new_list(new_ty_order, num), doors)) 
 
     def geteightdoors_text(self, ji_style, taiyi_acumyear):
         k = [an2cn(i) for i in list(self.geteightdoors(ji_style, taiyi_acumyear).keys())]
