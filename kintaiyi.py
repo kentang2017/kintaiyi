@@ -778,7 +778,7 @@ class Taiyi():
         original_dict = self.sixteen_gong1(ji_style, taiyi_acumyear)
         c = "五福,君基,臣基,民基,文昌,計神,小游,主大,客大,主參,客參,始擊,飛符,四神,天乙,地乙".split(",")
         a = {star: key for key, values in original_dict.items() for star in values if star in c}
-        d = dict(zip(di_zhi, range(0,13)))
+        d = dict(zip(config.di_zhi, range(0,13)))
         for star, gong_value in a.items():
             a[star] = d[gong_value]
         return  a
@@ -858,7 +858,7 @@ class Taiyi():
     def flyfu(self, ji_style, taiyi_acumyear):
         """飛符"""
         fly = self.accnum(ji_style, taiyi_acumyear) % 360 % 36 / 3
-        fly_fu = dict(zip(range(1,13), config.new_list(di_zhi, "辰"))).get(int(fly))
+        fly_fu = dict(zip(range(1,13), config.new_list(config.di_zhi, "辰"))).get(int(fly))
         if fly_fu == 0 or fly_fu is None:
             fly_fu = "中"
         return fly_fu
@@ -866,7 +866,7 @@ class Taiyi():
     def flyfu1(self, ji_style, taiyi_acumyear):
         """飛符"""
         fly = self.accnum(ji_style, taiyi_acumyear) % 360 % 36 / 3
-        fly_fu = dict(zip(range(1,13), config.new_list(di_zhi, "辰"))).get(int(fly))
+        fly_fu = dict(zip(range(1,13), config.new_list(config.di_zhi, "辰"))).get(int(fly))
         if fly_fu == 0 or fly_fu is None:
             fly_fu = "辰"
         return fly_fu
@@ -1330,7 +1330,7 @@ class Taiyi():
         
     def hour_gua(self):
         day = self.day_gua()[0]
-        hour = dict(zip(di_zhi, range(1,13))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
+        hour = dict(zip(config.di_zhi, range(1,13))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
         num= day + hour
         if num> 64:
             return [num, config.gua.get(num% 64)]
