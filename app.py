@@ -105,7 +105,10 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     genchart2 = ty.gen_gong(num, tn)
     kook_num = kook.get("數")
     yingyang = kook.get("文")[0]
-    wuyuan = ty.get_five_yuan_kook(num, tn)
+    if num != 5:
+        wuyuan = ty.get_five_yuan_kook(num, tn)
+    if num == 5:
+        wuyuan = ""
     homecal, awaycal, setcal = config.find_cal(yingyang, kook_num)
     zhao = {"男": "乾造", "女": "坤造"}.get(sex_o)
     life1 = ty.gongs_discription(sex_o)
