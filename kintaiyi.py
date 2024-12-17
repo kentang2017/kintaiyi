@@ -1300,7 +1300,7 @@ class Taiyi():
         m = config.gangzhi_to_num(gz[1][0]) + config.gangzhi_to_num(gz[1][1]) + config.element_to_num(config.multi_key_dict_get(config.nayin_wuxing, gz[1]))
         d = config.gangzhi_to_num(gz[2][0]) + config.gangzhi_to_num(gz[2][1]) + config.element_to_num(config.multi_key_dict_get(config.nayin_wuxing, gz[2]))
         h = config.gangzhi_to_num(gz[3][0]) + config.gangzhi_to_num(gz[3][1]) + config.element_to_num(config.multi_key_dict_get(config.nayin_wuxing, gz[3]))
-        return [(y + m + d + h + 55) % 64 ,gua.get((y + m + d + h + 55) % 64)]
+        return [(y + m + d + h + 55) % 64, config.gua.get((y + m + d + h + 55) % 64)]
 
     def year_gua(self):
         num= self.life_start_gua()[0] + config.calculateAge(date(self.year, self.month, self.day))
