@@ -1315,36 +1315,36 @@ class Taiyi():
         month = config.lunar_date_d(self.year, self.month, self.day).get("月")
         num= year + 2 + month
         if num> 64:
-            return [num, gua.get(num% 64)]
+            return [num, config.gua.get(num% 64)]
         else:
-            return [num, gua.get(num)]
+            return [num, config.gua.get(num)]
         
     def day_gua(self):
         month  = self.month_gua()[0]
         day = dict(zip(jiazi(), range(1,61))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2])
         num= month + day
         if num> 64:
-            return [num, gua.get(num% 64)]
+            return [num, config.gua.get(num% 64)]
         else:
-            return [num, gua.get(num)]
+            return [num, config.gua.get(num)]
         
     def hour_gua(self):
         day = self.day_gua()[0]
         hour = dict(zip(di_zhi, range(1,13))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
         num= day + hour
         if num> 64:
-            return [num, gua.get(num% 64)]
+            return [num, config.gua.get(num% 64)]
         else:
-            return [num, gua.get(num)]
+            return [num, config.gua.get(num)]
         
     def minute_gua(self):
         hour = self.hour_gua()[0]
         minute = dict(zip(jiazi(), range(1,61))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[4])
         num= hour + minute
         if num> 64:
-            return [num, gua.get(num% 64)]
+            return [num, config.gua.get(num% 64)]
         else:
-            return [num, gua.get(num)]
+            return [num, config.gua.get(num)]
         
     def taiyi_life(self, sex):
         twelve_gongs = "命宮,兄弟,妻妾,子孫,財帛,田宅,官祿,奴僕,疾厄,福德,相貌,父母".split(",")
