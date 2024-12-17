@@ -59,7 +59,7 @@ class Taiyi():
         tn_c = tndict.get(taiyi_acumyear)
         lunar_year = config.lunar_date_d(self.year, self.month, self.day).get("年")
         lunar_month = config.lunar_date_d(self.year, self.month, self.day).get("月")
-        lunar_day = config.lunar_date_d(self.year, self.month, self.day).get("日")3
+        lunar_day = config.lunar_date_d(self.year, self.month, self.day).get("日")
         jiazi = config.jiazi()
         if ji_style == 0: #年計
             if lunar_year >= 0:
