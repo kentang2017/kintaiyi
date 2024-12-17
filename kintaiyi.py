@@ -299,7 +299,7 @@ class Taiyi():
     def twenty_eightstar(self, ji_style, taiyi_acumyear):
         s_f = self.sf_num(ji_style, taiyi_acumyear)
         sf = self.sf(ji_style, taiyi_acumyear)
-        su_r = list(reversed(su))
+        su_r = list(reversed(config.su))
         c = dict(zip(config.new_list(sixteen, sf), config.new_list(su_r, s_f)))
         suu = dict(zip(range(1,29), su_r))
         sconfig.num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") + 2 
