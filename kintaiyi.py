@@ -239,18 +239,18 @@ class Taiyi():
         acc_num= self.accnum(ji_style, taiyi_acumyear)
         if ji_style in (0, 1, 2):
             if acc_num% 360 == 1:
-                find_ji_config.num= 1
+                find_ji_num= 1
             else:
-                find_ji_config.num= int((acc_num% 360) // 60 + 1)
-            if find_ji_config.num== 0:
-                find_ji_config.num= 1
+                find_ji_num= int((acc_num% 360) // 60 + 1)
+            if find_ji_num== 0:
+                find_ji_num= 1
             find_ji_num2 = int(acc_num% 360 % 72 % 24 / 3)
             if find_ji_num2 == 0:
                 find_ji_num2 = 1
             if find_ji_num2 > 6:
                 find_ji_num2 = find_ji_num2  - 6
-            if find_ji_config.num> 6:
-                find_ji_config.num= find_ji_config.num- 6
+            if find_ji_num> 6:
+                find_ji_num= find_ji_num- 6
             return {"元":dict(zip(range(1,7), config.cnum[0:6])).get(find_ji_num2), "紀":dict(zip(range(1,7), config.cnum[0:6])).get(find_ji_num)}
         if ji_style == 3:
             return f"第{config.multi_key_dict_get(config.epochdict, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2])}紀"
