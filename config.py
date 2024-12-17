@@ -538,17 +538,40 @@ def five_zi_yuan(taiyiju, gangzhi):
     d = [new_list(list(range(i, i+72)), i) for i in b]
     return an2cn(dict(zip([c[i][taiyiju-1] for i in range(0,5)], [d[i][taiyiju-1] for i in range(0,5)])).get(gangzhi)) + "局"
 #分計五子元
+#五子元局數
 def min_five_zi_yuan(taiyiju, gangzhi):
     if gangzhi[1] == "戌":
-        gz = gangzhi.replace("戌","子")
+        gz = gangzhi.replace("戌","申")
     if gangzhi[1] == "子":
         gz = gangzhi.replace("子","戌")
+    if gangzhi[1] == "丑":
+        gz = gangzhi.replace("丑","亥")
+    if gangzhi[1] == "寅":
+        gz = gangzhi.replace("寅","子") 
+    if gangzhi[1] == "卯":
+        gz = gangzhi.replace("卯","丑") 
+    if gangzhi[1] == "辰":
+        gz = gangzhi.replace("辰","寅")
+    if gangzhi[1] == "巳":
+        gz = gangzhi.replace("巳","卯")
+    if gangzhi[1] == "午":
+        gz = gangzhi.replace("午","辰")
+    if gangzhi[1] == "未":
+        gz = gangzhi.replace("未","巳")
+    if gangzhi[1] == "申":
+        gz = gangzhi.replace("申","午")
+    if gangzhi[1] == "酉":
+        gz = gangzhi.replace("酉","未")
+    #if gangzhi[1] == "戌":
+    #    gz = gangzhi.replace("午","辰")
+    if gangzhi[1] == "亥":
+        gz = gangzhi.replace("亥","酉")
     a =["甲子","丙子","戊子","庚子","壬子"]
     b = [1,73,145,217,289]
     c = [(new_list(jiazi(),i)*2)[0:72] for  i in a]
     d = [new_list(list(range(i, i+72)), i) for i in b]
-    #return dict(zip([c[i][taiyiju-2] for i in range(0,5)], [d[i][taiyiju-2] for i in range(0,5)]))
-    return an2cn(dict(zip([c[i][taiyiju-2] for i in range(0,5)], [d[i][taiyiju-2] for i in range(0,5)])).get(gz)) + "局"
+    #return dict(zip([c[i][taiyiju-2] for i in range(0,5)], [d[i][taiyiju-1] for i in range(0,5)]))
+    return an2cn(dict(zip([c[i][taiyiju-2] for i in range(0,5)], [d[i][taiyiju-1] for i in range(0,5)])).get(gz)) + "局"
 
 def five_zi_yuan1(taiyiju):
     a =["甲子","丙子","戊子","庚子","壬子"]
