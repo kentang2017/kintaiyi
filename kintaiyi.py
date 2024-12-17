@@ -59,7 +59,8 @@ class Taiyi():
         tn_c = tndict.get(taiyi_acumyear)
         lunar_year = config.lunar_date_d(self.year, self.month, self.day).get("年")
         lunar_month = config.lunar_date_d(self.year, self.month, self.day).get("月")
-        lunar_day = config.lunar_date_d(self.year, self.month, self.day).get("日")
+        lunar_day = config.lunar_date_d(self.year, self.month, self.day).get("日")3
+        jiazi = config.jiazi()
         if ji_style == 0: #年計
             if lunar_year >= 0:
                 return tn_c+ lunar_year
@@ -102,9 +103,9 @@ class Taiyi():
                 accday = config_num+ diff_val_two
                 acchr = ((accday -1) * 12) + (self.hour+1)//2 -11
             if taiyi_acumyear == 3:
-                tiangan = dict(zip([tuple(jiazi()[jiazi().index(i):jiazi().index(i)+6]) for i in jiazi()[0::6]], jiazi()[0::6]))
-                getfut = dict(zip(jiazi()[0::6], [1,7,13,19,25,31,37,43,49,55])).get(config.multi_key_dict_get(tiangan, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]))
-                dgz_config.num= dict(zip(jiazi(), range(1,61))).get( config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2])
+                tiangan = dict(zip([tuple(jiazi[jiazi.index(i):jiazi.index(i)+6]) for i in jiazi[0::6]], jiazi[0::6]))
+                getfut = dict(zip(jiazi[0::6], [1,7,13,19,25,31,37,43,49,55])).get(config.multi_key_dict_get(tiangan, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]))
+                dgz_config.num= dict(zip(jiazi, range(1,61))).get( config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2])
                 zhi_config.num= dict(zip(config.di_zhi, range(1,13))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
                 if tiangan != dgz_num:
                     acchr  =  ((dgz_num- getfut) * 12) + zhi_num
