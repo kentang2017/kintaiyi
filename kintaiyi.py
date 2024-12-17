@@ -303,44 +303,44 @@ class Taiyi():
         sixteen = config.sixteen
         c = dict(zip(config.new_list(sixteen, sf), config.new_list(su_r, s_f)))
         suu = dict(zip(range(1,29), su_r))
-        sconfig.num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") + 2 
+        num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") + 2 
         if sf == "坤":
-           sconfig.num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") - 2
+           num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") - 2
         if sf == "酉":
-           sconfig.num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") - 3
+           num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") - 3
         if sf == "亥":
-           sconfig.num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") - 5
+           num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") - 5
         if sf == "巳":
-           sconfig.num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") + 1
+           num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") + 1
         if sf == "寅":
-           sconfig.num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +4
+           num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +4
         if sf == "卯":
-           sconfig.num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +3
+           num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +3
         if sf == "子":
-           sconfig.num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +6
+           num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +6
         if sf == "未":
-           sconfig.num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") -1
+           num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") -1
         if sf == "申":
-           sconfig.num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") -2
+           num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") -2
         if sf == "戌":
-           sconfig.num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") -4
+           num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") -4
         if sf == "艮":
-           sconfig.num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +4
+           num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +4
         if sf == "巽":
-           sconfig.num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +1
+           num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +1
         if sf == "丑":
-           sconfig.num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +5
+           num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") +5
         if sf == "午":
-           sconfig.num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") 
+           num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") 
         if sf == "乾":
-           sconfig.num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") -5
-        if sconfig.num> 28:
-           sconfig.num= sconfig.num-28
-        if sconfig.num< 0:
-           sconfig.num= sconfig.num+28
-        if sconfig.num== 0:
-            sconfig.num= 28
-        return config.new_list(su_r, suu.get(snum))
+           num= su_r.index(s_f)-sixteen.index(sf)+sixteen.index("巳") -5
+        if num> 28:
+           num= num-28
+        if num< 0:
+           num= num+28
+        if num== 0:
+            num= 28
+        return config.new_list(su_r, suu.get(num))
 
     def sf(self, ji_style, taiyi_acumyear):
         """始擊落宮"""
