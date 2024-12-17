@@ -1296,10 +1296,10 @@ class Taiyi():
     #出身卦
     def life_start_gua(self):
         gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
-        y = config.gangzhi_to_num(gz[0][0]) + config.gangzhi_to_num(gz[0][1]) + config.element_to_num(config.config.multi_key_dict_get(config.nayin_wuxing, gz[0]))
-        m = config.gangzhi_to_num(gz[1][0]) + config.gangzhi_to_num(gz[1][1]) + config.element_to_num(config.config.multi_key_dict_get(config.nayin_wuxing, gz[1]))
-        d = config.gangzhi_to_num(gz[2][0]) + config.gangzhi_to_num(gz[2][1]) + config.element_to_num(config.config.multi_key_dict_get(config.nayin_wuxing, gz[2]))
-        h = config.gangzhi_to_num(gz[3][0]) + config.gangzhi_to_num(gz[3][1]) + config.element_to_num(config.config.multi_key_dict_get(config.nayin_wuxing, gz[3]))
+        y = config.gangzhi_to_num(gz[0][0]) + config.gangzhi_to_num(gz[0][1]) + config.element_to_num(config.multi_key_dict_get(config.nayin_wuxing, gz[0]))
+        m = config.gangzhi_to_num(gz[1][0]) + config.gangzhi_to_num(gz[1][1]) + config.element_to_num(config.multi_key_dict_get(config.nayin_wuxing, gz[1]))
+        d = config.gangzhi_to_num(gz[2][0]) + config.gangzhi_to_num(gz[2][1]) + config.element_to_num(config.multi_key_dict_get(config.nayin_wuxing, gz[2]))
+        h = config.gangzhi_to_num(gz[3][0]) + config.gangzhi_to_num(gz[3][1]) + config.element_to_num(config.multi_key_dict_get(config.nayin_wuxing, gz[3]))
         return [(y + m + d + h + 55) % 64 ,gua.get((y + m + d + h + 55) % 64)]
 
     def year_gua(self):
