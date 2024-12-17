@@ -22,6 +22,18 @@ def get_file_content_as_string(base_url, path):
     response = urllib.request.urlopen(url)
     return response.read().decode("utf-8")
 
+def format_text(d, parent_key=""):
+    items = []
+    for k, v in d.items():
+        new_key = f"{parent_key}{k}" if parent_key else k
+        if isinstance(v, dict):
+            items.extend(format_text(v, new_key + ":").splitlines())
+        elif isinstance(v, list):
+            items.append(f"{new_key}: {', '.join(map(str, v))}")
+        else:
+            items.append(f"{new_key}: {v}")
+    return "\n".join(items)+"\n"
+
 def render_svg(svg):
     b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
     html = f'<img src="data:image/svg+xml;base64,{b64}"/>'
@@ -151,9 +163,9 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown("時卦：{}".format(hgua))
             st.markdown("分卦：{}".format(mingua))
             st.markdown("【陽九行限】")
-            st.markdown(yjxx)
+            st.markdown(format_text(yjxx))
             st.markdown("【百六行限】")
-            st.markdown(blxx)
+            st.markdown(format_text(blxx))
             st.title("《太乙秘書》︰")
             st.markdown(ts)
             st.title("史事記載︰")
