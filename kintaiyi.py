@@ -264,7 +264,7 @@ class Taiyi():
             find_ji_num= 1
         else:
             find_ji_num= int(round((acc_num% 360) / 72, 0))
-        fiveyuen_d = dict(zip(range(1,6), jiazi()[0::12]))
+        fiveyuen_d = dict(zip(range(1,6), config.jiazi()[0::12]))
         if find_ji_num== 0:
             find_ji_num= 1
         jiyuan = fiveyuen_d.get(find_ji_num)
