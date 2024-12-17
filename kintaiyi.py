@@ -1321,7 +1321,7 @@ class Taiyi():
         
     def day_gua(self):
         month  = self.month_gua()[0]
-        day = dict(zip(jiazi(), range(1,61))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2])
+        day = dict(zip(config.jiazi(), range(1,61))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2])
         num= month + day
         if num> 64:
             return [num, config.gua.get(num% 64)]
