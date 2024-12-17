@@ -1303,7 +1303,7 @@ class Taiyi():
         return [(y + m + d + h + 55) % 64, config.gua.get((y + m + d + h + 55) % 64)]
 
     def year_gua(self):
-        num= self.life_start_gua()[0] + config.calculateAge(date(self.year, self.month, self.day))
+        num= self.life_start_gua()[0] + config.calculateAge(Date(self.year, self.month, self.day))
         if num> 64:
             return [num, gua.get(num% 64)]
         else:
