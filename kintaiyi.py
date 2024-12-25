@@ -79,7 +79,7 @@ class Taiyi():
                 config_num= 708011105
                 return config_num+ diff_val
             if taiyi_acumyear ==2:
-                config_num= 708011105 - 10153917 + tn_num
+                config_num= 708011105 - 10153917 #+ tn_num
                 return config_num+ diff_val
             if taiyi_acumyear ==1:
                 config_num= 708011105 - 185
@@ -96,11 +96,11 @@ class Taiyi():
                 accday = config_num+ diff_val_two
                 acchr = ((accday -1) * 12) + (self.hour+1)//2 +1
             if taiyi_acumyear ==2:
-                config_num= 708011105 - 10153917 + tn_num
+                config_num= 708011105 - 10153917 #+ tn_num
                 accday = config_num+ diff_val_two
                 acchr = ((accday -1) * 12) + (self.hour+1)//2 +1
             if taiyi_acumyear ==1:
-                config_num= 708011105 - 10153917 + tn_num
+                config_num= 708011105 - 10153917 #+ tn_num
                 accday = config_num+ diff_val_two
                 acchr = ((accday -1) * 12) + (self.hour+1)//2 -11
             if taiyi_acumyear == 3:
@@ -122,11 +122,11 @@ class Taiyi():
                 accday = config_num+ diff_val_two
                 acchr = ((accday -1) * 23) + (self.hour * 10500) + (self.minute +1)
             if taiyi_acumyear ==2:
-                config_num= 708011105 - 10153917 + tn_num
+                config_num= 708011105 - 10153917 #+ tn_num
                 accday = config_num+ diff_val_two
                 acchr = ((accday -1) * 23) + (self.hour * 10500) + (self.minute +1)
             if taiyi_acumyear ==1:
-                config_num= 708011105 - 10153917 + tn_num
+                config_num= 708011105 - 10153917 #+ tn_num
                 accday = config_num+ diff_val_two
                 acchr = ((accday -1) * 23) + (self.hour * 10500) + (self.minute +1)
             return acchr
