@@ -139,8 +139,8 @@ class Taiyi():
         return  (jiazi_accum(gz[0]) + y + jq_accum(jie_qi) + (jieqi.jq_count_days(self.year, self.month, self.day, self.hour, self.minute) *10000)) // 10000
 
     def three_cai_num(self):
-        accum_config.num= self.taiyi_life_accum()
-        sky = accum_config.num% 720
+        accum_num= self.taiyi_life_accum()
+        sky = accum_num% 720
         earth = sky % 72
         ppl = earth % 72
         return sky, earth, ppl
@@ -533,9 +533,9 @@ class Taiyi():
             return sum(se_order[: se_order.index(taiyi)])
         if se_jc !=1 and ty_jc !=1 and se_jc1 !=1 :
             return sum(se_order[: se_order.index(taiyi)])
-        if se_jc !=1 and ty_jc !=1 and se_jc1 !=1 and se_config.num!= taiyi:
+        if se_jc !=1 and ty_jc !=1 and se_jc1 !=1 and se_num!= taiyi:
             return sum(se_order[: se_order.index(taiyi)])
-        if se_jc !=1 and ty_jc !=1 and se_jc1 !=1 and se_config.num== taiyi:
+        if se_jc !=1 and ty_jc !=1 and se_jc1 !=1 and se_num== taiyi:
             return taiyi
 
     def set_general(self, ji_style, taiyi_acumyear):
