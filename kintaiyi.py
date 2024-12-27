@@ -106,8 +106,8 @@ class Taiyi():
             if taiyi_acumyear == 3:
                 tiangan = dict(zip([tuple(jiazi[jiazi.index(i):jiazi.index(i)+6]) for i in jiazi[0::6]], jiazi[0::6]))
                 getfut = dict(zip(jiazi[0::6], [1,7,13,19,25,31,37,43,49,55])).get(config.multi_key_dict_get(tiangan, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]))
-                dgz_config.num= dict(zip(jiazi, range(1,61))).get( config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2])
-                zhi_config.num= dict(zip(config.di_zhi, range(1,13))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
+                dgz_num= dict(zip(jiazi, range(1,61))).get( config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2])
+                zhi_num= dict(zip(config.di_zhi, range(1,13))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
                 if tiangan != dgz_num:
                     acchr  =  ((dgz_num- getfut) * 12) + zhi_num
                 if tiangan == dgz_num:
