@@ -14,6 +14,7 @@ from taiyidict import tengan_shiji, su_dist
 from taiyimishu import taiyi_yingyang
 from historytext import chistory
 import streamlit.components.v1 as components
+from streamlit.components.v1 import html
 
 # Define custom components
 @st.cache_data
@@ -35,6 +36,37 @@ def format_text(d, parent_key=""):
     return "\n\n".join(items)+"\n\n"
 
 def render_svg(svg):
+    # Directly embed raw SVG along with the interactive JavaScript
+    html_content = f"""
+    <div>
+      <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+        {svg}
+      </svg>
+    </div>
+    <script>
+      // Track rotation for each layer
+      const rotations = {{}};
+
+      // Function to rotate the clicked layer
+      function rotateLayer(layer) {{
+        const id = layer.id;
+        if (!rotations[id]) rotations[id] = 0; // Initialize rotation if not set
+        rotations[id] += 30; // Rotate by 30 degrees
+        layer.setAttribute(
+          "transform",
+          `rotate(${{rotations[id]}} 0 0)` // Rotate around the center
+        );
+      }}
+      // Add click listeners to all groups
+      document.querySelectorAll("#interactive-svg > g").forEach(group => {{
+        group.addEventListener("click", () => rotateLayer(group));
+      }});
+    </script>
+    """
+    # Render the HTML with components.html for proper interpretation
+    html(html_content, height=600)
+
+def render_svg1(svg):
     b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
     html = f"""
     <div>
