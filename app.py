@@ -64,7 +64,7 @@ def render_svg(svg):
       }});
     </script>
     """
-    html(html_content, height=390)
+    html(html_content, width=390, height=450)
 
 def render_svg2(svg):
     b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
