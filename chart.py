@@ -31,6 +31,8 @@ def gen_chart(first_layer, second_layer, sixth_layer):
     ]
     rotation_angle = 248
     for layer_index, divisions in enumerate(num_divisions):
+        layer_group = draw.Group(id=f'layer{layer_index + 1}')  # Group each layer for independent movement
+
         for division in range(divisions):
             start_angle = (360 / divisions) * division + rotation_angle
             end_angle = (360 / divisions) * (division + 1) + rotation_angle
@@ -52,16 +54,16 @@ def gen_chart(first_layer, second_layer, sixth_layer):
             path.L(end_inner_x, end_inner_y)  # Line to the end point on the inner radius
             path.A(inner, inner, 0, 0, 0, start_inner_x, start_inner_y)  # Inner arc
             path.Z()  # Close the path
-            d.append(path)
+            layer_group.append(path)
 
             # Add labels to the pie slices
             label_x = (inner + outer) / 2 * math.cos(math.radians((start_angle + end_angle) / 2))
             label_y = (inner + outer) / 2 * math.sin(math.radians((start_angle + end_angle) / 2))
-            #if divisions == 1:
-            #    label_text = draw.Text(label, 8, label_x, label_y, center=1, fill='black')
-            #else:
             label_text = draw.Text(label, 9, label_x, label_y, center=1, fill='white')
-            d.append(label_text)
+            layer_group.append(label_text)
+
+        # Append the group for this layer to the main drawing
+        d.append(layer_group)
     # ... [rest of your code remains the same]
 
     return d.as_svg().replace('''<path d="M-4.86988571440686,-12.053390109368236 L-21.72718241812291,-53.776663564873665 A58,58,0,0,1,-21.727182418122876,-53.77666356487368 L-4.869885714406852,-12.053390109368237 A13,13,0,0,0,-4.86988571440686,-12.053390109368236 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
@@ -88,6 +90,8 @@ def gen_chart_life(second_layer, twelve, sixth_layer):
     ]
     rotation_angle = 248
     for layer_index, divisions in enumerate(num_divisions):
+        layer_group = draw.Group(id=f'layer{layer_index + 1}')  # Group each layer for independent movement
+
         for division in range(divisions):
             start_angle = (360 / divisions) * division + rotation_angle
             end_angle = (360 / divisions) * (division + 1) + rotation_angle
@@ -102,23 +106,23 @@ def gen_chart_life(second_layer, twelve, sixth_layer):
             start_inner_x, start_inner_y = inner * math.cos(math.radians(start_angle)), inner * math.sin(math.radians(start_angle))
             end_inner_x, end_inner_y = inner * math.cos(math.radians(end_angle)), inner * math.sin(math.radians(end_angle))
 
-            path = draw.Path(stroke='white', stroke_width=1.88, fill='black')
+            path = draw.Path(stroke='white', stroke_width=1.8, fill='black')
             path.M(start_inner_x, start_inner_y)  # Move to the start point on the inner radius
             path.L(start_outer_x, start_outer_y)  # Line to the start point on the outer radius
             path.A(outer, outer, 0, 0, 1, end_outer_x, end_outer_y)  # Outer arc
             path.L(end_inner_x, end_inner_y)  # Line to the end point on the inner radius
             path.A(inner, inner, 0, 0, 0, start_inner_x, start_inner_y)  # Inner arc
             path.Z()  # Close the path
-            d.append(path)
+            layer_group.append(path)
 
             # Add labels to the pie slices
             label_x = (inner + outer) / 2 * math.cos(math.radians((start_angle + end_angle) / 2))
             label_y = (inner + outer) / 2 * math.sin(math.radians((start_angle + end_angle) / 2))
-            #if divisions == 1:
-            #    label_text = draw.Text(label, 8, label_x, label_y, center=1, fill='black')
-            #else:
             label_text = draw.Text(label, 9, label_x, label_y, center=1, fill='white')
-            d.append(label_text)
+            layer_group.append(label_text)
+
+        # Append the group for this layer to the main drawing
+        d.append(layer_group)
     # ... [rest of your code remains the same]
     return d.as_svg().replace('''<path d="M-4.495279120990947,-11.126206254801447 L-17.606509890547876,-43.577641164639005 A47,47,0,0,1,-17.606509890547848,-43.57764116463901 L-4.49527912099094,-11.12620625480145 A12,12,0,0,0,-4.495279120990947,-11.126206254801447 Z" stroke="white" stroke-width="1.88" fill="black" />''', "")
 
@@ -148,6 +152,8 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
     ]
     rotation_angle = 248
     for layer_index, divisions in enumerate(num_divisions):
+        layer_group = draw.Group(id=f'layer{layer_index + 1}')  # Group each layer for independent movement
+
         for division in range(divisions):
             start_angle = (360 / divisions) * division + rotation_angle
             end_angle = (360 / divisions) * (division + 1) + rotation_angle
@@ -169,16 +175,16 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
             path.L(end_inner_x, end_inner_y)  # Line to the end point on the inner radius
             path.A(inner, inner, 0, 0, 0, start_inner_x, start_inner_y)  # Inner arc
             path.Z()  # Close the path
-            d.append(path)
+            layer_group.append(path)
 
             # Add labels to the pie slices
             label_x = (inner + outer) / 2 * math.cos(math.radians((start_angle + end_angle) / 2))
             label_y = (inner + outer) / 2 * math.sin(math.radians((start_angle + end_angle) / 2))
-            #if divisions == 1:
-            #    label_text = draw.Text(label, 8, label_x, label_y, center=1, fill='black')
-            #else:
-            label_text = draw.Text(label, 8, label_x, label_y, center=1, fill='white')
-            d.append(label_text)
+            label_text = draw.Text(label, 9, label_x, label_y, center=1, fill='white')
+            layer_group.append(label_text)
+
+        # Append the group for this layer to the main drawing
+        d.append(layer_group)
     return d.as_svg().replace('''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
 
 #第一層中間, 第二層八門
