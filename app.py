@@ -36,7 +36,8 @@ def format_text(d, parent_key=""):
 
 def render_svg(svg):
     b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
-    html = f"""<img src="data:image/svg+xml;base64,{b64}"/> <script>
+    html = f'''
+       <img src="data:image/svg+xml;base64,{b64}"/> <script>
       // Track rotation for each layer
       const rotations = {};
 
@@ -55,7 +56,8 @@ def render_svg(svg):
       document.querySelectorAll("#interactive-svg > g").forEach(group => {
         group.addEventListener("click", () => rotateLayer(group));
       });
-    </script>"""
+    </script>
+    '''
     st.write(html, unsafe_allow_html=True)
 
 def timeline(data, height=800):
