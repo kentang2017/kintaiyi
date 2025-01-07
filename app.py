@@ -40,7 +40,7 @@ def render_svg2(svg):
     html = f'<img src="data:image/svg+xml;base64,{b64}"/>'
     st.write(html, unsafe_allow_html=True)
 
-def render_svg1(svg):
+def render_svg(svg):
     # Directly embed raw SVG along with the interactive JavaScript
     html_content = f"""
     <div>
@@ -59,14 +59,14 @@ def render_svg1(svg):
           `rotate(${{rotations[id]}} 0 0)`
         );
       }}
-      document.querySelectorAll("#interactive-svg > g").forEach(group => {{
+      document.querySelectorAll("g").forEach(group => {{
         group.addEventListener("click", () => rotateLayer(group));
       }});
     </script>
     """
     html(html_content)
 
-def render_svg(svg):
+def render_svg2(svg):
     b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
     html = f"""
     <div>
