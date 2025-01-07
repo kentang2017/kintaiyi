@@ -35,7 +35,7 @@ def format_text(d, parent_key=""):
             items.append(f"{new_key}: {v}")
     return "\n\n".join(items)+"\n\n"
 
-def render_svg(svg):
+def render_svg1(svg):
     # Directly embed raw SVG along with the interactive JavaScript
     html_content = f"""
     <div>
@@ -67,7 +67,7 @@ def render_svg(svg):
     # Render the HTML with components.html for proper interpretation
     html(html_content)
 
-def render_svg1(svg):
+def render_svg(svg):
     b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
     html = f"""
     <div>
