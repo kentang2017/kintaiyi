@@ -43,29 +43,29 @@ def render_svg(svg):
         {svg}
       </svg>
     </div>
-     <script>
-        // Track rotation for each layer
-        const rotations = {};
-    
-        // Function to rotate the clicked layer
-        function rotateLayer(layer) {
-          const id = layer.id;
-          if (!rotations[id]) rotations[id] = 0; // Initialize rotation if not set
-          rotations[id] += 30; // Rotate by 30 degrees
-          layer.setAttribute(
-            "transform",
-            `rotate(${rotations[id]} 0 0)` // Rotate around the center
-          );
-        }
-    
-        // Add click listeners to all groups
-        document.querySelectorAll("g").forEach(group => {
-          group.addEventListener("click", () => rotateLayer(group));
-        });
-      </script>
+    <script>
+      // Track rotation for each layer
+      const rotations = {{}};
+
+      // Function to rotate the clicked layer
+      function rotateLayer(layer) {{
+        const id = layer.id;
+        if (!rotations[id]) rotations[id] = 0; // Initialize rotation if not set
+        rotations[id] += 30; // Rotate by 30 degrees
+        layer.setAttribute(
+          "transform",
+          `rotate(${{rotations[id]}} 0 0)` // Rotate around the center
+        );
+      }}
+
+      // Add click listeners to all groups
+      document.querySelectorAll("#interactive-svg > g").forEach(group => {{
+        group.addEventListener("click", () => rotateLayer(group));
+      }});
+    </script>
     """
     # Render the HTML with components.html for proper interpretation
-    html(html_content, height=300)
+    html(html_content)
 
 def render_svg1(svg):
     b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
