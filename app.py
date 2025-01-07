@@ -40,7 +40,7 @@ def render_svg2(svg):
     html = f'<img src="data:image/svg+xml;base64,{b64}"/>'
     st.write(html, unsafe_allow_html=True)
 
-def render_svg(svg):
+def render_svg1(svg):
     # Directly embed raw SVG along with the interactive JavaScript
     html_content = f"""
     <div>
@@ -66,11 +66,10 @@ def render_svg(svg):
     """
     st.write(html, unsafe_allow_html=True)
 
-def render_svg2(svg):
+def render_svg(svg):
     b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
     html = f"""
-    <div>
-        <img src="data:image/svg+xml;base64,{b64}"/>
+    <img src="data:image/svg+xml;base64,{b64}"/>
         <script>
       const rotations = {{}};
       function rotateLayer(layer) {{
@@ -86,7 +85,6 @@ def render_svg2(svg):
         group.addEventListener("click", () => rotateLayer(group));
       }});
     </script>
-    </div>
     """
     st.write(html, unsafe_allow_html=True)
 
