@@ -35,7 +35,7 @@ def format_text(d, parent_key=""):
             items.append(f"{new_key}: {v}")
     return "\n\n".join(items)+"\n\n"
 
-def render_svg(svg):
+def render_svg2(svg):
     b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
     html = f'<img src="data:image/svg+xml;base64,{b64}"/>'
     st.write(html, unsafe_allow_html=True)
@@ -49,52 +49,41 @@ def render_svg1(svg):
       </svg>
     </div>
     <script>
-      // Track rotation for each layer
       const rotations = {{}};
-
-      // Function to rotate the clicked layer
       function rotateLayer(layer) {{
         const id = layer.id;
-        if (!rotations[id]) rotations[id] = 0; // Initialize rotation if not set
-        rotations[id] += 30; // Rotate by 30 degrees
+        if (!rotations[id]) rotations[id] = 0;
+        rotations[id] += 30;
         layer.setAttribute(
           "transform",
-          `rotate(${{rotations[id]}} 0 0)` // Rotate around the center
+          `rotate(${{rotations[id]}} 0 0)`
         );
       }}
-
-      // Add click listeners to all groups
       document.querySelectorAll("#interactive-svg > g").forEach(group => {{
         group.addEventListener("click", () => rotateLayer(group));
       }});
     </script>
     """
-    # Render the HTML with components.html for proper interpretation
     html(html_content)
 
-def render_svg2(svg):
+def render_svg(svg):
     b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
     html = f"""
     <div>
         <img src="data:image/svg+xml;base64,{b64}"/>
     </div>
     <script>
-      // Track rotation for each layer
       const rotations = {{}};
-
-      // Function to rotate the clicked layer
       function rotateLayer(layer) {{
         const id = layer.id;
-        if (!rotations[id]) rotations[id] = 0; // Initialize rotation if not set
+        if (!rotations[id]) rotations[id] = 0;
         rotations[id] += 30; // Rotate by 30 degrees
         layer.setAttribute(
           "transform",
-          `rotate(${{rotations[id]}} 0 0)` // Rotate around the center
+          `rotate(${{rotations[id]}} 0 0)`
         );
       }}
-
-      // Add click listeners to all groups
-      document.querySelectorAll("#interactive-svg > g").forEach(group => {{
+      document.querySelectorAll("g").forEach(group => {{
         group.addEventListener("click", () => rotateLayer(group));
       }});
     </script>
