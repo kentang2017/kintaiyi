@@ -64,15 +64,14 @@ def render_svg(svg):
       }});
     </script>
     """
-    html(html_content)
+    st.write(html, unsafe_allow_html=True)
 
 def render_svg2(svg):
     b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
     html = f"""
     <div>
         <img src="data:image/svg+xml;base64,{b64}"/>
-    </div>
-    <script>
+        <script>
       const rotations = {{}};
       function rotateLayer(layer) {{
         const id = layer.id;
@@ -87,6 +86,7 @@ def render_svg2(svg):
         group.addEventListener("click", () => rotateLayer(group));
       }});
     </script>
+    </div>
     """
     st.write(html, unsafe_allow_html=True)
 
