@@ -61,8 +61,7 @@ def render_svg(svg):
       document.querySelectorAll("#interactive-svg > g").forEach(group => {
         group.addEventListener("click", () => rotateLayer(group));
       });
-    </script>
-    '''
+    </script>'''
     st.write(html, unsafe_allow_html=True)
 
 def timeline(data, height=800):
