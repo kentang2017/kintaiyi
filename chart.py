@@ -204,7 +204,10 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
         twentyeight
     ]
     rotation_angle = 248
+
     for layer_index, divisions in enumerate(num_divisions):
+        layer_group = draw.Group(id=f'layer{layer_index + 1}')  # Group each layer for independent movement
+
         for division in range(divisions):
             start_angle = (360 / divisions) * division + rotation_angle
             end_angle = (360 / divisions) * (division + 1) + rotation_angle
@@ -226,17 +229,15 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
             path.L(end_inner_x, end_inner_y)  # Line to the end point on the inner radius
             path.A(inner, inner, 0, 0, 0, start_inner_x, start_inner_y)  # Inner arc
             path.Z()  # Close the path
-            d.append(path)
+            layer_group.append(path)
 
             # Add labels to the pie slices
             label_x = (inner + outer) / 2 * math.cos(math.radians((start_angle + end_angle) / 2))
             label_y = (inner + outer) / 2 * math.sin(math.radians((start_angle + end_angle) / 2))
-            #if divisions == 1:
-            #    label_text = draw.Text(label, 8, label_x, label_y, center=1, fill='black')
-            #else:
-            label_text = draw.Text(label, 8, label_x, label_y, center=1, fill='white')
-            d.append(label_text)
-    # ... [rest of your code remains the same]
+            label_text = draw.Text(label, 9, label_x, label_y, center=1, fill='white')
+            layer_group.append(label_text)
 
+        # Append the group for this layer to the main drawing
+        d.append(layer_group)
     return d.as_svg().replace('''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
 
