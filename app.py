@@ -35,33 +35,34 @@ def format_text(d, parent_key=""):
     return "\n\n".join(items)+"\n\n"
 
 def render_svg(svg):
-    b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
-    html = f'''
+    # Directly embed raw SVG
+    html = f"""
     <div>
       <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
-        {b64}
+        {svg}
       </svg>
     </div>
     <script>
       // Track rotation for each layer
-      const rotations = {};
+      const rotations = {{}};
 
       // Function to rotate the clicked layer
-      function rotateLayer(layer) {
+      function rotateLayer(layer) {{
         const id = layer.id;
         if (!rotations[id]) rotations[id] = 0; // Initialize rotation if not set
         rotations[id] += 30; // Rotate by 30 degrees
         layer.setAttribute(
           "transform",
-          `rotate(${rotations[id]} 0 0)` // Rotate around the center
+          `rotate(${{rotations[id]}} 0 0)` // Rotate around the center
         );
-      }
+      }}
 
       // Add click listeners to all groups
-      document.querySelectorAll("#interactive-svg > g").forEach(group => {
+      document.querySelectorAll("#interactive-svg > g").forEach(group => {{
         group.addEventListener("click", () => rotateLayer(group));
-      });
-    </script>'''
+      }});
+    </script>
+    """
     st.write(html, unsafe_allow_html=True)
 
 def timeline(data, height=800):
