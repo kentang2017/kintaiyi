@@ -15,6 +15,29 @@ from taiyimishu import taiyi_yingyang
 from historytext import chistory
 import streamlit.components.v1 as components
 
+js = """<script>
+    // Track rotation for each layer
+    const rotations = {};
+
+    // Function to rotate the clicked layer
+    function rotateLayer(layer) {
+      const id = layer.id;
+      if (!rotations[id]) rotations[id] = 0; // Initialize rotation if not set
+      rotations[id] += 30; // Rotate by 30 degrees
+      layer.setAttribute(
+        "transform",
+        `rotate(${rotations[id]} 0 0)` // Rotate around the center
+      );
+    }
+
+    // Add click listeners to all groups
+    document.querySelectorAll("g").forEach(group => {
+      group.addEventListener("click", () => rotateLayer(group));
+    });
+  </script>
+"""
+components.html(script)
+
 # Define custom components
 @st.cache_data
 def get_file_content_as_string(base_url, path):
