@@ -36,7 +36,7 @@ js = """<script>
     });
   </script>
 """
-components.html(script)
+components.html(js)
 
 # Define custom components
 @st.cache_data
