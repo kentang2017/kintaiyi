@@ -44,7 +44,7 @@ def render_svg(svg):
     # Directly embed raw SVG along with the interactive JavaScript
     html_content = f"""
     <div>
-      <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+      <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" viewBox="-500 -500 1000 1000" width="100%" height="auto" overflow="visible">
         {svg}
       </svg>
     </div>
