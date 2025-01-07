@@ -40,11 +40,11 @@ def render_svg2(svg):
     html = f'<img src="data:image/svg+xml;base64,{b64}"/>'
     st.write(html, unsafe_allow_html=True)
 
-def render_svg1(svg):
+def render_svg(svg):
     # Directly embed raw SVG along with the interactive JavaScript
     html_content = f"""
     <div>
-      <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
         {svg}
       </svg>
     </div>
@@ -64,9 +64,9 @@ def render_svg1(svg):
       }});
     </script>
     """
-    st.write(html, unsafe_allow_html=True)
+    html(html_content, height=1000)
 
-def render_svg(svg):
+def render_svg1(svg):
     b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
     html = f"""
     <img src="data:image/svg+xml;base64,{b64}"/>
