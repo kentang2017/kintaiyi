@@ -15,29 +15,6 @@ from taiyimishu import taiyi_yingyang
 from historytext import chistory
 import streamlit.components.v1 as components
 
-js = """<script>
-    // Track rotation for each layer
-    const rotations = {};
-
-    // Function to rotate the clicked layer
-    function rotateLayer(layer) {
-      const id = layer.id;
-      if (!rotations[id]) rotations[id] = 0; // Initialize rotation if not set
-      rotations[id] += 30; // Rotate by 30 degrees
-      layer.setAttribute(
-        "transform",
-        `rotate(${rotations[id]} 0 0)` // Rotate around the center
-      );
-    }
-
-    // Add click listeners to all groups
-    document.querySelectorAll("g").forEach(group => {
-      group.addEventListener("click", () => rotateLayer(group));
-    });
-  </script>
-"""
-components.html(js)
-
 # Define custom components
 @st.cache_data
 def get_file_content_as_string(base_url, path):
@@ -59,7 +36,26 @@ def format_text(d, parent_key=""):
 
 def render_svg(svg):
     b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
-    html = f'<img src="data:image/svg+xml;base64,{b64}"/>'
+    html = f"""<img src="data:image/svg+xml;base64,{b64}"/> <script>
+      // Track rotation for each layer
+      const rotations = {};
+
+      // Function to rotate the clicked layer
+      function rotateLayer(layer) {
+        const id = layer.id;
+        if (!rotations[id]) rotations[id] = 0; // Initialize rotation if not set
+        rotations[id] += 30; // Rotate by 30 degrees
+        layer.setAttribute(
+          "transform",
+          `rotate(${rotations[id]} 0 0)` // Rotate around the center
+        );
+      }
+
+      // Add click listeners to all groups
+      document.querySelectorAll("#interactive-svg > g").forEach(group => {
+        group.addEventListener("click", () => rotateLayer(group));
+      });
+    </script>"""
     st.write(html, unsafe_allow_html=True)
 
 def timeline(data, height=800):
