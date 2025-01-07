@@ -38,9 +38,7 @@ def render_svg(svg):
     b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
     html = f"""
     <div>
-      <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
-        {b64}
-      </svg>
+        <img src="data:image/svg+xml;base64,{b64}"/>
     </div>
     <script>
       // Track rotation for each layer
