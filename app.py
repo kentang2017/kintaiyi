@@ -47,16 +47,28 @@ def render_svg(svg):
       <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto" overflow="visible">
         {svg}
       </svg>
-    <script>
-      const rotations = {{}};
+        <script>
+      const rotations = {{}; // To store rotation angles for each layer
+    
       function rotateLayer(layer) {{
         const id = layer.id;
         if (!rotations[id]) rotations[id] = 0;
-        rotations[id] += 30;
-        layer.setAttribute(
-          "transform",
-          `rotate(${{rotations[id]}} 0 0)`
-        );
+        rotations[id] += 30; // Rotate by 30 degrees each click
+        const newRotation = rotations[id] % 360;
+    
+        // Update the group rotation
+        layer.setAttribute("transform", `rotate(${{newRotation}})`);
+    
+        // Adjust text elements inside the group to stay horizontal
+        layer.querySelectorAll("text").forEach(text => {{
+          const angle = newRotation % 360; // Angle of the layer
+          const x = parseFloat(text.getAttribute("x") || 0);
+          const y = parseFloat(text.getAttribute("y") || 0);
+    
+          // Calculate the new text rotation to compensate for the group rotation
+          const transform = `rotate(${{-angle}}, ${{x}}, ${{y}})`;
+          text.setAttribute("transform", transform);
+        }});
       }}
       document.querySelectorAll("g").forEach(group => {{
         group.addEventListener("click", () => rotateLayer(group));
