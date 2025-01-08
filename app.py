@@ -47,22 +47,28 @@ def render_svg(svg):
       <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto" overflow="visible">
         {svg}
       </svg>
-     <script>
-      const rotations = {{}}; 
-      function rotateLayer(layer) {{
-        const id = layer.id;
-        if (!rotations[id]) rotations[id] = 0;
-        rotations[id] += 30; // Rotate by 30 degrees each click
-        const newRotation = rotations[id] % 360;
-        layer.setAttribute("transform", `rotate(${newRotation})`);
-        layer.querySelectorAll("text").forEach(text => {{
-          text.setAttribute("transform", `rotate(${-newRotation})`);
-        }});
-      }}
-      document.querySelectorAll("g").forEach(group => {{
-        group.addEventListener("click", () => rotateLayer(group));
+ <script>
+    const rotations = {{}}; // To store rotation angles for each layer
+
+    function rotateLayer(layer) {{
+      const id = layer.id;
+      if (!rotations[id]) rotations[id] = 0;
+      rotations[id] += 30; // Rotate by 30 degrees each click
+      const newRotation = rotations[id] % 360;
+
+      // Update the group rotation
+      layer.setAttribute("transform", `rotate(${{newRotation}})`);
+
+      // Adjust text elements inside the group to stay upright
+      layer.querySelectorAll("text").forEach(text => {{
+        text.setAttribute("transform", `rotate(${{-newRotation}})`);
       }});
-    </script>
+    }}
+
+    document.querySelectorAll("g").forEach(group => {{
+      group.addEventListener("click", () => rotateLayer(group));
+    }});
+  </script>
     </div>
     """
     html(html_content, height=800)
