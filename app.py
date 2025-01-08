@@ -44,7 +44,7 @@ def render_svg(svg):
     # Directly embed raw SVG along with the interactive JavaScript
     html_content = f"""
     <div>
-      <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto" overflow="visible">
+      <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" width="auto" height="auto" overflow="visible">
         {svg}
       </svg>
        <script>
@@ -76,7 +76,7 @@ def render_svg(svg):
       </script>
     </div>
     """
-    html(html_content, height=800)
+    html(html_content, height=600)
 
 def render_svg1(svg):
     b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
