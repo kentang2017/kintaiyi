@@ -47,7 +47,7 @@ def render_svg(svg):
       <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto" overflow="visible">
         {svg}
       </svg>
-        <script>
+      <script>
         const rotations = {{}}; // To store rotation angles for each layer
     
         function rotateLayer(layer) {{
@@ -66,7 +66,7 @@ def render_svg(svg):
             const y = parseFloat(text.getAttribute("y") || 0);
     
             // Calculate the new text rotation to compensate for the group rotation
-            const transform = `rotate(${-angle}, ${x}, ${y})`;
+            const transform = `rotate(${{-angle}}, ${{x}}, ${{y}})`;
             text.setAttribute("transform", transform);
           }});
         }}
