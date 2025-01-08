@@ -48,32 +48,32 @@ def render_svg(svg):
         {svg}
       </svg>
         <script>
-      const rotations = {{}; // To store rotation angles for each layer
+        const rotations = {{}}; // To store rotation angles for each layer
     
-      function rotateLayer(layer) {{
-        const id = layer.id;
-        if (!rotations[id]) rotations[id] = 0;
-        rotations[id] += 30; // Rotate by 30 degrees each click
-        const newRotation = rotations[id] % 360;
+        function rotateLayer(layer) {{
+          const id = layer.id;
+          if (!rotations[id]) rotations[id] = 0;
+          rotations[id] += 30; // Rotate by 30 degrees each click
+          const newRotation = rotations[id] % 360;
     
-        // Update the group rotation
-        layer.setAttribute("transform", `rotate(${{newRotation}})`);
+          // Update the group rotation
+          layer.setAttribute("transform", `rotate(${newRotation})`);
     
-        // Adjust text elements inside the group to stay horizontal
-        layer.querySelectorAll("text").forEach(text => {{
-          const angle = newRotation % 360; // Angle of the layer
-          const x = parseFloat(text.getAttribute("x") || 0);
-          const y = parseFloat(text.getAttribute("y") || 0);
+          // Adjust text elements inside the group to stay horizontal
+          layer.querySelectorAll("text").forEach(text => {{
+            const angle = newRotation % 360; // Angle of the layer
+            const x = parseFloat(text.getAttribute("x") || 0);
+            const y = parseFloat(text.getAttribute("y") || 0);
     
-          // Calculate the new text rotation to compensate for the group rotation
-          const transform = `rotate(${{-angle}}, ${{x}}, ${{y}})`;
-          text.setAttribute("transform", transform);
+            // Calculate the new text rotation to compensate for the group rotation
+            const transform = `rotate(${-angle}, ${x}, ${y})`;
+            text.setAttribute("transform", transform);
+          }});
+        }}
+        document.querySelectorAll("g").forEach(group => {{
+          group.addEventListener("click", () => rotateLayer(group));
         }});
-      }}
-      document.querySelectorAll("g").forEach(group => {{
-        group.addEventListener("click", () => rotateLayer(group));
-      }});
-    </script>
+      </script>
     </div>
     """
     html(html_content, height=800)
