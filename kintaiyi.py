@@ -1015,6 +1015,123 @@ class Taiyi:
         sg = list(res.values())
         return  list(self.sixteen_gong1(3,0).values())[-1], sg, list(self.sixteen_gong1(3,0).values())[:-1]
 
+    def convert_gongs_text(self, a, b):
+        c = {}
+        for key in set(a.keys()).union(b.keys()):
+            value_a = a.get(key, [])
+            value_b = b.get(key, [])
+            if isinstance(value_a, list) and isinstance(value_b, list):
+                c[key] = value_a + [value_b]
+            else:
+                c[key] = value_a if value_a else value_b
+        text_output = ""
+        for key, value in c.items():
+            if isinstance(value, list):
+                value_str = ', '.join(map(str, value))
+                text_output += f"【{key}】\n{value_str}\n\n"
+            else:
+                text_output += f"【{key}】\n{value}\n\n"
+        return text_output.replace('[', '').replace(']', '').replace(',', '').replace("'","")
+
+    def gongs_discription_text(self, sex):
+        alld = self.gongs_discription_list(sex)
+        combined_dict = {}
+        for category, subcategories in alld.items():
+            combined_dict[category] = []
+            for subcategory in subcategories:
+                if subcategory in twelve_gong_stars[category]:
+                    combined_dict[category].append(twelve_gong_stars[category][subcategory])
+        formatted_text = ""
+        for key, value in combined_dict.items():
+            formatted_text += f"{key}:\n"
+            if value:
+                formatted_text += "\n".join([f"{line}\n" for line in value])
+            formatted_text += "\n"
+        return formatted_text
+        
+    def twostar_disc(self, sex):
+        a = twostars
+        b = self.gongs_discription_list(sex)
+        b = {key: [''.join(value)] for key, value in b.items()}
+        c = {}
+        for key, values in b.items():
+            c[key] = []
+            for val in values:
+                sub_dict = [ k+"同宮。" + a[k] for k in a if k in val]
+                c[key].append(sub_dict)
+        for key, values in c.items():
+            c[key] = [item for item in values[0] if item]  # Remove empty lists
+        return c
+    
+    def gongs_discription_list(self, sex):
+        sixteengongs = self.sixteen_gong1(3,0)
+        t = self.gen_life_gong_list(sex)[1]
+        stars = self.gen_life_gong_list(sex)[2]
+        alld =  dict(zip(t, stars))
+        for key, value in alld.items():
+            if not value:
+                alld[key] = ["空格"]
+        return alld
+
+    def gongs_discription(self, sex):
+        alld = self.gongs_discription_list(sex)
+        combined_dict = {}
+        for category, subcategories in alld.items():
+            combined_dict[category] = []
+            for subcategory in subcategories:
+                if subcategory in twelve_gong_stars[category]:
+                    combined_dict[category].append(twelve_gong_stars[category][subcategory])
+        return combined_dict
+
+    def sixteen_gong2(self, ji_style, taiyi_acumyear):
+        original_dict = self.sixteen_gong1(ji_style, taiyi_acumyear)
+        c = "五福,君基,臣基,民基,文昌,計神,小游,主大,客大,主參,客參,始擊,飛符,四神,天乙,地乙".split(",")
+        a = {star: key for key, values in original_dict.items() for star in values if star in c}
+        d = dict(zip(di_zhi, range(0,13)))
+        for star, gong_value in a.items():
+            a[star] = d[gong_value]
+        return  a
+    
+    def stars_descriptions(self, ji_style, taiyi_acumyear):
+        starszhi = self.sixteen_gong2(ji_style, taiyi_acumyear)
+        c = "五福,君基,臣基,民基,文昌,計神,小游,主大,客大,主參,客參,始擊,飛符,四神,天乙,地乙".split(",")
+        allstar = {}
+        for i in c:
+            try:
+                a = {i:stars_twelve.get(i)[starszhi.get(i)]}
+                allstar.update(a)
+            except IndexError:
+                pass
+        return allstar
+
+    def stars_descriptions_text(self, ji_style, taiyi_acumyear):
+        alld = self.stars_descriptions(ji_style, taiyi_acumyear)
+        text = ""
+        for key, value in alld.items():
+            text += f"【{key}】\n{value}\n\n"
+        return text
+    
+    def year_chin(self):
+        """太歲禽星"""
+        chin_28_stars_code = dict(zip(range(1,29), su))
+        year = config.lunar_date_d(self.year, self.month, self.day).get("年")
+        if config.lunar_date_d(self.year, self.month, self.day).get("月") == "十二月" or config.lunar_date_d(self.year, self.month, self.day).get("月") == "十一月":
+            if jieqi.jq(self.year, self.month, self.day, self.hour, self.minute) == "立春":
+                get_year_chin_number = (int(year)+15) % 28 #求年禽之公式為西元年加15除28之餘數
+                if get_year_chin_number == int(0):
+                    get_year_chin_number = int(28)
+                year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
+            else:
+                get_year_chin_number = (int(year-1)+15) % 28 #求年禽之公式為西元年加15除28之餘數
+                if get_year_chin_number == int(0):
+                    get_year_chin_number = int(28)
+                    year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
+        if config.lunar_date_d(self.year, self.month, self.day).get("月") != "十二月" or config.lunar_date_d(self.year, self.month, self.day).get("月") == "十一月":
+            get_year_chin_number = (int(year)+15) % 28 #求年禽之公式為西元年加15除28之餘數
+            if get_year_chin_number == int(0):
+                get_year_chin_number = int(28)
+            year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
+        return year_chin
     
     def taiyi_life(self, sex):
         twelve_gongs = "命宮,兄弟,妻妾,子孫,財帛,田宅,官祿,奴僕,疾厄,福德,相貌,父母".split(",")
