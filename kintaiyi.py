@@ -1016,6 +1016,37 @@ class Taiyi:
 
 
 #太乙命法
+    def gen_gong(self, ji_style, taiyi_acumyear):
+        if ji_style in [0,1]:
+            return chart.gen_chart( list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[-1], self.geteightdoors_text2(ji_style, taiyi_acumyear), list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[:-1])
+        if ji_style in [2]:
+            dict1 = config.gpan1(self.year, self.month, self.day, self.hour, self.minute)
+            middle = dict1[0][1]
+            ng = dict1[1]
+            return chart.gen_chart_day( list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[-1] + [middle], self.geteightdoors_text2(ji_style, taiyi_acumyear), ng, list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[:-1])
+
+        if ji_style in [3,4]:
+            #j_q = jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)
+            #d = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]
+            #h = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]
+            #m = config.lunar_date_d(self.year, self.month, self.day).get("月")
+            #sg = [ kinliuren.Liuren(j_q, m, d, h).result(0).get("地轉天將").get(i) for i in list("巳午未申酉戌亥子丑寅卯辰")]
+            earth_sky = self.lr().sky_n_earth_list()
+            g = dict(zip(list("貴蛇雀合勾龍空虎常玄陰后"), re.findall('..', '貴人螣蛇朱雀六合勾陳青龍天空白虎太常玄武太陰太后')))
+            general = self.lr().result(0).get("地轉天將")
+            k = list(general.keys())
+            v = list(general.values())
+            vnew = [g.get(i) for i in v]
+            general = dict(zip(k, vnew))
+            three_passes = [i[0]+self.lr().result(0).get("三傳").get(i)[0]+self.lr().result(0).get("三傳").get(i)[1][0] for i in ['初傳','中傳','末傳']]
+            res = {"巳":" ", "午":" ", "未":" ", "坤":" ", "申":" ", "酉":" ", "戌":" ", "乾":" ", "亥":" ", "子":" ", "丑":" ", "艮":" ","寅":" ", "卯":" ", "辰":" ", "巽":" "}
+            res1 = {"巳":" ", "午":" ", "未":" ", "坤":" ", "申":" ", "酉":" ", "戌":" ", "乾":" ", "亥":" ", "子":" ", "丑":" ", "艮":" ","寅":" ", "卯":" ", "辰":" ", "巽":" "}
+            res.update(general)
+            res1.update(earth_sky)
+            sg = [[list(res.values())[i], list(res1.values())[i] ] for i in range(0,len(list(res.values())))]
+            return chart.gen_chart_hour( three_passes + list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[-1]+[" "," "], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg,list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear))
+
+    
     def gen_life_gong(self, sex):
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
         dict1 = self.taiyi_life(sex).get("十二命宮排列")
