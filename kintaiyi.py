@@ -14,6 +14,7 @@ import numpy as np
 from cn2an import an2cn
 from taiyidict import tengan_shiji, su_dist
 import config
+import chart
 import jieqi
 from jieqi import jieqi_name
 
