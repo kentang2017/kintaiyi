@@ -208,9 +208,10 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     dgua = ty.day_gua()[1]
     hgua = ty.hour_gua()[1]
     mingua = ty.minute_gua()[1]
-    
+    text_info = f"{config.gendatetime(my, mm, md, mh, mmin)} {zhao} - {ty.taiyi_life(sex_o).get('性別')} - {config.taiyi_name(0)[0]} - {ty.accnum(0, 0)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{ty.kook(0, 0).get('文')} ({ttext.get('局式').get('年')}) | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))}"
     if num == 5:
         render_svg(genchart1)
+        st.write(text_info)
         with st.expander("解釋"):
             st.title("《太乙命法》︰")
             st.markdown("【十二宮分析】")
@@ -231,7 +232,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown(ts)
             st.title("史事記載︰")
             st.markdown(ch)
-        print(f"{config.gendatetime(my, mm, md, mh, mmin)} {zhao} - {ty.taiyi_life(sex_o).get('性別')} - {config.taiyi_name(0)[0]} - {ty.accnum(0, 0)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{ty.kook(0, 0).get('文')} ({ttext.get('局式').get('年')}) | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))}")
+        #print
     else:
         render_svg(genchart2)
         with st.expander("解釋"):
