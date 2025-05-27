@@ -32,7 +32,7 @@ class Taiyi:
         # Cache for expensive computations
         self.cache = {}
         # Precompute static mappings
-        self.di_zhi = self.di_zhi
+        self.di_zhi = config.di_zhi
         self.di_zhi_reversed = list(reversed(self.di_zhi))
         self.jiazi_list = config.jiazi()
         self.jigod_map = dict(zip(self.di_zhi, config.new_list(self.di_zhi_reversed, "寅")))
