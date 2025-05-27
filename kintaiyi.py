@@ -381,7 +381,7 @@ class Taiyi:
             return "太乙時計才顯示"
         general = "貴人,螣蛇,朱雀,六合,勾陳,青龍,天空,白虎,太常,玄武,太陰,天后".split(",")
         tiany = self.ty_gong(ji_style, taiyi_acumyear).replace("巽", "辰").replace("坤", "申").replace("艮", "丑").replace("乾", "亥")
-        return dict(zip(config.new_list(self.self.di_zhi if self.kook(ji_style, taiyi_acumyear).get("文")[0] == "陽" else self.self.di_zhi_reversed, tiany), general))
+        return dict(zip(config.new_list(self.di_zhi if self.kook(ji_style, taiyi_acumyear).get("文")[0] == "陽" else self.di_zhi_reversed, tiany), general))
 
     def set_cal(self, ji_style, taiyi_acumyear):
         """定算"""
@@ -506,7 +506,7 @@ class Taiyi:
     def kingbase(self, ji_style, taiyi_acumyear):
         """君基"""
         king_base = (self.accnum(ji_style, taiyi_acumyear) + 250) % 360 // 30 or 1
-        return dict(zip(range(1, 13), config.new_list(self.self.di_zhi, "午"))).get(int(king_base))
+        return dict(zip(range(1, 13), config.new_list(self.di_zhi, "午"))).get(int(king_base))
 
     def officerbase(self, ji_style, taiyi_acumyear):
         """臣基"""
@@ -514,7 +514,7 @@ class Taiyi:
 
     def pplbase(self, ji_style, taiyi_acumyear):
         """民基"""
-        return dict(zip(range(1, 73), itertools.cycle(config.new_list(self.self.di_zhi, "申")))).get(self.kook(ji_style, taiyi_acumyear).get("數"))
+        return dict(zip(range(1, 73), itertools.cycle(config.new_list(self.di_zhi, "申")))).get(self.kook(ji_style, taiyi_acumyear).get("數"))
 
     def fgd(self, ji_style, taiyi_acumyear):
         """四神"""
@@ -535,13 +535,13 @@ class Taiyi:
     def flyfu(self, ji_style, taiyi_acumyear):
         """飛符"""
         fly = self.accnum(ji_style, taiyi_acumyear) % 360 % 36 / 3
-        fly_fu = dict(zip(range(1, 13), config.new_list(self.self.di_zhi, "辰"))).get(int(fly)) or "中"
+        fly_fu = dict(zip(range(1, 13), config.new_list(self.di_zhi, "辰"))).get(int(fly)) or "中"
         return fly_fu
 
     def flyfu1(self, ji_style, taiyi_acumyear):
         """飛符 (for sixteen_gong1)"""
         fly = self.accnum(ji_style, taiyi_acumyear) % 360 % 36 / 3
-        fly_fu = dict(zip(range(1, 13), config.new_list(self.self.di_zhi, "辰"))).get(int(fly)) or "辰"
+        fly_fu = dict(zip(range(1, 13), config.new_list(self.di_zhi, "辰"))).get(int(fly)) or "辰"
         return fly_fu
 
     def tianzi_go(self, ji_style, taiyi_acumyear):
