@@ -15,66 +15,6 @@ from taiyimishu import taiyi_yingyang
 from historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
-from st_screen_stats import WindowQueryHelper
-
-with st.container(height=1, border=False):
-    helper_screen_stats = WindowQueryHelper()
-    is_mobile = helper_screen_stats.maximum_window_size(max_width=480, key="max_width_480")["status"]
-    is_tablet = helper_screen_stats.window_range_width(min_width=481, max_width=768, key="range_width_481_768")["status"]
-    is_laptop = helper_screen_stats.window_range_width(min_width=769, max_width=1024, key="range_width_769_1024")["status"]
-    is_large_screen = helper_screen_stats.minimum_window_size(min_width=1025, key="min_width_1025")["status"] 
-
-if is_mobile:
-    kpi_columns = 1
-    number_of_kpi_per_row = 1
-    chart_columns = 1
-    number_of_charts_per_row = 1
-    total_number_of_charts = 4
-    
-elif is_tablet:
-    kpi_columns = 3
-    number_of_kpi_per_row = 2
-    chart_columns = 2 
-    number_of_charts_per_row = 2
-    total_number_of_charts = 4
-elif is_laptop:
-    kpi_columns = 4
-    number_of_kpi_per_row = 2
-    chart_columns = 2
-    number_of_charts_per_row = 2
-    total_number_of_charts = 4
-else:
-    kpi_columns = 6
-    number_of_kpi_per_row = 6
-    chart_columns = 4 
-    number_of_charts_per_row = 4
-    total_number_of_charts = 4
-
-if is_mobile:
-    kpi_columns = 1
-    number_of_kpi_per_row = 1
-    chart_columns = 1
-    number_of_charts_per_row = 1
-    total_number_of_charts = 4
-    
-elif is_tablet:
-    kpi_columns = 3
-    number_of_kpi_per_row = 2
-    chart_columns = 2 
-    number_of_charts_per_row = 2
-    total_number_of_charts = 4
-elif is_laptop:
-    kpi_columns = 4
-    number_of_kpi_per_row = 2
-    chart_columns = 2
-    number_of_charts_per_row = 2
-    total_number_of_charts = 4
-else:
-    kpi_columns = 6
-    number_of_kpi_per_row = 6
-    chart_columns = 4 
-    number_of_charts_per_row = 4
-    total_number_of_charts = 4
 
 @st.cache_data
 def get_file_content_as_string(base_url, path):
