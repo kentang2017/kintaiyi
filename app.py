@@ -15,8 +15,67 @@ from taiyimishu import taiyi_yingyang
 from historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
+from st_screen_stats import WindowQueryHelper
 
-# Define custom components
+with st.container(height=1, border=False):
+    helper_screen_stats = WindowQueryHelper()
+    is_mobile = helper_screen_stats.maximum_window_size(max_width=480, key="max_width_480")["status"]
+    is_tablet = helper_screen_stats.window_range_width(min_width=481, max_width=768, key="range_width_481_768")["status"]
+    is_laptop = helper_screen_stats.window_range_width(min_width=769, max_width=1024, key="range_width_769_1024")["status"]
+    is_large_screen = helper_screen_stats.minimum_window_size(min_width=1025, key="min_width_1025")["status"] 
+
+if is_mobile:
+    kpi_columns = 1
+    number_of_kpi_per_row = 1
+    chart_columns = 1
+    number_of_charts_per_row = 1
+    total_number_of_charts = 4
+    
+elif is_tablet:
+    kpi_columns = 3
+    number_of_kpi_per_row = 2
+    chart_columns = 2 
+    number_of_charts_per_row = 2
+    total_number_of_charts = 4
+elif is_laptop:
+    kpi_columns = 4
+    number_of_kpi_per_row = 2
+    chart_columns = 2
+    number_of_charts_per_row = 2
+    total_number_of_charts = 4
+else:
+    kpi_columns = 6
+    number_of_kpi_per_row = 6
+    chart_columns = 4 
+    number_of_charts_per_row = 4
+    total_number_of_charts = 4
+
+if is_mobile:
+    kpi_columns = 1
+    number_of_kpi_per_row = 1
+    chart_columns = 1
+    number_of_charts_per_row = 1
+    total_number_of_charts = 4
+    
+elif is_tablet:
+    kpi_columns = 3
+    number_of_kpi_per_row = 2
+    chart_columns = 2 
+    number_of_charts_per_row = 2
+    total_number_of_charts = 4
+elif is_laptop:
+    kpi_columns = 4
+    number_of_kpi_per_row = 2
+    chart_columns = 2
+    number_of_charts_per_row = 2
+    total_number_of_charts = 4
+else:
+    kpi_columns = 6
+    number_of_kpi_per_row = 6
+    chart_columns = 4 
+    number_of_charts_per_row = 4
+    total_number_of_charts = 4
+
 @st.cache_data
 def get_file_content_as_string(base_url, path):
     url = base_url + path
@@ -132,6 +191,7 @@ def st_capture(output_func):
         stdout.write = new_write
         yield
 
+
 # Streamlit Page Configuration
 st.set_page_config(layout="wide", page_title="堅太乙 - 太鳦排盘")
 
@@ -208,10 +268,11 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     dgua = ty.day_gua()[1]
     hgua = ty.hour_gua()[1]
     mingua = ty.minute_gua()[1]
-    text_info = f"{config.gendatetime(my, mm, md, mh, mmin)} {zhao} - {ty.taiyi_life(sex_o).get('性別')} - {config.taiyi_name(0)[0]} - {ty.accnum(0, 0)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{ty.kook(0, 0).get('文')} ({ttext.get('局式').get('年')}) | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))}"
+    ltext_info = f"{config.gendatetime(my, mm, md, mh, mmin)} {zhao} - {ty.taiyi_life(sex_o).get('性別')} - {config.taiyi_name(0)[0]} - {ty.accnum(0, 0)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{ty.kook(0, 0).get('文')} ({ttext.get('局式').get('年')}) | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))}"
+    text_info = f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(num)[0]}數︰{ty.accnum(num, tn)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{config.ty_method(tn)} - {config.taiyi_name(num)} - {ty.kook(num, tn).get('文')} ({ttext.get('局式').get('年')}) 五子元局:{wuyuan} | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} 定筭︰{setcal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))} |"
     if num == 5:
         render_svg(genchart1)
-        st.write(text_info)
+        print(ltext_info)
         with st.expander("解釋"):
             st.title("《太乙命法》︰")
             st.markdown("【十二宮分析】")
@@ -235,6 +296,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
         #print
     else:
         render_svg(genchart2)
+        print(text_info)
         with st.expander("解釋"):
             st.title("《太乙秘書》︰")
             st.markdown(ts)
@@ -260,7 +322,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown(f"明天乙太乙所主術︰{ttext.get('明天乙太乙所主術')}")
             st.markdown(f"明地乙太乙所主術︰{ttext.get('明地乙太乙所主術')}")
             st.markdown(f"明值符太乙所主術︰{ttext.get('明值符太乙所主術')}")
-        print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(num)[0]}數︰{ty.accnum(num, tn)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{config.ty_method(tn)} - {config.taiyi_name(num)} - {ty.kook(num, tn).get('文')} ({ttext.get('局式').get('年')}) 五子元局:{wuyuan} | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} 定筭︰{setcal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))} |")
+
 
 with tabs[0]:
     output5 = st.empty()
