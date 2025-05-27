@@ -16,6 +16,14 @@ from historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
 
+
+with st.container(height=1, border=False):
+    helper_screen_stats = WindowQueryHelper()
+    is_mobile = helper_screen_stats.maximum_window_size(max_width=480, key="max_width_480")["status"]
+    is_tablet = helper_screen_stats.window_range_width(min_width=481, max_width=768, key="range_width_481_768")["status"]
+    is_laptop = helper_screen_stats.window_range_width(min_width=769, max_width=1024, key="range_width_769_1024")["status"]
+    is_large_screen = helper_screen_stats.minimum_window_size(min_width=1025, key="min_width_1025")["status"] 
+    
 # Define custom components
 @st.cache_data
 def get_file_content_as_string(base_url, path):
