@@ -16,6 +16,7 @@ from taiyidict import tengan_shiji, su_dist
 import config
 import chart
 import jieqi
+import taiyi_life_dict
 from jieqi import jieqi_name
 
 class Taiyi:
@@ -1039,8 +1040,8 @@ class Taiyi:
         for category, subcategories in alld.items():
             combined_dict[category] = []
             for subcategory in subcategories:
-                if subcategory in twelve_gong_stars[category]:
-                    combined_dict[category].append(twelve_gong_stars[category][subcategory])
+                if subcategory in taiyi_life_dict.twelve_gong_stars[category]:
+                    combined_dict[category].append(taiyi_life_dict.twelve_gong_stars[category][subcategory])
         formatted_text = ""
         for key, value in combined_dict.items():
             formatted_text += f"{key}:\n"
@@ -1079,8 +1080,8 @@ class Taiyi:
         for category, subcategories in alld.items():
             combined_dict[category] = []
             for subcategory in subcategories:
-                if subcategory in twelve_gong_stars[category]:
-                    combined_dict[category].append(twelve_gong_stars[category][subcategory])
+                if subcategory in taiyi_life_dict.twelve_gong_stars[category]:
+                    combined_dict[category].append(taiyi_life_dict.twelve_gong_stars[category][subcategory])
         return combined_dict
 
     def sixteen_gong2(self, ji_style, taiyi_acumyear):
