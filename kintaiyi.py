@@ -1113,6 +1113,7 @@ class Taiyi:
     
     def year_chin(self):
         """太歲禽星"""
+        su = config.su
         chin_28_stars_code = dict(zip(range(1,29), su))
         year = config.lunar_date_d(self.year, self.month, self.day).get("年")
         if config.lunar_date_d(self.year, self.month, self.day).get("月") == "十二月" or config.lunar_date_d(self.year, self.month, self.day).get("月") == "十一月":
