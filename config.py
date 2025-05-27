@@ -231,6 +231,14 @@ def genyao(a):
         g = "上六"
     return [b,c,d,e,f,g]
 
+#農曆
+def lunar_date_d(year, month, day):
+    lunar_m = ['占位', '正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '冬月', '腊月']
+    day = fromSolar(year, month, day)
+    return {"年":day.getLunarYear(),
+            "農曆月": lunar_m[int(day.getLunarMonth())],
+            "月":day.getLunarMonth(),
+            "日":day.getLunarDay()}
 #旬
 def liujiashun_dict():
     return dict(zip(list(map(lambda x: tuple(x), list(map(lambda x:new_list(jiazi(), x)[0:10] ,jiazi()[0::10])))), jiazi()[0::10]))
