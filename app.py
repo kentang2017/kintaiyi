@@ -216,7 +216,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     if num == 5:
         render_svg(genchart1)
         st.write(text_info)
-        with st.expander "解釋"):
+        with st.expander("解釋"):
             st.title("《太乙命法》︰")
             st.markdown("【十二宮分析】")
             st.markdown(lifedisc)
