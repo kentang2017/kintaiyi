@@ -1051,7 +1051,7 @@ class Taiyi:
         return formatted_text
         
     def twostar_disc(self, sex):
-        a = twostars
+        a = taiyi_life_dict.twostars
         b = self.gongs_discription_list(sex)
         b = {key: [''.join(value)] for key, value in b.items()}
         c = {}
