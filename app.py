@@ -14,9 +14,99 @@ from taiyidict import tengan_shiji, su_dist
 from taiyimishu import taiyi_yingyang
 from historytext import chistory
 import streamlit.components.v1 as components
-from streamlit.components.v1 import html
 
-# Define custom components
+# Streamlit Page Configuration
+st.set_page_config(layout="wide", page_title="堅太乙 - 太鳦排盘")
+
+# Inject CSS for responsive design
+st.markdown("""
+    <style>
+    /* SVG Container for responsive scaling */
+    .svg-container {
+        position: relative;
+        width: 100%;
+        padding-top: 100%; /* 1:1 aspect ratio for square SVG */
+        margin: 0;
+    }
+    .svg-container svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    /* Mobile-specific adjustments */
+    @media (max-width: 600px) {
+        .stMarkdown p, .stHeader {
+            font-size: 0.9rem; /* Smaller text on mobile */
+        }
+        .stButton > button {
+            width: 100%; /* Full-width buttons on mobile */
+            margin-bottom: 10px;
+        }
+    }
+    /* Desktop adjustments */
+    @media (min-width: 601px) {
+        .stButton > button {
+            width: auto; /* Default width on desktop */
+            margin-right: 10px;
+        }
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# Define base URLs for file content
+BASE_URL_KINTAIYI = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/master/'
+BASE_URL_KINLIUREN = 'https://raw.githubusercontent.com/kentang2017/kinliuren/master/'
+
+# Create Tabs
+tabs = st.tabs(['🧮太乙排盤', '💬使用說明', '📜局數史例', '🔥災異統計', '📚古籍書目', '🆕更新日誌', '🚀看盤要領', '🔗連結'])
+
+# Sidebar Inputs
+with st.sidebar:
+    idate = st.text_input('輸入日期(如: 1997/8/8)', '')
+    itime = st.text_input('輸入時間(如: 18:30)', '').replace("︰", ":")
+    option = st.selectbox('起盤方式', ('年計太乙', '月計太乙', '日計太乙', '時計太乙', '分計太乙', '太乙命法'))
+    acum = st.selectbox('太乙積年數', ('太乙統宗', '太乙金鏡', '太乙淘金歌', '太乙局'))
+    sex_o = st.selectbox('太乙命法性別', ('男', '女'))
+    num = {'年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '時計太乙': 3, '分計太乙': 4, '太乙命法': 5}[option]
+    tn = {'太乙統宗': 0, '太乙金鏡': 1, '太乙淘金歌': 2, '太乙局': 3}[acum]
+    # Buttons in sidebar (responsive by default)
+    manual = st.button('手動盤')
+    instant = st.button('即時盤')
+
+# Optimized render_svg function for responsive SVG
+def render_svg(svg):
+    html_content = f"""
+    <div class="svg-container">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 390" preserveAspectRatio="xMidYMid meet">
+        {svg}
+      </svg>
+    </div>
+    <script>
+      const rotations = {{}};
+      function rotateLayer(layer) {{
+        const id = layer.id || 'layer-' + Math.random().toString(36).substr(2, 9);
+        if (!rotations[id]) rotations[id] = 0;
+        rotations[id] += 30;
+        const newRotation = rotations[id] % 360;
+        layer.setAttribute("transform", `rotate(${{newRotation}})`);
+        layer.querySelectorAll("text").forEach(text => {{
+          const angle = newRotation % 360;
+          const x = parseFloat(text.getAttribute("x") || 0);
+          const y = parseFloat(text.getAttribute("y") || 0);
+          text.setAttribute("transform", `rotate(${{-angle}}, ${{x}}, ${{y}})`);
+        }});
+      }}
+      document.querySelectorAll("g").forEach(group => {{
+        group.addEventListener("click", () => rotateLayer(group));
+        group.addEventListener("touchstart", () => rotateLayer(group));
+      }});
+    </script>
+    """
+    st.write(html_content, unsafe_allow_html=True)
+
+# Other utility functions (unchanged)
 @st.cache_data
 def get_file_content_as_string(base_url, path):
     url = base_url + path
@@ -34,71 +124,6 @@ def format_text(d, parent_key=""):
         else:
             items.append(f"{new_key}: {v}")
     return "\n\n".join(items)+"\n\n"
-
-def render_svg2(svg):
-    b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
-    html = f'<img src="data:image/svg+xml;base64,{b64}"/>'
-    st.write(html, unsafe_allow_html=True)
-
-def render_svg(svg):
-    # Directly embed raw SVG along with the interactive JavaScript
-    html_content = f"""
-    <div>
-      <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 390" width="100%" height="500px" overflow="visible">
-        {svg}
-      </svg>
-       <script>
-        const rotations = {{}}; // To store rotation angles for each layer
-    
-        function rotateLayer(layer) {{
-          const id = layer.id;
-          if (!rotations[id]) rotations[id] = 0;
-          rotations[id] += 30; // Rotate by 30 degrees each click
-          const newRotation = rotations[id] % 360;
-    
-          // Update the group rotation
-          layer.setAttribute("transform", `rotate(${{newRotation}})`);
-    
-          // Adjust text elements inside the group to stay horizontal
-          layer.querySelectorAll("text").forEach(text => {{
-            const angle = newRotation % 360; // Angle of the layer
-            const x = parseFloat(text.getAttribute("x") || 0);
-            const y = parseFloat(text.getAttribute("y") || 0);
-    
-            // Calculate the new text rotation to compensate for the group rotation
-            const transform = `rotate(${{-angle}}, ${{x}}, ${{y}})`;
-            text.setAttribute("transform", transform);
-          }});
-        }}
-        document.querySelectorAll("g").forEach(group => {{
-          group.addEventListener("click", () => rotateLayer(group));
-        }});
-      </script>
-    </div>
-    """
-    html(html_content, height=600)
-
-def render_svg1(svg):
-    b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
-    html = f"""
-    <img src="data:image/svg+xml;base64,{b64}"/>
-        <script>
-      const rotations = {{}};
-      function rotateLayer(layer) {{
-        const id = layer.id;
-        if (!rotations[id]) rotations[id] = 0;
-        rotations[id] += 30; // Rotate by 30 degrees
-        layer.setAttribute(
-          "transform",
-          `rotate(${{rotations[id]}} 0 0)`
-        );
-      }}
-      document.querySelectorAll("g").forEach(group => {{
-        group.addEventListener("click", () => rotateLayer(group));
-      }});
-    </script>
-    """
-    st.write(html, unsafe_allow_html=True)
 
 def timeline(data, height=800):
     if isinstance(data, str):
@@ -132,28 +157,7 @@ def st_capture(output_func):
         stdout.write = new_write
         yield
 
-# Streamlit Page Configuration
-st.set_page_config(layout="wide", page_title="堅太乙 - 太鳦排盘")
-
-# Define base URLs for file content
-BASE_URL_KINTAIYI = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/master/'
-BASE_URL_KINLIUREN = 'https://raw.githubusercontent.com/kentang2017/kinliuren/master/'
-
-# Create Tabs
-tabs = st.tabs(['🧮太乙排盤', '💬使用說明', '📜局數史例', '🔥災異統計', '📚古籍書目', '🆕更新日誌', '🚀看盤要領', '🔗連結'])
-
-# Sidebar Inputs
-with st.sidebar:
-    idate = st.text_input('輸入日期(如: 1997/8/8)', '')
-    itime = st.text_input('輸入時間(如: 18:30)', '').replace("︰", ":")
-    option = st.selectbox('起盤方式', ('年計太乙', '月計太乙', '日計太乙', '時計太乙', '分計太乙', '太乙命法'))
-    acum = st.selectbox('太乙積年數', ('太乙統宗', '太乙金鏡', '太乙淘金歌', '太乙局'))
-    sex_o = st.selectbox('太乙命法性別', ('男', '女'))
-    num = {'年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '時計太乙': 3, '分計太乙': 4, '太乙命法': 5}[option]
-    tn = {'太乙統宗': 0, '太乙金鏡': 1, '太乙淘金歌': 2, '太乙局': 3}[acum]
-    manual = st.button('手動盤')
-    instant = st.button('即時盤')
-
+# Main logic for generating results (unchanged)
 def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
     if num != 5:
@@ -212,7 +216,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     if num == 5:
         render_svg(genchart1)
         st.write(text_info)
-        with st.expander("解釋"):
+        with st.expander "解釋"):
             st.title("《太乙命法》︰")
             st.markdown("【十二宮分析】")
             st.markdown(lifedisc)
@@ -232,7 +236,6 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown(ts)
             st.title("史事記載︰")
             st.markdown(ch)
-        #print
     else:
         render_svg(genchart2)
         with st.expander("解釋"):
@@ -262,6 +265,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown(f"明值符太乙所主術︰{ttext.get('明值符太乙所主術')}")
         print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(num)[0]}數︰{ty.accnum(num, tn)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{config.ty_method(tn)} - {config.taiyi_name(num)} - {ty.kook(num, tn).get('文')} ({ttext.get('局式').get('年')}) 五子元局:{wuyuan} | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} 定筭︰{setcal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))} |")
 
+# Tab 0: Main functionality
 with tabs[0]:
     output5 = st.empty()
     with st_capture(output5.code):
@@ -283,7 +287,7 @@ with tabs[0]:
         except ValueError:
             st.empty()
 
-# Additional Tabs Content
+# Additional Tabs Content (unchanged)
 with tabs[7]:
     st.header('連結')
     st.markdown(get_file_content_as_string(BASE_URL_KINLIUREN, "update.md"), unsafe_allow_html=True)
