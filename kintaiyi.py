@@ -1034,7 +1034,7 @@ class Taiyi:
         dict1 = self.taiyi_life(sex).get("十二命宮排列")
         res.update(dict1)
         sg = list(res.values())
-        return  list(self.sixteen_gong1(3,0).values())[-1], sg, list(self.sixteen_gong1(3,0).values())[:-1]
+        return  list(self.sixteen_gong1(4,0).values())[-1], sg, list(self.sixteen_gong1(4,0).values())[:-1]
 
     def convert_gongs_text(self, a, b):
         c = {}
@@ -1085,7 +1085,7 @@ class Taiyi:
         return c
     
     def gongs_discription_list(self, sex):
-        sixteengongs = self.sixteen_gong1(3,0)
+        sixteengongs = self.sixteen_gong1(4,0)
         t = self.gen_life_gong_list(sex)[1]
         stars = self.gen_life_gong_list(sex)[2]
         alld =  dict(zip(t, stars))
