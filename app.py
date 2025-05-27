@@ -221,7 +221,7 @@ with st.sidebar:
         instant = st.button('即時盤', use_container_width=True)
 
 @st.cache_data
-def gen_results(my, mm, md, mh, mmin, num Johanna, tn, sex_o):
+def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     try:
         ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
         if num != 5:
