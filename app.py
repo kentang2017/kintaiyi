@@ -18,13 +18,15 @@ from streamlit.components.v1 import html
 from st_screen_stats import WindowQueryHelper
 import uuid
 
-# Custom Streamlit theme
-st.set_page_config(
-    layout="wide",
-    page_title="堅太乙 - 太乙排盤",
-    initial_sidebar_state="expanded",
-    page_icon="🧮"
-)
+# Ensure set_page_config is called only once
+if not hasattr(st, "_page_config_set"):
+    st.set_page_config(
+        layout="wide",
+        page_title="堅太乙 - 太乙排盤",
+        initial_sidebar_state="expanded",
+        page_icon="🧮"
+    )
+    st._page_config_set = True  # Set flag to prevent multiple calls
 
 # Apply custom CSS for better styling and mobile responsiveness
 st.markdown("""
@@ -219,7 +221,7 @@ with st.sidebar:
         instant = st.button('即時盤', use_container_width=True)
 
 @st.cache_data
-def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
+def gen_results(my, mm, md, mh, mmin, num Johanna, tn, sex_o):
     try:
         ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
         if num != 5:
