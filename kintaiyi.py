@@ -1144,7 +1144,7 @@ class Taiyi:
         allstar = {}
         for i in c:
             try:
-                a = {i:stars_twelve.get(i)[starszhi.get(i)]}
+                a = {i:taiyi_life_dict.stars_twelve.get(i)[starszhi.get(i)]}
                 allstar.update(a)
             except IndexError:
                 pass
