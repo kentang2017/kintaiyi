@@ -32,11 +32,11 @@ class Taiyi:
         # Cache for expensive computations
         self.cache = {}
         # Precompute static mappings
-        self.di_zhi = config.di_zhi
-        self.di_zhi_reversed = list(reversed(self.di_zhi))
+        self.self.di_zhi = config.self.di_zhi
+        self.self.di_zhi_reversed = list(reversed(self.self.di_zhi))
         self.jiazi_list = config.jiazi()
-        self.jigod_map = dict(zip(self.di_zhi, config.new_list(self.di_zhi_reversed, "寅")))
-        self.hegod_map = dict(zip(self.di_zhi, config.new_list(self.di_zhi_reversed, "丑")))
+        self.jigod_map = dict(zip(self.self.di_zhi, config.new_list(self.self.di_zhi_reversed, "寅")))
+        self.hegod_map = dict(zip(self.self.di_zhi, config.new_list(self.self.di_zhi_reversed, "丑")))
         self.l_num = [8, 8, 3, 3, 4, 4, 9, 9, 2, 2, 7, 7, 6, 6, 1, 1]
 
     def _get_gangzhi(self):
@@ -106,7 +106,7 @@ class Taiyi:
                 dgz = self._get_gangzhi()[2]
                 getfut = dict(zip(self.jiazi_list[0::6], [1, 7, 13, 19, 25, 31, 37, 43, 49, 55])).get(config.multi_key_dict_get(tiangan, dgz))
                 dgz_num = dict(zip(self.jiazi_list, range(1, 61))).get(dgz)
-                zhi_num = dict(zip(self.di_zhi, range(1, 13))).get(self._get_gangzhi()[3][1])
+                zhi_num = dict(zip(self.self.di_zhi, range(1, 13))).get(self._get_gangzhi()[3][1])
                 result = zhi_num if tiangan == dgz_num else ((dgz_num - getfut) * 12) + zhi_num
         elif ji_style == 4:  # 分計
             diff_val_two = int(Date(f"{self.year:04d}/{self.month:02d}/{self.day:02d} {self.hour:02d}:{self.minute:02d}:00.00") - Date("1900/12/21 00:00:00.00"))
@@ -381,7 +381,7 @@ class Taiyi:
             return "太乙時計才顯示"
         general = "貴人,螣蛇,朱雀,六合,勾陳,青龍,天空,白虎,太常,玄武,太陰,天后".split(",")
         tiany = self.ty_gong(ji_style, taiyi_acumyear).replace("巽", "辰").replace("坤", "申").replace("艮", "丑").replace("乾", "亥")
-        return dict(zip(config.new_list(self.di_zhi if self.kook(ji_style, taiyi_acumyear).get("文")[0] == "陽" else self.di_zhi_reversed, tiany), general))
+        return dict(zip(config.new_list(self.self.di_zhi if self.kook(ji_style, taiyi_acumyear).get("文")[0] == "陽" else self.self.di_zhi_reversed, tiany), general))
 
     def set_cal(self, ji_style, taiyi_acumyear):
         """定算"""
@@ -506,7 +506,7 @@ class Taiyi:
     def kingbase(self, ji_style, taiyi_acumyear):
         """君基"""
         king_base = (self.accnum(ji_style, taiyi_acumyear) + 250) % 360 // 30 or 1
-        return dict(zip(range(1, 13), config.new_list(self.di_zhi, "午"))).get(int(king_base))
+        return dict(zip(range(1, 13), config.new_list(self.self.di_zhi, "午"))).get(int(king_base))
 
     def officerbase(self, ji_style, taiyi_acumyear):
         """臣基"""
@@ -514,7 +514,7 @@ class Taiyi:
 
     def pplbase(self, ji_style, taiyi_acumyear):
         """民基"""
-        return dict(zip(range(1, 73), itertools.cycle(config.new_list(self.di_zhi, "申")))).get(self.kook(ji_style, taiyi_acumyear).get("數"))
+        return dict(zip(range(1, 73), itertools.cycle(config.new_list(self.self.di_zhi, "申")))).get(self.kook(ji_style, taiyi_acumyear).get("數"))
 
     def fgd(self, ji_style, taiyi_acumyear):
         """四神"""
@@ -535,13 +535,13 @@ class Taiyi:
     def flyfu(self, ji_style, taiyi_acumyear):
         """飛符"""
         fly = self.accnum(ji_style, taiyi_acumyear) % 360 % 36 / 3
-        fly_fu = dict(zip(range(1, 13), config.new_list(self.di_zhi, "辰"))).get(int(fly)) or "中"
+        fly_fu = dict(zip(range(1, 13), config.new_list(self.self.di_zhi, "辰"))).get(int(fly)) or "中"
         return fly_fu
 
     def flyfu1(self, ji_style, taiyi_acumyear):
         """飛符 (for sixteen_gong1)"""
         fly = self.accnum(ji_style, taiyi_acumyear) % 360 % 36 / 3
-        fly_fu = dict(zip(range(1, 13), config.new_list(self.di_zhi, "辰"))).get(int(fly)) or "辰"
+        fly_fu = dict(zip(range(1, 13), config.new_list(self.self.di_zhi, "辰"))).get(int(fly)) or "辰"
         return fly_fu
 
     def tianzi_go(self, ji_style, taiyi_acumyear):
@@ -918,14 +918,14 @@ class Taiyi:
         mg = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[1][0]
         num= config.Ganzhi_num(mg)
         place = config.Ganzhi_place(mg)
-        return dict(zip(config.generate_ranges(num, 10, 11),{"男":config.new_list(config.di_zhi, place), "女":config.new_list(list(reversed(config.di_zhi)), place)}.get(sex)))
+        return dict(zip(config.generate_ranges(num, 10, 11),{"男":config.new_list(config.self.di_zhi, place), "女":config.new_list(list(reversed(config.self.di_zhi)), place)}.get(sex)))
     #百六行限
     def bailiu_xingxian(self, sex):
         sqn = self.souqi_num()
         sqn_gua = dict(zip(range(1,65), config.jiazi())).get(sqn)
         place = config.cheungsun.get(config.Ganzhiwuxing(sqn_gua[1]))
         num= dict(zip(list("土金水木火"),[5,4,1,3,2])).get(config.Ganzhiwuxing(place))
-        return dict(zip(config.generate_ranges(num, 10, 11),{"男":config.new_list(config.di_zhi, place), "女":config.new_list(list(reversed(config.di_zhi)), place)}.get(sex)))
+        return dict(zip(config.generate_ranges(num, 10, 11),{"男":config.new_list(config.self.di_zhi, place), "女":config.new_list(list(reversed(config.self.di_zhi)), place)}.get(sex)))
 
     def souqi_num(self):
         gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
@@ -974,7 +974,7 @@ class Taiyi:
         
     def hour_gua(self):
         day = self.day_gua()[0]
-        hour = dict(zip(config.di_zhi, range(1,13))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
+        hour = dict(zip(config.self.di_zhi, range(1,13))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
         num= day + hour
         if num> 64:
             return [num, config.gua.get(num% 64)]
@@ -990,38 +990,32 @@ class Taiyi:
         else:
             return [num, config.gua.get(num)]
 
-    def gen_gong(self, ji_style, taiyi_acumyear):
-        if ji_style in [0,1]:
-            return chart.gen_chart( list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[-1], self.geteightdoors_text2(ji_style, taiyi_acumyear), list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[:-1])
-        if ji_style in [2]:
-            dict1 = config.gpan1(self.year, self.month, self.day, self.hour, self.minute)
-            middle = dict1[0][1]
-            ng = dict1[1]
-            return chart.gen_chart_day( list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[-1] + [middle], self.geteightdoors_text2(ji_style, taiyi_acumyear), ng, list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[:-1])
-
-        if ji_style in [3,4]:
-            #j_q = jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)
-            #d = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]
-            #h = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]
-            #m = config.lunar_date_d(self.year, self.month, self.day).get("月")
-            #sg = [ kinliuren.Liuren(j_q, m, d, h).result(0).get("地轉天將").get(i) for i in list("巳午未申酉戌亥子丑寅卯辰")]
-            earth_sky = self.lr().sky_n_earth_list()
-            g = dict(zip(list("貴蛇雀合勾龍空虎常玄陰后"), re.findall('..', '貴人螣蛇朱雀六合勾陳青龍天空白虎太常玄武太陰太后')))
-            general = self.lr().result(0).get("地轉天將")
-            k = list(general.keys())
-            v = list(general.values())
-            vnew = [g.get(i) for i in v]
-            general = dict(zip(k, vnew))
-            three_passes = [i[0]+self.lr().result(0).get("三傳").get(i)[0]+self.lr().result(0).get("三傳").get(i)[1][0] for i in ['初傳','中傳','末傳']]
-            res = {"巳":" ", "午":" ", "未":" ", "坤":" ", "申":" ", "酉":" ", "戌":" ", "乾":" ", "亥":" ", "子":" ", "丑":" ", "艮":" ","寅":" ", "卯":" ", "辰":" ", "巽":" "}
-            res1 = {"巳":" ", "午":" ", "未":" ", "坤":" ", "申":" ", "酉":" ", "戌":" ", "乾":" ", "亥":" ", "子":" ", "丑":" ", "艮":" ","寅":" ", "卯":" ", "辰":" ", "巽":" "}
-            res.update(general)
-            res1.update(earth_sky)
-            sg = [[list(res.values())[i], list(res1.values())[i] ] for i in range(0,len(list(res.values())))]
-            return chart.gen_chart_hour( three_passes + list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[-1]+[" "," "], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg,list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear))
+    def year_chin(self):
+        """太歲禽星"""
+        su = config.su
+        chin_28_stars_code = dict(zip(range(1,29), su))
+        year = config.lunar_date_d(self.year, self.month, self.day).get("年")
+        if config.lunar_date_d(self.year, self.month, self.day).get("月") == "十二月" or config.lunar_date_d(self.year, self.month, self.day).get("月") == "十一月":
+            if jieqi.jq(self.year, self.month, self.day, self.hour, self.minute) == "立春":
+                get_year_chin_number = (int(year)+15) % 28 #求年禽之公式為西元年加15除28之餘數
+                if get_year_chin_number == int(0):
+                    get_year_chin_number = int(28)
+                year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
+            else:
+                get_year_chin_number = (int(year-1)+15) % 28 #求年禽之公式為西元年加15除28之餘數
+                if get_year_chin_number == int(0):
+                    get_year_chin_number = int(28)
+                    year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
+        if config.lunar_date_d(self.year, self.month, self.day).get("月") != "十二月" or config.lunar_date_d(self.year, self.month, self.day).get("月") == "十一月":
+            get_year_chin_number = (int(year)+15) % 28 #求年禽之公式為西元年加15除28之餘數
+            if get_year_chin_number == int(0):
+                get_year_chin_number = int(28)
+            year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
+        return year_chin
 
 
-    
+
+#太乙命法
     def gen_life_gong(self, sex):
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
         dict1 = self.taiyi_life(sex).get("十二命宮排列")
@@ -1034,7 +1028,7 @@ class Taiyi:
         dict1 = self.taiyi_life(sex).get("十二命宮排列")
         res.update(dict1)
         sg = list(res.values())
-        return  list(self.sixteen_gong1(4,0).values())[-1], sg, list(self.sixteen_gong1(4,0).values())[:-1]
+        return  list(self.sixteen_gong1(3,0).values())[-1], sg, list(self.sixteen_gong1(3,0).values())[:-1]
 
     def convert_gongs_text(self, a, b):
         c = {}
@@ -1071,7 +1065,7 @@ class Taiyi:
         return formatted_text
         
     def twostar_disc(self, sex):
-        a = taiyi_life_dict.twostars
+        a = twostars
         b = self.gongs_discription_list(sex)
         b = {key: [''.join(value)] for key, value in b.items()}
         c = {}
@@ -1085,7 +1079,7 @@ class Taiyi:
         return c
     
     def gongs_discription_list(self, sex):
-        sixteengongs = self.sixteen_gong1(4,0)
+        sixteengongs = self.sixteen_gong1(3,0)
         t = self.gen_life_gong_list(sex)[1]
         stars = self.gen_life_gong_list(sex)[2]
         alld =  dict(zip(t, stars))
@@ -1119,7 +1113,7 @@ class Taiyi:
         allstar = {}
         for i in c:
             try:
-                a = {i:taiyi_life_dict.stars_twelve.get(i)[starszhi.get(i)]}
+                a = {i:stars_twelve.get(i)[starszhi.get(i)]}
                 allstar.update(a)
             except IndexError:
                 pass
@@ -1132,39 +1126,16 @@ class Taiyi:
             text += f"【{key}】\n{value}\n\n"
         return text
     
-    def year_chin(self):
-        """太歲禽星"""
-        su = config.su
-        chin_28_stars_code = dict(zip(range(1,29), su))
-        year = config.lunar_date_d(self.year, self.month, self.day).get("年")
-        if config.lunar_date_d(self.year, self.month, self.day).get("月") == "十二月" or config.lunar_date_d(self.year, self.month, self.day).get("月") == "十一月":
-            if jieqi.jq(self.year, self.month, self.day, self.hour, self.minute) == "立春":
-                get_year_chin_number = (int(year)+15) % 28 #求年禽之公式為西元年加15除28之餘數
-                if get_year_chin_number == int(0):
-                    get_year_chin_number = int(28)
-                year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
-            else:
-                get_year_chin_number = (int(year-1)+15) % 28 #求年禽之公式為西元年加15除28之餘數
-                if get_year_chin_number == int(0):
-                    get_year_chin_number = int(28)
-                    year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
-        if config.lunar_date_d(self.year, self.month, self.day).get("月") != "十二月" or config.lunar_date_d(self.year, self.month, self.day).get("月") == "十一月":
-            get_year_chin_number = (int(year)+15) % 28 #求年禽之公式為西元年加15除28之餘數
-            if get_year_chin_number == int(0):
-                get_year_chin_number = int(28)
-            year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
-        return year_chin
-    
     def taiyi_life(self, sex):
         twelve_gongs = "命宮,兄弟,妻妾,子孫,財帛,田宅,官祿,奴僕,疾厄,福德,相貌,父母".split(",")
         gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
         yz = gz[0][1]
         mz = gz[1][1]
-        di_zhi = config.di_zhi
-        num= di_zhi.index(yz)
-        yy = config.multi_key_dict_get({tuple(di_zhi[0::2]):"陽", tuple(di_zhi[1::2]):"陰"}, yz)
+        self.di_zhi = config.self.di_zhi
+        num= self.di_zhi.index(yz)
+        yy = config.multi_key_dict_get({tuple(self.di_zhi[0::2]):"陽", tuple(self.di_zhi[1::2]):"陰"}, yz)
         direction =  config.multi_key_dict_get({("男陽","女陰"):"順", ("男陰", "女陽"):"逆"}, sex+yy)
-        arrangelist = {"順":config.new_list(config.new_list(di_zhi,yz), mz), "逆":config.new_list(list(reversed(config.new_list(di_zhi,yz))), mz)}.get(direction)
+        arrangelist = {"順":config.new_list(config.new_list(self.di_zhi,yz), mz), "逆":config.new_list(list(reversed(config.new_list(self.di_zhi,yz))), mz)}.get(direction)
         pan = {
                 "性別":"{}{}".format(yy,sex),
                 "出生日期":config.gendatetime(self.year, self.month, self.day, self.hour, self.minute),
