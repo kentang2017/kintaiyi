@@ -15,7 +15,6 @@ from taiyimishu import taiyi_yingyang
 from historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
-from st_screen_stats import WindowQueryHelper
 import uuid
 
 # Ensure set_page_config is called only once
@@ -72,11 +71,28 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Device detection
+# Device detection using JavaScript
 with st.container(height=1, border=False):
-    helper_screen_stats = WindowQueryHelper()
-    window_width = helper_screen_stats.get_window_width()
-    
+    # Inject JavaScript to log window width (for debugging purposes)
+    js_code = """
+    <script>
+        function getWindowWidth() {
+            return window.innerWidth;
+        }
+        window.addEventListener('resize', function() {
+            document.getElementById('window-width').innerText = getWindowWidth();
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('window-width').innerText = getWindowWidth();
+        });
+    </script>
+    <div id="window-width" style="display:none;"></div>
+    """
+    components.html(js_code, height=0)
+
+    # Since we can't retrieve JS values directly in Python without a custom component,
+    # use default values and rely on Tailwind CSS for responsiveness
+    window_width = 1024  # Default to a reasonable value (e.g., laptop)
     if window_width <= 480:
         device = "mobile"
         kpi_columns = 1
