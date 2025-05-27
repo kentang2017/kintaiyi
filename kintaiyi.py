@@ -13,6 +13,7 @@ from ephem import Date
 import numpy as np
 from cn2an import an2cn
 from taiyidict import tengan_shiji, su_dist
+from kinliuren import kinliuren
 import config
 import chart
 import jieqi
