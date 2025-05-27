@@ -32,7 +32,7 @@ class Taiyi:
         # Cache for expensive computations
         self.cache = {}
         # Precompute static mappings
-        self.self.di_zhi = config.self.di_zhi
+        self.self.di_zhi = self.di_zhi
         self.self.di_zhi_reversed = list(reversed(self.self.di_zhi))
         self.jiazi_list = config.jiazi()
         self.jigod_map = dict(zip(self.self.di_zhi, config.new_list(self.self.di_zhi_reversed, "寅")))
@@ -918,14 +918,14 @@ class Taiyi:
         mg = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[1][0]
         num= config.Ganzhi_num(mg)
         place = config.Ganzhi_place(mg)
-        return dict(zip(config.generate_ranges(num, 10, 11),{"男":config.new_list(config.self.di_zhi, place), "女":config.new_list(list(reversed(config.self.di_zhi)), place)}.get(sex)))
+        return dict(zip(config.generate_ranges(num, 10, 11),{"男":config.new_list(self.di_zhi, place), "女":config.new_list(list(reversed(self.di_zhi)), place)}.get(sex)))
     #百六行限
     def bailiu_xingxian(self, sex):
         sqn = self.souqi_num()
         sqn_gua = dict(zip(range(1,65), config.jiazi())).get(sqn)
         place = config.cheungsun.get(config.Ganzhiwuxing(sqn_gua[1]))
         num= dict(zip(list("土金水木火"),[5,4,1,3,2])).get(config.Ganzhiwuxing(place))
-        return dict(zip(config.generate_ranges(num, 10, 11),{"男":config.new_list(config.self.di_zhi, place), "女":config.new_list(list(reversed(config.self.di_zhi)), place)}.get(sex)))
+        return dict(zip(config.generate_ranges(num, 10, 11),{"男":config.new_list(self.di_zhi, place), "女":config.new_list(list(reversed(self.di_zhi)), place)}.get(sex)))
 
     def souqi_num(self):
         gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
@@ -974,7 +974,7 @@ class Taiyi:
         
     def hour_gua(self):
         day = self.day_gua()[0]
-        hour = dict(zip(config.self.di_zhi, range(1,13))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
+        hour = dict(zip(self.di_zhi, range(1,13))).get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
         num= day + hour
         if num> 64:
             return [num, config.gua.get(num% 64)]
@@ -1131,7 +1131,7 @@ class Taiyi:
         gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
         yz = gz[0][1]
         mz = gz[1][1]
-        self.di_zhi = config.self.di_zhi
+        self.di_zhi = self.di_zhi
         num= self.di_zhi.index(yz)
         yy = config.multi_key_dict_get({tuple(self.di_zhi[0::2]):"陽", tuple(self.di_zhi[1::2]):"陰"}, yz)
         direction =  config.multi_key_dict_get({("男陽","女陰"):"順", ("男陰", "女陽"):"逆"}, sex+yy)
