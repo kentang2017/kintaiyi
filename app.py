@@ -15,7 +15,7 @@ from taiyimishu import taiyi_yingyang
 from historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
-
+from st_screen_stats import WindowQueryHelper
 
 with st.container(height=1, border=False):
     helper_screen_stats = WindowQueryHelper()
