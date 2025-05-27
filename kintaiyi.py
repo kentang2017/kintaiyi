@@ -118,6 +118,12 @@ class Taiyi:
         self.cache[cache_key] = result
         return result
 
+    def lr(self):
+        gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
+        j_q = jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)
+        cm = dict(zip(range(1,13), config.cmonth )).get(lunar_date_d(self.year, self.month, self.day).get("月") )
+        return kinliuren.Liuren(j_q, cm, gz[2], gz[3])
+
     def taiyi_life_accum(self):
         """太乙命數積日數"""
         def calculate_value_for_year(year):
