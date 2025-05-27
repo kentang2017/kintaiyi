@@ -32,11 +32,11 @@ class Taiyi:
         # Cache for expensive computations
         self.cache = {}
         # Precompute static mappings
-        self.self.di_zhi = self.di_zhi
-        self.self.di_zhi_reversed = list(reversed(self.self.di_zhi))
+        self.di_zhi = self.di_zhi
+        self.di_zhi_reversed = list(reversed(self.di_zhi))
         self.jiazi_list = config.jiazi()
-        self.jigod_map = dict(zip(self.self.di_zhi, config.new_list(self.self.di_zhi_reversed, "寅")))
-        self.hegod_map = dict(zip(self.self.di_zhi, config.new_list(self.self.di_zhi_reversed, "丑")))
+        self.jigod_map = dict(zip(self.di_zhi, config.new_list(self.di_zhi_reversed, "寅")))
+        self.hegod_map = dict(zip(self.di_zhi, config.new_list(self.di_zhi_reversed, "丑")))
         self.l_num = [8, 8, 3, 3, 4, 4, 9, 9, 2, 2, 7, 7, 6, 6, 1, 1]
 
     def _get_gangzhi(self):
@@ -106,7 +106,7 @@ class Taiyi:
                 dgz = self._get_gangzhi()[2]
                 getfut = dict(zip(self.jiazi_list[0::6], [1, 7, 13, 19, 25, 31, 37, 43, 49, 55])).get(config.multi_key_dict_get(tiangan, dgz))
                 dgz_num = dict(zip(self.jiazi_list, range(1, 61))).get(dgz)
-                zhi_num = dict(zip(self.self.di_zhi, range(1, 13))).get(self._get_gangzhi()[3][1])
+                zhi_num = dict(zip(self.di_zhi, range(1, 13))).get(self._get_gangzhi()[3][1])
                 result = zhi_num if tiangan == dgz_num else ((dgz_num - getfut) * 12) + zhi_num
         elif ji_style == 4:  # 分計
             diff_val_two = int(Date(f"{self.year:04d}/{self.month:02d}/{self.day:02d} {self.hour:02d}:{self.minute:02d}:00.00") - Date("1900/12/21 00:00:00.00"))
