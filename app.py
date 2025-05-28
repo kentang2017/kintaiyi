@@ -145,7 +145,7 @@ tabs = st.tabs(['🧮太乙排盤', '💬使用說明', '📜局數史例', '�
 # Sidebar Inputs
 with st.sidebar:
     now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-    my = st.number_input('年', min_value=1900, max_value=2100, value=now.year)
+    my = st.number_input('年', min_value=0, max_value=2100, value=now.year)
     mm = st.number_input('月', min_value=1, max_value=12, value=now.month)
     md = st.number_input('日', min_value=1, max_value=31, value=now.day)
     mh = st.number_input('時', min_value=0, max_value=23, value=now.hour)
