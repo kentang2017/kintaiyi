@@ -208,10 +208,8 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     dgua = ty.day_gua()[1]
     hgua = ty.hour_gua()[1]
     mingua = ty.minute_gua()[1]
-    ltext_info = f"{config.gendatetime(my, mm, md, mh, mmin)} {zhao} - {ty.taiyi_life(sex_o).get('性別')} - {config.taiyi_name(0)[0]} - {ty.accnum(0, 0)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{ty.kook(0, 0).get('文')} ({ttext.get('局式').get('年')}) | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))}"
-    text_info = f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(num)[0]}數︰{ty.accnum(num, tn)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{config.ty_method(tn)} - {config.taiyi_name(num)} - {ty.kook(num, tn).get('文')} ({ttext.get('局式').get('年')}) 五子元局:{wuyuan} | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} 定筭︰{setcal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))} |"
+    
     if num == 5:
-        print(ltext_info)
         render_svg(genchart1)
         with st.expander("解釋"):
             st.title("《太乙命法》︰")
@@ -233,9 +231,8 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown(ts)
             st.title("史事記載︰")
             st.markdown(ch)
-        #print
+        print(f"{config.gendatetime(my, mm, md, mh, mmin)} {zhao} - {ty.taiyi_life(sex_o).get('性別')} - {config.taiyi_name(0)[0]} - {ty.accnum(0, 0)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{ty.kook(0, 0).get('文')} ({ttext.get('局式').get('年')}) | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))}")
     else:
-        print(text_info)
         render_svg(genchart2)
         with st.expander("解釋"):
             st.title("《太乙秘書》︰")
@@ -262,7 +259,8 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown(f"明天乙太乙所主術︰{ttext.get('明天乙太乙所主術')}")
             st.markdown(f"明地乙太乙所主術︰{ttext.get('明地乙太乙所主術')}")
             st.markdown(f"明值符太乙所主術︰{ttext.get('明值符太乙所主術')}")
-        
+        print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(num)[0]}數︰{ty.accnum(num, tn)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{config.ty_method(tn)} - {config.taiyi_name(num)} - {ty.kook(num, tn).get('文')} ({ttext.get('局式').get('年')}) 五子元局:{wuyuan} | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} 定筭︰{setcal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))} |")
+
 with tabs[0]:
     output5 = st.empty()
     with st_capture(output5.code):
