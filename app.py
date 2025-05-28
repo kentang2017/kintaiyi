@@ -144,12 +144,13 @@ tabs = st.tabs(['🧮太乙排盤', '💬使用說明', '📜局數史例', '�
 
 # Sidebar Inputs
 with st.sidebar:
-    my = st.number_input('年', min_value=1900, max_value=2100, value=1997)
-    mm = st.number_input('月', min_value=1, max_value=12, value=8)
-    md = st.number_input('日', min_value=1, max_value=31, value=8)
-    mh = st.number_input('時', min_value=0, max_value=23, value=18)
-    mmin = st.number_input('分', min_value=0, max_value=59, value=30)
-    option = st.selectbox('起盤方式', ('年計太乙', '月計太乙', '日計太乙', '時計太乙', '分計太乙', '太乙命法'))
+    now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
+    my = st.number_input('年', min_value=1900, max_value=2100, value=now.year)
+    mm = st.number_input('月', min_value=1, max_value=12, value=now.month)
+    md = st.number_input('日', min_value=1, max_value=31, value=now.day)
+    mh = st.number_input('時', min_value=0, max_value=23, value=now.hour)
+    mmin = st.number_input('分', min_value=0, max_value=59, value=now.minute)
+    option = st.selectbox('起盤方式', ('時計太乙', '年計太乙', '月計太乙', '日計太乙',  '分計太乙', '太乙命法'))
     acum = st.selectbox('太乙積年數', ('太乙統宗', '太乙金鏡', '太乙淘金歌', '太乙局'))
     sex_o = st.selectbox('太乙命法性別', ('男', '女'))
     num = {'年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '時計太乙': 3, '分計太乙': 4, '太乙命法': 5}[option]
@@ -220,7 +221,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
         render_svg(genchart1)
         with st.expander("解釋"):
             st.title("《太乙命法》︰")
-           荷蘭st.markdown("【十二宮分析】")
+            st.markdown("【十二宮分析】")
             st.markdown(lifedisc)
             st.markdown("【太乙十六神落宮】")
             st.markdown(lifedisc2)
