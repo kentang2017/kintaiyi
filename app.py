@@ -33,7 +33,7 @@ def format_text(d, parent_key=""):
             items.append(f"{new_key}: {', '.join(map(str, v))}")
         else:
             items.append(f"{new_key}: {v}")
-    return "\n\n".join(items) + "\n\n"
+    return "\n\n".join(items)+"\n\n"
 
 def render_svg2(svg):
     b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
@@ -41,23 +41,31 @@ def render_svg2(svg):
     st.write(html, unsafe_allow_html=True)
 
 def render_svg(svg):
+    # Directly embed raw SVG along with the interactive JavaScript
     html_content = f"""
     <div>
       <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 390" width="100%" height="500px" overflow="visible">
         {svg}
       </svg>
        <script>
-        const rotations = {{}};
+        const rotations = {{}}; // To store rotation angles for each layer
+    
         function rotateLayer(layer) {{
           const id = layer.id;
           if (!rotations[id]) rotations[id] = 0;
-          rotations[id] += 30;
+          rotations[id] += 30; // Rotate by 30 degrees each click
           const newRotation = rotations[id] % 360;
+    
+          // Update the group rotation
           layer.setAttribute("transform", `rotate(${{newRotation}})`);
+    
+          // Adjust text elements inside the group to stay horizontal
           layer.querySelectorAll("text").forEach(text => {{
-            const angle = newRotation % 360;
+            const angle = newRotation % 360; // Angle of the layer
             const x = parseFloat(text.getAttribute("x") || 0);
             const y = parseFloat(text.getAttribute("y") || 0);
+    
+            // Calculate the new text rotation to compensate for the group rotation
             const transform = `rotate(${{-angle}}, ${{x}}, ${{y}})`;
             text.setAttribute("transform", transform);
           }});
@@ -79,8 +87,11 @@ def render_svg1(svg):
       function rotateLayer(layer) {{
         const id = layer.id;
         if (!rotations[id]) rotations[id] = 0;
-        rotations[id] += 30;
-        layer.setAttribute("transform", `rotate(${{rotations[id]}} 0 0)`);
+        rotations[id] += 30; // Rotate by 30 degrees
+        layer.setAttribute(
+          "transform",
+          `rotate(${{rotations[id]}} 0 0)`
+        );
       }}
       document.querySelectorAll("g").forEach(group => {{
         group.addEventListener("click", () => rotateLayer(group));
@@ -149,6 +160,7 @@ with st.sidebar:
     with col2:
         instant = st.button('即時盤')
 
+@st.cache_data
 def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
     if num != 5:
@@ -175,7 +187,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     yingyang = kook.get("文")[0]
     if num != 5:
         wuyuan = ty.get_five_yuan_kook(num, tn)
-    else:
+    if num == 5:
         wuyuan = ""
     homecal, awaycal, setcal = config.find_cal(yingyang, kook_num)
     zhao = {"男": "乾造", "女": "坤造"}.get(sex_o)
@@ -204,46 +216,57 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     hgua = ty.hour_gua()[1]
     mingua = ty.minute_gua()[1]
     
-    return {
-        "genchart1": genchart1,
-        "genchart2": genchart2,
-        "kook_num": kook_num,
-        "yingyang": yingyang,
-        "wuyuan": wuyuan,
-        "homecal": homecal,
-        "awaycal": awaycal,
-        "setcal": setcal,
-        "zhao": zhao,
-        "life1": life1,
-        "life2": life2,
-        "lifedisc": lifedisc,
-        "lifedisc2": lifedisc2,
-        "ed": ed,
-        "yc": yc,
-        "yj": yj,
-        "bl": bl,
-        "g": g,
-        "year_predict": year_predict,
-        "home_vs_away3": home_vs_away3,
-        "ts": ts,
-        "gz": gz,
-        "lunard": lunard,
-        "ch": ch,
-        "tys": tys,
-        "yy": yy,
-        "yjxx": yjxx,
-        "blxx": blxx,
-        "ygua": ygua,
-        "mgua": mgua,
-        "dgua": dgua,
-        "hgua": hgua,
-        "mingua": mingua,
-        "sj_su_predict": sj_su_predict,
-        "tg_sj_su_predict": tg_sj_su_predict,
-        "three_door": three_door,
-        "five_generals": five_generals,
-        "home_vs_away1": home_vs_away1
-    }
+    if num == 5:
+        render_svg(genchart1)
+        with st.expander("解釋"):
+            st.title("《太乙命法》︰")
+            st.markdown("【十二宮分析】")
+            st.markdown(lifedisc)
+            st.markdown("【太乙十六神落宮】")
+            st.markdown(lifedisc2)
+            st.markdown("【值卦】")
+            st.markdown("年卦：{}".format(ygua))
+            st.markdown("月卦：{}".format(mgua))
+            st.markdown("日卦：{}".format(dgua))
+            st.markdown("時卦：{}".format(hgua))
+            st.markdown("分卦：{}".format(mingua))
+            st.markdown("【陽九行限】")
+            st.markdown(format_text(yjxx))
+            st.markdown("【百六行限】")
+            st.markdown(format_text(blxx))
+            st.title("《太乙秘書》︰")
+            st.markdown(ts)
+            st.title("史事記載︰")
+            st.markdown(ch)
+        print(f"{config.gendatetime(my, mm, md, mh, mmin)} {zhao} - {ty.taiyi_life(sex_o).get('性別')} - {config.taiyi_name(0)[0]} - {ty.accnum(0, 0)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{ty.kook(0, 0).get('文')} ({ttext.get('局式').get('年')}) | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))}")
+    else:
+        render_svg(genchart2)
+        with st.expander("解釋"):
+            st.title("《太乙秘書》︰")
+            st.markdown(ts)
+            st.title("史事記載︰")
+            st.markdown(ch)
+            st.title("太乙盤局分析︰")
+            st.markdown(f"太歲值宿斷事︰{year_predict}")
+            st.markdown(f"始擊值宿斷事︰{sj_su_predict}")
+            st.markdown(f"十天干歲始擊落宮預測︰{tg_sj_su_predict}")
+            st.markdown(f"推太乙在天外地內法︰{ty.ty_gong_dist(num, tn)}")
+            st.markdown(f"三門五將︰{three_door + five_generals}")
+            st.markdown(f"推主客相關︰{home_vs_away1}")
+            st.markdown(f"推多少以占勝負︰{ttext.get('推多少以占勝負')}")
+            st.markdown(f"推孤單以占成敗:{ttext.get('推孤單以占成敗')}")
+            st.markdown(f"推陰陽以占厄會︰{ttext.get('推陰陽以占厄會')}")
+            st.markdown(f"推太乙風雲飛鳥助戰︰{home_vs_away3}")
+            st.markdown(f"明天子巡狩之期術︰{ttext.get('明天子巡狩之期術')}")
+            st.markdown(f"明君基太乙所主術︰{ttext.get('明君基太乙所主術')}")
+            st.markdown(f"明臣基太乙所主術︰{ttext.get('明臣基太乙所主術')}")
+            st.markdown(f"明民基太乙所主術︰{ttext.get('明民基太乙所主術')}")
+            st.markdown(f"明五福太乙所主術︰{ttext.get('明五福太乙所主術')}")
+            st.markdown(f"明五福吉算所主術︰{ttext.get('明五福吉算所主術')}")
+            st.markdown(f"明天乙太乙所主術︰{ttext.get('明天乙太乙所主術')}")
+            st.markdown(f"明地乙太乙所主術︰{ttext.get('明地乙太乙所主術')}")
+            st.markdown(f"明值符太乙所主術︰{ttext.get('明值符太乙所主術')}")
+        print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(num)[0]}數︰{ty.accnum(num, tn)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{config.ty_method(tn)} - {config.taiyi_name(num)} - {ty.kook(num, tn).get('文')} ({ttext.get('局式').get('年')}) 五子元局:{wuyuan} | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} 定筭︰{setcal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))} |")
 
 with tabs[0]:
     output5 = st.empty()
@@ -251,165 +274,16 @@ with tabs[0]:
         try:
             # Default execution with current time, num=3, tn=0, sex_o="男"
             now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-            result = gen_results(now.year, now.month, now.day, now.hour, now.minute, 3, 0, "男")
+            gen_results(now.year, now.month, now.day, now.hour, now.minute, 3, 0, "男")
             
-            # Render SVG based on num
-            if 5 == 3:  # Adjusted condition to match num=3 case
-                render_svg(result["genchart2"])
-                with st.expander("解釋"):
-                    st.title("《太乙秘書》︰")
-                    st.markdown(result["ts"])
-                    st.title("史事記載︰")
-                    st.markdown(result["ch"])
-                    st.title("太乙盤局分析︰")
-                    st.markdown(f"太歲值宿斷事︰{result['year_predict']}")
-                    st.markdown(f"始擊值宿斷事︰{result['sj_su_predict']}")
-                    st.markdown(f"十天干歲始擊落宮預測︰{result['tg_sj_su_predict']}")
-                    st.markdown(f"推太乙在天外地內法︰{kintaiyi.Taiyi(now.year, now.month, now.day, now.hour, now.minute).ty_gong_dist(3, 0)}")
-                    st.markdown(f"三門五將︰{result['three_door'] + result['five_generals']}")
-                    st.markdown(f"推主客相關︰{result['home_vs_away1']}")
-                    st.markdown(f"推多少以占勝負︰{result.get('推多少以占勝負', '')}")
-                    st.markdown(f"推孤單以占成敗:{result.get('推孤單以占成敗', '')}")
-                    st.markdown(f"推陰陽以占厄會︰{result.get('推陰陽以占厄會', '')}")
-                    st.markdown(f"推太乙風雲飛鳥助戰︰{result['home_vs_away3']}")
-                    st.markdown(f"明天子巡狩之期術︰{result.get('明天子巡狩之期術', '')}")
-                    st.markdown(f"明君基太乙所主術︰{result.get('明君基太乙所主術', '')}")
-                    st.markdown(f"明臣基太乙所主術︰{result.get('明臣基太乙所主術', '')}")
-                    st.markdown(f"明民基太乙所主術︰{result.get('明民基太乙所主術', '')}")
-                    st.markdown(f"明五福太乙所主術︰{result.get('明五福太乙所主術', '')}")
-                    st.markdown(f"明五福吉算所主術︰{result.get('明五福吉算所主術', '')}")
-                    st.markdown(f"明天乙太乙所主術︰{result.get('明天乙太乙所主術', '')}")
-                    st.markdown(f"明地乙太乙所主術︰{result.get('明地乙太乙所主術', '')}")
-                    st.markdown(f"明值符太乙所主術︰{result.get('明值符太乙所主術', '')}")
-            else:
-                render_svg(result["genchart1"])
-                with st.expander("解釋"):
-                    st.title("《太乙命法》︰")
-                    st.markdown("【十二宮分析】")
-                    st.markdown(result["lifedisc"])
-                    st.markdown("【太乙十六神落宮】")
-                    st.markdown(result["lifedisc2"])
-                    st.markdown("【值卦】")
-                    st.markdown(f"年卦：{result['ygua']}")
-                    st.markdown(f"月卦：{result['mgua']}")
-                    st.markdown(f"日卦：{result['dgua']}")
-                    st.markdown(f"時卦：{result['hgua']}")
-                    st.markdown(f"分卦：{result['mingua']}")
-                    st.markdown("【陽九行限】")
-                    st.markdown(format_text(result["yjxx"]))
-                    st.markdown("【百六行限】")
-                    st.markdown(format_text(result["blxx"]))
-                    st.title("《太乙秘書》︰")
-                    st.markdown(result["ts"])
-                    st.title("史事記載︰")
-                    st.markdown(result["ch"])
-
             # Additional executions based on button clicks
             if num != 5:
                 sex_o = '男'
             if manual:
-                result = gen_results(my, mm, md, mh, mmin, num, tn, sex_o)
-                if num == 5:
-                    render_svg(result["genchart1"])
-                    with st.expander("解釋"):
-                        st.title("《太乙命法》︰")
-                        st.markdown("【十二宮分析】")
-                        st.markdown(result["lifedisc"])
-                        st.markdown("【太乙十六神落宮】")
-                        st.markdown(result["lifedisc2"])
-                        st.markdown("【值卦】")
-                        st.markdown(f"年卦：{result['ygua']}")
-                        st.markdown(f"月卦：{result['mgua']}")
-                        st.markdown(f"日卦：{result['dgua']}")
-                        st.markdown(f"時卦：{result['hgua']}")
-                        st.markdown(f"分卦：{result['mingua']}")
-                        st.markdown("【陽九行限】")
-                        st.markdown(format_text(result["yjxx"]))
-                        st.markdown("【百六行限】")
-                        st.markdown(format_text(result["blxx"]))
-                        st.title("《太乙秘書》︰")
-                        st.markdown(result["ts"])
-                        st.title("史事記載︰")
-                        st.markdown(result["ch"])
-                else:
-                    render_svg(result["genchart2"])
-                    with st.expander("解釋"):
-                        st.title("《太乙秘書》︰")
-                        st.markdown(result["ts"])
-                        st.title("史事記載︰")
-                        st.markdown(result["ch"])
-                        st.title("太乙盤局分析︰")
-                        st.markdown(f"太歲值宿斷事︰{result['year_predict']}")
-                        st.markdown(f"始擊值宿斷事︰{result['sj_su_predict']}")
-                        st.markdown(f"十天干歲始擊落宮預測︰{result['tg_sj_su_predict']}")
-                        st.markdown(f"推太乙在天外地內法︰{kintaiyi.Taiyi(my, mm, md, mh, mmin).ty_gong_dist(num, tn)}")
-                        st.markdown(f"三門五將︰{result['three_door'] + result['five_generals']}")
-                        st.markdown(f"推主客相關︰{result['home_vs_away1']}")
-                        st.markdown(f"推多少以占勝負︰{result.get('推多少以占勝負', '')}")
-                        st.markdown(f"推孤單以占成敗:{result.get('推孤單以占成敗', '')}")
-                        st.markdown(f"推陰陽以占厄會︰{result.get('推陰陽以占厄會', '')}")
-                        st.markdown(f"推太乙風雲飛鳥助戰︰{result['home_vs_away3']}")
-                        st.markdown(f"明天子巡狩之期術︰{result.get('明天子巡狩之期術', '')}")
-                        st.markdown(f"明君基太乙所主術︰{result.get('明君基太乙所主術', '')}")
-                        st.markdown(f"明臣基太乙所主術︰{result.get('明臣基太乙所主術', '')}")
-                        st.markdown(f"明民基太乙所主術︰{result.get('明民基太乙所主術', '')}")
-                        st.markdown(f"明五福太乙所主術︰{result.get('明五福太乙所主術', '')}")
-                        st.markdown(f"明五福吉算所主術︰{result.get('明五福吉算所主術', '')}")
-                        st.markdown(f"明天乙太乙所主術︰{result.get('明天乙太乙所主術', '')}")
-                        st.markdown(f"明地乙太乙所主術︰{result.get('明地乙太乙所主術', '')}")
-                        st.markdown(f"明值符太乙所主術︰{result.get('明值符太乙所主術', '')}")
+                gen_results(my, mm, md, mh, mmin, num, tn, sex_o)
             if instant:
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-                result = gen_results(now.year, now.month, now.day, now.hour, now.minute, num, tn, sex_o)
-                if num == 5:
-                    render_svg(result["genchart1"])
-                    with st.expander("解釋"):
-                        st.title("《太乙命法》︰")
-                        st.markdown("【十二宮分析】")
-                        st.markdown(result["lifedisc"])
-                        st.markdown("【太乙十六神落宮】")
-                        st.markdown(result["lifedisc2"])
-                        st.markdown("【值卦】")
-                        st.markdown(f"年卦：{result['ygua']}")
-                        st.markdown(f"月卦：{result['mgua']}")
-                        st.markdown(f"日卦：{result['dgua']}")
-                        st.markdown(f"時卦：{result['hgua']}")
-                        st.markdown(f"分卦：{result['mingua']}")
-                        st.markdown("【陽九行限】")
-                        st.markdown(format_text(result["yjxx"]))
-                        st.markdown("【百六行限】")
-                        st.markdown(format_text(result["blxx"]))
-                        st.title("《太乙秘書》︰")
-                        st.markdown(result["ts"])
-                        st.title("史事記載︰")
-                        st.markdown(result["ch"])
-                else:
-                    render_svg(result["genchart2"])
-                    with st.expander("解釋"):
-                        st.title("《太乙秘書》︰")
-                        st.markdown(result["ts"])
-                        st.title("史事記載︰")
-                        st.markdown(result["ch"])
-                        st.title("太乙盤局分析︰")
-                        st.markdown(f"太歲值宿斷事︰{result['year_predict']}")
-                        st.markdown(f"始擊值宿斷事︰{result['sj_su_predict']}")
-                        st.markdown(f"十天干歲始擊落宮預測︰{result['tg_sj_su_predict']}")
-                        st.markdown(f"推太乙在天外地內法︰{kintaiyi.Taiyi(now.year, now.month, now.day, now.hour, now.minute).ty_gong_dist(num, tn)}")
-                        st.markdown(f"三門五將︰{result['three_door'] + result['five_generals']}")
-                        st.markdown(f"推主客相關︰{result['home_vs_away1']}")
-                        st.markdown(f"推多少以占勝負︰{result.get('推多少以占勝負', '')}")
-                        st.markdown(f"推孤單以占成敗:{result.get('推孤單以占成敗', '')}")
-                        st.markdown(f"推陰陽以占厄會︰{result.get('推陰陽以占厄會', '')}")
-                        st.markdown(f"推太乙風雲飛鳥助戰︰{result['home_vs_away3']}")
-                        st.markdown(f"明天子巡狩之期術︰{result.get('明天子巡狩之期術', '')}")
-                        st.markdown(f"明君基太乙所主術︰{result.get('明君基太乙所主術', '')}")
-                        st.markdown(f"明臣基太乙所主術︰{result.get('明臣基太乙所主術', '')}")
-                        st.markdown(f"明民基太乙所主術︰{result.get('明民基太乙所主術', '')}")
-                        st.markdown(f"明五福太乙所主術︰{result.get('明五福太乙所主術', '')}")
-                        st.markdown(f"明五福吉算所主術︰{result.get('明五福吉算所主術', '')}")
-                        st.markdown(f"明天乙太乙所主術︰{result.get('明天乙太乙所主術', '')}")
-                        st.markdown(f"明地乙太乙所主術︰{result.get('明地乙太乙所主術', '')}")
-                        st.markdown(f"明值符太乙所主術︰{result.get('明值符太乙所主術', '')}")
+                gen_results(now.year, now.month, now.day, now.hour, now.minute, num, tn, sex_o)
         except ValueError:
             st.empty()
 
