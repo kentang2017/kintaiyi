@@ -153,7 +153,7 @@ with st.sidebar:
     acum = st.selectbox('太乙積年數', ('太乙統宗', '太乙金鏡', '太乙淘金歌', '太乙局'))
     sex_o = st.selectbox('太乙命法性別', ('男', '女'))
     num = {'年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '時計太乙': 3, '分計太乙': 4, '太乙命法': 5}[option]
-    tn = {'太乙統宗': 0, '太乙金鏡': 1, '太#太乙局': 3}[acum]
+    tn = {'太乙統宗': 0, '太乙金鏡': 1, '太乙淘金歌': 2, '太乙局': 3}[acum]
     col1, col2 = st.columns(2)
     with col1:
         manual = st.button('手動盤')
@@ -220,7 +220,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
         render_svg(genchart1)
         with st.expander("解釋"):
             st.title("《太乙命法》︰")
-            st.markdown("【十二宮分析】")
+           荷蘭st.markdown("【十二宮分析】")
             st.markdown(lifedisc)
             st.markdown("【太乙十六神落宮】")
             st.markdown(lifedisc2)
@@ -272,11 +272,6 @@ with tabs[0]:
     output5 = st.empty()
     with st_capture(output5.code):
         try:
-            # Default execution with current time, num=3, tn=0, sex_o="男"
-            now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-            gen_results(now.year, now.month, now.day, now.hour, now.minute, 3, 0, "男")
-            
-            # Additional executions based on button clicks
             if num != 5:
                 sex_o = '男'
             if manual:
