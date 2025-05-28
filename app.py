@@ -220,7 +220,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
         render_svg(genchart1)
         with st.expander("解釋"):
             st.title("《太乙命法》︰")
-           荷蘭st.markdown("【十二宮分析】")
+            st.markdown("【十二宮分析】")
             st.markdown(lifedisc)
             st.markdown("【太乙十六神落宮】")
             st.markdown(lifedisc2)
