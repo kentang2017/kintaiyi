@@ -248,7 +248,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown(ch)
             st.title("太乙盤局分析︰")
             st.markdown(f"太歲值宿斷事︰{year_predict}")
-            st.markdown(f"始擊值宿斷事�：{sj_su_predict}")
+            st.markdown(f"始擊值宿斷事︰{sj_su_predict}")
             st.markdown(f"十天干歲始擊落宮預測︰{tg_sj_su_predict}")
             st.markdown(f"推太乙在天外地內法︰{ty.ty_gong_dist(num, tn)}")
             st.markdown(f"三門五將︰{three_door + five_generals}")
@@ -272,6 +272,11 @@ with tabs[0]:
     output5 = st.empty()
     with st_capture(output5.code):
         try:
+            # Default execution with current time, num=3, tn=0, sex_o="男"
+            now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
+            gen_results(now.year, now.month, now.day, now.hour, now.minute, 3, 0, "男")
+            
+            # Additional executions based on button clicks
             if num != 5:
                 sex_o = '男'
             if manual:
