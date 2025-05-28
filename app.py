@@ -144,16 +144,23 @@ tabs = st.tabs(['🧮太乙排盤', '💬使用說明', '📜局數史例', '�
 
 # Sidebar Inputs
 with st.sidebar:
-    idate = st.text_input('輸入日期(如: 1997/8/8)', '')
-    itime = st.text_input('輸入時間(如: 18:30)', '').replace("︰", ":")
+    my = st.number_input('年', min_value=1900, max_value=2100, value=1997)
+    mm = st.number_input('月', min_value=1, max_value=12, value=8)
+    md = st.number_input('日', min_value=1, max_value=31, value=8)
+    mh = st.number_input('時', min_value=0, max_value=23, value=18)
+    mmin = st.number_input('分', min_value=0, max_value=59, value=30)
     option = st.selectbox('起盤方式', ('年計太乙', '月計太乙', '日計太乙', '時計太乙', '分計太乙', '太乙命法'))
     acum = st.selectbox('太乙積年數', ('太乙統宗', '太乙金鏡', '太乙淘金歌', '太乙局'))
     sex_o = st.selectbox('太乙命法性別', ('男', '女'))
     num = {'年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '時計太乙': 3, '分計太乙': 4, '太乙命法': 5}[option]
     tn = {'太乙統宗': 0, '太乙金鏡': 1, '太乙淘金歌': 2, '太乙局': 3}[acum]
-    manual = st.button('手動盤')
-    instant = st.button('即時盤')
+    col1, col2 = st.columns(2)
+    with col1:
+        manual = st.button('手動盤')
+    with col2:
+        instant = st.button('即時盤')
 
+@st.cache_data
 def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
     if num != 5:
@@ -241,7 +248,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown(ch)
             st.title("太乙盤局分析︰")
             st.markdown(f"太歲值宿斷事︰{year_predict}")
-            st.markdown(f"始擊值宿斷事︰{sj_su_predict}")
+            st.markdown(f"始擊值宿斷事�：{sj_su_predict}")
             st.markdown(f"十天干歲始擊落宮預測︰{tg_sj_su_predict}")
             st.markdown(f"推太乙在天外地內法︰{ty.ty_gong_dist(num, tn)}")
             st.markdown(f"三門五將︰{three_door + five_generals}")
@@ -268,17 +275,10 @@ with tabs[0]:
             if num != 5:
                 sex_o = '男'
             if manual:
-                if num == 0 and len(idate) <= 4:
-                    idate += "/3/3"
-                p = [int(x) for x in idate.split("/")]
-                pp = [int(x) for x in itime.split(":")]
-                my, mm, md = p
-                mh, mmin = pp
                 gen_results(my, mm, md, mh, mmin, num, tn, sex_o)
             if instant:
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-                y, m, d, h, min = now.year, now.month, now.day, now.hour, now.minute
-                gen_results(y, m, d, h, min, num, tn, sex_o)
+                gen_results(now.year, now.month, now.day, now.hour, now.minute, num, tn, sex_o)
         except ValueError:
             st.empty()
 
