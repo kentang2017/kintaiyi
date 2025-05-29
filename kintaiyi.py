@@ -1047,6 +1047,7 @@ class Taiyi:
             sg = [[list(res.values())[i], list(res1.values())[i] ] for i in range(0,len(list(res.values())))]
             return chart.gen_chart_hour( three_passes + list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[-1]+[" "," "], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg,list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear))
 
+    
     def gen_life_gong(self, sex):
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
         dict1 = self.taiyi_life(sex).get("十二命宮排列")
@@ -1110,7 +1111,7 @@ class Taiyi:
         return c
     
     def gongs_discription_list(self, sex):
-        sixteengongs = self.sixteen_gong1(4,0)
+        sixteengongs = self.sixteen_gong1(3,0)
         t = self.gen_life_gong_list(sex)[1]
         stars = self.gen_life_gong_list(sex)[2]
         alld =  dict(zip(t, stars))
@@ -1118,7 +1119,7 @@ class Taiyi:
             if not value:
                 alld[key] = ["空格"]
         return alld
-
+    
     def gongs_discription(self, sex):
         alld = self.gongs_discription_list(sex)
         combined_dict = {}
@@ -1312,12 +1313,17 @@ class Taiyi:
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    year = 2024
-    month = 11
-    day = 19
-    hour = 8
+    year = 2025
+    month = 5
+    day = 16
+    hour = 3
     minute = 0
-    print(Taiyi(year, month, day, hour, minute).pan(4,0))
+    print(Taiyi(year, month, day, hour, minute).gen_life_gong_list("男"))
+    #print(Taiyi(year, month, day, hour, minute).taiyi_life("男"))
+    #print(Taiyi(year, month, day, hour, minute).gongs_discription_list("男"))
+    #print(Taiyi(year, month, day, hour, minute).gongs_discription("男"))
+    #print(Taiyi(year, month, day, hour, minute).gongs_discription_list("男"))
+    #print(Taiyi(year, month, day, hour, minute).taiyi_life("男"))
     #print(Taiyi(year, month, day, hour, minute).gen_gong(3,0))
     #print(Taiyi(year, month, day, hour, minute).geteightdoors_text2(2,0))
     #print(Taiyi(year, month, day, hour, minute).yangjiu_xingxian("男"))
