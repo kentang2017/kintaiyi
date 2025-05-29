@@ -1047,20 +1047,19 @@ class Taiyi:
             sg = [[list(res.values())[i], list(res1.values())[i] ] for i in range(0,len(list(res.values())))]
             return chart.gen_chart_hour( three_passes + list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[-1]+[" "," "], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg,list(self.sixteen_gong( ji_style, taiyi_acumyear).values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear))
 
-    
     def gen_life_gong(self, sex):
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
         dict1 = self.taiyi_life(sex).get("十二命宮排列")
         res.update(dict1)
         sg = list(res.values())
-        return chart.gen_chart_life( list(self.sixteen_gong1(4,0).values())[-1], sg, list(self.sixteen_gong1(4,0).values())[:-1])
+        return chart.gen_chart_life( list(self.sixteen_gong1(4,0).values())[-1], sg, [self.sixteen_gong1(4,0).get(i) for i in list(config.di_zhi)])
 
     def gen_life_gong_list(self, sex):
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
         dict1 = self.taiyi_life(sex).get("十二命宮排列")
         res.update(dict1)
         sg = list(res.values())
-        return  list(self.sixteen_gong1(4,0).values())[-1], sg, list(self.sixteen_gong1(4,0).values())[:-1]
+        return  list(self.sixteen_gong1(4,0).values())[-1], sg, [self.sixteen_gong1(4,0).get(i) for i in list(config.di_zhi)]
 
     def convert_gongs_text(self, a, b):
         c = {}
