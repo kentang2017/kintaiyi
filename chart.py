@@ -72,7 +72,7 @@ def gen_chart(first_layer, second_layer, sixth_layer):
 def gen_chart_life(second_layer, twelve, sixth_layer):
     # ... [rest of your setup code remains the same]
     # Create an SVG drawing canvas
-    d = draw.Drawing(390, 420, origin="center")
+    d = draw.Drawing(390, 450, origin="center")
     # Set the donut's radii and number of divisions for each layer
     inner_radius = 12
     layer_gap = 35  # Gap between layers
@@ -124,11 +124,8 @@ def gen_chart_life(second_layer, twelve, sixth_layer):
         # Append the group for this layer to the main drawing
         d.append(layer_group)
     # ... [rest of your code remains the same]
-    return d.as_svg().replace('''<path d="M-4.495279120990947,-11.126206254801447 L-17.606509890547876,-43.577641164639005 A47,47,0,0,1,-17.606509890547848,-43.57764116463901 L-4.49527912099094,-11.12620625480145 A12,12,0,0,0,-4.495279120990947,-11.126206254801447 Z" stroke="white" stroke-width="1.88" fill="black" />''', "")
-
-
+    return d.as_svg().replace('''<path d="M-4.495279120990947,-11.126206254801447 L-17.606509890547876,-43.577641164639005 A47,47,0,0,1,-17.606509890547848,-43.57764116463901 L-4.49527912099094,-11.12620625480145 A12,12,0,0,0,-4.495279120990947,-11.126206254801447 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
 #日家太乙盤
-
 #第一層中間, 第二層八門
 def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
     # ... [rest of your setup code remains the same]
