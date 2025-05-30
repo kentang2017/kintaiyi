@@ -38,11 +38,11 @@ def format_text(d, parent_key=""):
             items.append(f"{new_key}: {v}")
     return "\n\n".join(items) + "\n\n"
 
-def render_svg(svg):
+def render_svg(svg, num):
     """渲染交互式 SVG 圖表"""
     html_content = f"""
-    <div>
-      <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 390" width="100%" height="500px" overflow="visible">
+    <div style="margin: 0; padding: 0;">
+      <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {num} {num}" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
         {svg}
       </svg>
       <script>
@@ -66,8 +66,18 @@ def render_svg(svg):
         }});
       </script>
     </div>
+    <style>
+        #interactive-svg {{
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }}
+        .stCodeBlock {{
+            margin-bottom: 10px !important;
+        }}
+    </style>
     """
-    html(html_content, height=600)
+    html(html_content, height=num)  # Reduced height for the HTML component
+
 
 def timeline(data, height=800):
     """渲染時間線組件"""
@@ -199,7 +209,8 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     mingua = ty.minute_gua()[1]
     
     if num == 5:
-        render_svg(genchart1)
+        start_pt = genchart1[genchart1.index('''viewBox="''')+22:].split(" ")[1])
+        render_svg(genchart1, int(start_pt))
         with st.expander("解釋"):
             st.title("《太乙命法》︰")
             st.markdown("【十二宮分析】")
@@ -222,7 +233,8 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown(ch)
         print(f"{config.gendatetime(my, mm, md, mh, mmin)} {zhao} - {ty.taiyi_life(sex_o).get('性別')} - {config.taiyi_name(0)[0]} - {ty.accnum(0, 0)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{ty.kook(0, 0).get('文')} ({ttext.get('局式').get('年')}) | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} |")
     else:
-        render_svg(genchart2)
+        start_pt2 = genchart2[genchart2.index('''viewBox="''')+22:].split(" ")[1])
+        render_svg(genchart2, int(start_pt2))
         with st.expander("解釋"):
             st.title("《太乙秘書》︰")
             st.markdown(ts)
