@@ -128,7 +128,7 @@ tabs = st.tabs(['🧮太乙排盤', '💬使用說明', '📜局數史例', '�
 # 側邊欄輸入
 with st.sidebar:
     now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-    st.header("輸入參數")
+    st.header("排盤參數設置")
     
     # 使用 st.columns 優化手機端佈局
     col1, col2 = st.columns(2)
