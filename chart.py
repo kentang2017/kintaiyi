@@ -188,7 +188,7 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
 def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeight):
     # ... [rest of your setup code remains the same]
     # Create an SVG drawing canvas
-    d = draw.Drawing(387, 387, origin="center")
+    d = draw.Drawing(386, 386, origin="center")
     # Set the donut's radii and number of divisions for each layer
     inner_radius = 3
     layer_gap = 31.5  # Gap between layers
