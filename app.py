@@ -259,7 +259,7 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
 
 # 太乙排盤
 with tabs[0]:
-    output = st.empty()
+output = st.empty()
     with st_capture(output.code):
         try:
             if manual:
@@ -277,8 +277,6 @@ with tabs[0]:
 
             if results:
                 if results["style"] == 5:
-                    # Log the SVG for debugging
-                    st.write("Debug: genchart1 SVG content:", results["genchart1"])
                     try:
                         start_pt = results["genchart1"][results["genchart1"].index('''viewBox="''')+22:].split(" ")[1]
                         render_svg(results["genchart1"], int(start_pt))
