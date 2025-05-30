@@ -17,6 +17,10 @@ from historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
 # 自定義組件定義
+
+# Initialize session state to control rendering
+if 'render_default' not in st.session_state:
+    st.session_state.render_default = True
 @st.cache_data
 def get_file_content_as_string(base_url, path):
     """從指定 URL 獲取文件內容並返回字符串"""
@@ -76,7 +80,6 @@ def render_svg(svg, num):
     </style>
     """
     html(html_content, height=num)  # Reduced height for the HTML component
-
 
 def timeline(data, height=800):
     """渲染時間線組件"""
@@ -159,7 +162,7 @@ with st.sidebar:
 @st.cache_data
 # Remove @st.cache_data decorator
 def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
-    """生成太乙計算結果"""
+    """生成太乙計算結果，返回數據字典"""
     ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
     if num != 5:
         ttext = ty.pan(num, tn)
@@ -190,9 +193,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     life2 = ty.twostar_disc(sex_o)
     lifedisc = ty.convert_gongs_text(life1, life2)
     lifedisc2 = ty.stars_descriptions_text(4, 0)
-    ed = ttext.get("八門值事")
     yc = ty.year_chin()
-    g = ty.yeargua(tn)
     year_predict = f"太歲{yc}值宿，{su_dist.get(yc)}"
     home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
     ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
@@ -208,48 +209,47 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     hgua = ty.hour_gua()[1]
     mingua = ty.minute_gua()[1]
     
-    if num == 5:
-        start_pt = genchart1[genchart1.index('''viewBox="''')+22:].split(" ")[1]
-        render_svg(genchart1, int(start_pt))
-        with st.expander("解釋"):
-            st.title("《太乙命法》︰")
-            st.markdown("【十二宮分析】")
-            st.markdown(lifedisc)
-            st.markdown("【太乙十六神落宮】")
-            st.markdown(lifedisc2)
-            st.markdown("【值卦】")
-            st.markdown(f"年卦：{ygua}")
-            st.markdown(f"月卦：{mgua}")
-            st.markdown(f"日卦：{dgua}")
-            st.markdown(f"時卦：{hgua}")
-            st.markdown(f"分卦：{mingua}")
-            st.markdown("【陽九行限】")
-            st.markdown(format_text(yjxx))
-            st.markdown("【百六行限】")
-            st.markdown(format_text(blxx))
-            st.title("《太乙秘書》︰")
-            st.markdown(ts)
-            st.title("史事記載︰")
-            st.markdown(ch)
-        print(f"{config.gendatetime(my, mm, md, mh, mmin)} {zhao} - {ty.taiyi_life(sex_o).get('性別')} - {config.taiyi_name(0)[0]} - {ty.accnum(0, 0)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{ty.kook(0, 0).get('文')} ({ttext.get('局式').get('年')}) | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} |")
-    else:
-        start_pt2 = genchart2[genchart2.index('''viewBox="''')+22:].split(" ")[1]
-        render_svg(genchart2, int(start_pt2))
-        with st.expander("解釋"):
-            st.title("《太乙秘書》︰")
-            st.markdown(ts)
-            st.title("史事記載︰")
-            st.markdown(ch)
-            st.title("太乙盤局分析︰")
-            st.markdown(f"太歲值宿斷事︰{year_predict}")
-            st.markdown(f"始擊值宿斷事︰{sj_su_predict}")
-            st.markdown(f"十天干歲始擊落宮預測︰{tg_sj_su_predict}")
-            st.markdown(f"推太乙在天外地內法︰{ty.ty_gong_dist(num, tn)}")
-            st.markdown(f"三門五將︰{three_door + five_generals}")
-            st.markdown(f"推主客相關︰{home_vs_away1}")
-            st.markdown(f"推多少以占勝負︰{ttext.get('推多少以占勝負')}")
-            st.markdown(f"推太乙風雲飛鳥助戰︰{home_vs_away3}")
-        print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(num)[0]}數︰{ty.accnum(num, tn)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{config.ty_method(tn)} - {ty.kook(num, tn).get('文')} ({ttext.get('局式').get('年')}) 五子元局:{wuyuan} | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} 定筭︰{setcal} |")
+    # Return all computed data as a dictionary
+    return {
+        "ttext": ttext,
+        "kook": kook,
+        "sj_su_predict": sj_su_predict,
+        "tg_sj_su_predict": tg_sj_su_predict,
+        "three_door": three_door,
+        "five_generals": five_generals,
+        "home_vs_away1": home_vs_away1,
+        "genchart1": genchart1,
+        "genchart2": genchart2,
+        "kook_num": kook_num,
+        "yingyang": yingyang,
+        "wuyuan": wuyuan,
+        "homecal": homecal,
+        "awaycal": awaycal,
+        "setcal": setcal,
+        "zhao": zhao,
+        "life1": life1,
+        "life2": life2,
+        "lifedisc": lifedisc,
+        "lifedisc2": lifedisc2,
+        "year_predict": year_predict,
+        "home_vs_away3": home_vs_away3,
+        "ts": ts,
+        "gz": gz,
+        "lunard": lunard,
+        "ch": ch,
+        "tys": tys,
+        "yjxx": yjxx,
+        "blxx": blxx,
+        "ygua": ygua,
+        "mgua": mgua,
+        "dgua": dgua,
+        "hgua": hgua,
+        "mingua": mingua,
+        "num": num,
+        "tn": tn,
+        "sex_o": sex_o,
+        "ty": ty
+    }
 # 太乙排盤
 with tabs[0]:
     output = st.empty()
@@ -257,18 +257,67 @@ with tabs[0]:
         try:
             if manual:
                 # Use sidebar inputs for manual calculation
-                text_output = gen_results(my, mm, md, mh, mmin, num, tn, sex_o)
+                results = gen_results(my, mm, md, mh, mmin, num, tn, sex_o)
+                st.session_state.render_default = False
             elif instant:
                 # Use current time for instant calculation
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-                text_output = gen_results(now.year, now.month, now.day, now.hour, now.minute, num, tn, sex_o)
-            else:
+                results = gen_results(now.year, now.month, now.day, now.hour, now.minute, num, tn, sex_o)
+                st.session_state.render_default = False
+            elif st.session_state.render_default:
                 # Default: Run with current time and specified parameters
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-                text_output = gen_results(now.year, now.month, now.day, now.hour, now.minute, 4, 0, "男")
+                results = gen_results(now.year, now.month, now.day, now.hour, now.minute, 4, 0, "男")
+            else:
+                # Prevent rendering if sidebar changes but no button is clicked
+                results = None
+
+            if results:
+                # Render UI elements based on results
+                if results["num"] == 5:
+                    start_pt = results["genchart1"][results["genchart1"].index('''viewBox="''')+22:].split(" ")[1]
+                    render_svg(results["genchart1"], int(start_pt))
+                    with st.expander("解釋"):
+                        st.title("《太乙命法》︰")
+                        st.markdown("【十二宮分析】")
+                        st.markdown(results["lifedisc"])
+                        st.markdown("【太乙十六神落宮】")
+                        st.markdown(results["lifedisc2"])
+                        st.markdown("【值卦】")
+                        st.markdown(f"年卦：{results['ygua']}")
+                        st.markdown(f"月卦：{results['mgua']}")
+                        st.markdown(f"日卦：{results['dgua']}")
+                        st.markdown(f"時卦：{results['hgua']}")
+                        st.markdown(f"分卦：{results['mingua']}")
+                        st.markdown("【陽九行限】")
+                        st.markdown(format_text(results["yjxx"]))
+                        st.markdown("【百六行限】")
+                        st.markdown(format_text(results["blxx"]))
+                        st.title("《太乙秘書》︰")
+                        st.markdown(results["ts"])
+                        st.title("史事記載︰")
+                        st.markdown(results["ch"])
+                    print(f"{config.gendatetime(my, mm, md, mh, mmin)} {results['zhao']} - {results['ty'].taiyi_life(results['sex_o']).get('性別')} - {config.taiyi_name(0)[0]} - {results['ty'].accnum(0, 0)} | \n農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{results['gz']} |\n{config.kingyear(my)} |\n{results['ty'].kook(0, 0).get('文')} ({results['ttext'].get('局式').get('年')}) | \n紀元︰{results['ttext'].get('紀元')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} |")
+                else:
+                    start_pt2 = results["genchart2"][results["genchart2"].index('''viewBox="''')+22:].split(" ")[1]
+                    render_svg(results["genchart2"], int(start_pt2))
+                    with st.expander("解釋"):
+                        st.title("《太乙秘書》︰")
+                        st.markdown(results["ts"])
+                        st.title("史事記載︰")
+                        st.markdown(results["ch"])
+                        st.title("太乙盤局分析︰")
+                        st.markdown(f"太歲值宿斷事︰{results['year_predict']}")
+                        st.markdown(f"始擊值宿斷事︰{results['sj_su_predict']}")
+                        st.markdown(f"十天干歲始擊落宮預測︰{results['tg_sj_su_predict']}")
+                        st.markdown(f"推太乙在天外地內法︰{results['ty'].ty_gong_dist(results['num'], results['tn'])}")
+                        st.markdown(f"三門五將︰{results['three_door'] + results['five_generals']}")
+                        st.markdown(f"推主客相關︰{results['home_vs_away1']}")
+                        st.markdown(f"推少多以占勝負︰{results['ttext'].get('推少多以占勝負')}")
+                        st.markdown(f"推太乙風雲飛鳥助戰︰{results['home_vs_away3']}")
+                    print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(results['num'])[0]}數︰{results['ty'].accnum(results['num'], results['tn'])} | \n農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{results['gz']} |\n{config.kingyear(my)} |\n{config.ty_method(results['tn'])} - {results['ty'].kook(results['num'], results['tn']).get('文')} ({results['ttext'].get('局式').get('年')}) 五子元局:{results['wuyuan']} | \n紀元︰{results['ttext'].get('紀元')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} 定筭︰{results['setcal']} |")
         except Exception as e:
             st.error(f"生成盤局時發生錯誤：{str(e)}")
-            text_output = None
 
 #使用說明
 with tabs[1]:
