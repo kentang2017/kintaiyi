@@ -13,7 +13,7 @@ import re
 def gen_chart(first_layer, second_layer, sixth_layer):
     # ... [rest of your setup code remains the same]
     # Create an SVG drawing canvas
-    d = draw.Drawing(390, 390, origin="center")
+    d = draw.Drawing(400, 400, origin="center")
     # Set the donut's radii and number of divisions for each layer
     inner_radius = 13
     layer_gap = 45  # Gap between layers
