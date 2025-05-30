@@ -253,7 +253,6 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
 
 # 太乙排盤
 with tabs[0]:
-    st.markdown("太乙排盤")
     output = st.empty()
     with st_capture(output.code):
         try:
@@ -268,9 +267,9 @@ with tabs[0]:
     # Add "截圖分享" button and screenshot functionality
     if manual or instant:
         st.button("截圖分享", key="screenshot_share")
-        # Inject html2canvas library and JavaScript for screenshot
+        # Inject dom-to-image library and JavaScript for screenshot
         screenshot_html = """
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
         <script>
         document.querySelectorAll('[data-testid="stButton"]').forEach(button => {
             if (button.textContent.includes("截圖分享")) {
@@ -283,22 +282,22 @@ with tabs[0]:
                             alert("無法找到要截圖的區域！");
                             return;
                         }
-                        html2canvas(element, {
-                            backgroundColor: "#1E1E1E",
-                            useCORS: true,
-                            allowTaint: true,
-                            scale: 2, // Increase resolution for better quality
-                            logging: true // Enable logging for debugging
-                        }).then(canvas => {
+                        domtoimage.toPng(element, {
+                            bgcolor: "#1E1E1E",
+                            quality: 1,
+                            scale: 2
+                        })
+                        .then(dataUrl => {
                             const link = document.createElement("a");
                             link.download = "taiyi_screenshot.png";
-                            link.href = canvas.toDataURL("image/png");
+                            link.href = dataUrl;
                             link.click();
-                        }).catch(err => {
+                        })
+                        .catch(err => {
                             console.error("截圖失敗:", err);
-                            alert("截圖失敗，請重試！錯誤信息：" + err.message);
+                            alert("截圖失敗，請重試！錯誤信息：" + err);
                         });
-                    }, 1000); // Delay of 1 second to ensure rendering
+                    }, 2000); // Delay of 2 seconds to ensure rendering
                 });
             }
         });
