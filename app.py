@@ -269,62 +269,6 @@ with tabs[0]:
             st.error(f"生成盤局時發生錯誤：{str(e)}")
             text_output = None
 
-    # Add "截圖分享" button and screenshot functionality
-    if manual or instant:
-        if st.button("截圖分享", key="screenshot_share"):
-            if not WEBDRIVER_MANAGER_AVAILABLE:
-                st.error("缺少 'webdriver-manager' 模組。請運行 `pip install webdriver-manager` 並重啟應用程序。")
-            else:
-                try:
-                    # Set up Selenium with headless Chrome
-                    chrome_options = Options()
-                    chrome_options.add_argument("--headless")
-                    chrome_options.add_argument("--no-sandbox")
-                    chrome_options.add_argument("--disable-dev-shm-usage")
-                    driver = webdriver.Chrome(options=chrome_options, executable_path=ChromeDriverManager().install())
-
-                    # Get the current app URL (assuming local or deployed URL)
-                    current_url = st.server.server_url
-                    if not current_url:
-                        current_url = "http://localhost:8501"  # Default local URL for testing
-                    driver.get(current_url)
-
-                    # Wait for the page to load (adjust timeout as needed)
-                    driver.implicitly_wait(10)
-
-                    # Take screenshot
-                    screenshot = driver.get_screenshot_as_png()
-                    driver.quit()
-
-                    # Provide download button for the screenshot
-                    st.download_button(
-                        label="下載截圖",
-                        data=screenshot,
-                        file_name="taiyi_screenshot.png",
-                        mime="image/png"
-                    )
-
-                    # Display sharing instructions
-                    st.markdown("""
-                    **分享步驟：**
-                    1. 點擊「下載截圖」按鈕以上載圖片。
-                    2. 圖片下載後，手動將圖片分享到 WhatsApp 或 WeChat：
-                    """)
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        st.markdown(
-                            '<a href="https://api.whatsapp.com/send" target="_blank"><button style="background-color:#25D366;color:white;padding:10px;border-radius:5px;border:none;cursor:pointer;">分享到 WhatsApp</button></a>',
-                            unsafe_allow_html=True
-                        )
-                    with col2:
-                        st.markdown(
-                            '<a href="weixin://dl/chat" target="_blank"><button style="background-color:#7BB32E;color:white;padding:10px;border-radius:5px;border:none;cursor:pointer;">分享到 WeChat</button></a>',
-                            unsafe_allow_html=True
-                        )
-                    st.markdown("**注意：** 點擊分享按鈕後，請在 WhatsApp 或 WeChat 中選擇剛才下載的圖片進行分享。")
-                except Exception as e:
-                    st.error(f"截圖生成失敗：{str(e)}")
-                    st.warning("請確保 ChromeDriver 已正確安裝並配置，或在本地運行應用程序。您也可以嘗試手動下載 ChromeDriver 並指定路徑。")
 #使用說明
 with tabs[1]:
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "instruction.md"))
