@@ -241,7 +241,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
 
 # 太乙排盤標籤頁
 with tabs[0]:
-    st.header("太乙排盤")
+    st.markdown("太乙排盤")
     output = st.empty()
     with st_capture(output.code):
         try:
@@ -255,11 +255,11 @@ with tabs[0]:
 
 # 其他標籤頁內容
 with tabs[1]:
-    st.header('使用說明')
+    st.markdown('使用說明')
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "instruction.md"))
 
 with tabs[2]:
-    st.header('太乙局數史例')
+    st.markdown('太乙局數史例')
     with open('example.json', "r") as f:
         data = f.read()
     timeline(data, height=600)
@@ -267,7 +267,7 @@ with tabs[2]:
         st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "example.md"))
 
 with tabs[3]:
-    st.header('災害統計')
+    st.markdown('災害統計')
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "disaster.md"))
 
 with tabs[4]:
@@ -279,9 +279,9 @@ with tabs[5]:
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "update.md"))
 
 with tabs[6]:
-    st.header('看盤要領')
+    st.markdown('看盤要領')
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "tutorial.md"), unsafe_allow_html=True)
 
 with tabs[7]:
-    st.header('連結')
+    st.markdown('連結')
     st.markdown(get_file_content_as_string(BASE_URL_KINLIUREN, "update.md"), unsafe_allow_html=True)
