@@ -255,7 +255,6 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
 
 # 太乙排盤
 with tabs[0]:
-    st.markdown("太乙排盤")
     output = st.empty()
     with st_capture(output.code):
         try:
