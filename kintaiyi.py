@@ -915,6 +915,29 @@ class Taiyi:
             result.append("值符與小游同宮，其分火炎、兵革，人民不安。")
         return "".join(result)
 
+    def flybird_wl(self,ji_style, taiyi_acumyear):
+        """推太乙風雲飛鳥助戰法"""
+        fb = config.flybird(taiyi_acumyear)
+        hg = self.home_general(ji_style, taiyi_acumyear)
+        ag = self.away_general(ji_style, taiyi_acumyear)
+        hvg = self.home_vgen(ji_style, taiyi_acumyear)
+        avg = self.away_vgen(ji_style, taiyi_acumyear)
+        ty = self.ty(ji_style, taiyi_acumyear)
+        wc = config.gong2.get(self.skyeyes(ji_style, taiyi_acumyear))
+        sj = config.gong2.get(self.sf(ji_style, taiyi_acumyear))
+        if fb == ty:
+            return "太乙所在宮有風雲飛鳥等來衝格迫擊太乙者，大敗之兆。"
+        elif fb == wc:
+            return "從主目上去擊客，主勝"
+        elif fb == sj:
+            return "從客目上去擊主，客勝"
+        elif fb == hg or fb == hvg:
+            return "飛鳥扶主人陣者，主人勝"
+        elif fb == ag or fb == avg:
+            return "飛鳥扶客人陣者，客人勝"
+        else:
+            return "飛鳥方向不明確，和"
+    
     def tui_danger(self, ji_style, taiyi_acumyear):
         """推陰陽以占厄會"""
         tai_yi = self.ty(ji_style, taiyi_acumyear)
@@ -1409,15 +1432,7 @@ class Taiyi:
                                         self.away_cal(ji_style, taiyi_acumyear),
                                         self.home_general(ji_style, taiyi_acumyear),
                                         self.away_general(ji_style, taiyi_acumyear)),
-                "推太乙風雲飛鳥助戰法":config.flybird_wl(self.accnum(ji_style, taiyi_acumyear),
-                                      config.flybird(self.accnum(ji_style, taiyi_acumyear)),
-                                      self.home_general(ji_style, taiyi_acumyear),
-                                      self.away_general(ji_style, taiyi_acumyear),
-                                      self.home_vgen(ji_style, taiyi_acumyear),
-                                      self.away_vgen(ji_style, taiyi_acumyear),
-                                      self.ty(ji_style, taiyi_acumyear),
-                                      config.gong2.get(self.skyeyes(ji_style, taiyi_acumyear)),
-                                      config.gong2.get(self.sf(ji_style, taiyi_acumyear)) ),
+                "推太乙風雲飛鳥助戰法": self.flybird_wl(ji_style, taiyi_acumyear),
                 "推孤單以占成敗":self.gudan(ji_style, taiyi_acumyear), 
                 "推雷公入水":config.leigong(self.ty(ji_style, taiyi_acumyear)),
                 "推臨津問道":config.lijin(self.year, self.month, self.day, self.hour, self.minute),
