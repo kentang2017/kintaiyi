@@ -16,11 +16,11 @@ from taiyimishu import taiyi_yingyang
 from historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
-# 自定義組件定義
 
 # Initialize session state to control rendering
 if 'render_default' not in st.session_state:
     st.session_state.render_default = True
+
 @st.cache_data
 def get_file_content_as_string(base_url, path):
     """從指定 URL 獲取文件內容並返回字符串"""
@@ -130,7 +130,6 @@ with st.sidebar:
     now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
     st.header("排盤參數設置")
     
-    # 使用 st.columns 優化手機端佈局
     col1, col2 = st.columns(2)
     with col1:
         my = st.number_input('年', min_value=0, max_value=2100, value=now.year)
@@ -142,20 +141,18 @@ with st.sidebar:
     
     option = st.selectbox('起盤方式', ('時計太乙', '年計太乙', '月計太乙', '日計太乙', '分計太乙', '太乙命法'))
     acum = st.selectbox('太乙積年數', ('太乙統宗', '太乙金鏡', '太乙淘金歌', '太乙局'))
-    ten_ching = st.selectbox('太乙十精', ('無','有' ))
+    ten_ching = st.selectbox('太乙十精', ('無', '有'))
     sex_o = st.selectbox('太乙命法性別', ('男', '女'))
     
-    # 映射起盤方式到數字
     num_dict = {'時計太乙': 4, '年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '分計太乙': 3, '太乙命法': 5}
     num = num_dict[option]
     
-    # 映射積年數到 tn
     tn_dict = {'太乙統宗': 0, '太乙金鏡': 1, '太乙淘金歌': 2, '太乙局': 3}
     tn = tn_dict[acum]
     
-    tc_dict = {'有':1, '無':0}
-    tc = tc_dict[ten_ching] 
-    # 按鈕佈局
+    tc_dict = {'有': 1, '無': 0}
+    tc = tc_dict[ten_ching]
+    
     col1, col2 = st.columns(2)
     with col1:
         manual = st.button('手動盤', use_container_width=True)
@@ -163,7 +160,6 @@ with st.sidebar:
         instant = st.button('即時盤', use_container_width=True)
 
 @st.cache_data
-# Remove @st.cache_data decorator
 def gen_results(my, mm, md, mh, mmin, num, tn, sex_o, tc):
     """生成太乙計算結果，返回數據字典"""
     ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
@@ -212,7 +208,6 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o, tc):
     hgua = ty.hour_gua()[1]
     mingua = ty.minute_gua()[1]
     
-    # Return all computed data as a dictionary
     return {
         "ttext": ttext,
         "kook": kook,
@@ -253,33 +248,32 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o, tc):
         "sex_o": sex_o,
         "ty": ty
     }
+
 # 太乙排盤
 with tabs[0]:
     output = st.empty()
     with st_capture(output.code):
         try:
             if manual:
-                # Use sidebar inputs for manual calculation
                 results = gen_results(my, mm, md, mh, mmin, num, tn, sex_o, tc)
                 st.session_state.render_default = False
             elif instant:
-                # Use current time for instant calculation
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
                 results = gen_results(now.year, now.month, now.day, now.hour, now.minute, num, tn, sex_o, tc)
                 st.session_state.render_default = False
             elif st.session_state.render_default:
-                # Default: Run with current time and specified parameters
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
                 results = gen_results(now.year, now.month, now.day, now.hour, now.minute, 3, 0, "男", 0)
             else:
-                # Prevent rendering if sidebar changes but no button is clicked
                 results = None
 
             if results:
-                # Render UI elements based on results
                 if results["num"] == 5:
-                    start_pt = results["genchart1"][results["genchart1"].index('''viewBox="''')+22:].split(" ")[1]
-                    render_svg(results["genchart1"], int(start_pt))
+                    try:
+                        start_pt = results["genchart1"][results["genchart1"].index('''viewBox="''')+22:].split(" ")[1]
+                        render_svg(results["genchart1"], int(start_pt))
+                    except (ValueError, IndexError):
+                        st.error("Invalid SVG viewBox attribute in genchart1")
                     with st.expander("解釋"):
                         st.title("《太乙命法》︰")
                         st.markdown("【十二宮分析】")
@@ -302,8 +296,11 @@ with tabs[0]:
                         st.markdown(results["ch"])
                     print(f"{config.gendatetime(my, mm, md, mh, mmin)} {results['zhao']} - {results['ty'].taiyi_life(results['sex_o']).get('性別')} - {config.taiyi_name(0)[0]} - {results['ty'].accnum(0, 0)} | \n農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{results['gz']} |\n{config.kingyear(my)} |\n{results['ty'].kook(0, 0).get('文')} ({results['ttext'].get('局式').get('年')}) | \n紀元︰{results['ttext'].get('紀元')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} |")
                 else:
-                    start_pt2 = results["genchart2"][results["genchart2"].index('''viewBox="''')+22:].split(" ")[1]
-                    render_svg(results["genchart2"], int(start_pt2))
+                    try:
+                        start_pt2 = results["genchart2"][results["genchart2"].index('''viewBox="''')+22:].split(" ")[1]
+                        render_svg(results["genchart2"], int(start_pt2))
+                    except (ValueError, IndexError):
+                        st.error("Invalid SVG viewBox attribute in genchart2")
                     with st.expander("解釋"):
                         st.title("《太乙秘書》︰")
                         st.markdown(results["ts"])
@@ -322,28 +319,28 @@ with tabs[0]:
         except Exception as e:
             st.error(f"生成盤局時發生錯誤：{str(e)}")
 
-#使用說明
+# 使用說明
 with tabs[1]:
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "instruction.md"))
-#太乙局數史例
+# 太乙局數史例
 with tabs[2]:
     with open('example.json', "r") as f:
         data = f.read()
     timeline(data, height=600)
     with st.expander("列表"):
         st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "example.md"))
-#災害統計
+# 災害統計
 with tabs[3]:
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "disaster.md"))
-#古籍書目
+# 古籍書目
 with tabs[4]:
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "guji.md"))
-#更新日誌
+# 更新日誌
 with tabs[5]:
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "update.md"))
-#看盤要領
+# 看盤要領
 with tabs[6]:
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "tutorial.md"), unsafe_allow_html=True)
-
+# 連結
 with tabs[7]:
     st.markdown(get_file_content_as_string(BASE_URL_KINLIUREN, "update.md"), unsafe_allow_html=True)
