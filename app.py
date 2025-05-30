@@ -176,7 +176,7 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
         ttext = ty.pan(style, tn)
         kook = ty.kook(style, tn)
         sj_su_predict = f"始擊落{ty.sf_num(style, tn)}宿，{su_dist.get(ty.sf_num(style, tn))}"
-        tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(num, tn)))
+        tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(style, tn)))
         three_door = ty.threedoors(style, tn)
         five_generals = ty.fivegenerals(style, tn)
         home_vs_away1 = ty.wc_n_sj(style, tn)
