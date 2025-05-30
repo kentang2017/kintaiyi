@@ -55,14 +55,14 @@ def render_svg(svg, num):
           if (!rotations[id]) rotations[id] = 0;
           rotations[id] += 30;
           const newRotation = rotations[id] % 360;
-          layer.setAttribute("transform", `rotate(${newRotation})`);
-          layer.querySelectorAll("text").forEach(text => {
+          layer.setAttribute("transform", `rotate(${{newRotation}})`);
+          layer.querySelectorAll("text").forEach(text => {{
             const angle = newRotation % 360;
             const x = parseFloat(text.getAttribute("x") || 0);
             const y = parseFloat(text.getAttribute("y") || 0);
-            const transform = `rotate(${-angle}, ${x}, ${y})`;
+            const transform = `rotate(${{-angle}}, ${{x}}, ${{y}})`;
             text.setAttribute("transform", transform);
-          });
+          }});
         }}
         document.querySelectorAll("g").forEach(group => {{
           group.addEventListener("click", () => rotateLayer(group));
@@ -79,7 +79,7 @@ def render_svg(svg, num):
         }}
     </style>
     """
-    html(html_content, height=num)  # Reduced height for the HTML component
+    html(html_content, height=num)
 
 def timeline(data, height=800):
     """渲染時間線組件"""
