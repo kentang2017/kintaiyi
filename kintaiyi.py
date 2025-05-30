@@ -37,7 +37,7 @@ class Taiyi:
         self.di_zhi_reversed = list(reversed(self.di_zhi))
         self.jiazi_list = config.jiazi()
         self.jigod_map = dict(zip(self.di_zhi, config.new_list(self.di_zhi_reversed, "寅")))
-        self.hegod_map = dict(zip(self.di_zhi, config.new_list(self.di_zhi_reversed, "丑")))
+        self.hegod_map = dict(zip(self.di_zhi, config.new_list(self.di_zhi_reversed, "亥")))
         self.l_num = [8, 8, 3, 3, 4, 4, 9, 9, 2, 2, 7, 7, 6, 6, 1, 1]
 
     def _get_gangzhi(self):
