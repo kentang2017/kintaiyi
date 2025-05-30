@@ -253,35 +253,28 @@ with tabs[0]:
         except Exception as e:
             st.error(f"生成盤局時發生錯誤：{str(e)}")
 
-# 其他標籤頁內容
+#使用說明
 with tabs[1]:
-    st.markdown('使用說明')
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "instruction.md"))
-
+#太乙局數史例
 with tabs[2]:
-    st.markdown('太乙局數史例')
     with open('example.json', "r") as f:
         data = f.read()
     timeline(data, height=600)
     with st.expander("列表"):
         st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "example.md"))
-
+#災害統計
 with tabs[3]:
-    st.markdown('災害統計')
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "disaster.md"))
-
+#古籍書目
 with tabs[4]:
-    st.header('古籍書目')
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "guji.md"))
-
+#更新日誌
 with tabs[5]:
-    st.header('更新日誌')
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "update.md"))
-
+#看盤要領
 with tabs[6]:
-    st.markdown('看盤要領')
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "tutorial.md"), unsafe_allow_html=True)
 
 with tabs[7]:
-    st.markdown('連結')
     st.markdown(get_file_content_as_string(BASE_URL_KINLIUREN, "update.md"), unsafe_allow_html=True)
