@@ -264,6 +264,55 @@ with tabs[0]:
         except Exception as e:
             st.error(f"生成盤局時發生錯誤：{str(e)}")
 
+    # Add "截圖分享" button and screenshot functionality
+    if manual or instant:
+        st.button("截圖分享", key="screenshot_share")
+        # Inject html2canvas library and JavaScript for screenshot
+        screenshot_html = """
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+        <script>
+        document.querySelectorAll('[data-testid="stButton"]').forEach(button => {
+            if (button.textContent.includes("截圖分享")) {
+                button.addEventListener("click", () => {
+                    const element = document.getElementById("capture-area");
+                    if (!element) {
+                        alert("無法找到要截圖的區域！");
+                        return;
+                    }
+                    html2canvas(element, {backgroundColor: "#1E1E1E"}).then(canvas => {
+                        const link = document.createElement("a");
+                        link.download = "taiyi_screenshot.png";
+                        link.href = canvas.toDataURL("image/png");
+                        link.click();
+                    }).catch(err => {
+                        console.error("截圖失敗:", err);
+                        alert("截圖失敗，請重試！");
+                    });
+                });
+            }
+        });
+        </script>
+        """
+        st.markdown(screenshot_html, unsafe_allow_html=True)
+        
+        # Display sharing instructions
+        st.markdown("""
+        **分享步驟：**
+        1. 點擊「截圖分享」按鈕以上載圖片。
+        2. 圖片下載後，手動將圖片分享到 WhatsApp 或 WeChat：
+        """)
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown(
+                '<a href="https://api.whatsapp.com/send" target="_blank"><button style="background-color:#25D366;color:white;padding:10px;border-radius:5px;border:none;cursor:pointer;">分享到 WhatsApp</button></a>',
+                unsafe_allow_html=True
+            )
+        with col2:
+            st.markdown(
+                '<a href="weixin://dl/chat" target="_blank"><button style="background-color:#7BB32E;color:white;padding:10px;border-radius:5px;border:none;cursor:pointer;">分享到 WeChat</button></a>',
+                unsafe_allow_html=True
+            )
+        st.markdown("**注意：** 點擊分享按鈕後，請在 WhatsApp 或 WeChat 中選擇剛才下載的圖片進行分享。")
 #使用說明
 with tabs[1]:
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "instruction.md"))
