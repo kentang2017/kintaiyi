@@ -16,7 +16,9 @@ from taiyimishu import taiyi_yingyang
 from historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
-
+from svglib.svglib import svg2rlg
+from reportlab.graphics import renderPM
+from PIL import Image
 # 自定義組件定義
 @st.cache_data
 def get_file_content_as_string(base_url, path):
@@ -253,6 +255,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
 
 # 太乙排盤
 with tabs[0]:
+    st.markdown("太乙排盤")
     output = st.empty()
     with st_capture(output.code):
         try:
@@ -264,65 +267,37 @@ with tabs[0]:
         except Exception as e:
             st.error(f"生成盤局時發生錯誤：{str(e)}")
 
-    # Add "截圖分享" button and screenshot functionality
+    # Add "截圖分享" button and download functionality
     if manual or instant:
         st.button("截圖分享", key="screenshot_share")
-        # Inject dom-to-image library and JavaScript for screenshot
-        screenshot_html = """
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
-        <script>
-        document.querySelectorAll('[data-testid="stButton"]').forEach(button => {
-            if (button.textContent.includes("截圖分享")) {
-                button.addEventListener("click", () => {
-                    // Add a delay to ensure the DOM is fully rendered
-                    setTimeout(() => {
-                        const element = document.getElementById("capture-area");
-                        if (!element) {
-                            console.error("無法找到 capture-area 元素");
-                            alert("無法找到要截圖的區域！");
-                            return;
-                        }
-                        domtoimage.toPng(element, {
-                            bgcolor: "#1E1E1E",
-                            quality: 1,
-                            scale: 2
-                        })
-                        .then(dataUrl => {
-                            const link = document.createElement("a");
-                            link.download = "taiyi_screenshot.png";
-                            link.href = dataUrl;
-                            link.click();
-                        })
-                        .catch(err => {
-                            console.error("截圖失敗:", err);
-                            alert("截圖失敗，請重試！錯誤信息：" + err);
-                        });
-                    }, 2000); // Delay of 2 seconds to ensure rendering
-                });
-            }
-        });
-        </script>
-        """
-        st.markdown(screenshot_html, unsafe_allow_html=True)
-        
-        # Display sharing instructions
-        st.markdown("""
-        **分享步驟：**
-        1. 點擊「截圖分享」按鈕以上載圖片。
-        2. 圖片下載後，手動將圖片分享到 WhatsApp 或 WeChat：
-        """)
-        col1, col2 = st.columns(2)
-        with col1:
-            st.markdown(
-                '<a href="https://api.whatsapp.com/send" target="_blank"><button style="background-color:#25D366;color:white;padding:10px;border-radius:5px;border:none;cursor:pointer;">分享到 WhatsApp</button></a>',
-                unsafe_allow_html=True
-            )
-        with col2:
-            st.markdown(
-                '<a href="weixin://dl/chat" target="_blank"><button style="background-color:#7BB32E;color:white;padding:10px;border-radius:5px;border:none;cursor:pointer;">分享到 WeChat</button></a>',
-                unsafe_allow_html=True
-            )
-        st.markdown("**注意：** 點擊分享按鈕後，請在 WhatsApp 或 WeChat 中選擇剛才下載的圖片進行分享。")
+        if 'image_path' in locals():
+            with open(image_path, "rb") as file:
+                btn = st.download_button(
+                    label="下載截圖",
+                    data=file,
+                    file_name="taiyi_screenshot.png",
+                    mime="image/png"
+                )
+            # Display sharing instructions
+            st.markdown("""
+            **分享步驟：**
+            1. 點擊「下載截圖」按鈕以上載圖片。
+            2. 圖片下載後，手動將圖片分享到 WhatsApp 或 WeChat：
+            """)
+            col1, col2 = st.columns(2)
+            with col1:
+                st.markdown(
+                    '<a href="https://api.whatsapp.com/send" target="_blank"><button style="background-color:#25D366;color:white;padding:10px;border-radius:5px;border:none;cursor:pointer;">分享到 WhatsApp</button></a>',
+                    unsafe_allow_html=True
+                )
+            with col2:
+                st.markdown(
+                    '<a href="weixin://dl/chat" target="_blank"><button style="background-color:#7BB32E;color:white;padding:10px;border-radius:5px;border:none;cursor:pointer;">分享到 WeChat</button></a>',
+                    unsafe_allow_html=True
+                )
+            st.markdown("**注意：** 點擊分享按鈕後，請在 WhatsApp 或 WeChat 中選擇剛才下載的圖片進行分享。")
+        else:
+            st.warning("截圖生成失敗，請確保所有依賴庫已安裝（如 svglib 和 reportlab）。")
 #使用說明
 with tabs[1]:
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "instruction.md"))
