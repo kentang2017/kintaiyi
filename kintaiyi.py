@@ -539,7 +539,74 @@ class Taiyi:
         rrres = [re.findall("..", i) for i in rres]
         overall = str(res.keys())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
         return {overall[i]:rrres[i] for i in range(0,13)}
-           
+
+    def sixteen_gong2(self, ji_style, taiyi_acumyear):
+        """十六宮各星將"""
+        if ji_style != 4:
+            dict1 = [{self.skyeyes(ji_style, taiyi_acumyear):"文昌"},
+                     {self.taishui(ji_style):"太歲"},
+                     {self.hegod(ji_style):"合神"},
+                     {self.jigod(ji_style):"計神"},
+                     {self.sf(ji_style, taiyi_acumyear):"始擊"},
+                     {self.se(ji_style, taiyi_acumyear):"定計"}, 
+                     {self.kingbase(ji_style, taiyi_acumyear):"君基"}, 
+                     {self.officerbase(ji_style, taiyi_acumyear):"臣基"}, 
+                     {self.pplbase(ji_style, taiyi_acumyear):"民基"},
+                     {self.fgd(ji_style, taiyi_acumyear):"四神"},
+                     {self.skyyi(ji_style, taiyi_acumyear):"天乙"},
+                     {self.earthyi(ji_style, taiyi_acumyear):"地乙"},
+                     {self.zhifu(ji_style, taiyi_acumyear):"直符"},
+                     {self.flyfu(ji_style, taiyi_acumyear):"飛符"},
+                     {config.num2gong(config.wufu(self.accnum(ji_style,taiyi_acumyear))):"五福"},
+                     #{self.ty_gong(ji_style, taiyi_acumyear):"太乙"},
+                     {config.num2gong(self.home_general(ji_style, taiyi_acumyear)):"主大"},  
+                     {config.num2gong(self.home_vgen(ji_style, taiyi_acumyear)):"主參"},
+                     {config.num2gong(self.away_general(ji_style, taiyi_acumyear)):"客大"},  
+                     {config.num2gong(self.away_vgen(ji_style, taiyi_acumyear)):"客參"},
+                     {config.num2gong(config.bigyo(self.accnum(ji_style,taiyi_acumyear))):"大游"},
+                     {config.num2gong(config.smyo(self.accnum(ji_style,taiyi_acumyear))):"小游"},  
+                     #{config.leigong(self.ty(ji_style, taiyi_acumyear)):"雷公"},  
+                     {config.yangjiu(self.year, self.month, self.day):"陽九"}, 
+                     {config.baliu(self.year, self.month, self.day):"百六"},
+                     {config.num2gong(self.ty(ji_style, taiyi_acumyear)):"太乙"}, 
+                     ]
+        if ji_style == 4:
+            dict1 = [{self.skyeyes(ji_style, taiyi_acumyear):"文昌"},
+                     {self.hegod(ji_style):"合神"},
+                     {self.jigod(ji_style):"計神"},
+                     {self.sf(ji_style, taiyi_acumyear):"始擊"},
+                     {self.kingbase(ji_style, taiyi_acumyear):"君基"}, 
+                     {self.officerbase(ji_style, taiyi_acumyear):"臣基"}, 
+                     {self.pplbase(ji_style, taiyi_acumyear):"民基"},
+                     {self.fgd(ji_style, taiyi_acumyear):"四神"},
+                     {self.skyyi(ji_style, taiyi_acumyear):"天乙"},
+                     {self.earthyi(ji_style, taiyi_acumyear):"地乙"},
+                     {self.zhifu(ji_style, taiyi_acumyear):"直符"},
+                     {self.flyfu(ji_style, taiyi_acumyear):"飛符"},
+                     {config.num2gong(config.wufu(self.accnum(ji_style,taiyi_acumyear))):"五福"},
+                     {config.num2gong(self.home_general(ji_style, taiyi_acumyear)):"主大"},  
+                     {config.num2gong(self.home_vgen(ji_style, taiyi_acumyear)):"主參"},
+                     {config.num2gong(self.away_general(ji_style, taiyi_acumyear)):"客大"},  
+                     {config.num2gong(self.away_vgen(ji_style, taiyi_acumyear)):"客參"},
+                     {config.num2gong(self.ty(ji_style, taiyi_acumyear)):"太乙"}, 
+                     ]
+        res = {"巳":"", "午":"", "未":"", "坤":"", "申":"", "酉":"", "戌":"", "乾":"", "亥":"", "子":"", "丑":"", "艮":"","寅":"", "卯":"", "辰":"", "巽":"","中":""}
+        for dict in dict1:
+            for list in dict:
+                if list in res:
+                    try:
+                        res[list] += (dict[list])
+                    except TypeError:
+                        pass
+                else:
+                    try:
+                        res[list] = dict[list]
+                    except TypeError:
+                        pass
+        rres = str(res.values())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
+        rrres = [re.findall("..", i) for i in rres]
+        overall = str(res.keys())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
+        return {overall[i]:rrres[i] for i in range(0,17)}
 
     def stars_descriptions_text(self, ji_style, taiyi_acumyear):
         """星將描述"""
