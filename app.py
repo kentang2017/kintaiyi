@@ -51,7 +51,7 @@ def render_svg(svg, num):
       <script>
         const rotations = {{}};
         function rotateLayer(layer) {{
-          const id = layer.id || "default_" + Math.random().toString(36).substr(2, 9); // Fallback ID
+          const id = layer.id;
           if (!rotations[id]) rotations[id] = 0;
           rotations[id] += 30;
           const newRotation = rotations[id] % 360;
@@ -79,7 +79,7 @@ def render_svg(svg, num):
         }}
     </style>
     """
-    html(html_content, height=num)
+    html(html_content, height=num)  # Reduced height for the HTML component
 
 def timeline(data, height=800):
     """渲染時間線組件"""
