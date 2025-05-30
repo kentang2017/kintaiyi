@@ -13,7 +13,7 @@ import re
 def gen_chart(first_layer, second_layer, sixth_layer):
     # ... [rest of your setup code remains the same]
     # Create an SVG drawing canvas
-    d = draw.Drawing(390, 390, origin="top")
+    d = draw.Drawing(390, 390, origin="center")
     # Set the donut's radii and number of divisions for each layer
     inner_radius = 13
     layer_gap = 45  # Gap between layers
@@ -72,7 +72,7 @@ def gen_chart(first_layer, second_layer, sixth_layer):
 def gen_chart_life(second_layer, twelve, sixth_layer):
     # ... [rest of your setup code remains the same]
     # Create an SVG drawing canvas
-    d = draw.Drawing(390, 450, origin="top")
+    d = draw.Drawing(306, 306, origin="center")
     # Set the donut's radii and number of divisions for each layer
     inner_radius = 12
     layer_gap = 35  # Gap between layers
@@ -130,7 +130,7 @@ def gen_chart_life(second_layer, twelve, sixth_layer):
 def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
     # ... [rest of your setup code remains the same]
     # Create an SVG drawing canvas
-    d = draw.Drawing(390, 420, origin="top")
+    d = draw.Drawing(322, 322, origin="center")
     # Set the donut's radii and number of divisions for each layer
     inner_radius = 3
     layer_gap = 31.5  # Gap between layers
@@ -188,7 +188,7 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
 def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeight):
     # ... [rest of your setup code remains the same]
     # Create an SVG drawing canvas
-    d = draw.Drawing(390, 420, origin="top")
+    d = draw.Drawing(387, 387, origin="center")
     # Set the donut's radii and number of divisions for each layer
     inner_radius = 3
     layer_gap = 31.5  # Gap between layers
