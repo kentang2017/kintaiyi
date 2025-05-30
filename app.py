@@ -16,6 +16,9 @@ from taiyimishu import taiyi_yingyang
 from historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 
 # 自定義組件定義
 @st.cache_data
@@ -257,57 +260,69 @@ with tabs[0]:
     with st_capture(output.code):
         try:
             if manual:
-                svg_content, text_output = gen_results(my, mm, md, mh, mmin, num, tn, sex_o)
+                text_output = gen_results(my, mm, md, mh, mmin, num, tn, sex_o)
             elif instant:
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-                svg_content, text_output = gen_results(now.year, now.month, now.day, now.hour, now.minute, num, tn, sex_o)
+                text_output = gen_results(now.year, now.month, now.day, now.hour, now.minute, num, tn, sex_o)
             else:
-                svg_content, text_output = None, None
+                text_output = None
         except Exception as e:
             st.error(f"生成盤局時發生錯誤：{str(e)}")
-            svg_content, text_output = None, None
+            text_output = None
 
-    # Add "截圖分享" button and download functionality
+    # Add "截圖分享" button and screenshot functionality
     if manual or instant:
-        st.button("截圖分享", key="screenshot_share")
-        if svg_content and text_output:
-            st.download_button(
-                label="下載 SVG 文件",
-                data=svg_content.encode('utf-8'),
-                file_name="taiyi_chart.svg",
-                mime="image/svg+xml"
-            )
-            st.download_button(
-                label="下載文本文件",
-                data=text_output.encode('utf-8'),
-                file_name="taiyi_text.txt",
-                mime="text/plain"
-            )
-            # Display sharing instructions
-            st.markdown("""
-            **分享步驟：**
-            1. 下載「SVG 文件」和「文本文件」。
-            2. 使用圖形編輯器（如 Inkscape 或瀏覽器）將 SVG 文件轉換為圖片（如 PNG）。
-            3. 將圖片和文本合併（例如使用圖片編輯軟件），或單獨分享圖片到 WhatsApp 或 WeChat：
-            """)
-            col1, col2 = st.columns(2)
-            with col1:
-                st.markdown(
-                    '<a href="https://api.whatsapp.com/send" target="_blank"><button style="background-color:#25D366;color:white;padding:10px;border-radius:5px;border:none;cursor:pointer;">分享到 WhatsApp</button></a>',
-                    unsafe_allow_html=True
+        if st.button("截圖分享", key="screenshot_share"):
+            try:
+                # Set up Selenium with headless Chrome
+                chrome_options = Options()
+                chrome_options.add_argument("--headless")
+                chrome_options.add_argument("--no-sandbox")
+                chrome_options.add_argument("--disable-dev-shm-usage")
+                driver = webdriver.Chrome(options=chrome_options, executable_path=ChromeDriverManager().install())
+
+                # Get the current app URL (assuming local or deployed URL)
+                current_url = st.server.server_url
+                if not current_url:
+                    current_url = "http://localhost:8501"  # Default local URL for testing
+                driver.get(current_url)
+
+                # Wait for the page to load (adjust timeout as needed)
+                driver.implicitly_wait(10)
+
+                # Take screenshot
+                screenshot = driver.get_screenshot_as_png()
+                driver.quit()
+
+                # Provide download button for the screenshot
+                st.download_button(
+                    label="下載截圖",
+                    data=screenshot,
+                    file_name="taiyi_screenshot.png",
+                    mime="image/png"
                 )
-            with col2:
-                st.markdown(
-                    '<a href="weixin://dl/chat" target="_blank"><button style="background-color:#7BB32E;color:white;padding:10px;border-radius:5px;border:none;cursor:pointer;">分享到 WeChat</button></a>',
-                    unsafe_allow_html=True
-                )
-            st.markdown("""
-            **注意：**
-            - 將 SVG 文件拖到瀏覽器中可預覽，然後右鍵「儲存為」PNG 格式。
-            - 合併圖片和文本後，請在 WhatsApp 或 WeChat 中選擇下載的圖片進行分享。
-            """)
-        else:
-            st.warning("無法生成可下載內容，請確保輸入參數正確。")
+
+                # Display sharing instructions
+                st.markdown("""
+                **分享步驟：**
+                1. 點擊「下載截圖」按鈕以上載圖片。
+                2. 圖片下載後，手動將圖片分享到 WhatsApp 或 WeChat：
+                """)
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.markdown(
+                        '<a href="https://api.whatsapp.com/send" target="_blank"><button style="background-color:#25D366;color:white;padding:10px;border-radius:5px;border:none;cursor:pointer;">分享到 WhatsApp</button></a>',
+                        unsafe_allow_html=True
+                    )
+                with col2:
+                    st.markdown(
+                        '<a href="weixin://dl/chat" target="_blank"><button style="background-color:#7BB32E;color:white;padding:10px;border-radius:5px;border:none;cursor:pointer;">分享到 WeChat</button></a>',
+                        unsafe_allow_html=True
+                    )
+                st.markdown("**注意：** 點擊分享按鈕後，請在 WhatsApp 或 WeChat 中選擇剛才下載的圖片進行分享。")
+            except Exception as e:
+                st.error(f"截圖生成失敗：{str(e)}")
+                st.warning("請確保 ChromeDriver 已正確安裝並配置，或在本地運行應用程序。")
 #使用說明
 with tabs[1]:
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "instruction.md"))
