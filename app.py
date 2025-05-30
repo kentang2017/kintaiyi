@@ -154,7 +154,7 @@ with st.sidebar:
     sex_o = st.selectbox('太乙命法性別', ('男', '女'))
     
     num_dict = {'時計太乙': 4, '年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '分計太乙': 3, '太乙命法': 5}
-    num = num_dict[option]
+    style = num_dict[option]
     
     tn_dict = {'太乙統宗': 0, '太乙金鏡': 1, '太乙淘金歌': 2, '太乙局': 3}
     tn = tn_dict[acum]
@@ -169,18 +169,19 @@ with st.sidebar:
         instant = st.button('即時盤', use_container_width=True)
 
 @st.cache_data
-def gen_results(my, mm, md, mh, mmin, num, tn, sex_o, tc):
+def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
     """生成太乙計算結果，返回數據字典"""
     ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
-    if num != 5:
-        ttext = ty.pan(num, tn)
-        kook = ty.kook(num, tn)
-        sj_su_predict = f"始擊落{ty.sf_num(num, tn)}宿，{su_dist.get(ty.sf_num(num, tn))}"
+    if style != 5:
+        ttext = ty.pan(style, tn)
+        kook = ty.kook(style, tn)
+        sj_su_predict = f"始擊落{ty.sf_num(style, tn)}宿，{su_dist.get(ty.sf_num(style, tn))}"
         tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(num, tn)))
-        three_door = ty.threedoors(num, tn)
-        five_generals = ty.fivegenerals(num, tn)
-        home_vs_away1 = ty.wc_n_sj(num, tn)
-    else:
+        three_door = ty.threedoors(style, tn)
+        five_generals = ty.fivegenerals(style, tn)
+        home_vs_away1 = ty.wc_n_sj(style, tn)
+        genchart2 = ty.gen_gong(style, tn, tc)
+    if style == 5
         tn = 0
         ttext = ty.pan(3, 0)
         kook = ty.kook(3, 0)
@@ -189,12 +190,11 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o, tc):
         three_door = ty.threedoors(3, 0)
         five_generals = ty.fivegenerals(3, 0)
         home_vs_away1 = ty.wc_n_sj(3, 0)
-    
+        genchart2 = ty.gen_gong(3, tn, tc)
     genchart1 = ty.gen_life_gong(sex_o)
-    genchart2 = ty.gen_gong(num, tn, tc)
     kook_num = kook.get("數")
     yingyang = kook.get("文")[0]
-    wuyuan = ty.get_five_yuan_kook(num, tn) if num != 5 else ""
+    wuyuan = ty.get_five_yuan_kook(style, tn) if style != 5 else ""
     homecal, awaycal, setcal = config.find_cal(yingyang, kook_num)
     zhao = {"男": "乾造", "女": "坤造"}.get(sex_o)
     life1 = ty.gongs_discription(sex_o)
@@ -252,7 +252,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o, tc):
         "dgua": dgua,
         "hgua": hgua,
         "mingua": mingua,
-        "num": num,
+        "style": style,
         "tn": tn,
         "sex_o": sex_o,
         "ty": ty
@@ -264,11 +264,11 @@ with tabs[0]:
     with st_capture(output.code):
         try:
             if manual:
-                results = gen_results(my, mm, md, mh, mmin, num, tn, sex_o, tc)
+                results = gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc)
                 st.session_state.render_default = False
             elif instant:
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-                results = gen_results(now.year, now.month, now.day, now.hour, now.minute, num, tn, sex_o, tc)
+                results = gen_results(now.year, now.month, now.day, now.hour, now.minute, style, tn, sex_o, tc)
                 st.session_state.render_default = False
             elif st.session_state.render_default:
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
@@ -277,7 +277,7 @@ with tabs[0]:
                 results = None
 
             if results:
-                if results["num"] == 5:
+                if results["style"] == 5:
                     # Log the SVG for debugging
                     st.write("Debug: genchart1 SVG content:", results["genchart1"])
                     try:
@@ -321,12 +321,12 @@ with tabs[0]:
                         st.markdown(f"太歲值宿斷事︰{results['year_predict']}")
                         st.markdown(f"始擊值宿斷事︰{results['sj_su_predict']}")
                         st.markdown(f"十天干歲始擊落宮預測︰{results['tg_sj_su_predict']}")
-                        st.markdown(f"推太乙在天外地內法︰{results['ty'].ty_gong_dist(results['num'], results['tn'])}")
+                        st.markdown(f"推太乙在天外地內法︰{results['ty'].ty_gong_dist(results['style'], results['tn'])}")
                         st.markdown(f"三門五將︰{results['three_door'] + results['five_generals']}")
                         st.markdown(f"推主客相關︰{results['home_vs_away1']}")
                         st.markdown(f"推少多以占勝負︰{results['ttext'].get('推少多以占勝負')}")
                         st.markdown(f"推太乙風雲飛鳥助戰︰{results['home_vs_away3']}")
-                    print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(results['num'])[0]}數︰{results['ty'].accnum(results['num'], results['tn'])} | \n農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{results['gz']} |\n{config.kingyear(my)} |\n{config.ty_method(results['tn'])} - {results['ty'].kook(results['num'], results['tn']).get('文')} ({results['ttext'].get('局式').get('年')}) 五子元局:{results['wuyuan']} | \n紀元︰{results['ttext'].get('紀元')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} 定筭︰{results['setcal']} |")
+                    print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(results['style'])[0]}數︰{results['ty'].accnum(results['style'], results['tn'])} | \n農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{results['gz']} |\n{config.kingyear(my)} |\n{config.ty_method(results['tn'])} - {results['ty'].kook(results['style'], results['tn']).get('文')} ({results['ttext'].get('局式').get('年')}) 五子元局:{results['wuyuan']} | \n紀元︰{results['ttext'].get('紀元')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} 定筭︰{results['setcal']} |")
         except Exception as e:
             st.error(f"生成盤局時發生錯誤：{str(e)}")
 
