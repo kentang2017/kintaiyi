@@ -43,6 +43,11 @@ def format_text(d, parent_key=""):
 
 def render_svg(svg, num):
     """渲染交互式 SVG 圖表"""
+    # Validate SVG input
+    if not svg or 'svg' not in svg.lower():
+        st.error("Invalid SVG content provided")
+        return
+    
     html_content = f"""
     <div style="margin: 0; padding: 0;">
       <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {num} {num}" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
@@ -51,21 +56,24 @@ def render_svg(svg, num):
       <script>
         const rotations = {{}};
         function rotateLayer(layer) {{
-          const id = layer.id;
+          if (!layer || !layer.getAttribute) return;
+          const id = layer.getAttribute('id') || "default_" + Math.random().toString(36).substr(2, 9);
           if (!rotations[id]) rotations[id] = 0;
           rotations[id] += 30;
-          const newRotation = rotations[id] % 360;
+          const newRotation = (rotations[id] || 0) % 360;
           layer.setAttribute("transform", `rotate(${{newRotation}})`);
           layer.querySelectorAll("text").forEach(text => {{
+            if (!text || !text.getAttribute) return;
             const angle = newRotation % 360;
             const x = parseFloat(text.getAttribute("x") || 0);
             const y = parseFloat(text.getAttribute("y") || 0);
+            if (isNaN(x) || isNaN(y)) return;
             const transform = `rotate(${{-angle}}, ${{x}}, ${{y}})`;
             text.setAttribute("transform", transform);
           }});
         }}
         document.querySelectorAll("g").forEach(group => {{
-          group.addEventListener("click", () => rotateLayer(group));
+          if (group) group.addEventListener("click", () => rotateLayer(group));
         }});
       </script>
     </div>
@@ -79,7 +87,7 @@ def render_svg(svg, num):
         }}
     </style>
     """
-    html(html_content, height=num)  # Reduced height for the HTML component
+    html(html_content, height=num)
 
 def timeline(data, height=800):
     """渲染時間線組件"""
