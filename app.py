@@ -259,7 +259,7 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
 
 # 太乙排盤
 with tabs[0]:
-output = st.empty()
+    output = st.empty()
     with st_capture(output.code):
         try:
             if manual:
