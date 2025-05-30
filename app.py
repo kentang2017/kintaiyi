@@ -239,9 +239,8 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown(f"推太乙風雲飛鳥助戰︰{home_vs_away3}")
         print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(num)[0]}數︰{ty.accnum(num, tn)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{config.ty_method(tn)} - {ty.kook(num, tn).get('文')} ({ttext.get('局式').get('年')}) 五子元局:{wuyuan} | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} 定筭︰{setcal} |")
 
-# 太乙排盤標籤頁
+# 太乙排盤
 with tabs[0]:
-    st.markdown("太乙排盤")
     output = st.empty()
     with st_capture(output.code):
         try:
