@@ -142,6 +142,7 @@ with st.sidebar:
     
     option = st.selectbox('起盤方式', ('時計太乙', '年計太乙', '月計太乙', '日計太乙', '分計太乙', '太乙命法'))
     acum = st.selectbox('太乙積年數', ('太乙統宗', '太乙金鏡', '太乙淘金歌', '太乙局'))
+    ten_ching = st.selectbox('太乙十精', ('有', '無'))
     sex_o = st.selectbox('太乙命法性別', ('男', '女'))
     
     # 映射起盤方式到數字
@@ -152,6 +153,8 @@ with st.sidebar:
     tn_dict = {'太乙統宗': 0, '太乙金鏡': 1, '太乙淘金歌': 2, '太乙局': 3}
     tn = tn_dict[acum]
     
+    tc_dict = {'有':1, '無':0}
+    tc = tc_dict[ten_ching] 
     # 按鈕佈局
     col1, col2 = st.columns(2)
     with col1:
@@ -161,7 +164,7 @@ with st.sidebar:
 
 @st.cache_data
 # Remove @st.cache_data decorator
-def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
+def gen_results(my, mm, md, mh, mmin, num, tn, sex_o, tc):
     """生成太乙計算結果，返回數據字典"""
     ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
     if num != 5:
@@ -183,7 +186,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
         home_vs_away1 = ty.wc_n_sj(3, 0)
     
     genchart1 = ty.gen_life_gong(sex_o)
-    genchart2 = ty.gen_gong(num, tn)
+    genchart2 = ty.gen_gong(num, tn, tc)
     kook_num = kook.get("數")
     yingyang = kook.get("文")[0]
     wuyuan = ty.get_five_yuan_kook(num, tn) if num != 5 else ""
@@ -257,17 +260,17 @@ with tabs[0]:
         try:
             if manual:
                 # Use sidebar inputs for manual calculation
-                results = gen_results(my, mm, md, mh, mmin, num, tn, sex_o)
+                results = gen_results(my, mm, md, mh, mmin, num, tn, sex_o, tc)
                 st.session_state.render_default = False
             elif instant:
                 # Use current time for instant calculation
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-                results = gen_results(now.year, now.month, now.day, now.hour, now.minute, num, tn, sex_o)
+                results = gen_results(now.year, now.month, now.day, now.hour, now.minute, num, tn, sex_o, tc)
                 st.session_state.render_default = False
             elif st.session_state.render_default:
                 # Default: Run with current time and specified parameters
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-                results = gen_results(now.year, now.month, now.day, now.hour, now.minute, 3, 0, "男")
+                results = gen_results(now.year, now.month, now.day, now.hour, now.minute, 3, 0, "男", tc)
             else:
                 # Prevent rendering if sidebar changes but no button is clicked
                 results = None
