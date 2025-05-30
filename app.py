@@ -16,9 +16,6 @@ from taiyimishu import taiyi_yingyang
 from historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-
 # 自定義組件定義
 @st.cache_data
 def get_file_content_as_string(base_url, path):
