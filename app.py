@@ -16,7 +16,7 @@ from historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
 
-# Define custom components
+# 定義自定義組件
 @st.cache_data
 def get_file_content_as_string(base_url, path):
     url = base_url + path
@@ -41,31 +41,31 @@ def render_svg2(svg):
     st.write(html, unsafe_allow_html=True)
 
 def render_svg(svg):
-    # Directly embed raw SVG along with the interactive JavaScript
+    # 直接嵌入原始 SVG 和互動 JavaScript
     html_content = f"""
     <div>
       <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 390" width="100%" height="500px" overflow="visible">
         {svg}
       </svg>
        <script>
-        const rotations = {{}}; // To store rotation angles for each layer
+        const rotations = {{}}; // 儲存每個層的旋轉角度
     
         function rotateLayer(layer) {{
           const id = layer.id;
           if (!rotations[id]) rotations[id] = 0;
-          rotations[id] += 30; // Rotate by 30 degrees each click
+          rotations[id] += 30; // 每次點擊旋轉 30 度
           const newRotation = rotations[id] % 360;
     
-          // Update the group rotation
+          // 更新組的旋轉
           layer.setAttribute("transform", `rotate(${{newRotation}})`);
     
-          // Adjust text elements inside the group to stay horizontal
+          // 調整組內的文字元素保持水平
           layer.querySelectorAll("text").forEach(text => {{
-            const angle = newRotation % 360; // Angle of the layer
+            const angle = newRotation % 360; // 層的角度
             const x = parseFloat(text.getAttribute("x") || 0);
             const y = parseFloat(text.getAttribute("y") || 0);
     
-            // Calculate the new text rotation to compensate for the group rotation
+            // 計算新的文字旋轉以補償組的旋轉
             const transform = `rotate(${{-angle}}, ${{x}}, ${{y}})`;
             text.setAttribute("transform", transform);
           }});
@@ -87,7 +87,7 @@ def render_svg1(svg):
       function rotateLayer(layer) {{
         const id = layer.id;
         if (!rotations[id]) rotations[id] = 0;
-        rotations[id] += 30; // Rotate by 30 degrees
+        rotations[id] += 30; // 旋轉 30 度
         layer.setAttribute(
           "transform",
           `rotate(${{rotations[id]}} 0 0)`
@@ -132,17 +132,17 @@ def st_capture(output_func):
         stdout.write = new_write
         yield
 
-# Streamlit Page Configuration
+# Streamlit 頁面配置
 st.set_page_config(layout="wide", page_title="堅太乙 - 太鳦排盘")
 
-# Define base URLs for file content
+# 定義文件內容的基本 URL
 BASE_URL_KINTAIYI = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/master/'
 BASE_URL_KINLIUREN = 'https://raw.githubusercontent.com/kentang2017/kinliuren/master/'
 
-# Create Tabs
+# 創建標籤頁
 tabs = st.tabs(['🧮太乙排盤', '💬使用說明', '📜局數史例', '🔥災異統計', '📚古籍書目', '🆕更新日誌', '🚀看盤要領', '🔗連結'])
 
-# Sidebar Inputs
+# Sidebar 輸入
 with st.sidebar:
     now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
     my = st.number_input('年', min_value=0, max_value=2100, value=now.year)
@@ -156,12 +156,26 @@ with st.sidebar:
     num = {'年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '時計太乙': 3, '分計太乙': 4, '太乙命法': 5}[option]
     tn = {'太乙統宗': 0, '太乙金鏡': 1, '太乙淘金歌': 2, '太乙局': 3}[acum]
 
-    # Optimized button layout using columns with equal width
-    col1, col2 = st.columns([1, 1])  # Equal width columns
-    with col1:
-        manual = st.button('手動盤', key="manual_button")
-    with col2:
-        instant = st.button('即時盤', key="instant_button")
+    # 使用 HTML/CSS 優化按鈕佈局，實現水平排列
+    st.markdown("""
+    <div style="display: flex; justify-content: space-between;">
+        <button onclick="st.session_state.manual_button = True">手動盤</button>
+        <button onclick="st.session_state.instant_button = True">即時盤</button>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # 通過 session_state 監聽按鈕點擊
+    if 'manual_button' in st.session_state and st.session_state.manual_button:
+        manual = True
+        del st.session_state.manual_button  # 重置狀態
+    else:
+        manual = False
+
+    if 'instant_button' in st.session_state and st.session_state.instant_button:
+        instant = True
+        del st.session_state.instant_button  # 重置狀態
+    else:
+        instant = False
 
 @st.cache_data
 def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
@@ -269,7 +283,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown(f"明天乙太乙所主術︰{ttext.get('明天乙太乙所主術')}")
             st.markdown(f"明地乙太乙所主術︰{ttext.get('明地乙太乙所主術')}")
             st.markdown(f"明值符太乙所主術︰{ttext.get('明值符太乙所主術')}")
-        print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(num)[0]}數︰{ty.accnum(num, tn)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{config.ty_method(tn)} - {config.taiyi_name(num)} - {ty.kook(num, tn).get('文')} ({ttext.get('局式').get('年')}) 五子元局:{wuyuan} | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} 定筭︰{setcal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))} |")
+        print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(num)[0]}數︰{ty.accnum(num, tn)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{config.ty_method(tn)} - {config.taiyi_name(num)} - {ty.kook(num, tn).get('文')} ({ttext.get('局式').get('年')}) 五子元局:{wuyuan} | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} 定筭�：{setcal} |\n{yc}禽值年 | {ed}門值事 | \n{g}卦值年 | 太乙統運卦︰{config.find_gua(config.lunar_date_d(my, mm, md).get('年'))} |")
 
 with tabs[0]:
     output5 = st.empty()
@@ -285,7 +299,7 @@ with tabs[0]:
         except ValueError:
             st.empty()
 
-# Additional Tabs Content
+# 其他標籤頁內容
 with tabs[7]:
     st.header('連結')
     st.markdown(get_file_content_as_string(BASE_URL_KINLIUREN, "update.md"), unsafe_allow_html=True)
