@@ -16,8 +16,6 @@ from taiyimishu import taiyi_yingyang
 from historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
-import cairosvg
-from PIL import Image, ImageDraw, ImageFont
 
 # 自定義組件定義
 @st.cache_data
@@ -255,36 +253,42 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
 
 # 太乙排盤
 with tabs[0]:
-    st.markdown("太乙排盤")
     output = st.empty()
     with st_capture(output.code):
         try:
             if manual:
-                svg_content, text_output, image_io = gen_results(my, mm, md, mh, mmin, num, tn, sex_o)
+                svg_content, text_output = gen_results(my, mm, md, mh, mmin, num, tn, sex_o)
             elif instant:
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-                svg_content, text_output, image_io = gen_results(now.year, now.month, now.day, now.hour, now.minute, num, tn, sex_o)
+                svg_content, text_output = gen_results(now.year, now.month, now.day, now.hour, now.minute, num, tn, sex_o)
             else:
-                svg_content, text_output, image_io = None, None, None
+                svg_content, text_output = None, None
         except Exception as e:
             st.error(f"生成盤局時發生錯誤：{str(e)}")
-            svg_content, text_output, image_io = None, None, None
+            svg_content, text_output = None, None
 
     # Add "截圖分享" button and download functionality
     if manual or instant:
         st.button("截圖分享", key="screenshot_share")
-        if image_io:
+        if svg_content and text_output:
             st.download_button(
-                label="下載截圖",
-                data=image_io,
-                file_name="taiyi_screenshot.png",
-                mime="image/png"
+                label="下載 SVG 文件",
+                data=svg_content.encode('utf-8'),
+                file_name="taiyi_chart.svg",
+                mime="image/svg+xml"
+            )
+            st.download_button(
+                label="下載文本文件",
+                data=text_output.encode('utf-8'),
+                file_name="taiyi_text.txt",
+                mime="text/plain"
             )
             # Display sharing instructions
             st.markdown("""
             **分享步驟：**
-            1. 點擊「下載截圖」按鈕以上載圖片。
-            2. 圖片下載後，手動將圖片分享到 WhatsApp 或 WeChat：
+            1. 下載「SVG 文件」和「文本文件」。
+            2. 使用圖形編輯器（如 Inkscape 或瀏覽器）將 SVG 文件轉換為圖片（如 PNG）。
+            3. 將圖片和文本合併（例如使用圖片編輯軟件），或單獨分享圖片到 WhatsApp 或 WeChat：
             """)
             col1, col2 = st.columns(2)
             with col1:
@@ -297,25 +301,13 @@ with tabs[0]:
                     '<a href="weixin://dl/chat" target="_blank"><button style="background-color:#7BB32E;color:white;padding:10px;border-radius:5px;border:none;cursor:pointer;">分享到 WeChat</button></a>',
                     unsafe_allow_html=True
                 )
-            st.markdown("**注意：** 點擊分享按鈕後，請在 WhatsApp 或 WeChat 中選擇剛才下載的圖片進行分享。")
+            st.markdown("""
+            **注意：**
+            - 將 SVG 文件拖到瀏覽器中可預覽，然後右鍵「儲存為」PNG 格式。
+            - 合併圖片和文本後，請在 WhatsApp 或 WeChat 中選擇下載的圖片進行分享。
+            """)
         else:
-            st.warning("截圖生成失敗，請確保所有依賴庫已安裝（如 cairosvg 和 Pillow）。")
-            # Fallback: Provide SVG and text as separate downloads
-            if svg_content and text_output:
-                st.markdown("**備用選項：** 您可以下載 SVG 和文本文件，手動合併後分享：")
-                st.download_button(
-                    label="下載 SVG 文件",
-                    data=svg_content.encode('utf-8'),
-                    file_name="taiyi_chart.svg",
-                    mime="image/svg+xml"
-                )
-                st.download_button(
-                    label="下載文本文件",
-                    data=text_output.encode('utf-8'),
-                    file_name="taiyi_text.txt",
-                    mime="text/plain"
-                )
-
+            st.warning("無法生成可下載內容，請確保輸入參數正確。")
 #使用說明
 with tabs[1]:
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "instruction.md"))
