@@ -698,7 +698,7 @@ def taijun(taiyi_acumyear):
 def flybird(taiyi_acumyear):
     f = taiyi_acumyear % 8
     if f == 0:
-       return dict(zip(list(range(1,17)),gong1)).get(f)
+       return "坤"
     else:
        return dict(zip(range(1,9), [1,8,3,4,9,2,7,6])).get(int(f))
 #推太乙風雲飛鳥助戰法
