@@ -51,18 +51,18 @@ def render_svg(svg, num):
       <script>
         const rotations = {{}};
         function rotateLayer(layer) {{
-          const id = layer.id;
+          const id = layer.id || "default_" + Math.random().toString(36).substr(2, 9); // Fallback ID
           if (!rotations[id]) rotations[id] = 0;
           rotations[id] += 30;
           const newRotation = rotations[id] % 360;
-          layer.setAttribute("transform", `rotate(${{newRotation}})`);
-          layer.querySelectorAll("text").forEach(text => {{
+          layer.setAttribute("transform", `rotate(${newRotation})`);
+          layer.querySelectorAll("text").forEach(text => {
             const angle = newRotation % 360;
             const x = parseFloat(text.getAttribute("x") || 0);
             const y = parseFloat(text.getAttribute("y") || 0);
-            const transform = `rotate(${{-angle}}, ${{x}}, ${{y}})`;
+            const transform = `rotate(${-angle}, ${x}, ${y})`;
             text.setAttribute("transform", transform);
-          }});
+          });
         }}
         document.querySelectorAll("g").forEach(group => {{
           group.addEventListener("click", () => rotateLayer(group));
