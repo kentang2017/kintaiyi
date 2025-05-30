@@ -253,6 +253,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
 
 # 太乙排盤
 with tabs[0]:
+    st.markdown("太乙排盤")
     output = st.empty()
     with st_capture(output.code):
         try:
@@ -274,20 +275,30 @@ with tabs[0]:
         document.querySelectorAll('[data-testid="stButton"]').forEach(button => {
             if (button.textContent.includes("截圖分享")) {
                 button.addEventListener("click", () => {
-                    const element = document.getElementById("capture-area");
-                    if (!element) {
-                        alert("無法找到要截圖的區域！");
-                        return;
-                    }
-                    html2canvas(element, {backgroundColor: "#1E1E1E"}).then(canvas => {
-                        const link = document.createElement("a");
-                        link.download = "taiyi_screenshot.png";
-                        link.href = canvas.toDataURL("image/png");
-                        link.click();
-                    }).catch(err => {
-                        console.error("截圖失敗:", err);
-                        alert("截圖失敗，請重試！");
-                    });
+                    // Add a delay to ensure the DOM is fully rendered
+                    setTimeout(() => {
+                        const element = document.getElementById("capture-area");
+                        if (!element) {
+                            console.error("無法找到 capture-area 元素");
+                            alert("無法找到要截圖的區域！");
+                            return;
+                        }
+                        html2canvas(element, {
+                            backgroundColor: "#1E1E1E",
+                            useCORS: true,
+                            allowTaint: true,
+                            scale: 2, // Increase resolution for better quality
+                            logging: true // Enable logging for debugging
+                        }).then(canvas => {
+                            const link = document.createElement("a");
+                            link.download = "taiyi_screenshot.png";
+                            link.href = canvas.toDataURL("image/png");
+                            link.click();
+                        }).catch(err => {
+                            console.error("截圖失敗:", err);
+                            alert("截圖失敗，請重試！錯誤信息：" + err.message);
+                        });
+                    }, 1000); // Delay of 1 second to ensure rendering
                 });
             }
         });
