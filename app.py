@@ -261,7 +261,9 @@ with tabs[0]:
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
                 text_output = gen_results(now.year, now.month, now.day, now.hour, now.minute, num, tn, sex_o)
             else:
-                text_output = None
+                # Default: Run with current time and specified parameters
+                now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
+                text_output = gen_results(now.year, now.month, now.day, now.hour, now.minute, 4, 0, "男")
         except Exception as e:
             st.error(f"生成盤局時發生錯誤：{str(e)}")
             text_output = None
