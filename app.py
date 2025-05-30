@@ -270,7 +270,7 @@ with tabs[0]:
             elif st.session_state.render_default:
                 # Default: Run with current time and specified parameters
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-                results = gen_results(now.year, now.month, now.day, now.hour, now.minute, 3, 0, "男", tc)
+                results = gen_results(now.year, now.month, now.day, now.hour, now.minute, 3, 0, "男", 0)
             else:
                 # Prevent rendering if sidebar changes but no button is clicked
                 results = None
