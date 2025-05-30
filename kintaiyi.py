@@ -413,79 +413,133 @@ class Taiyi:
         """定參將"""
         set_vg = self.set_general(ji_style, taiyi_acumyear) * 3 % 10
         return 5 if set_vg == 0 else set_vg
-
     def sixteen_gong(self, ji_style, taiyi_acumyear):
         """十六宮各星將與十精分佈"""
-        base_dict = [
-            {self.skyeyes(ji_style, taiyi_acumyear): "文昌"},
-            {self.taishui(ji_style): "太歲"},
-            {self.hegod(ji_style): "合神"},
-            {self.jigod(ji_style): "計神"},
-            {self.sf(ji_style, taiyi_acumyear): "始擊"},
-            {self.se(ji_style, taiyi_acumyear): "定計"},
-            {self.kingbase(ji_style, taiyi_acumyear): "君基"},
-            {self.officerbase(ji_style, taiyi_acumyear): "臣基"},
-            {self.pplbase(ji_style, taiyi_acumyear): "民基"},
-            {self.fgd(ji_style, taiyi_acumyear): "四神"},
-            {self.skyyi(ji_style, taiyi_acumyear): "天乙"},
-            {self.earthyi(ji_style, taiyi_acumyear): "地乙"},
-            {self.zhifu(ji_style, taiyi_acumyear): "直符"},
-            {self.flyfu(ji_style, taiyi_acumyear): "飛符"},
-            {config.tian_wang(self.accnum(ji_style, taiyi_acumyear)): "天皇"},
-            {config.wuxing(self.accnum(ji_style, taiyi_acumyear)): "五行"},
-            {config.kingfu(self.accnum(ji_style, taiyi_acumyear)): "帝符"},
-            {config.taijun(self.accnum(ji_style, taiyi_acumyear)): "太尊"},
-            {config.num2gong(config.wufu(self.accnum(ji_style, taiyi_acumyear))): "五福"},
-            {config.num2gong(self.home_general(ji_style, taiyi_acumyear)): "主大"},
-            {config.num2gong(self.home_vgen(ji_style, taiyi_acumyear)): "主參"},
-            {config.num2gong(self.away_general(ji_style, taiyi_acumyear)): "客大"},
-            {config.num2gong(self.away_vgen(ji_style, taiyi_acumyear)): "客參"},
-            {config.num2gong(config.threewind(self.accnum(ji_style, taiyi_acumyear))): "三風"},
-            {config.num2gong(config.fivewind(self.accnum(ji_style, taiyi_acumyear))): "五風"},
-            {config.num2gong(config.eightwind(self.accnum(ji_style, taiyi_acumyear))): "八風"},
-            {config.num2gong(config.flybird(self.accnum(ji_style, taiyi_acumyear))): "飛鳥"},
-            {config.num2gong(config.bigyo(self.accnum(ji_style, taiyi_acumyear))): "大游"},
-            {config.num2gong(config.smyo(self.accnum(ji_style, taiyi_acumyear))): "小游"},
-            {config.num2gong(self.ty(ji_style, taiyi_acumyear)): "太乙"},
-            {config.yangjiu(self.year, self.month, self.day): "陽九"},
-            {config.baliu(self.year, self.month, self.day): "百六"}
-        ]
+        if ji_style != 4:
+            dict1 = [{self.skyeyes(ji_style, taiyi_acumyear):"文昌"},
+                     {self.taishui(ji_style):"太歲"},
+                     {self.hegod(ji_style):"合神"},
+                     {self.jigod(ji_style):"計神"},
+                     {self.sf(ji_style, taiyi_acumyear):"始擊"},
+                     {self.se(ji_style, taiyi_acumyear):"定計"}, 
+                     {self.kingbase(ji_style, taiyi_acumyear):"君基"}, 
+                     {self.officerbase(ji_style, taiyi_acumyear):"臣基"}, 
+                     {self.pplbase(ji_style, taiyi_acumyear):"民基"},
+                     {self.fgd(ji_style, taiyi_acumyear):"四神"},
+                     {self.skyyi(ji_style, taiyi_acumyear):"天乙"},
+                     {self.earthyi(ji_style, taiyi_acumyear):"地乙"},
+                     {self.zhifu(ji_style, taiyi_acumyear):"直符"},
+                     {self.flyfu(ji_style, taiyi_acumyear):"飛符"},
+                     {config.tian_wang(self.accnum(ji_style,taiyi_acumyear)):"天皇"},
+                     {config.tian_shi(self.accnum(ji_style,taiyi_acumyear)):"天時"},
+                     {config.wuxing(self.accnum(ji_style,taiyi_acumyear)):"五行"},
+                     {config.kingfu(self.accnum(ji_style,taiyi_acumyear)):"帝符"},
+                     {config.taijun(self.accnum(ji_style,taiyi_acumyear)):"太尊"},
+                     {config.num2gong(config.wufu(self.accnum(ji_style,taiyi_acumyear))):"五福"},
+                     #{self.ty_gong(ji_style, taiyi_acumyear):"太乙"},
+                     {config.num2gong(self.home_general(ji_style, taiyi_acumyear)):"主大"},  
+                     {config.num2gong(self.home_vgen(ji_style, taiyi_acumyear)):"主參"},
+                     {config.num2gong(self.away_general(ji_style, taiyi_acumyear)):"客大"},  
+                     {config.num2gong(self.away_vgen(ji_style, taiyi_acumyear)):"客參"},
+                     {config.num2gong(config.threewind(self.accnum(ji_style,taiyi_acumyear))):"三風"},  
+                     {config.num2gong(config.fivewind(self.accnum(ji_style,taiyi_acumyear))):"五風"},
+                     {config.num2gong(config.eightwind(self.accnum(ji_style,taiyi_acumyear))):"八風"},  
+                     {config.num2gong(config.flybird(self.accnum(ji_style,taiyi_acumyear))):"飛鳥"},
+                     {config.num2gong(config.bigyo(self.accnum(ji_style,taiyi_acumyear))):"大游"},
+                     {config.num2gong(config.smyo(self.accnum(ji_style,taiyi_acumyear))):"小游"},  
+                     #{config.leigong(self.ty(ji_style, taiyi_acumyear)):"雷公"},  
+                     {config.yangjiu(self.year, self.month, self.day):"陽九"}, 
+                     {config.baliu(self.year, self.month, self.day):"百六"},
+                     #{config.lijin(self.year, self.month, self.day, self.hour, self.minute):"臨津"}, 
+                     #{config.lion(self.year, self.month, self.day, self.hour, self.minute):"獅子"}, 
+                     #{config.cloud(self.home_general(ji_style, taiyi_acumyear)):"白雲"},
+                     #{config.tiger(self.ty(ji_style, taiyi_acumyear)):"猛虎"}, 
+                     #{config.returnarmy(self.away_general(ji_style, taiyi_acumyear)):"回軍"}, 
+                     {config.num2gong(self.ty(ji_style, taiyi_acumyear)):"太乙"}, 
+                     ]
         if ji_style == 4:
-            base_dict.pop(1)  # Remove 太歲
-        res = {k: [] for k in config.gong1 + ["中"]}
-        for d in base_dict:
-            for k, v in d.items():
-                if k in res:
-                    res[k].append(v)
-        return res
+            dict1 = [{self.skyeyes(ji_style, taiyi_acumyear):"文昌"},
+                     {self.hegod(ji_style):"合神"},
+                     {self.jigod(ji_style):"計神"},
+                     {self.sf(ji_style, taiyi_acumyear):"始擊"},
+                     {self.kingbase(ji_style, taiyi_acumyear):"君基"}, 
+                     {self.officerbase(ji_style, taiyi_acumyear):"臣基"}, 
+                     {self.pplbase(ji_style, taiyi_acumyear):"民基"},
+                     {self.fgd(ji_style, taiyi_acumyear):"四神"},
+                     {self.skyyi(ji_style, taiyi_acumyear):"天乙"},
+                     {self.earthyi(ji_style, taiyi_acumyear):"地乙"},
+                     {self.zhifu(ji_style, taiyi_acumyear):"直符"},
+                     {self.flyfu(ji_style, taiyi_acumyear):"飛符"},
+                     {config.tian_wang(self.accnum(ji_style,taiyi_acumyear)):"天皇"},
+                     {config.wuxing(self.accnum(ji_style,taiyi_acumyear)):"五行"},
+                     {config.kingfu(self.accnum(ji_style,taiyi_acumyear)):"帝符"},
+                     {config.taijun(self.accnum(ji_style,taiyi_acumyear)):"太尊"},
+                     {config.num2gong(config.wufu(self.accnum(ji_style,taiyi_acumyear))):"五福"},
+                     {config.num2gong(self.home_general(ji_style, taiyi_acumyear)):"主大"},  
+                     {config.num2gong(self.home_vgen(ji_style, taiyi_acumyear)):"主參"},
+                     {config.num2gong(self.away_general(ji_style, taiyi_acumyear)):"客大"},  
+                     {config.num2gong(self.away_vgen(ji_style, taiyi_acumyear)):"客參"},
+                     {config.num2gong(config.threewind(self.accnum(ji_style,taiyi_acumyear))):"三風"},  
+                     {config.num2gong(config.fivewind(self.accnum(ji_style,taiyi_acumyear))):"五風"},
+                     {config.num2gong(config.eightwind(self.accnum(ji_style,taiyi_acumyear))):"八風"},  
+                     {config.num2gong(config.flybird(self.accnum(ji_style,taiyi_acumyear))):"飛鳥"},
+                     {config.num2gong(self.ty(ji_style, taiyi_acumyear)):"太乙"}, 
+                     ]
+        res = {"巳":"", "午":"", "未":"", "坤":"", "申":"", "酉":"", "戌":"", "乾":"", "亥":"", "子":"", "丑":"", "艮":"","寅":"", "卯":"", "辰":"", "巽":"","中":""}
+        for dict in dict1:
+            for list in dict:
+                if list in res:
+                    try:
+                        res[list] += (dict[list])
+                    except TypeError:
+                        pass
+                else:
+                    try:
+                        res[list] = dict[list]
+                    except TypeError:
+                        pass
+        rres = str(res.values())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
+        rrres = [re.findall("..", i) for i in rres]
+        overall = str(res.keys())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
+        return {overall[i]:rrres[i] for i in range(0,17)}
 
     def sixteen_gong1(self, ji_style, taiyi_acumyear):
         """十六星分佈"""
-        replace_map = {"巽": "辰", "坤": "申", "艮": "丑", "乾": "亥", "中": "辰"}
-        base_dict = [
-            {replace_map.get(self.skyeyes(ji_style, taiyi_acumyear), self.skyeyes(ji_style, taiyi_acumyear)): "文昌"},
-            {replace_map.get(self.jigod(ji_style), self.jigod(ji_style)): "計神"},
-            {replace_map.get(self.sf(ji_style, taiyi_acumyear), self.sf(ji_style, taiyi_acumyear)): "始擊"},
-            {replace_map.get(self.kingbase(ji_style, taiyi_acumyear), self.kingbase(ji_style, taiyi_acumyear)): "君基"},
-            {replace_map.get(self.officerbase(ji_style, taiyi_acumyear), self.officerbase(ji_style, taiyi_acumyear)): "臣基"},
-            {replace_map.get(self.pplbase(ji_style, taiyi_acumyear), self.pplbase(ji_style, taiyi_acumyear)): "民基"},
-            {replace_map.get(self.fgd(ji_style, taiyi_acumyear), self.fgd(ji_style, taiyi_acumyear)): "四神"},
-            {replace_map.get(self.skyyi(ji_style, taiyi_acumyear), self.skyyi(ji_style, taiyi_acumyear)): "天乙"},
-            {replace_map.get(self.earthyi(ji_style, taiyi_acumyear), self.earthyi(ji_style, taiyi_acumyear)): "地乙"},
-            {replace_map.get(self.flyfu1(ji_style, taiyi_acumyear), self.flyfu1(ji_style, taiyi_acumyear)): "飛符"},
-            {replace_map.get(config.num2gong_life(config.wufu(self.accnum(ji_style, taiyi_acumyear))), config.num2gong_life(config.wufu(self.accnum(ji_style, taiyi_acumyear)))): "五福"},
-            {replace_map.get(config.num2gong_life(self.home_general(ji_style, taiyi_acumyear)), config.num2gong_life(self.home_general(ji_style, taiyi_acumyear))): "主大"},
-            {replace_map.get(config.num2gong_life(self.home_vgen(ji_style, taiyi_acumyear)), config.num2gong_life(self.home_vgen(ji_style, taiyi_acumyear))): "主參"},
-            {replace_map.get(config.num2gong_life(self.away_general(ji_style, taiyi_acumyear)), config.num2gong_life(self.away_general(ji_style, taiyi_acumyear))): "客大"},
-            {replace_map.get(config.num2gong_life(self.away_vgen(ji_style, taiyi_acumyear)), config.num2gong_life(self.away_vgen(ji_style, taiyi_acumyear))): "客參"},
-            {replace_map.get(config.num2gong_life(config.smyo(self.accnum(ji_style, taiyi_acumyear))), config.num2gong_life(config.smyo(self.accnum(ji_style, taiyi_acumyear)))): "小游"}
-        ]
-        res = {k: [] for k in config.gong1 + ["中"]}
-        for d in base_dict:
-            for k, v in d.items():
-                if k in res:
-                    res[k].append(v)
-        return res
+        dict1 = [{self.skyeyes(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"文昌"},
+                 {self.jigod(ji_style).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"計神"},
+                 {self.sf(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"始擊"},
+                 {self.kingbase(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"君基"}, 
+                 {self.officerbase(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"臣基"}, 
+                 {self.pplbase(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"民基"},
+                 {self.fgd(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"四神"},
+                 {self.skyyi(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"天乙"},
+                 {self.earthyi(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"地乙"},
+                 {self.flyfu1(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"飛符"},
+                 {config.num2gong_life(config.wufu(self.accnum(ji_style,taiyi_acumyear))).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"五福"},
+                 {config.num2gong_life(self.home_general(ji_style, taiyi_acumyear)).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"主大"},  
+                 {config.num2gong_life(self.home_vgen(ji_style, taiyi_acumyear)).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"主參"},
+                 {config.num2gong_life(self.away_general(ji_style, taiyi_acumyear)).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"客大"},  
+                 {config.num2gong_life(self.away_vgen(ji_style, taiyi_acumyear)).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"客參"},
+                 {config.num2gong_life(config.smyo(self.accnum(ji_style,taiyi_acumyear))).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"小游"},  
+                 ]
+        res = {"巳":"", "午":"", "未":"", "申":"", "酉":"", "戌":"", "亥":"", "子":"", "丑":"", "寅":"", "卯":"", "辰":"","中":""}
+        for dict in dict1:
+            for list in dict:
+                if list in res:
+                    try:
+                        res[list] += (dict[list])
+                    except TypeError:
+                        pass
+                else:
+                    try:
+                        res[list] = dict[list]
+                    except TypeError:
+                        pass
+        rres = str(res.values())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
+        rrres = [re.findall("..", i) for i in rres]
+        overall = str(res.keys())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
+        return {overall[i]:rrres[i] for i in range(0,13)}
+           
 
     def stars_descriptions_text(self, ji_style, taiyi_acumyear):
         """星將描述"""
@@ -1314,7 +1368,7 @@ if __name__ == '__main__':
     day = 16
     hour = 3
     minute = 0
-    print(Taiyi(year, month, day, hour, minute).gen_life_gong_list("男"))
+    print(Taiyi(year, month, day, hour, minute).pan(4,0))
     #print(Taiyi(year, month, day, hour, minute).taiyi_life("男"))
     #print(Taiyi(year, month, day, hour, minute).gongs_discription_list("男"))
     #print(Taiyi(year, month, day, hour, minute).gongs_discription("男"))
