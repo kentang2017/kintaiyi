@@ -540,8 +540,8 @@ class Taiyi:
         overall = str(res.keys())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
         return {overall[i]:rrres[i] for i in range(0,13)}
 
-    def sixteen_gong2(self, ji_style, taiyi_acumyear):
-        """十六宮各星將"""
+    def sixteen_gong3(self, ji_style, taiyi_acumyear):
+        """十六宮各星將，無十精"""
         if ji_style != 4:
             dict1 = [{self.skyeyes(ji_style, taiyi_acumyear):"文昌"},
                      {self.taishui(ji_style):"太歲"},
