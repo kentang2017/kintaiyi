@@ -209,7 +209,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
     mingua = ty.minute_gua()[1]
     
     if num == 5:
-        start_pt = genchart1[genchart1.index('''viewBox="''')+22:].split(" ")[1])
+        start_pt = genchart1[genchart1.index('''viewBox="''')+22:].split(" ")[1]
         render_svg(genchart1, int(start_pt))
         with st.expander("解釋"):
             st.title("《太乙命法》︰")
@@ -233,7 +233,7 @@ def gen_results(my, mm, md, mh, mmin, num, tn, sex_o):
             st.markdown(ch)
         print(f"{config.gendatetime(my, mm, md, mh, mmin)} {zhao} - {ty.taiyi_life(sex_o).get('性別')} - {config.taiyi_name(0)[0]} - {ty.accnum(0, 0)} | \n農曆︰{lunard} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{gz} |\n{config.kingyear(my)} |\n{ty.kook(0, 0).get('文')} ({ttext.get('局式').get('年')}) | \n紀元︰{ttext.get('紀元')} | 主筭︰{homecal} 客筭︰{awaycal} |")
     else:
-        start_pt2 = genchart2[genchart2.index('''viewBox="''')+22:].split(" ")[1])
+        start_pt2 = genchart2[genchart2.index('''viewBox="''')+22:].split(" ")[1]
         render_svg(genchart2, int(start_pt2))
         with st.expander("解釋"):
             st.title("《太乙秘書》︰")
