@@ -1136,7 +1136,7 @@ class Taiyi:
         return year_chin
 
     def gen_gong(self, ji_style, taiyi_acumyear, tenching): #有十精1, 無十精0
-        sixteengongs = {0: self.sixteen_gong( ji_style, taiyi_acumyear), 1:self.sixteen_gong1( ji_style, taiyi_acumyear) }.get(tenching)
+        sixteengongs = {0: self.sixteen_gong3( ji_style, taiyi_acumyear), 1:self.sixteen_gong( ji_style, taiyi_acumyear) }.get(tenching)
         if ji_style in [0,1]:
             return chart.gen_chart( list(sixteengongs.values())[-1], self.geteightdoors_text2(ji_style, taiyi_acumyear), list(sixteengongs.values())[:-1])
         if ji_style in [2]:
@@ -1163,8 +1163,8 @@ class Taiyi:
             res.update(general)
             res1.update(earth_sky)
             sg = [[list(res.values())[i], list(res1.values())[i] ] for i in range(0,len(list(res.values())))]
-            return chart.gen_chart_hour( list(sixteengongs( ji_style, taiyi_acumyear).values())[-1]+[" "," "], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg,list(sixteengongs.values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear))
-    #太乙命法
+            return chart.gen_chart_hour( list(sixteengongs.values())[-1]+[" "," "], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg,list(sixteengongs.values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear))
+#太乙命法
     def gen_life_gong(self, sex):
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
         dict1 = self.taiyi_life(sex).get("十二命宮排列")
