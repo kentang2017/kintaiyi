@@ -701,28 +701,7 @@ def flybird(taiyi_acumyear):
        return "坤"
     else:
        return dict(zip(range(1,9), [1,8,3,4,9,2,7,6])).get(int(f))
-#推太乙風雲飛鳥助戰法
-def flybird_wl(taiyi_acumyear, fb, hg, ag, hvg, avg, ty, wc, sj):
-    #fb = flybird(taiyi_acumyear)
-    #hg = self.home_general(ji_style, taiyi_acumyear)
-    #ag = self.away_general(ji_style, taiyi_acumyear)
-    #hvg = self.home_vgen(ji_style, taiyi_acumyear)
-    #avg = self.away_vgen(ji_style, taiyi_acumyear)
-    #ty = self.ty(ji_style, taiyi_acumyear)
-    #wc = gong2.get(self.skyeyes(ji_style, taiyi_acumyear))
-    #sj = gong2.get(self.sf(ji_style, taiyi_acumyear))
-    if fb == ty:
-        return "太乙所在宮有風雲飛鳥等來衝格迫擊太乙者，大敗之兆。"
-    elif fb == wc:
-        return "從主目上去擊客，主勝"
-    elif fb == sj:
-        return "從客目上去擊主，客勝"
-    elif fb == hg or fb == hvg:
-        return "飛鳥扶主人陣者，主人勝"
-    elif fb == ag or fb == avg:
-        return "飛鳥扶客人陣者，客人勝"
-    else:
-        return "飛鳥方向不明確，和"
+
 #三風
 def threewind(taiyi_acumyear):
     #f = self.accnum(ji_style, taiyi_acumyear) % 9
