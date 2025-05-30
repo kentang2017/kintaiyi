@@ -14,3 +14,5 @@ kinliuren==0.1.2.6
 streamlit-modal==0.1.0
 streamlit-timeline==0.0.2
 streamlit-date-picker==0.0.3
+svglib==1.5.1
+reportlab==4.4.1
