@@ -1033,7 +1033,7 @@ class Taiyi:
             #m = config.lunar_date_d(self.year, self.month, self.day).get("月")
             #sg = [ kinliuren.Liuren(j_q, m, d, h).result(0).get("地轉天將").get(i) for i in list("巳午未申酉戌亥子丑寅卯辰")]
             earth_sky = self.lr().sky_n_earth_list()
-            g = dict(zip(list("貴蛇雀合勾龍空虎常玄陰后"), re.findall('..', '貴人螣蛇朱雀六合勾陳青龍天空白虎太常玄武太陰太后')))
+            g = dict(zip(list("貴蛇雀合勾龍空虎常玄陰后"), re.findall('..', '貴人螣蛇朱雀六合勾陳青龍天空白虎太常玄武太陰天后')))
             general = self.lr().result(0).get("地轉天將")
             k = list(general.keys())
             v = list(general.values())
