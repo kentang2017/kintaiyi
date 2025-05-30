@@ -181,7 +181,7 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
         five_generals = ty.fivegenerals(style, tn)
         home_vs_away1 = ty.wc_n_sj(style, tn)
         genchart2 = ty.gen_gong(style, tn, tc)
-    if style == 5
+    if style == 5:
         tn = 0
         ttext = ty.pan(3, 0)
         kook = ty.kook(3, 0)
