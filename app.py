@@ -140,6 +140,28 @@ def render_svg1(svg, num):
     """
     html(html_content, height=num)
 
+def timeline(data, height=800):
+    """渲染時間線組件"""
+    if isinstance(data, str):
+        data = json.loads(data)
+    json_text = json.dumps(data)
+    source_param = 'timeline_json'
+    source_block = f'var {source_param} = {json_text};'
+    cdn_path = 'https://cdn.knightlab.com/libs/timeline3/latest'
+    css_block = f'<link title="timeline-styles" rel="stylesheet" href="{cdn_path}/css/timeline.css">'
+    js_block = f'<script src="{cdn_path}/js/timeline.js"></script>'
+    htmlcode = f'''
+        {css_block}
+        {js_block}
+        <div id='timeline-embed' style="width: 95%; height: {height}px; margin: 1px;"></div>
+        <script type="text/javascript">
+            var additionalOptions = {{ start_at_end: false, is_embed: true, default_bg_color: {{r:14, g:17, b:23}} }};
+            {source_block}
+            timeline = new TL.Timeline('timeline-embed', {source_param}, additionalOptions);
+        </script>
+    '''
+    components.html(htmlcode, height=height)
+
 @contextmanager
 def st_capture(output_func):
     """捕獲 stdout 並將其傳遞給指定的輸出函數"""
@@ -180,7 +202,7 @@ with st.sidebar:
     acum = st.selectbox('太乙積年數', ('太乙統宗', '太乙金鏡', '太乙淘金歌', '太乙局'))
     ten_ching = st.selectbox('太乙十精', ('無', '有'))
     sex_o = st.selectbox('太乙命法性別', ('男', '女'))
-    rotation = st.selectbox('轉盤', ('固定可着色', '轉動'))
+    rotation = st.selectbox('轉盤', ('固定', '轉動'))
     
     num_dict = {'時計太乙': 4, '年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '分計太乙': 3, '太乙命法': 5}
     style = num_dict[option]
