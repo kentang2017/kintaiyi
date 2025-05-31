@@ -315,8 +315,7 @@ sidebar_script = """
 """
 components.html(sidebar_script, height=0)
 
-# Add a button to show the sidebar (hidden by default)
-st.markdown('<button id="show-sidebar-button">Show Sidebar</button>', unsafe_allow_html=True)
+
 
 @st.cache_data
 def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
