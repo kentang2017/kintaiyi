@@ -95,18 +95,16 @@ def render_svg1(svg, num):
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
         return
-    html_content = f"""
-    <div style="margin: 0; padding: 0;">
-      <svg id="static-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {num} {num}" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
-        {svg}
-      </svg>
-      <script>
+    
+    # JavaScript for click handling
+    js_script = """
+    <script>
         const coloredSections = new Set();
         const colors = ['#800080', '#FF69B4']; // Purple and Pink
         let colorIndex = 0;
 
         document.querySelectorAll('#static-svg g').forEach(group => {
-          group.addEventListener('click', () => {
+          group.addEventListener('click', function() {
             const id = group.getAttribute('id') || 'default_' + Math.random().toString(36).substr(2, 9);
             if (coloredSections.has(id)) {
               // Remove color if already colored
@@ -120,7 +118,15 @@ def render_svg1(svg, num):
             }
           });
         });
-      </script>
+    </script>
+    """
+
+    html_content = f"""
+    <div style="margin: 0; padding: 0;">
+      <svg id="static-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {num} {num}" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
+        {svg}
+      </svg>
+      {js_script}
     </div>
     <style>
         #static-svg {{
@@ -133,7 +139,6 @@ def render_svg1(svg, num):
     </style>
     """
     html(html_content, height=num)
-
 
 @contextmanager
 def st_capture(output_func):
