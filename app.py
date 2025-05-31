@@ -90,7 +90,7 @@ def render_svg(svg, num):
     html(html_content, height=num)
 
 def render_svg1(svg, num):
-    """渲染靜態 SVG 圖表（可點擊著色功能，僅針對十六分之一的段）"""
+    """渲染靜態 SVG 圖表（可點擊同時著色第二、三、四層的十六分之一部分）"""
     # Validate SVG input
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
@@ -99,42 +99,57 @@ def render_svg1(svg, num):
     # JavaScript for click handling
     js_script = """
     <script>
-        const coloredSections = new Set();
+        const coloredGroups = new Set();
         const colors = ['#800080', '#FF69B4']; // Purple and Pink
         let colorIndex = 0;
 
-        // Find the group with exactly 16 path or polygon children (the 16 segments layer)
+        // Find all groups with exactly 16 path or polygon children (layers with 16 segments)
         const allGroups = document.querySelectorAll('#static-svg g');
-        let targetGroup = null;
+        const targetLayers = [];
         allGroups.forEach(group => {
             const children = group.querySelectorAll('path, polygon');
             if (children.length === 16) {
-                targetGroup = group;
+                targetLayers.push(group);
             }
         });
 
-        if (targetGroup) {
-            // Add click handlers to each path/polygon in the target group
-            const segments = targetGroup.querySelectorAll('path, polygon');
-            segments.forEach(segment => {
-                segment.style.cursor = 'pointer'; // Make segments clickable
-                segment.addEventListener('click', function(event) {
-                    event.stopPropagation(); // Prevent event bubbling
-                    const id = segment.getAttribute('id') || 'segment_' + Math.random().toString(36).substr(2, 9);
-                    
-                    // Check if the segment is already colored
-                    const isColored = coloredSections.has(id);
-                    
-                    if (isColored) {
-                        // Remove color
-                        segment.removeAttribute('fill');
-                        coloredSections.delete(id);
-                    } else if (coloredSections.size < 2) {
-                        // Apply color to the segment
-                        segment.setAttribute('fill', colors[colorIndex]);
-                        coloredSections.add(id);
-                        colorIndex = (colorIndex + 1) % colors.length;
-                    }
+        // Ensure we have at least 4 layers to select the 2nd, 3rd, and 4th
+        if (targetLayers.length >= 4) {
+            const layersToColor = [targetLayers[1], targetLayers[2], targetLayers[3]]; // 2nd, 3rd, 4th layers (index 1, 2, 3)
+
+            // Add click handlers to segments in these layers
+            layersToColor.forEach(layer => {
+                const segments = layer.querySelectorAll('path, polygon');
+                segments.forEach((segment, index) => {
+                    segment.style.cursor = 'pointer'; // Make segments clickable
+                    segment.addEventListener('click', function(event) {
+                        event.stopPropagation(); // Prevent event bubbling
+                        const groupId = `group_${index}`; // Use the segment index as the group identifier
+                        
+                        // Check if this group of segments is already colored
+                        const isColored = coloredGroups.has(groupId);
+                        
+                        if (isColored) {
+                            // Remove color from corresponding segments in all three layers
+                            layersToColor.forEach(l => {
+                                const segs = l.querySelectorAll('path, polygon');
+                                if (segs[index]) {
+                                    segs[index].removeAttribute('fill');
+                                }
+                            });
+                            coloredGroups.delete(groupId);
+                        } else if (coloredGroups.size < 2) {
+                            // Apply color to corresponding segments in all three layers
+                            layersToColor.forEach(l => {
+                                const segs = l.querySelectorAll('path, polygon');
+                                if (segs[index]) {
+                                    segs[index].setAttribute('fill', colors[colorIndex]);
+                                }
+                            });
+                            coloredGroups.add(groupId);
+                            colorIndex = (colorIndex + 1) % colors.length;
+                        }
+                    });
                 });
             });
         }
@@ -159,6 +174,7 @@ def render_svg1(svg, num):
     </style>
     """
     html(html_content, height=num)
+
 
 def timeline(data, height=800):
     """渲染時間線組件"""
