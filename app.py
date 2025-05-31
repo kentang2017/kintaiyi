@@ -89,6 +89,31 @@ def render_svg(svg, num):
     """
     html(html_content, height=num)
 
+def render_svg1(svg, num):
+    """渲染靜態 SVG 圖表（無旋轉功能）"""
+    # Validate SVG input
+    if not svg or 'svg' not in svg.lower():
+        st.error("Invalid SVG content provided")
+        return
+    
+    html_content = f"""
+    <div style="margin: 0; padding: 0;">
+      <svg id="static-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {num} {num}" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
+        {svg}
+      </svg>
+    </div>
+    <style>
+        #static-svg {{
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }}
+        .stCodeBlock {{
+            margin-bottom: 10px !important;
+        }}
+    </style>
+    """
+    html(html_content, height=num)
+
 def timeline(data, height=800):
     """渲染時間線組件"""
     if isinstance(data, str):
@@ -151,6 +176,7 @@ with st.sidebar:
     acum = st.selectbox('太乙積年數', ('太乙統宗', '太乙金鏡', '太乙淘金歌', '太乙局'))
     ten_ching = st.selectbox('太乙十精', ('無', '有'))
     sex_o = st.selectbox('太乙命法性別', ('男', '女'))
+    rotation = st.selectbox('轉盤', ('固定', '轉動'))
     
     num_dict = {'時計太乙': 4, '年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '分計太乙': 3, '太乙命法': 5}
     style = num_dict[option]
@@ -279,7 +305,10 @@ with tabs[0]:
                 if results["style"] == 5:
                     try:
                         start_pt = results["genchart1"][results["genchart1"].index('''viewBox="''')+22:].split(" ")[1]
-                        render_svg(results["genchart1"], int(start_pt))
+                        if rotation == "轉動":
+                            render_svg(results["genchart1"], int(start_pt))
+                        else:
+                            render_svg1(results["genchart1"], int(start_pt))
                     except (ValueError, IndexError) as e:
                         st.error(f"Failed to parse SVG viewBox: {str(e)}")
                     with st.expander("解釋"):
@@ -306,7 +335,10 @@ with tabs[0]:
                 else:
                     try:
                         start_pt2 = results["genchart2"][results["genchart2"].index('''viewBox="''')+22:].split(" ")[1]
-                        render_svg(results["genchart2"], int(start_pt2))
+                        if rotation == "轉動":
+                            render_svg(results["genchart2"], int(start_pt2))
+                        else:
+                            render_svg1(results["genchart2"], int(start_pt2))
                     except (ValueError, IndexError) as e:
                         st.error(f"Failed to parse SVG viewBox: {str(e)}")
                     with st.expander("解釋"):
