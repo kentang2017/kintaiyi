@@ -43,6 +43,7 @@ def format_text(d, parent_key=""):
 
 def render_svg(svg, num):
     """渲染交互式 SVG 圖表"""
+    # Validate SVG input
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
         return
@@ -90,16 +91,19 @@ def render_svg(svg, num):
 
 def render_svg1(svg, num):
     """渲染靜態 SVG 圖表（可點擊同時著色第二、三、四層的十六分之一部分）"""
+    # Validate SVG input
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
         return
     
+    # JavaScript for click handling
     js_script = """
     <script>
         const coloredGroups = new Set();
-        const colors = ['#800080', '#FF69B4'];
+        const colors = ['#800080', '#FF69B4']; // Purple and Pink
         let colorIndex = 0;
 
+        // Find all segments across all groups
         const allGroups = document.querySelectorAll('#static-svg g');
         const targetLayers = [];
         allGroups.forEach((group, groupIndex) => {
@@ -109,25 +113,30 @@ def render_svg1(svg, num):
             }
         });
 
+        // Debug: Log the layers found
         console.log('Found ' + targetLayers.length + ' layers with segments:', targetLayers.map(l => ({ index: l.index, segmentCount: l.segments.length })));
 
+        // Ensure we have at least 4 layers to select the 2nd, 3rd, and 4th
         if (targetLayers.length >= 4) {
-            const layersToColor = [targetLayers[1], targetLayers[2], targetLayers[3]];
+            const layersToColor = [targetLayers[1], targetLayers[2], targetLayers[3]]; // 2nd, 3rd, 4th layers
 
+            // Add click handlers to all segments
             layersToColor.forEach((layer, layerNum) => {
                 layer.segments.forEach((segment, index) => {
                     segment.style.cursor = 'pointer';
                     segment.style.pointerEvents = 'all';
-                    segment.style.zIndex = '10';
+                    segment.style.zIndex = '10'; // Ensure segments are on top
                     segment.setAttribute('data-index', index);
-                    segment.setAttribute('data-layer', layerNum);
+                    segment.setAttribute('data-layer', layerNum); // Track which layer this segment belongs to
                     segment.addEventListener('click', function(event) {
                         event.stopPropagation();
                         const segmentIndex = parseInt(segment.getAttribute('data-index'));
                         const groupId = `group_${segmentIndex}`;
 
+                        // Debug: Log the click
                         console.log(`Clicked segment in layer ${parseInt(segment.getAttribute('data-layer')) + 2}, index: ${segmentIndex}`);
 
+                        // Check if this group of segments is already colored
                         const isColored = coloredGroups.has(groupId);
 
                         if (isColored) {
@@ -256,66 +265,6 @@ with st.sidebar:
         manual = st.button('手動盤', use_container_width=True)
     with col2:
         instant = st.button('即時盤', use_container_width=True)
-
-# Add JavaScript to hide sidebar when clicking outside
-sidebar_script = """
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const sidebar = document.querySelector('section[data-testid="stSidebar"]');
-        const showSidebarButton = document.getElementById('show-sidebar-button');
-        
-        if (sidebar && showSidebarButton) {
-            // Function to hide sidebar
-            function hideSidebar() {
-                sidebar.style.display = 'none';
-                showSidebarButton.style.display = 'block';
-            }
-            
-            // Function to show sidebar
-            function showSidebar() {
-                sidebar.style.display = 'block';
-                showSidebarButton.style.display = 'none';
-            }
-            
-            // Click event listener for the entire document
-            document.addEventListener('click', function(event) {
-                const isClickInsideSidebar = sidebar.contains(event.target);
-                const isClickOnButton = showSidebarButton.contains(event.target);
-                
-                if (!isClickInsideSidebar && !isClickOnButton) {
-                    hideSidebar();
-                }
-            });
-            
-            // Show sidebar button click event
-            showSidebarButton.addEventListener('click', showSidebar);
-            
-            // Initially show the sidebar
-            sidebar.style.display = 'block';
-            showSidebarButton.style.display = 'none';
-        } else {
-            console.error('Sidebar or show sidebar button not found');
-        }
-    });
-</script>
-<style>
-    #show-sidebar-button {
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        z-index: 1000;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        padding: 10px;
-        cursor: pointer;
-        display: none;
-    }
-</style>
-"""
-components.html(sidebar_script, height=0)
-
-
 
 @st.cache_data
 def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
