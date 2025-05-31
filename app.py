@@ -104,15 +104,30 @@ def render_svg1(svg, num):
         let colorIndex = 0;
 
         document.querySelectorAll('#static-svg g').forEach(group => {
-          group.addEventListener('click', function() {
+          group.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent event bubbling
             const id = group.getAttribute('id') || 'default_' + Math.random().toString(36).substr(2, 9);
-            if (coloredSections.has(id)) {
-              // Remove color if already colored
-              group.removeAttribute('fill');
+            
+            // Check if the group or its children are already colored
+            const isColored = coloredSections.has(id);
+            
+            if (isColored) {
+              // Remove color
+              const elementsToColor = group.querySelectorAll('path, polygon, rect');
+              if (elementsToColor.length > 0) {
+                elementsToColor.forEach(el => el.removeAttribute('fill'));
+              } else {
+                group.removeAttribute('fill');
+              }
               coloredSections.delete(id);
             } else if (coloredSections.size < 2) {
-              // Add color if less than 2 sections are colored
-              group.setAttribute('fill', colors[colorIndex]);
+              // Apply color to child elements (path, polygon, rect) if they exist, otherwise to the group
+              const elementsToColor = group.querySelectorAll('path, polygon, rect');
+              if (elementsToColor.length > 0) {
+                elementsToColor.forEach(el => el.setAttribute('fill', colors[colorIndex]));
+              } else {
+                group.setAttribute('fill', colors[colorIndex]);
+              }
               coloredSections.add(id);
               colorIndex = (colorIndex + 1) % colors.length;
             }
