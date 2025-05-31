@@ -89,7 +89,6 @@ def render_svg(svg, num):
     """
     html(html_content, height=num)
 
-
 def render_svg1(svg, num):
     """渲染靜態 SVG 圖表（可點擊同時著色第二、三、四層的十六分之一部分）"""
     # Validate SVG input
@@ -104,57 +103,53 @@ def render_svg1(svg, num):
         const colors = ['#800080', '#FF69B4']; // Purple and Pink
         let colorIndex = 0;
 
-        // Find all groups with exactly 16 path, polygon, or rect children (layers with 16 segments)
+        // Find all segments across all groups
         const allGroups = document.querySelectorAll('#static-svg g');
         const targetLayers = [];
         allGroups.forEach((group, groupIndex) => {
-            const children = group.querySelectorAll('path, polygon, rect');
-            if (children.length === 16) {
-                targetLayers.push({ group: group, index: groupIndex });
+            const segments = group.querySelectorAll('path, polygon, rect');
+            if (segments.length > 0) {
+                targetLayers.push({ group: group, index: groupIndex, segments: Array.from(segments) });
             }
         });
 
-        // Debug: Log the number of layers found
-        console.log('Found ' + targetLayers.length + ' layers with 16 segments:', targetLayers);
+        // Debug: Log the layers found
+        console.log('Found ' + targetLayers.length + ' layers with segments:', targetLayers.map(l => ({ index: l.index, segmentCount: l.segments.length })));
 
         // Ensure we have at least 4 layers to select the 2nd, 3rd, and 4th
         if (targetLayers.length >= 4) {
-            const layersToColor = [targetLayers[1].group, targetLayers[2].group, targetLayers[3].group]; // 2nd, 3rd, 4th layers
+            const layersToColor = [targetLayers[1], targetLayers[2], targetLayers[3]]; // 2nd, 3rd, 4th layers
 
-            // Add click handlers to segments in these layers
-            layersToColor.forEach((layer, layerIndex) => {
-                const segments = layer.querySelectorAll('path, polygon, rect');
-                segments.forEach((segment, index) => {
-                    // Ensure segments are clickable
+            // Add click handlers to all segments
+            layersToColor.forEach((layer, layerNum) => {
+                layer.segments.forEach((segment, index) => {
                     segment.style.cursor = 'pointer';
                     segment.style.pointerEvents = 'all';
-                    segment.setAttribute('data-index', index); // Store the index for reference
+                    segment.style.zIndex = '10'; // Ensure segments are on top
+                    segment.setAttribute('data-index', index);
+                    segment.setAttribute('data-layer', layerNum); // Track which layer this segment belongs to
                     segment.addEventListener('click', function(event) {
-                        event.stopPropagation(); // Prevent event bubbling
+                        event.stopPropagation();
                         const segmentIndex = parseInt(segment.getAttribute('data-index'));
-                        const groupId = `group_${segmentIndex}`; // Use the segment index as the group identifier
-                        
-                        // Debug: Log the clicked segment
-                        console.log('Clicked segment in layer ' + (layerIndex + 2) + ', index: ' + segmentIndex);
+                        const groupId = `group_${segmentIndex}`;
+
+                        // Debug: Log the click
+                        console.log(`Clicked segment in layer ${parseInt(segment.getAttribute('data-layer')) + 2}, index: ${segmentIndex}`);
 
                         // Check if this group of segments is already colored
                         const isColored = coloredGroups.has(groupId);
-                        
+
                         if (isColored) {
-                            // Remove color from corresponding segments in all three layers
                             layersToColor.forEach(l => {
-                                const segs = l.querySelectorAll('path, polygon, rect');
-                                if (segs[segmentIndex]) {
-                                    segs[segmentIndex].removeAttribute('fill');
+                                if (l.segments[segmentIndex]) {
+                                    l.segments[segmentIndex].removeAttribute('fill');
                                 }
                             });
                             coloredGroups.delete(groupId);
                         } else if (coloredGroups.size < 2) {
-                            // Apply color to corresponding segments in all three layers
                             layersToColor.forEach(l => {
-                                const segs = l.querySelectorAll('path, polygon, rect');
-                                if (segs[segmentIndex]) {
-                                    segs[segmentIndex].setAttribute('fill', colors[colorIndex]);
+                                if (l.segments[segmentIndex]) {
+                                    l.segments[segmentIndex].setAttribute('fill', colors[colorIndex]);
                                 }
                             });
                             coloredGroups.add(groupId);
@@ -164,7 +159,7 @@ def render_svg1(svg, num):
                 });
             });
         } else {
-            console.error('Not enough layers with 16 segments found. Found only ' + targetLayers.length + ' layers.');
+            console.error('Not enough layers found. Found only ' + targetLayers.length + ' layers.');
         }
     </script>
     """
@@ -183,6 +178,7 @@ def render_svg1(svg, num):
         }}
         #static-svg path, #static-svg polygon, #static-svg rect {{
             pointer-events: all !important;
+            z-index: 10 !important;
         }}
         .stCodeBlock {{
             margin-bottom: 10px !important;
