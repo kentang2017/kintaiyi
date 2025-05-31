@@ -90,7 +90,7 @@ def render_svg(svg, num):
     html(html_content, height=num)
 
 def render_svg1(svg, num):
-    """渲染靜態 SVG 圖表（可點擊著色功能）"""
+    """渲染靜態 SVG 圖表（可點擊著色功能，僅針對十六分之一的段）"""
     # Validate SVG input
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
@@ -103,36 +103,41 @@ def render_svg1(svg, num):
         const colors = ['#800080', '#FF69B4']; // Purple and Pink
         let colorIndex = 0;
 
-        document.querySelectorAll('#static-svg g').forEach(group => {
-          group.addEventListener('click', function(event) {
-            event.stopPropagation(); // Prevent event bubbling
-            const id = group.getAttribute('id') || 'default_' + Math.random().toString(36).substr(2, 9);
-            
-            // Check if the group or its children are already colored
-            const isColored = coloredSections.has(id);
-            
-            if (isColored) {
-              // Remove color
-              const elementsToColor = group.querySelectorAll('path, polygon, rect');
-              if (elementsToColor.length > 0) {
-                elementsToColor.forEach(el => el.removeAttribute('fill'));
-              } else {
-                group.removeAttribute('fill');
-              }
-              coloredSections.delete(id);
-            } else if (coloredSections.size < 2) {
-              // Apply color to child elements (path, polygon, rect) if they exist, otherwise to the group
-              const elementsToColor = group.querySelectorAll('path, polygon, rect');
-              if (elementsToColor.length > 0) {
-                elementsToColor.forEach(el => el.setAttribute('fill', colors[colorIndex]));
-              } else {
-                group.setAttribute('fill', colors[colorIndex]);
-              }
-              coloredSections.add(id);
-              colorIndex = (colorIndex + 1) % colors.length;
+        // Find the group with exactly 16 path or polygon children (the 16 segments layer)
+        const allGroups = document.querySelectorAll('#static-svg g');
+        let targetGroup = null;
+        allGroups.forEach(group => {
+            const children = group.querySelectorAll('path, polygon');
+            if (children.length === 16) {
+                targetGroup = group;
             }
-          });
         });
+
+        if (targetGroup) {
+            // Add click handlers to each path/polygon in the target group
+            const segments = targetGroup.querySelectorAll('path, polygon');
+            segments.forEach(segment => {
+                segment.style.cursor = 'pointer'; // Make segments clickable
+                segment.addEventListener('click', function(event) {
+                    event.stopPropagation(); // Prevent event bubbling
+                    const id = segment.getAttribute('id') || 'segment_' + Math.random().toString(36).substr(2, 9);
+                    
+                    // Check if the segment is already colored
+                    const isColored = coloredSections.has(id);
+                    
+                    if (isColored) {
+                        // Remove color
+                        segment.removeAttribute('fill');
+                        coloredSections.delete(id);
+                    } else if (coloredSections.size < 2) {
+                        // Apply color to the segment
+                        segment.setAttribute('fill', colors[colorIndex]);
+                        coloredSections.add(id);
+                        colorIndex = (colorIndex + 1) % colors.length;
+                    }
+                });
+            });
+        }
     </script>
     """
 
