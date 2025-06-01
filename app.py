@@ -404,7 +404,7 @@ with tabs[0]:
                         st.markdown(results["ts"])
                         st.title("史事記載︰")
                         st.markdown(results["ch"])
-                    print(f"{config.gendatetime(my, mm, md, mh, mmin)} {results['zhao']} - {results['ty'].taiyi_life(results['sex_o']).get('性別')} - {config.taiyi_name(0)[0]} - {results['ty'].accnum(0, 0)} | \n農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{results['gz']} |\n{config.kingyear(my)} |\n 太乙命法︰{results['ty'].kook(0, 0).get('文')} ({results['ttext'].get('局式').get('年')}) | \n紀元︰{results['ttext'].get('紀元')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} |")
+                    print(f"{config.gendatetime(my, mm, md, mh, mmin)} {results['zhao']} - {results['ty'].taiyi_life(results['sex_o']).get('性別')} - {config.taiyi_name(0)[0]} - {results['ty'].accnum(0, 0)} | \n農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{results['gz']} |\n{config.kingyear(my)} |\n太乙命法 - {results['ty'].kook(0, 0).get('文')} ({results['ttext'].get('局式').get('年')}) | \n紀元︰{results['ttext'].get('紀元')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} |")
                 else:
                     try:
                         start_pt2 = results["genchart2"][results["genchart2"].index('''viewBox="''')+22:].split(" ")[1]
