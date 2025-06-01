@@ -428,7 +428,13 @@ with tabs[0]:
                         st.markdown(f"推主客相關︰{results['home_vs_away1']}")
                         st.markdown(f"推少多以占勝負︰{results['ttext'].get('推少多以占勝負')}")
                         st.markdown(f"推太乙風雲飛鳥助戰︰{results['home_vs_away3']}")
-                    print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(results['style'])[0]}數︰{results['ty'].accnum(results['style'], results['tn'])} | \n農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{results['gz']} |\n{config.kingyear(my)} |\n{config.ty_method(results['tn'])}{results['ttext'].get("太乙計")} - {results['ty'].kook(results['style'], results['tn']).get('文')} ({results['ttext'].get('局式').get('年')}) 五子元局:{results['wuyuan']} | \n紀元︰{results['ttext'].get('紀元')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} 定筭︰{results['setcal']} |")
+                    print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(results['style'])[0]}數︰{results['ty'].accnum(results['style'], results['tn'])} | \n"
+                          f"農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n"
+                          f"{results['gz']} |\n"
+                          f"{config.kingyear(my)} |\n"
+                          f"{config.ty_method(results['tn'])}{results['ttext'].get('太乙計', '')} - {results['ty'].kook(results['style'], results['tn']).get('文', '')} "
+                          f"({results['ttext'].get('局式', {}).get('年', '')}) 五子元局:{results['wuyuan']} | \n"
+                          f"紀元︰{results['ttext'].get('紀元', '')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} 定筭︰{results['setcal']} |")
         except Exception as e:
             st.error(f"生成盤局時發生錯誤：{str(e)}")
 
