@@ -261,6 +261,8 @@ BASE_URL_KINLIUREN = 'https://raw.githubusercontent.com/kentang2017/kinliuren/ma
 tabs = st.tabs(['🧮太乙排盤', '💬使用說明', '📜局數史例', '🔥災異統計', '📚古籍書目', '🆕更新日誌', '🚀看盤要領', '🔗連結'])
 
 # 側邊欄輸入
+
+# 側邊欄輸入
 with st.sidebar:
     now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
     st.header("排盤參數設置")
@@ -280,7 +282,7 @@ with st.sidebar:
     sex_o = st.selectbox('太乙命法性別', ('男', '女'))
     rotation = st.selectbox('轉盤', ('固定', '轉動'))
     
-    num_dict = {'時計太乙': 3, '年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '分計太乙': 4, '太乙命法': 5}
+    num_dict = {'時計太乙': 4, '年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '分計太乙': 3, '太乙命法': 5}
     style = num_dict[option]
     
     tn_dict = {'太乙統宗': 0, '太乙金鏡': 1, '太乙淘金歌': 2, '太乙局': 3}
@@ -294,6 +296,73 @@ with st.sidebar:
         manual = st.button('手動盤', use_container_width=True)
     with col2:
         instant = st.button('即時盤', use_container_width=True)
+
+# Add JavaScript to hide sidebar when clicking outside and show with < button
+sidebar_script = """
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.querySelector('section[data-testid="stSidebar"]');
+        const showSidebarButton = document.getElementById('show-sidebar-button');
+        
+        if (sidebar && showSidebarButton) {
+            // Function to hide sidebar
+            function hideSidebar() {
+                sidebar.style.display = 'none';
+                showSidebarButton.style.display = 'block';
+            }
+            
+            // Function to show sidebar
+            function showSidebar() {
+                sidebar.style.display = 'block';
+                showSidebarButton.style.display = 'none';
+            }
+            
+            // Click event listener for the entire document
+            document.addEventListener('click', function(event) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnButton = showSidebarButton.contains(event.target);
+                
+                if (!isClickInsideSidebar && !isClickOnButton) {
+                    hideSidebar();
+                }
+            });
+            
+            // Show sidebar button click event
+            showSidebarButton.addEventListener('click', showSidebar);
+            
+            // Initially show the sidebar
+            sidebar.style.display = 'block';
+            showSidebarButton.style.display = 'none';
+        } else {
+            console.error('Sidebar or show sidebar button not found');
+        }
+    });
+</script>
+<style>
+    #show-sidebar-button {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 1000;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: bold;
+        border-radius: 4px;
+        display: none;
+    }
+    #show-sidebar-button:hover {
+        background-color: #45a049;
+    }
+</style>
+"""
+components.html(sidebar_script, height=0)
+
+# Add a button with < symbol to show the sidebar (hidden by default)
+st.markdown('<button id="show-sidebar-button">&lt;</button>', unsafe_allow_html=True)
 
 @st.cache_data
 def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
