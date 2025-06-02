@@ -100,8 +100,28 @@ def render_svg1(svg, num):
     js_script = """
     <script>
         const coloredGroups = new Set();
-        const colors = ['#800080', '#FF69B4']; // Purple and Pink
-        let colorIndex = 0;
+        let currentColors = []; // Store the current pair of colors
+
+        // Function to generate a random hex color
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        // Function to generate two different random colors
+        function generateTwoColors() {
+            let color1 = getRandomColor();
+            let color2 = getRandomColor();
+            // Ensure the two colors are different
+            while (color1 === color2) {
+                color2 = getRandomColor();
+            }
+            return [color1, color2];
+        }
 
         // Find all segments across all groups
         const allGroups = document.querySelectorAll('#static-svg g');
@@ -147,13 +167,22 @@ def render_svg1(svg, num):
                             });
                             coloredGroups.delete(groupId);
                         } else if (coloredGroups.size < 2) {
+                            // Generate new random colors if this is a new group
+                            if (coloredGroups.size === 0 || currentColors.length === 0) {
+                                currentColors = generateTwoColors();
+                                console.log('Generated new colors:', currentColors);
+                            }
+                            const colorToUse = currentColors[coloredGroups.size];
                             layersToColor.forEach(l => {
                                 if (l.segments[segmentIndex]) {
-                                    l.segments[segmentIndex].setAttribute('fill', colors[colorIndex]);
+                                    l.segments[segmentIndex].setAttribute('fill', colorToUse);
                                 }
                             });
                             coloredGroups.add(groupId);
-                            colorIndex = (colorIndex + 1) % colors.length;
+                            // Reset colors when both groups are filled
+                            if (coloredGroups.size === 2) {
+                                currentColors = [];
+                            }
                         }
                     });
                 });
@@ -172,7 +201,7 @@ def render_svg1(svg, num):
       {js_script}
     </div>
     <style>
-        #static-svg {{
+        #static-svg {{ 
             margin-top: 10px;
             margin-bottom: 10px;
         }}
