@@ -55,17 +55,26 @@ def render_svg(svg, num):
       </svg>
       <script>
         const rotations = {{ "layer4": 0, "layer6": 0 }};
-        const centerX = {num / 2}; // 計算 viewBox 中心
-        const centerY = {num / 2};
 
         function rotateLayer(layer, deltaAngle) {{
-          if (!layer || !layer.getAttribute) return;
+          if (!layer || !layer.getAttribute) {{
+            console.error("層元素無效");
+            return;
+          }}
           const id = layer.getAttribute('id');
-          if (!id || !rotations[id]) return;
+          if (!id || !rotations[id]) {{
+            console.error(`未找到 ${id} 的旋轉數據`);
+            return;
+          }}
           rotations[id] += deltaAngle;
           const newRotation = rotations[id] % 360;
-          layer.setAttribute("transform", `rotate(${{newRotation}} ${{centerX}} ${{centerY}})`); // 圍繞中心旋轉
-          
+
+          // 獲取層的邊界框中心作為旋轉點
+          const bbox = layer.getBBox();
+          const centerX = bbox.x + bbox.width / 2;
+          const centerY = bbox.y + bbox.height / 2;
+          layer.setAttribute("transform", `rotate(${{newRotation}} ${{centerX}} ${{centerY}})`);
+
           // 旋轉內部的 <text> 元素
           layer.querySelectorAll("text").forEach(text => {{
             if (!text || !text.getAttribute) return;
@@ -75,59 +84,74 @@ def render_svg(svg, num):
             const textTransform = `rotate(${{-newRotation}}, ${{x}}, ${{y}})`;
             text.setAttribute("transform", textTransform);
           }});
+          console.log(`旋轉 ${id} 至 ${newRotation}°，中心 (${centerX}, ${centerY})`);
         }}
 
         // 為 layer4 和 layer6 添加事件監聽器
         ["layer4", "layer6"].forEach(id => {{
           const layer = document.querySelector(`#${{id}}`);
           if (layer) {{
-            let isRotating = false; // 為每個層獨立設置旋轉狀態
+            let isRotating = false;
             let startX = 0;
 
             layer.style.cursor = "pointer";
-            layer.style.pointerEvents = "auto"; // 確保事件可觸及
+            layer.style.pointerEvents = "auto";
 
             layer.addEventListener("mousedown", (event) => {{
-              event.preventDefault(); // 阻止預設選中行為
+              event.preventDefault();
+              event.stopPropagation(); // 阻止事件冒泡
               isRotating = true;
               startX = event.clientX;
-              console.log(`開始旋轉 ${id}`);
+              console.log(`mousedown on ${id}, startX: ${startX}`);
             }});
 
             layer.addEventListener("mousemove", (event) => {{
               if (isRotating) {{
-                event.preventDefault(); // 阻止預設拖動行為
+                event.preventDefault();
+                event.stopPropagation();
                 const deltaX = event.clientX - startX;
-                const deltaAngle = deltaX * 0.2; // 滑鼠移動距離轉換為旋轉角度
+                const deltaAngle = deltaX * 0.2;
                 rotateLayer(layer, deltaAngle);
-                startX = event.clientX; // 更新起始點
-                console.log(`旋轉角度 ${id}: ${{deltaAngle}}`);
+                startX = event.clientX;
+                console.log(`mousemove on ${id}, deltaX: ${deltaX}, deltaAngle: ${deltaAngle}`);
               }}
             }});
 
-            layer.addEventListener("mouseup", () => {{
+            layer.addEventListener("mouseup", (event) => {{
+              event.preventDefault();
+              event.stopPropagation();
               isRotating = false;
-              console.log(`結束旋轉 ${id}`);
+              console.log(`mouseup on ${id}`);
             }});
 
             layer.addEventListener("mouseleave", () => {{
               isRotating = false;
-              console.log(`離開旋轉區域 ${id}`);
+              console.log(`mouseleave on ${id}`);
             }});
 
-            // 單擊旋轉 30°（備用功能）
             layer.addEventListener("click", (event) => {{
               if (!isRotating) {{
-                event.preventDefault(); // 阻止單擊選中
+                event.preventDefault();
+                event.stopPropagation();
                 const direction = Math.random() < 0.5 ? 30 : -30;
                 rotateLayer(layer, direction);
-                console.log(`單擊旋轉 ${id}: ${{direction}}°`);
+                console.log(`click on ${id}, direction: ${direction}°`);
               }}
             }});
-            console.log(`已為 ${id} 添加點擊和拖動事件`);
+            console.log(`事件監聽器已為 ${id} 添加`);
           }} else {{
             console.error(`未找到 id='${id}' 的 <g> 元素`);
           }}
+        }});
+
+        // 確保 SVG 載入後執行
+        window.addEventListener("load", () => {{
+          console.log("SVG 已完全載入");
+          ["layer4", "layer6"].forEach(id => {{
+            const layer = document.querySelector(`#${{id}}`);
+            if (layer) console.log(`找到 ${id}，準備旋轉`);
+            else console.error(`載入後仍未找到 ${id}`);
+          }});
         }});
       </script>
     </div>
