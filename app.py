@@ -43,7 +43,7 @@ def format_text(d, parent_key=""):
 
 def render_svg(svg, num):
     """Render an interactive SVG where the fourth layer rotates on click."""
-    # Validate SVG input
+    # 驗證 SVG 輸入
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
         return
@@ -54,20 +54,20 @@ def render_svg(svg, num):
         {svg}
       </svg>
       <script>
-        // Function to rotate the layer around the center
+        // 旋轉圖層的函數，圍繞中心點旋轉
         function rotateLayer(layer) {{
           if (!layer) return;
           const currentTransform = layer.getAttribute("transform") || "rotate(0 0 0)";
           const currentRotationMatch = currentTransform.match(/rotate\(([-]?\d+\.?\d*)/);
           let currentRotation = currentRotationMatch ? parseFloat(currentRotationMatch[1]) : 0;
-          const direction = Math.random() < 0.5 ? 30 : -30; // Randomly rotate 30° clockwise or counterclockwise
+          const direction = Math.random() < 0.5 ? 30 : -30; // 隨機順時針或逆時針旋轉 30 度
           currentRotation += direction;
-          // Rotate around the center of the SVG (0, 0)
+          // 圍繞 SVG 中心 (0, 0) 旋轉
           layer.setAttribute("transform", `rotate(${currentRotation} 0 0)`);
           console.log(`Rotated to ${currentRotation} degrees`);
         }}
 
-        // Select all <path> elements with d attribute containing 'A129.0,129.0' (fourth layer)
+        // 選擇所有具有特定 d 屬性 (A129.0,129.0) 的 <path> 元素，代表第四層
         const allPaths = document.querySelectorAll('#interactive-svg path');
         const fourthLayerPaths = Array.from(allPaths).filter(path => 
           path.getAttribute('d').includes('A129.0,129.0')
@@ -79,7 +79,7 @@ def render_svg(svg, num):
           fourthLayerGroup.setAttribute('id', 'fourth-layer');
           fourthLayerGroup.style.cursor = "pointer";
 
-          // Move each <path> and its next <text> sibling to the group
+          // 將每個 <path> 及其後的 <text> 元素移動到群組中
           fourthLayerPaths.forEach(path => {{
             const text = path.nextElementSibling;
             if (text && text.tagName === 'text') {{
@@ -90,11 +90,11 @@ def render_svg(svg, num):
             }}
           }});
 
-          // Insert the group into the SVG
+          // 將群組插入 SVG 中
           const svg = document.getElementById('interactive-svg');
           svg.appendChild(fourthLayerGroup);
 
-          // Add click event listener to the group
+          // 為群組添加點擊事件監聽器
           fourthLayerGroup.addEventListener("click", () => rotateLayer(fourthLayerGroup));
           console.log("Event listener attached to fourth layer group");
         }} else {{
