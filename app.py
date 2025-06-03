@@ -42,7 +42,7 @@ def format_text(d, parent_key=""):
     return "\n\n".join(items) + "\n\n"
 
 def render_svg(svg, num):
-    """渲染交互式 SVG 圖表"""
+    """渲染交互式 SVG 圖表，僅針對 id='layer4' 的 <g> 標籤進行順時針或逆時針旋轉"""
     # Validate SVG input
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
@@ -54,27 +54,35 @@ def render_svg(svg, num):
         {svg}
       </svg>
       <script>
-        const rotations = {{}};
         function rotateLayer(layer) {{
           if (!layer || !layer.getAttribute) return;
           const id = layer.getAttribute('id') || "default_" + Math.random().toString(36).substr(2, 9);
-          if (!rotations[id]) rotations[id] = 0;
-          rotations[id] += 30;
-          const newRotation = (rotations[id] || 0) % 360;
-          layer.setAttribute("transform", `rotate(${{newRotation}})`);
+          let currentRotation = layer.getAttribute("transform") ? parseFloat(layer.getAttribute("transform").match(/rotate\(([-]?\d+\.?\d*)/)?.[1] || 0) : 0;
+          const direction = Math.random() < 0.5 ? 30 : -30; // 隨機選擇順時針或逆時針
+          currentRotation += direction;
+          const newRotation = currentRotation % 360;
+          layer.setAttribute("transform", `rotate(${newRotation} 0 0)`); // 圍繞中心 (0, 0) 旋轉
+          
+          // 旋轉內部的 <text> 元素
           layer.querySelectorAll("text").forEach(text => {{
             if (!text || !text.getAttribute) return;
-            const angle = newRotation % 360;
             const x = parseFloat(text.getAttribute("x") || 0);
             const y = parseFloat(text.getAttribute("y") || 0);
             if (isNaN(x) || isNaN(y)) return;
-            const transform = `rotate(${{-angle}}, ${{x}}, ${{y}})`;
-            text.setAttribute("transform", transform);
+            const textTransform = `rotate(${-newRotation}, ${x}, ${y})`; // 反向旋轉以保持文本可讀
+            text.setAttribute("transform", textTransform);
           }});
         }}
-        document.querySelectorAll("g").forEach(group => {{
-          if (group) group.addEventListener("click", () => rotateLayer(group));
-        }});
+
+        // 僅為 id='layer4' 的 <g> 添加點擊事件監聽器
+        const layer4 = document.querySelector("#layer4");
+        if (layer4) {
+          layer4.style.cursor = "pointer";
+          layer4.addEventListener("click", () => rotateLayer(layer4));
+          console.log("已為 layer4 添加點擊事件");
+        } else {
+          console.error("未找到 id='layer4' 的 <g> 元素");
+        }
       </script>
     </div>
     <style>
