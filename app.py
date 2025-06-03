@@ -48,7 +48,7 @@ def render_svg(svg, num):
         st.error("Invalid SVG content provided")
         return
     
-    html_content = f'''
+    html_content = f"""
     <div style="margin: 0; padding: 0;">
       <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {num} {num}" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
         {svg}
@@ -57,11 +57,11 @@ def render_svg(svg, num):
         function rotateLayer(layer) {{
           if (!layer || !layer.getAttribute) return;
           const id = layer.getAttribute('id') || "default_" + Math.random().toString(36).substr(2, 9);
-          let currentRotation = layer.getAttribute("transform") ? parseFloat(layer.getAttribute("transform").match(/rotate\(([-]?\d+\.?\d*)/)?.[1] || 0) : 0;
+          let currentRotation = layer.getAttribute("transform") ? parseFloat(layer.getAttribute("transform").match(/rotate\\(([-]?\\d+\\.?\\d*)/)?.[1] || 0) : 0;
           const direction = Math.random() < 0.5 ? 30 : -30; // 隨機選擇順時針或逆時針
           currentRotation += direction;
           const newRotation = currentRotation % 360;
-          layer.setAttribute("transform", `rotate(${newRotation} 0 0)`); // 圍繞中心 (0, 0) 旋轉
+          layer.setAttribute("transform", `rotate(${{newRotation}} 0 0)`); // 圍繞中心 (0, 0) 旋轉
           
           // 旋轉內部的 <text> 元素
           layer.querySelectorAll("text").forEach(text => {{
@@ -69,20 +69,20 @@ def render_svg(svg, num):
             const x = parseFloat(text.getAttribute("x") || 0);
             const y = parseFloat(text.getAttribute("y") || 0);
             if (isNaN(x) || isNaN(y)) return;
-            const textTransform = `rotate(${-newRotation}, ${x}, ${y})`; // 反向旋轉以保持文本可讀
+            const textTransform = `rotate(${{-newRotation}}, ${{x}}, ${{y}})`;
             text.setAttribute("transform", textTransform);
           }});
         }}
 
         // 僅為 id='layer4' 的 <g> 添加點擊事件監聽器
         const layer4 = document.querySelector("#layer4");
-        if (layer4) {
+        if (layer4) {{
           layer4.style.cursor = "pointer";
           layer4.addEventListener("click", () => rotateLayer(layer4));
           console.log("已為 layer4 添加點擊事件");
-        } else {
+        }} else {{
           console.error("未找到 id='layer4' 的 <g> 元素");
-        }
+        }}
       </script>
     </div>
     <style>
@@ -94,7 +94,7 @@ def render_svg(svg, num):
             margin-bottom: 10px !important;
         }}
     </style>
-    '''
+    """
     html(html_content, height=num)
 
 def render_svg1(svg, num):
