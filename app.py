@@ -42,10 +42,10 @@ def format_text(d, parent_key=""):
     return "\n\n".join(items) + "\n\n"
 
 def render_svg(svg, num):
-    """Render an interactive SVG where the fourth layer rotates on click."""
-    # Validate SVG input
+    """渲染一個可交互的 SVG，使第四層在點擊時旋轉。"""
+    # 驗證 SVG 輸入
     if not svg or 'svg' not in svg.lower():
-        st.error("Invalid SVG content provided")
+        st.error("提供的 SVG 內容無效")
         return
     
     html_content = f"""
@@ -54,32 +54,45 @@ def render_svg(svg, num):
         {svg}
       </svg>
       <script>
-        // Function to rotate the layer around the center
+        console.log("腳本正在運行");  // 調試：確認腳本已加載
+
+        // 旋轉圖層的函數，圍繞中心點旋轉
         function rotateLayer(layer) {{
-          if (!layer) return;
+          if (!layer) {{
+            console.error("未找到圖層");
+            return;
+          }}
+          console.log("正在旋轉圖層");  // 調試：確認函數被調用
+          
+          // 從 transform 屬性中提取當前旋轉角度
           const currentTransform = layer.getAttribute("transform") || "rotate(0 0 0)";
-          const currentRotationMatch = currentTransform.match(/rotate\(([-]?\d+\.?\d*)/);
+          const currentRotationMatch = currentTransform.match(/rotate\(([-]?\\d+\\.?\\d*)/);
           let currentRotation = currentRotationMatch ? parseFloat(currentRotationMatch[1]) : 0;
-          const direction = Math.random() < 0.5 ? 30 : -30; // Randomly rotate 30° clockwise or counterclockwise
+          console.log("當前旋轉角度:", currentRotation);  // 調試：確認旋轉角度
+          
+          // 隨機選擇旋轉方向：+30° 或 -30°
+          const direction = Math.random() < 0.5 ? 30 : -30;
           currentRotation += direction;
-          // Rotate around the center of the SVG (0, 0)
+          
+          // 更新 transform 屬性，圍繞中心點 (0, 0) 旋轉
           layer.setAttribute("transform", `rotate(${currentRotation} 0 0)`);
-          console.log(`Rotated to ${currentRotation} degrees`);
+          console.log(`已旋轉至 ${currentRotation} 度`);  // 調試：確認旋轉完成
         }}
 
-        // Select all <path> elements with d attribute containing 'A129.0,129.0' (fourth layer)
+        // 選擇所有包含 'A129.0,129.0' 的 <path> 元素（第四層）
         const allPaths = document.querySelectorAll('#interactive-svg path');
         const fourthLayerPaths = Array.from(allPaths).filter(path => 
           path.getAttribute('d').includes('A129.0,129.0')
         );
-        console.log(`Found ${fourthLayerPaths.length} paths for the fourth layer`);
+        console.log(`找到 ${fourthLayerPaths.length} 個第四層的路徑`);  // 調試：確認圖層檢測
 
         if (fourthLayerPaths.length > 0) {{
+          // 為第四層創建一個組
           const fourthLayerGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
           fourthLayerGroup.setAttribute('id', 'fourth-layer');
           fourthLayerGroup.style.cursor = "pointer";
 
-          // Move each <path> and its next <text> sibling to the group
+          // 將每個 <path> 及其對應的 <text> 移動到組中
           fourthLayerPaths.forEach(path => {{
             const text = path.nextElementSibling;
             if (text && text.tagName === 'text') {{
@@ -90,15 +103,15 @@ def render_svg(svg, num):
             }}
           }});
 
-          // Insert the group into the SVG
+          // 將組添加到 SVG 中
           const svg = document.getElementById('interactive-svg');
           svg.appendChild(fourthLayerGroup);
 
-          // Add click event listener to the group
+          // 為組添加點擊事件監聽器
           fourthLayerGroup.addEventListener("click", () => rotateLayer(fourthLayerGroup));
-          console.log("Event listener attached to fourth layer group");
+          console.log("已為第四層組附加事件監聽器");  // 調試：確認事件附加
         }} else {{
-          console.error('No paths found for the fourth layer');
+          console.error('未找到第四層的路徑');
         }}
       </script>
     </div>
