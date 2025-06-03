@@ -42,7 +42,7 @@ def format_text(d, parent_key=""):
     return "\n\n".join(items) + "\n\n"
 
 def render_svg(svg, num):
-    """渲染交互式 SVG 圖表"""
+    """渲染交互式 SVG 圖表，僅第四層可點擊順時針或逆時針旋轉"""
     # Validate SVG input
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
@@ -55,25 +55,33 @@ def render_svg(svg, num):
       </svg>
       <script>
         const rotations = {{}};
-        function rotateLayer(layer) {{
-          if (!layer || !layer.getAttribute) return;
-          const id = layer.getAttribute('id') || "default_" + Math.random().toString(36).substr(2, 9);
+        function rotateFourthLayer(layer) {{
+          if (!layer || !layer.getAttribute || layer.getAttribute('id') !== 'fourth-layer') return;
+          const id = layer.getAttribute('id');
           if (!rotations[id]) rotations[id] = 0;
-          rotations[id] += 30;
+          const direction = Math.random() < 0.5 ? 30 : -30; // Randomly choose clockwise or anticlockwise
+          rotations[id] += direction;
           const newRotation = (rotations[id] || 0) % 360;
           layer.setAttribute("transform", `rotate(${{newRotation}})`);
-          layer.querySelectorAll("text").forEach(text => {{
+          // Fix the first text element (e.g., 巳, 午, 未, etc.) and rotate the rest
+          layer.querySelectorAll("text").forEach((text, index) => {{
             if (!text || !text.getAttribute) return;
             const angle = newRotation % 360;
             const x = parseFloat(text.getAttribute("x") || 0);
             const y = parseFloat(text.getAttribute("y") || 0);
             if (isNaN(x) || isNaN(y)) return;
-            const transform = `rotate(${{-angle}}, ${{x}}, ${{y}})`;
-            text.setAttribute("transform", transform);
+            if (index % 3 === 0) {{
+              // Fix the first element (e.g., 巳, 午, 未, etc.)
+              text.setAttribute("transform", `rotate(0, ${{x}}, ${{y}})`);
+            }} else {{
+              // Rotate the second and third elements (e.g., ['大神', '楚'], ['大威', '荊州'], etc.)
+              const transform = `rotate(${{-angle}}, ${{x}}, ${{y}})`;
+              text.setAttribute("transform", transform);
+            }}
           }});
         }}
-        document.querySelectorAll("g").forEach(group => {{
-          if (group) group.addEventListener("click", () => rotateLayer(group));
+        document.querySelectorAll("g#fourth-layer").forEach(group => {{
+          if (group) group.addEventListener("click", () => rotateFourthLayer(group));
         }});
       </script>
     </div>
