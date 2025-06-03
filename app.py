@@ -17,9 +17,6 @@ from historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
 
-
-
-html("<button onclick='console.log(\"Button clicked!\")'>Click me</button>", height=50)
 # Initialize session state to control rendering
 if 'render_default' not in st.session_state:
     st.session_state.render_default = True
@@ -499,6 +496,7 @@ with tabs[0]:
                           f"紀元︰{results['ttext'].get('紀元', '')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} 定筭︰{results['setcal']} |")
         except Exception as e:
             st.error(f"生成盤局時發生錯誤：{str(e)}")
+     html("<button onclick='console.log(\"Button clicked!\")'>Click me</button>", height=50)
 
 # 使用說明
 with tabs[1]:
