@@ -42,7 +42,7 @@ def format_text(d, parent_key=""):
     return "\n\n".join(items) + "\n\n"
 
 def render_svg(svg, num):
-    """渲染交互式 SVG 圖表，僅針對 id='layer4' 的 <g> 標籤進行順時針或逆時針旋轉"""
+    """渲染交互式 SVG 圖表，僅針對 id='layer4' 的 <g> 標籤進行順時針或逆時針旋轉，支援按住滑鼠旋轉並移除殘影"""
     # Validate SVG input
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
@@ -54,12 +54,14 @@ def render_svg(svg, num):
         {svg}
       </svg>
       <script>
-        function rotateLayer(layer) {{
+        let isRotating = false;
+        let startX = 0;
+        let currentRotation = 0;
+
+        function rotateLayer(layer, deltaAngle) {{
           if (!layer || !layer.getAttribute) return;
           const id = layer.getAttribute('id') || "default_" + Math.random().toString(36).substr(2, 9);
-          let currentRotation = layer.getAttribute("transform") ? parseFloat(layer.getAttribute("transform").match(/rotate\\(([-]?\\d+\\.?\\d*)/)?.[1] || 0) : 0;
-          const direction = Math.random() < 0.5 ? 30 : -30; // 隨機選擇順時針或逆時針
-          currentRotation += direction;
+          currentRotation += deltaAngle;
           const newRotation = currentRotation % 360;
           layer.setAttribute("transform", `rotate(${{newRotation}} 0 0)`); // 圍繞中心 (0, 0) 旋轉
           
@@ -74,12 +76,44 @@ def render_svg(svg, num):
           }});
         }}
 
-        // 僅為 id='layer4' 的 <g> 添加點擊事件監聽器
         const layer4 = document.querySelector("#layer4");
         if (layer4) {{
           layer4.style.cursor = "pointer";
-          layer4.addEventListener("click", () => rotateLayer(layer4));
-          console.log("已為 layer4 添加點擊事件");
+          layer4.addEventListener("mousedown", (event) => {{
+            isRotating = true;
+            startX = event.clientX;
+            console.log("開始旋轉");
+          }});
+
+          layer4.addEventListener("mousemove", (event) => {{
+            if (isRotating) {{
+              const deltaX = event.clientX - startX;
+              const deltaAngle = deltaX * 0.2; // 滑鼠移動距離轉換為旋轉角度，0.2 為靈敏度
+              rotateLayer(layer4, deltaAngle);
+              startX = event.clientX; // 更新起始點
+              console.log(`旋轉角度: ${{deltaAngle}}`);
+            }}
+          }});
+
+          layer4.addEventListener("mouseup", () => {{
+            isRotating = false;
+            console.log("結束旋轉");
+          }});
+
+          layer4.addEventListener("mouseleave", () => {{
+            isRotating = false;
+            console.log("離開旋轉區域");
+          }});
+
+          // 單擊旋轉 30°（備用功能）
+          layer4.addEventListener("click", (event) => {{
+            if (!isRotating) {{
+              const direction = Math.random() < 0.5 ? 30 : -30;
+              rotateLayer(layer4, direction);
+              console.log(`單擊旋轉: ${{direction}}°`);
+            }}
+          }});
+          console.log("已為 layer4 添加點擊和拖動事件");
         }} else {{
           console.error("未找到 id='layer4' 的 <g> 元素");
         }}
@@ -89,6 +123,18 @@ def render_svg(svg, num):
         #interactive-svg {{
             margin-top: 10px;
             margin-bottom: 10px;
+            user-select: none; /* 移除文字選擇效果 */
+            -webkit-user-select: none; /* 兼容 WebKit 瀏覽器 */
+            -moz-user-select: none; /* 兼容 Firefox */
+            -ms-user-select: none; /* 兼容 IE/Edge */
+            outline: none; /* 移除焦點框 */
+        }}
+        #interactive-svg * {{
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            outline: none;
         }}
         .stCodeBlock {{
             margin-bottom: 10px !important;
