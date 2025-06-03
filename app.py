@@ -67,13 +67,14 @@ def render_svg(svg, num):
             return;
           }}
           rotations[id] += deltaAngle;
-          const newRotation = rotations[id] % 360;
+          const newRotation = rotations[id] % 360; // 確保 newRotation 在此定義
+          console.log(`計算 newRotation 為 ${id}: ${newRotation}`);
 
           // 獲取層的邊界框中心作為旋轉點
           const bbox = layer.getBBox();
           const centerX = bbox.x + bbox.width / 2;
           const centerY = bbox.y + bbox.height / 2;
-          layer.setAttribute("transform", `rotate(${{newRotation}} ${{centerX}} ${{centerY}})`);
+          layer.setAttribute("transform", `rotate(${newRotation} ${centerX} ${centerY}`); // 移除多餘的 {{}}
 
           // 旋轉內部的 <text> 元素
           layer.querySelectorAll("text").forEach(text => {{
@@ -81,7 +82,7 @@ def render_svg(svg, num):
             const x = parseFloat(text.getAttribute("x") || 0);
             const y = parseFloat(text.getAttribute("y") || 0);
             if (isNaN(x) || isNaN(y)) return;
-            const textTransform = `rotate(${{-newRotation}}, ${{x}}, ${{y}})`;
+            const textTransform = `rotate(${-newRotation} ${x} ${y})`; // 簡化為直接使用變數
             text.setAttribute("transform", textTransform);
           }});
           console.log(`旋轉 ${id} 至 ${newRotation}°，中心 (${centerX}, ${centerY})`);
@@ -89,7 +90,7 @@ def render_svg(svg, num):
 
         // 為 layer4 和 layer6 添加事件監聽器
         ["layer4", "layer6"].forEach(id => {{
-          const layer = document.querySelector(`#${{id}}`);
+          const layer = document.querySelector(`#${id}`);
           if (layer) {{
             let isRotating = false;
             let startX = 0;
@@ -99,7 +100,7 @@ def render_svg(svg, num):
 
             layer.addEventListener("mousedown", (event) => {{
               event.preventDefault();
-              event.stopPropagation(); // 阻止事件冒泡
+              event.stopPropagation();
               isRotating = true;
               startX = event.clientX;
               console.log(`mousedown on ${id}, startX: ${startX}`);
@@ -144,11 +145,10 @@ def render_svg(svg, num):
           }}
         }});
 
-        // 確保 SVG 載入後執行
         window.addEventListener("load", () => {{
           console.log("SVG 已完全載入");
           ["layer4", "layer6"].forEach(id => {{
-            const layer = document.querySelector(`#${{id}}`);
+            const layer = document.querySelector(`#${id}`);
             if (layer) console.log(`找到 ${id}，準備旋轉`);
             else console.error(`載入後仍未找到 ${id}`);
           }});
