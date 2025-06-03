@@ -54,9 +54,9 @@ def render_svg(svg, num):
         {svg}
       </svg>
       <script>
-        let isRotating = false;
-        let startX = 0;
-        let rotations = {{ "layer4": 0, "layer6": 0 }};
+        const rotations = {{ "layer4": 0, "layer6": 0 }};
+        const centerX = {num / 2}; // 計算 viewBox 中心
+        const centerY = {num / 2};
 
         function rotateLayer(layer, deltaAngle) {{
           if (!layer || !layer.getAttribute) return;
@@ -64,7 +64,7 @@ def render_svg(svg, num):
           if (!id || !rotations[id]) return;
           rotations[id] += deltaAngle;
           const newRotation = rotations[id] % 360;
-          layer.setAttribute("transform", `rotate(${{newRotation}} 0 0)`); // 圍繞中心 (0, 0) 旋轉
+          layer.setAttribute("transform", `rotate(${{newRotation}} ${{centerX}} ${{centerY}})`); // 圍繞中心旋轉
           
           // 旋轉內部的 <text> 元素
           layer.querySelectorAll("text").forEach(text => {{
@@ -81,7 +81,12 @@ def render_svg(svg, num):
         ["layer4", "layer6"].forEach(id => {{
           const layer = document.querySelector(`#${{id}}`);
           if (layer) {{
+            let isRotating = false; // 為每個層獨立設置旋轉狀態
+            let startX = 0;
+
             layer.style.cursor = "pointer";
+            layer.style.pointerEvents = "auto"; // 確保事件可觸及
+
             layer.addEventListener("mousedown", (event) => {{
               event.preventDefault(); // 阻止預設選中行為
               isRotating = true;
