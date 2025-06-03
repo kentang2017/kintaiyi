@@ -60,7 +60,6 @@ def render_svg(svg, num):
 
         function rotateLayer(layer, deltaAngle) {{
           if (!layer || !layer.getAttribute) return;
-          const id = layer.getAttribute('id') || "default_" + Math.random().toString(36).substr(2, 9);
           currentRotation += deltaAngle;
           const newRotation = currentRotation % 360;
           layer.setAttribute("transform", `rotate(${{newRotation}} 0 0)`); // 圍繞中心 (0, 0) 旋轉
@@ -80,6 +79,7 @@ def render_svg(svg, num):
         if (layer4) {{
           layer4.style.cursor = "pointer";
           layer4.addEventListener("mousedown", (event) => {{
+            event.preventDefault(); // 阻止預設選中行為
             isRotating = true;
             startX = event.clientX;
             console.log("開始旋轉");
@@ -87,8 +87,9 @@ def render_svg(svg, num):
 
           layer4.addEventListener("mousemove", (event) => {{
             if (isRotating) {{
+              event.preventDefault(); // 阻止預設拖動行為
               const deltaX = event.clientX - startX;
-              const deltaAngle = deltaX * 0.2; // 滑鼠移動距離轉換為旋轉角度，0.2 為靈敏度
+              const deltaAngle = deltaX * 0.2; // 滑鼠移動距離轉換為旋轉角度，負值為逆時針
               rotateLayer(layer4, deltaAngle);
               startX = event.clientX; // 更新起始點
               console.log(`旋轉角度: ${{deltaAngle}}`);
@@ -108,6 +109,7 @@ def render_svg(svg, num):
           // 單擊旋轉 30°（備用功能）
           layer4.addEventListener("click", (event) => {{
             if (!isRotating) {{
+              event.preventDefault(); // 阻止單擊選中
               const direction = Math.random() < 0.5 ? 30 : -30;
               rotateLayer(layer4, direction);
               console.log(`單擊旋轉: ${{direction}}°`);
@@ -123,11 +125,13 @@ def render_svg(svg, num):
         #interactive-svg {{
             margin-top: 10px;
             margin-bottom: 10px;
-            user-select: none; /* 移除文字選擇效果 */
-            -webkit-user-select: none; /* 兼容 WebKit 瀏覽器 */
-            -moz-user-select: none; /* 兼容 Firefox */
-            -ms-user-select: none; /* 兼容 IE/Edge */
-            outline: none; /* 移除焦點框 */
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            outline: none;
+            -webkit-tap-highlight-color: transparent; /* 移除移動端點擊高亮 */
+            touch-action: none; /* 禁用觸控拖動預設行為 */
         }}
         #interactive-svg * {{
             user-select: none;
