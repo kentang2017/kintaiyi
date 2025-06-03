@@ -42,81 +42,52 @@ def format_text(d, parent_key=""):
     return "\n\n".join(items) + "\n\n"
 
 def render_svg(svg, num):
-    """渲染一個可交互的 SVG，使第四層在點擊時旋轉。"""
-    # 驗證 SVG 輸入
+    """渲染交互式 SVG 圖表"""
+    # Validate SVG input
     if not svg or 'svg' not in svg.lower():
-        st.error("提供的 SVG 內容無效")
+        st.error("Invalid SVG content provided")
         return
     
     html_content = f"""
     <div style="margin: 0; padding: 0;">
-      <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" viewBox="-195.0 -225.0 390 450" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
+      <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {num} {num}" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
         {svg}
       </svg>
       <script>
-        console.log("腳本正在運行");  // 調試：確認腳本已加載
-
-        // 旋轉圖層的函數，圍繞中心點旋轉
+        const rotations = {{}};
         function rotateLayer(layer) {{
-          if (!layer) {{
-            console.error("未找到圖層");
-            return;
-          }}
-          console.log("正在旋轉圖層");  // 調試：確認函數被調用
-          
-          // 從 transform 屬性中提取當前旋轉角度
-          const currentTransform = layer.getAttribute("transform") || "rotate(0 0 0)";
-          const currentRotationMatch = currentTransform.match(/rotate\(([-]?\\d+\\.?\\d*)/);
-          let currentRotation = currentRotationMatch ? parseFloat(currentRotationMatch[1]) : 0;
-          console.log("當前旋轉角度:", currentRotation);  // 調試：確認旋轉角度
-          
-          // 隨機選擇旋轉方向：+30° 或 -30°
-          const direction = Math.random() < 0.5 ? 30 : -30;
-          currentRotation += direction;
-          
-          // 更新 transform 屬性，圍繞中心點 (0, 0) 旋轉
-          layer.setAttribute("transform", `rotate(${currentRotation} 0 0)`);
-          console.log(`已旋轉至 ${currentRotation} 度`);  // 調試：確認旋轉完成
-        }}
-
-        // 選擇所有包含 'A129.0,129.0' 的 <path> 元素（第四層）
-        const allPaths = document.querySelectorAll('#interactive-svg path');
-        const fourthLayerPaths = Array.from(allPaths).filter(path => 
-          path.getAttribute('d').includes('A129.0,129.0')
-        );
-        console.log(`找到 ${fourthLayerPaths.length} 個第四層的路徑`);  // 調試：確認圖層檢測
-
-        if (fourthLayerPaths.length > 0) {{
-          // 為第四層創建一個組
-          const fourthLayerGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-          fourthLayerGroup.setAttribute('id', 'fourth-layer');
-          fourthLayerGroup.style.cursor = "pointer";
-
-          // 將每個 <path> 及其對應的 <text> 移動到組中
-          fourthLayerPaths.forEach(path => {{
-            const text = path.nextElementSibling;
-            if (text && text.tagName === 'text') {{
-              fourthLayerGroup.appendChild(path.cloneNode(true));
-              fourthLayerGroup.appendChild(text.cloneNode(true));
-              path.remove();
-              text.remove();
-            }}
+          if (!layer || !layer.getAttribute) return;
+          const id = layer.getAttribute('id') || "default_" + Math.random().toString(36).substr(2, 9);
+          if (!rotations[id]) rotations[id] = 0;
+          rotations[id] += 30;
+          const newRotation = (rotations[id] || 0) % 360;
+          layer.setAttribute("transform", `rotate(${{newRotation}})`);
+          layer.querySelectorAll("text").forEach(text => {{
+            if (!text || !text.getAttribute) return;
+            const angle = newRotation % 360;
+            const x = parseFloat(text.getAttribute("x") || 0);
+            const y = parseFloat(text.getAttribute("y") || 0);
+            if (isNaN(x) || isNaN(y)) return;
+            const transform = `rotate(${{-angle}}, ${{x}}, ${{y}})`;
+            text.setAttribute("transform", transform);
           }});
-
-          // 將組添加到 SVG 中
-          const svg = document.getElementById('interactive-svg');
-          svg.appendChild(fourthLayerGroup);
-
-          // 為組添加點擊事件監聽器
-          fourthLayerGroup.addEventListener("click", () => rotateLayer(fourthLayerGroup));
-          console.log("已為第四層組附加事件監聽器");  // 調試：確認事件附加
-        }} else {{
-          console.error('未找到第四層的路徑');
         }}
+        document.querySelectorAll("g").forEach(group => {{
+          if (group) group.addEventListener("click", () => rotateLayer(group));
+        }});
       </script>
     </div>
+    <style>
+        #interactive-svg {{
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }}
+        .stCodeBlock {{
+            margin-bottom: 10px !important;
+        }}
+    </style>
     """
-    html(html_content, height=num + 50)
+    html(html_content, height=num)
 
 def render_svg1(svg, num):
     """渲染靜態 SVG 圖表（可點擊同時著色第二、三、四層的十六分之一部分）"""
@@ -418,7 +389,6 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
 # 太乙排盤
 with tabs[0]:
     output = st.empty()
-    html("<button onclick='console.log(\"Button clicked!\")'>Click me</button>", height=50)
     with st_capture(output.code):
         try:
             if manual:
