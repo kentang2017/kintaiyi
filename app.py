@@ -43,6 +43,7 @@ def format_text(d, parent_key=""):
 
 def render_svg(svg, num):
     """Render an interactive SVG where the fourth layer rotates on click."""
+    # Validate SVG input
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
         return
@@ -53,27 +54,32 @@ def render_svg(svg, num):
         {svg}
       </svg>
       <script>
+        // Function to rotate the layer around the center
         function rotateLayer(layer) {{
           if (!layer) return;
           const currentTransform = layer.getAttribute("transform") || "rotate(0 0 0)";
-          const currentRotationMatch = currentTransform.match(/rotate\(([-]?\\d+\\.?\\d*)/);
+          const currentRotationMatch = currentTransform.match(/rotate\(([-]?\d+\.?\d*)/);
           let currentRotation = currentRotationMatch ? parseFloat(currentRotationMatch[1]) : 0;
-          const direction = Math.random() < 0.5 ? 30 : -30;
+          const direction = Math.random() < 0.5 ? 30 : -30; // Randomly rotate 30° clockwise or counterclockwise
           currentRotation += direction;
+          // Rotate around the center of the SVG (0, 0)
           layer.setAttribute("transform", `rotate(${currentRotation} 0 0)`);
           console.log(`Rotated to ${currentRotation} degrees`);
         }}
 
+        // Select all <path> elements with d attribute containing 'A129.0,129.0' (fourth layer)
         const allPaths = document.querySelectorAll('#interactive-svg path');
         const fourthLayerPaths = Array.from(allPaths).filter(path => 
           path.getAttribute('d').includes('A129.0,129.0')
         );
+        console.log(`Found ${fourthLayerPaths.length} paths for the fourth layer`);
 
         if (fourthLayerPaths.length > 0) {{
           const fourthLayerGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
           fourthLayerGroup.setAttribute('id', 'fourth-layer');
           fourthLayerGroup.style.cursor = "pointer";
 
+          // Move each <path> and its next <text> sibling to the group
           fourthLayerPaths.forEach(path => {{
             const text = path.nextElementSibling;
             if (text && text.tagName === 'text') {{
@@ -84,9 +90,11 @@ def render_svg(svg, num):
             }}
           }});
 
+          // Insert the group into the SVG
           const svg = document.getElementById('interactive-svg');
           svg.appendChild(fourthLayerGroup);
 
+          // Add click event listener to the group
           fourthLayerGroup.addEventListener("click", () => rotateLayer(fourthLayerGroup));
           console.log("Event listener attached to fourth layer group");
         }} else {{
