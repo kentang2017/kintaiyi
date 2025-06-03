@@ -50,7 +50,8 @@ def render_svg(svg, num):
     
     html_content = f"""
     <div style="margin: 0; padding: 0;">
-      <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {num} {num}" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
+      <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+           width="386" height="386" viewBox="-193.0 -193.0 386 386" style="max-height: 400px; display: block; margin: 0 auto;">
         {svg}
       </svg>
       <script>
@@ -67,14 +68,14 @@ def render_svg(svg, num):
             return;
           }}
           rotations[id] += deltaAngle;
-          const newRotation = rotations[id] % 360; // 確保 newRotation 定義
+          const newRotation = rotations[id] % 360;
           console.log(`計算 newRotation 為 ${id}: ${newRotation}`);
 
           // 獲取層的邊界框中心作為旋轉點
           const bbox = layer.getBBox();
           const centerX = bbox.x + bbox.width / 2;
           const centerY = bbox.y + bbox.height / 2;
-          layer.setAttribute("transform", "rotate(" + newRotation + " " + centerX + " " + centerY + ")"); // 使用字符串拼接，避免模板字面量問題
+          layer.setAttribute("transform", "rotate(" + newRotation + " " + centerX + " " + centerY + ")");
 
           // 旋轉內部的 <text> 元素
           layer.querySelectorAll("text").forEach(text => {{
@@ -88,61 +89,69 @@ def render_svg(svg, num):
           console.log(`旋轉 ${id} 至 ${newRotation}°，中心 (${centerX}, ${centerY})`);
         }}
 
-        // 為 layer4 和 layer6 添加事件監聽器
-        ["layer4", "layer6"].forEach(id => {{
-          const layer = document.querySelector("#" + id);
-          if (layer) {{
-            let isRotating = false;
-            let startX = 0;
+        function setupEventListeners() {{
+          ["layer4", "layer6"].forEach(id => {{
+            const layer = document.querySelector("#" + id);
+            if (layer) {{
+              layer.style.pointerEvents = "all";
+              layer.style.cursor = "pointer";
 
-            layer.style.cursor = "pointer";
-            layer.style.pointerEvents = "auto";
+              let isRotating = false;
+              let startX = 0;
 
-            layer.addEventListener("mousedown", (event) => {{
-              event.preventDefault();
-              event.stopPropagation();
-              isRotating = true;
-              startX = event.clientX;
-              console.log(`mousedown on ${id}, startX: ${startX}`);
-            }});
-
-            layer.addEventListener("mousemove", (event) => {{
-              if (isRotating) {{
+              layer.addEventListener("mousedown", (event) => {{
                 event.preventDefault();
                 event.stopPropagation();
-                const deltaX = event.clientX - startX;
-                const deltaAngle = deltaX * 0.2;
-                rotateLayer(layer, deltaAngle);
+                isRotating = true;
                 startX = event.clientX;
-                console.log(`mousemove on ${id}, deltaX: ${deltaX}, deltaAngle: ${deltaAngle}`);
-              }}
-            }});
+                const bbox = layer.getBBox();
+                console.log(`mousedown on ${id}, startX: ${startX}, clientX: ${event.clientX}, clientY: ${event.clientY}, bbox:`, bbox);
+              }});
 
-            layer.addEventListener("mouseup", (event) => {{
-              event.preventDefault();
-              event.stopPropagation();
-              isRotating = false;
-              console.log(`mouseup on ${id}`);
-            }});
+              layer.addEventListener("mousemove", (event) => {{
+                if (isRotating) {{
+                  event.preventDefault();
+                  event.stopPropagation();
+                  const deltaX = event.clientX - startX;
+                  const deltaAngle = deltaX * 0.2;
+                  rotateLayer(layer, deltaAngle);
+                  startX = event.clientX;
+                  console.log(`mousemove on ${id}, deltaX: ${deltaX}, deltaAngle: ${deltaAngle}`);
+                }}
+              }});
 
-            layer.addEventListener("mouseleave", () => {{
-              isRotating = false;
-              console.log(`mouseleave on ${id}`);
-            }});
-
-            layer.addEventListener("click", (event) => {{
-              if (!isRotating) {{
+              layer.addEventListener("mouseup", (event) => {{
                 event.preventDefault();
                 event.stopPropagation();
-                const direction = Math.random() < 0.5 ? 30 : -30;
-                rotateLayer(layer, direction);
-                console.log(`click on ${id}, direction: ${direction}°`);
-              }}
-            }});
-            console.log(`事件監聽器已為 ${id} 添加`);
-          }} else {{
-            console.error(`未找到 id='${id}' 的 <g> 元素`);
-          }}
+                isRotating = false;
+                console.log(`mouseup on ${id}`);
+              }});
+
+              layer.addEventListener("mouseleave", () => {{
+                isRotating = false;
+                console.log(`mouseleave on ${id}`);
+              }});
+
+              layer.addEventListener("click", (event) => {{
+                if (!isRotating) {{
+                  event.preventDefault();
+                  event.stopPropagation();
+                  const direction = Math.random() < 0.5 ? 30 : -30;
+                  rotateLayer(layer, direction);
+                  console.log(`click on ${id}, direction: ${direction}°`);
+                }}
+              }});
+              console.log(`事件監聽器已為 ${id} 添加, layer found:`, layer);
+            }} else {{
+              console.error(`未找到 id='${id}' 的 <g> 元素`);
+            }}
+          }});
+        }}
+
+        // 使用 requestAnimationFrame 確保 DOM 渲染完成
+        requestAnimationFrame(() => {{
+          setupEventListeners();
+          console.log("SVG 渲染完成，事件監聽器已設置");
         }});
 
         window.addEventListener("load", () => {{
