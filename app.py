@@ -418,6 +418,7 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
 # 太乙排盤
 with tabs[0]:
     output = st.empty()
+    html("<button onclick='console.log(\"Button clicked!\")'>Click me</button>", height=50)
     with st_capture(output.code):
         try:
             if manual:
@@ -496,7 +497,7 @@ with tabs[0]:
                           f"紀元︰{results['ttext'].get('紀元', '')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} 定筭︰{results['setcal']} |")
         except Exception as e:
             st.error(f"生成盤局時發生錯誤：{str(e)}")
-     html("<button onclick='console.log(\"Button clicked!\")'>Click me</button>", height=50)
+     
 
 # 使用說明
 with tabs[1]:
