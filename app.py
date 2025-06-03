@@ -42,7 +42,7 @@ def format_text(d, parent_key=""):
     return "\n\n".join(items) + "\n\n"
 
 def render_svg(svg, num):
-    """渲染交互式 SVG 圖表，僅第四層可點擊順時針或逆時針旋轉"""
+    """Render an interactive SVG where the fourth layer rotates on click."""
     # Validate SVG input
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
@@ -50,52 +50,60 @@ def render_svg(svg, num):
     
     html_content = f"""
     <div style="margin: 0; padding: 0;">
-      <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {num} {num}" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
+      <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" viewBox="-195.0 -225.0 390 450" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
         {svg}
       </svg>
       <script>
-        const rotations = {{}};
-        function rotateFourthLayer(layer) {{
-          if (!layer || !layer.getAttribute || layer.getAttribute('id') !== 'fourth-layer') return;
-          const id = layer.getAttribute('id');
-          if (!rotations[id]) rotations[id] = 0;
-          const direction = Math.random() < 0.5 ? 30 : -30; // Randomly choose clockwise or anticlockwise
-          rotations[id] += direction;
-          const newRotation = (rotations[id] || 0) % 360;
-          layer.setAttribute("transform", `rotate(${{newRotation}})`);
-          // Fix the first text element (e.g., 巳, 午, 未, etc.) and rotate the rest
-          layer.querySelectorAll("text").forEach((text, index) => {{
-            if (!text || !text.getAttribute) return;
-            const angle = newRotation % 360;
-            const x = parseFloat(text.getAttribute("x") || 0);
-            const y = parseFloat(text.getAttribute("y") || 0);
-            if (isNaN(x) || isNaN(y)) return;
-            if (index % 3 === 0) {{
-              // Fix the first element (e.g., 巳, 午, 未, etc.)
-              text.setAttribute("transform", `rotate(0, ${{x}}, ${{y}})`);
-            }} else {{
-              // Rotate the second and third elements (e.g., ['大神', '楚'], ['大威', '荊州'], etc.)
-              const transform = `rotate(${{-angle}}, ${{x}}, ${{y}})`;
-              text.setAttribute("transform", transform);
+        // Function to rotate the layer around the center
+        function rotateLayer(layer) {{
+          if (!layer) return;
+          const currentTransform = layer.getAttribute("transform") || "rotate(0 0 0)";
+          const currentRotationMatch = currentTransform.match(/rotate\(([-]?\d+\.?\d*)/);
+          let currentRotation = currentRotationMatch ? parseFloat(currentRotationMatch[1]) : 0;
+          const direction = Math.random() < 0.5 ? 30 : -30; // Randomly rotate 30° clockwise or counterclockwise
+          currentRotation += direction;
+          // Rotate around the center of the SVG (0, 0)
+          layer.setAttribute("transform", `rotate(${currentRotation} 0 0)`);
+          console.log(`Rotated to ${currentRotation} degrees`);
+        }}
+
+        // Select all <path> elements with d attribute containing 'A129.0,129.0' (fourth layer)
+        const allPaths = document.querySelectorAll('#interactive-svg path');
+        const fourthLayerPaths = Array.from(allPaths).filter(path => 
+          path.getAttribute('d').includes('A129.0,129.0')
+        );
+        console.log(`Found ${fourthLayerPaths.length} paths for the fourth layer`);
+
+        if (fourthLayerPaths.length > 0) {{
+          const fourthLayerGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+          fourthLayerGroup.setAttribute('id', 'fourth-layer');
+          fourthLayerGroup.style.cursor = "pointer";
+
+          // Move each <path> and its next <text> sibling to the group
+          fourthLayerPaths.forEach(path => {{
+            const text = path.nextElementSibling;
+            if (text && text.tagName === 'text') {{
+              fourthLayerGroup.appendChild(path.cloneNode(true));
+              fourthLayerGroup.appendChild(text.cloneNode(true));
+              path.remove();
+              text.remove();
             }}
           }});
+
+          // Insert the group into the SVG
+          const svg = document.getElementById('interactive-svg');
+          svg.appendChild(fourthLayerGroup);
+
+          // Add click event listener to the group
+          fourthLayerGroup.addEventListener("click", () => rotateLayer(fourthLayerGroup));
+          console.log("Event listener attached to fourth layer group");
+        }} else {{
+          console.error('No paths found for the fourth layer');
         }}
-        document.querySelectorAll("g#fourth-layer").forEach(group => {{
-          if (group) group.addEventListener("click", () => rotateFourthLayer(group));
-        }});
       </script>
     </div>
-    <style>
-        #interactive-svg {{
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }}
-        .stCodeBlock {{
-            margin-bottom: 10px !important;
-        }}
-    </style>
     """
-    html(html_content, height=num)
+    html(html_content, height=num + 50)
 
 def render_svg1(svg, num):
     """渲染靜態 SVG 圖表（可點擊同時著色第二、三、四層的十六分之一部分）"""
