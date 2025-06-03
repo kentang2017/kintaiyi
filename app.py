@@ -17,6 +17,9 @@ from historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
 
+
+
+html("<button onclick='console.log(\"Button clicked!\")'>Click me</button>", height=50)
 # Initialize session state to control rendering
 if 'render_default' not in st.session_state:
     st.session_state.render_default = True
