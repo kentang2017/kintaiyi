@@ -161,8 +161,7 @@ def render_svg(svg, num):
 
     html_content = f"""
     <div style="margin: 0; padding: 0;">
-      <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-           width="386" height="386" viewBox="-193.0 -193.0 386 386" style="max-height: 400px; display: block; margin: 0 auto;">
+      <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {num} {num}" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
         {svg}
       </svg>
       <script>
