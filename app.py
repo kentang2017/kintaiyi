@@ -63,8 +63,8 @@ def render_svg(svg, num):
         return;
       }
       rotations[id] += deltaAngle;
-      const newRotation = rotations[id] % 360; // 確保 newRotation 定義
-      console.log(`計算 newRotation 為 ${id}: ${newRotation}`);
+      const newRotation = rotations[id] % 360; // 確保 0-359 範圍
+      console.log(`計算 newRotation 為 ${id}: ${newRotation}, 累計旋轉: ${rotations[id]}`);
 
       // 獲取層的邊界框中心作為旋轉點
       const bbox = layer.getBBox();
@@ -109,7 +109,7 @@ def render_svg(svg, num):
               event.preventDefault();
               event.stopPropagation();
               const deltaX = event.clientX - startX;
-              const deltaAngle = deltaX * 0.2;
+              const deltaAngle = deltaX * 1.0; // 調整靈敏度，1 像素 = 1 度
               rotateLayer(layer, deltaAngle);
               startX = event.clientX;
               console.log(`mousemove on ${id}, deltaX: ${deltaX}, deltaAngle: ${deltaAngle}`);
@@ -193,7 +193,7 @@ def render_svg(svg, num):
     </style>
     """
     html(html_content, height=num)
-
+    
 def render_svg1(svg, num):
     """渲染靜態 SVG 圖表（可點擊同時著色第二、三、四層的十六分之一部分）"""
     # Validate SVG input
