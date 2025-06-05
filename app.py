@@ -42,7 +42,7 @@ def format_text(d, parent_key=""):
     return "\n\n".join(items) + "\n\n"
 
 def render_svg(svg, num):
-    """渲染交互式 SVG 圖表，針對 id='layer4' 和 id='layer6' 的 <g> 標籤進行順時針或逆時針旋轉，支援按住滑鼠旋轉並移除殘影"""
+    """渲染交互式 SVG 圖表，針對 id='layer4' 和 id='layer6' 的 <g> 標籤進行順時針或逆時針旋轉，支援按住滑鼠旋轉並移除殞影"""
     # Validate SVG input
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
@@ -144,6 +144,46 @@ def render_svg(svg, num):
       });
     }
 
+    function captureSVG() {
+      const svgElement = document.querySelector("#interactive-svg");
+      if (!svgElement) {
+        console.error("未找到 SVG 元素");
+        return;
+      }
+
+      // 序列化 SVG
+      const serializer = new XMLSerializer();
+      let svgString = serializer.serializeToString(svgElement);
+
+      // 將 SVG 嵌入 canvas 並轉換為圖片
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      const img = new Image();
+
+      // 設置 canvas 尺寸與 SVG 一致
+      const viewBox = svgElement.getAttribute("viewBox").split(" ");
+      canvas.width = parseInt(viewBox[2]) * 2; // 提高解析度
+      canvas.height = parseInt(viewBox[3]) * 2;
+
+      // 將 SVG 轉為 data URL
+      svgString = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+
+      img.onload = function() {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const dataURL = canvas.toDataURL("image/png");
+
+        // 創建下載鏈接
+        const link = document.createElement("a");
+        link.href = dataURL;
+        link.download = "taiyi_chart.png";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      };
+
+      img.src = svgString;
+    }
+
     requestAnimationFrame(() => {
       setupEventListeners();
       console.log("SVG 渲染完成，事件監聽器已設置");
@@ -193,7 +233,7 @@ def render_svg(svg, num):
     </style>
     """
     html(html_content, height=num)
-    
+
 def render_svg1(svg, num):
     """渲染靜態 SVG 圖表（可點擊同時著色第二、三、四層的十六分之一部分）"""
     # Validate SVG input
@@ -201,7 +241,7 @@ def render_svg1(svg, num):
         st.error("Invalid SVG content provided")
         return
     
-    # JavaScript for click handling
+    # JavaScript for click handling and screenshot
     js_script = """
     <script>
         const coloredGroups = new Set();
@@ -295,6 +335,46 @@ def render_svg1(svg, num):
         } else {
             console.error('Not enough layers found. Found only ' + targetLayers.length + ' layers.');
         }
+
+        function captureSVG() {
+          const svgElement = document.querySelector("#static-svg");
+          if (!svgElement) {
+            console.error("未找到 SVG 元素");
+            return;
+          }
+
+          // 序列化 SVG
+          const serializer = new XMLSerializer();
+          let svgString = serializer.serializeToString(svgElement);
+
+          // 將 SVG 嵌入 canvas 並轉換為圖片
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          const img = new Image();
+
+          // 設置 canvas 尺寸與 SVG 一致
+          const viewBox = svgElement.getAttribute("viewBox").split(" ");
+          canvas.width = parseInt(viewBox[2]) * 2; // 提高解析度
+          canvas.height = parseInt(viewBox[3]) * 2;
+
+          // 將 SVG 轉為 data URL
+          svgString = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+
+          img.onload = function() {
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            const dataURL = canvas.toDataURL("image/png");
+
+            // 創建下載鏈接
+            const link = document.createElement("a");
+            link.href = dataURL;
+            link.download = "taiyi_chart.png";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          };
+
+          img.src = svgString;
+        }
     </script>
     """
 
@@ -337,6 +417,7 @@ def timeline(data, height=800):
         <div id='timeline-embed' style="width: 95%; height: {height}px; margin: 1px;"></div>
         <script type="text/javascript">
             var additionalOptions = {{ start_at_end: false, is_embed: true, default_bg_color: {{r:14, g:17, b:23}} }};
+stop
             {source_block}
             timeline = new TL.Timeline('timeline-embed', {source_param}, additionalOptions);
         </script>
@@ -363,7 +444,7 @@ BASE_URL_KINTAIYI = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/mast
 BASE_URL_KINLIUREN = 'https://raw.githubusercontent.com/kentang2017/kinliuren/master/'
 
 # 創建標籤頁
-tabs = st.tabs(['🧮太乙排盤', '💬使用說明', '📜局數史例', '🔥災異統計', '📚古籍書目', '🆕更新日誌', '🚀看盤要領', '🔗連結'])
+tabs باليابانية: tabs = st.tabs(['🧮太乙排盤', '💬使用說明', '📜局數史例', '🔥災異統計', '📚古籍書目', '🆕更新日誌', '🚀看盤要領', '🔗連結'])
 
 # 側邊欄輸入
 with st.sidebar:
@@ -399,7 +480,6 @@ with st.sidebar:
         manual = st.button('手動盤', use_container_width=True)
     with col2:
         instant = st.button('即時盤', use_container_width=True)
-
 
 @st.cache_data
 def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
@@ -510,6 +590,18 @@ with tabs[0]:
                 results = None
 
             if results:
+                # Add screenshot button
+                if st.button("下載盤局圖片", key="screenshot_button"):
+                    components.html("""
+                    <script>
+                        if (typeof captureSVG === 'function') {
+                            captureSVG();
+                        } else {
+                            console.error('captureSVG function not found');
+                        }
+                    </script>
+                    """, height=0)
+
                 if results["style"] == 5:
                     try:
                         start_pt = results["genchart1"][results["genchart1"].index('''viewBox="''')+22:].split(" ")[1]
@@ -572,7 +664,6 @@ with tabs[0]:
                           f"紀元︰{results['ttext'].get('紀元', '')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} 定筭︰{results['setcal']} |")
         except Exception as e:
             st.error(f"生成盤局時發生錯誤：{str(e)}")
-     
 
 # 使用說明
 with tabs[1]:
