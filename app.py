@@ -479,19 +479,24 @@ with tabs[0]:
     with st_capture(output.code):
         try:
             if manual:
+                st.write("生成手動盤...")
                 results = gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc)
                 st.session_state.render_default = False
             elif instant:
+                st.write("生成即時盤...")
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
                 results = gen_results(now.year, now.month, now.day, now.hour, now.minute, style, tn, sex_o, tc)
                 st.session_state.render_default = False
             elif st.session_state.render_default:
+                st.write("生成預設盤...")
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
                 results = gen_results(now.year, now.month, now.day, now.hour, now.minute, 3, 0, "男", 0)
             else:
                 results = None
+                st.write("未生成盤局，請選擇手動或即時盤。")
 
             if results:
+                st.write("盤局生成完成，正在渲染...")
                 if results["style"] == 5:
                     try:
                         start_pt = results["genchart1"][results["genchart1"].index('''viewBox="''')+22:].split(" ")[1]
@@ -552,34 +557,43 @@ with tabs[0]:
                           f"{config.ty_method(results['tn'])}{results['ttext'].get('太乙計', '')} - {results['ty'].kook(results['style'], results['tn']).get('文', '')} "
                           f"({results['ttext'].get('局式', {}).get('年', '')}) 五子元局:{results['wuyuan']} | \n"
                           f"紀元︰{results['ttext'].get('紀元', '')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} 定筭︰{results['setcal']} |")
-                
-                # 添加截圖功能
+
+                # 添加分隔線和截圖功能
                 st.markdown("---")
                 if st.button("截圖並下載"):
+                    st.write("開始生成截圖...")
                     screenshot_js = """
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
                     <script>
                         function takeScreenshot() {
-                            const element = document.querySelector('.stApp');
+                            const element = document.querySelector('.main .block-container');
+                            if (!element) {
+                                console.error('無法找到目標元素');
+                                alert('無法找到頁面內容，請稍後重試或手動截圖。');
+                                return;
+                            }
                             html2canvas(element, {
-                                scale: 2, // 提高解析度
+                                scale: 2,
                                 useCORS: true,
                                 allowTaint: true,
-                                backgroundColor: '#ffffff'
+                                backgroundColor: '#ffffff',
+                                logging: true
                             }).then(canvas => {
-                                var link = document.createElement('a');
+                                const link = document.createElement('a');
                                 link.download = 'taiyi_screenshot.png';
                                 link.href = canvas.toDataURL('image/png');
                                 link.click();
+                                console.log('截圖生成並嘗試下載:', canvas.toDataURL('image/png').substring(0, 50) + '...');
                             }).catch(err => {
                                 console.error('截圖失敗:', err);
+                                alert('截圖生成失敗，請使用瀏覽器手動截圖（按 PrtScn 或右鍵保存）。');
                             });
                         }
-                        setTimeout(takeScreenshot, 500); // 延遲執行以確保頁面渲染完成
+                        setTimeout(takeScreenshot, 1500); // 延長至 1.5 秒確保渲染完成
                     </script>
                     """
-                    components.html(screenshot_js)
-                    st.write("正在生成截圖，請稍後查看下載。")
+                    components.html(screenshot_js, height=0)
+                    st.write("正在生成截圖，請檢查瀏覽器下載或手動截圖。")
 
         except Exception as e:
             st.error(f"生成盤局時發生錯誤：{str(e)}")
@@ -587,6 +601,7 @@ with tabs[0]:
 # 使用說明
 with tabs[1]:
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "instruction.md"))
+
 # 太乙局數史例
 with tabs[2]:
     with open('example.json', "r") as f:
@@ -594,18 +609,23 @@ with tabs[2]:
     timeline(data, height=600)
     with st.expander("列表"):
         st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "example.md"))
+
 # 災害統計
 with tabs[3]:
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "disaster.md"))
+
 # 古籍書目
 with tabs[4]:
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "guji.md"))
+
 # 更新日誌
 with tabs[5]:
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "update.md"))
+
 # 看盤要領
 with tabs[6]:
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "tutorial.md"), unsafe_allow_html=True)
+
 # 連結
 with tabs[7]:
     st.markdown(get_file_content_as_string(BASE_URL_KINLIUREN, "update.md"), unsafe_allow_html=True)
