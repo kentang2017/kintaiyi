@@ -42,7 +42,7 @@ def format_text(d, parent_key=""):
     return "\n\n".join(items) + "\n\n"
 
 def render_svg(svg, num):
-    """渲染交互式 SVG 圖表，針對 id='layer4' 和 id='layer6' 的 <g> 標籤進行順時針或逆時針旋轉，支援按住滑鼠旋轉並移除殞影"""
+    """渲染交互式 SVG 圖表，針對 id='layer4' 和 id='layer6' 的 <g> 標籤進行順時針或逆時針旋轉，支援按住滑鼠旋轉並移除殘影"""
     # Validate SVG input
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
@@ -144,46 +144,6 @@ def render_svg(svg, num):
       });
     }
 
-    function captureSVG() {
-      const svgElement = document.querySelector("#interactive-svg");
-      if (!svgElement) {
-        console.error("未找到 SVG 元素");
-        return;
-      }
-
-      // 序列化 SVG
-      const serializer = new XMLSerializer();
-      let svgString = serializer.serializeToString(svgElement);
-
-      // 將 SVG 嵌入 canvas 並轉換為圖片
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      const img = new Image();
-
-      // 設置 canvas 尺寸與 SVG 一致
-      const viewBox = svgElement.getAttribute("viewBox").split(" ");
-      canvas.width = parseInt(viewBox[2]) * 2; // 提高解析度
-      canvas.height = parseInt(viewBox[3]) * 2;
-
-      // 將 SVG 轉為 data URL
-      svgString = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
-
-      img.onload = function() {
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        const dataURL = canvas.toDataURL("image/png");
-
-        // 創建下載鏈接
-        const link = document.createElement("a");
-        link.href = dataURL;
-        link.download = "taiyi_chart.png";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      };
-
-      img.src = svgString;
-    }
-
     requestAnimationFrame(() => {
       setupEventListeners();
       console.log("SVG 渲染完成，事件監聽器已設置");
@@ -233,21 +193,19 @@ def render_svg(svg, num):
     </style>
     """
     html(html_content, height=num)
-
+    
 def render_svg1(svg, num):
-    """渲染靜態 SVG 圖表（可點擊同時著色第二、三、四層的十六分之一部分）"""
-    # Validate SVG input
+    """渲染靜態 SVG 圖表（可點擊同時著色第二、三、四層的十六分之一部分），適配手機觸控交互並移除殘影"""
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
         return
     
-    # JavaScript for click handling and screenshot
     js_script = """
     <script>
         const coloredGroups = new Set();
-        let currentColors = []; // Store the current pair of colors
+        let currentColors = [];
+        let lastTouchTime = 0; // 防止觸控和點擊事件重複觸發
 
-        // Function to generate a random hex color
         function getRandomColor() {
             const letters = '0123456789ABCDEF';
             let color = '#';
@@ -257,124 +215,109 @@ def render_svg1(svg, num):
             return color;
         }
 
-        // Function to generate two different random colors
         function generateTwoColors() {
             let color1 = getRandomColor();
             let color2 = getRandomColor();
-            // Ensure the two colors are different
             while (color1 === color2) {
                 color2 = getRandomColor();
             }
             return [color1, color2];
         }
 
-        // Find all segments across all groups
-        const allGroups = document.querySelectorAll('#static-svg g');
-        const targetLayers = [];
-        allGroups.forEach((group, groupIndex) => {
-            const segments = group.querySelectorAll('path, polygon, rect');
-            if (segments.length > 0) {
-                targetLayers.push({ group: group, index: groupIndex, segments: Array.from(segments) });
+        function handleSegmentClick(segment, segmentIndex, layerNum) {
+            const groupId = `group_${segmentIndex}`;
+            console.log(`處理分段點擊，層 ${layerNum + 2}，索引: ${segmentIndex}`);
+
+            const isColored = coloredGroups.has(groupId);
+
+            if (isColored) {
+                layersToColor.forEach(l => {
+                    if (l.segments[segmentIndex]) {
+                        l.segments[segmentIndex].removeAttribute('fill');
+                    }
+                });
+                coloredGroups.delete(groupId);
+            } else if (coloredGroups.size < 2) {
+                if (coloredGroups.size === 0 || currentColors.length === 0) {
+                    currentColors = generateTwoColors();
+                    console.log('生成新顏色:', currentColors);
+                }
+                const colorToUse = currentColors[coloredGroups.size];
+                layersToColor.forEach(l => {
+                    if (l.segments[segmentIndex]) {
+                        l.segments[segmentIndex].setAttribute('fill', colorToUse);
+                    }
+                });
+                coloredGroups.add(groupId);
+                if (coloredGroups.size === 2) {
+                    currentColors = [];
+                }
             }
-        });
+        }
 
-        // Debug: Log the layers found
-        console.log('Found ' + targetLayers.length + ' layers with segments:', targetLayers.map(l => ({ index: l.index, segmentCount: l.segments.length })));
+        // 等待 DOM 加載完成後選擇元素
+        window.addEventListener('load', () => {
+            const svgElement = document.querySelector('#static-svg');
+            if (!svgElement) {
+                console.error('未找到 SVG 元素 #static-svg');
+                return;
+            }
 
-        // Ensure we have at least 4 layers to select the 2nd, 3rd, and 4th
-        if (targetLayers.length >= 4) {
-            const layersToColor = [targetLayers[1], targetLayers[2], targetLayers[3]]; // 2nd, 3rd, 4th layers
+            const allGroups = svgElement.querySelectorAll('g');
+            const targetLayers = [];
+            allGroups.forEach((group, groupIndex) => {
+                const segments = group.querySelectorAll('path, polygon, rect');
+                if (segments.length > 0) {
+                    targetLayers.push({ group: group, index: groupIndex, segments: Array.from(segments) });
+                }
+            });
 
-            // Add click handlers to all segments
-            layersToColor.forEach((layer, layerNum) => {
-                layer.segments.forEach((segment, index) => {
-                    segment.style.cursor = 'pointer';
-                    segment.style.pointerEvents = 'all';
-                    segment.style.zIndex = '10'; // Ensure segments are on top
-                    segment.setAttribute('data-index', index);
-                    segment.setAttribute('data-layer', layerNum); // Track which layer this segment belongs to
-                    segment.addEventListener('click', function(event) {
-                        event.stopPropagation();
-                        const segmentIndex = parseInt(segment.getAttribute('data-index'));
-                        const groupId = `group_${segmentIndex}`;
+            console.log('找到 ' + targetLayers.length + ' 個帶分段的層:', targetLayers.map(l => ({ index: l.index, segmentCount: l.segments.length })));
 
-                        // Debug: Log the click
-                        console.log(`Clicked segment in layer ${parseInt(segment.getAttribute('data-layer')) + 2}, index: ${segmentIndex}`);
+            if (targetLayers.length >= 4) {
+                const layersToColor = [targetLayers[1], targetLayers[2], targetLayers[3]];
 
-                        // Check if this group of segments is already colored
-                        const isColored = coloredGroups.has(groupId);
+                layersToColor.forEach((layer, layerNum) => {
+                    layer.segments.forEach((segment, index) => {
+                        segment.style.cursor = 'pointer';
+                        segment.style.pointerEvents = 'all';
+                        segment.style.zIndex = '10';
+                        segment.setAttribute('data-index', index);
+                        segment.setAttribute('data-layer', layerNum);
 
-                        if (isColored) {
-                            layersToColor.forEach(l => {
-                                if (l.segments[segmentIndex]) {
-                                    l.segments[segmentIndex].removeAttribute('fill');
-                                }
-                            });
-                            coloredGroups.delete(groupId);
-                        } else if (coloredGroups.size < 2) {
-                            // Generate new random colors if this is a new group
-                            if (coloredGroups.size === 0 || currentColors.length === 0) {
-                                currentColors = generateTwoColors();
-                                console.log('Generated new colors:', currentColors);
-                            }
-                            const colorToUse = currentColors[coloredGroups.size];
-                            layersToColor.forEach(l => {
-                                if (l.segments[segmentIndex]) {
-                                    l.segments[segmentIndex].setAttribute('fill', colorToUse);
-                                }
-                            });
-                            coloredGroups.add(groupId);
-                            // Reset colors when both groups are filled
-                            if (coloredGroups.size === 2) {
-                                currentColors = [];
-                            }
-                        }
+                        // 處理滑鼠點擊
+                        segment.addEventListener('click', function(event) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            const now = Date.now();
+                            if (now - lastTouchTime < 300) return; // 防止觸控後的點擊事件
+                            const segmentIndex = parseInt(segment.getAttribute('data-index'));
+                            const layerNum = parseInt(segment.getAttribute('data-layer'));
+                            handleSegmentClick(segment, segmentIndex, layerNum);
+                            console.log(`滑鼠點擊層 ${layerNum + 2}，索引: ${segmentIndex}`);
+                        });
+
+                        // 處理觸控點擊
+                        segment.addEventListener('touchend', function(event) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            lastTouchTime = Date.now();
+                            const segmentIndex = parseInt(segment.getAttribute('data-index'));
+                            const layerNum = parseInt(segment.getAttribute('data-layer'));
+                            handleSegmentClick(segment, segmentIndex, layerNum);
+                            console.log(`觸控點擊層 ${layerNum + 2}，索引: ${segmentIndex}`);
+                        });
                     });
                 });
+            } else {
+                console.error('未找到足夠的層。僅找到 ' + targetLayers.length + ' 個層。');
+            }
+
+            // 確保觸控事件後不觸發其他行為
+            svgElement.addEventListener('touchstart', function(event) {
+                event.preventDefault();
             });
-        } else {
-            console.error('Not enough layers found. Found only ' + targetLayers.length + ' layers.');
-        }
-
-        function captureSVG() {
-          const svgElement = document.querySelector("#static-svg");
-          if (!svgElement) {
-            console.error("未找到 SVG 元素");
-            return;
-          }
-
-          // 序列化 SVG
-          const serializer = new XMLSerializer();
-          let svgString = serializer.serializeToString(svgElement);
-
-          // 將 SVG 嵌入 canvas 並轉換為圖片
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
-          const img = new Image();
-
-          // 設置 canvas 尺寸與 SVG 一致
-          const viewBox = svgElement.getAttribute("viewBox").split(" ");
-          canvas.width = parseInt(viewBox[2]) * 2; // 提高解析度
-          canvas.height = parseInt(viewBox[3]) * 2;
-
-          // 將 SVG 轉為 data URL
-          svgString = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
-
-          img.onload = function() {
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            const dataURL = canvas.toDataURL("image/png");
-
-            // 創建下載鏈接
-            const link = document.createElement("a");
-            link.href = dataURL;
-            link.download = "taiyi_chart.png";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          };
-
-          img.src = svgString;
-        }
+        });
     </script>
     """
 
@@ -389,6 +332,20 @@ def render_svg1(svg, num):
         #static-svg {{ 
             margin-top: 10px;
             margin-bottom: 10px;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            touch-action: none; /* 禁用觸控縮放和滾動 */
+            -webkit-tap-highlight-color: transparent; /* 移除觸控高亮 */
+        }}
+        #static-svg * {{
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            touch-action: none;
+            -webkit-tap-highlight-color: transparent;
         }}
         #static-svg path, #static-svg polygon, #static-svg rect {{
             pointer-events: all !important;
@@ -417,7 +374,6 @@ def timeline(data, height=800):
         <div id='timeline-embed' style="width: 95%; height: {height}px; margin: 1px;"></div>
         <script type="text/javascript">
             var additionalOptions = {{ start_at_end: false, is_embed: true, default_bg_color: {{r:14, g:17, b:23}} }};
-stop
             {source_block}
             timeline = new TL.Timeline('timeline-embed', {source_param}, additionalOptions);
         </script>
@@ -480,6 +436,7 @@ with st.sidebar:
         manual = st.button('手動盤', use_container_width=True)
     with col2:
         instant = st.button('即時盤', use_container_width=True)
+
 
 @st.cache_data
 def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
@@ -590,18 +547,6 @@ with tabs[0]:
                 results = None
 
             if results:
-                # Add screenshot button
-                if st.button("下載盤局圖片", key="screenshot_button"):
-                    components.html("""
-                    <script>
-                        if (typeof captureSVG === 'function') {
-                            captureSVG();
-                        } else {
-                            console.error('captureSVG function not found');
-                        }
-                    </script>
-                    """, height=0)
-
                 if results["style"] == 5:
                     try:
                         start_pt = results["genchart1"][results["genchart1"].index('''viewBox="''')+22:].split(" ")[1]
@@ -664,6 +609,7 @@ with tabs[0]:
                           f"紀元︰{results['ttext'].get('紀元', '')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} 定筭︰{results['setcal']} |")
         except Exception as e:
             st.error(f"生成盤局時發生錯誤：{str(e)}")
+     
 
 # 使用說明
 with tabs[1]:
