@@ -204,6 +204,7 @@ def render_svg1(svg, num):
     <script>
         const coloredGroups = new Set();
         let currentColors = [];
+        let lastTouchTime = 0; // 防止觸控和點擊事件重複觸發
 
         function getRandomColor() {
             const letters = '0123456789ABCDEF';
@@ -254,55 +255,68 @@ def render_svg1(svg, num):
             }
         }
 
-        const allGroups = document.querySelectorAll('#static-svg g');
-        const targetLayers = [];
-        allGroups.forEach((group, groupIndex) => {
-            const segments = group.querySelectorAll('path, polygon, rect');
-            if (segments.length > 0) {
-                targetLayers.push({ group: group, index: groupIndex, segments: Array.from(segments) });
+        // 等待 DOM 加載完成後選擇元素
+        window.addEventListener('load', () => {
+            const svgElement = document.querySelector('#static-svg');
+            if (!svgElement) {
+                console.error('未找到 SVG 元素 #static-svg');
+                return;
             }
-        });
 
-        console.log('找到 ' + targetLayers.length + ' 個帶分段的層:', targetLayers.map(l => ({ index: l.index, segmentCount: l.segments.length })));
+            const allGroups = svgElement.querySelectorAll('g');
+            const targetLayers = [];
+            allGroups.forEach((group, groupIndex) => {
+                const segments = group.querySelectorAll('path, polygon, rect');
+                if (segments.length > 0) {
+                    targetLayers.push({ group: group, index: groupIndex, segments: Array.from(segments) });
+                }
+            });
 
-        if (targetLayers.length >= 4) {
-            const layersToColor = [targetLayers[1], targetLayers[2], targetLayers[3]];
+            console.log('找到 ' + targetLayers.length + ' 個帶分段的層:', targetLayers.map(l => ({ index: l.index, segmentCount: l.segments.length })));
 
-            layersToColor.forEach((layer, layerNum) => {
-                layer.segments.forEach((segment, index) => {
-                    segment.style.cursor = 'pointer';
-                    segment.style.pointerEvents = 'all';
-                    segment.style.zIndex = '10';
-                    segment.setAttribute('data-index', index);
-                    segment.setAttribute('data-layer', layerNum);
+            if (targetLayers.length >= 4) {
+                const layersToColor = [targetLayers[1], targetLayers[2], targetLayers[3]];
 
-                    // 處理滑鼠點擊
-                    segment.addEventListener('click', function(event) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        const segmentIndex = parseInt(segment.getAttribute('data-index'));
-                        const layerNum = parseInt(segment.getAttribute('data-layer'));
-                        handleSegmentClick(segment, segmentIndex, layerNum);
-                    });
+                layersToColor.forEach((layer, layerNum) => {
+                    layer.segments.forEach((segment, index) => {
+                        segment.style.cursor = 'pointer';
+                        segment.style.pointerEvents = 'all';
+                        segment.style.zIndex = '10';
+                        segment.setAttribute('data-index', index);
+                        segment.setAttribute('data-layer', layerNum);
 
-                    // 處理觸控點擊
-                    segment.addEventListener('touchstart', function(event) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        const segmentIndex = parseInt(segment.getAttribute('data-index'));
-                        const layerNum = parseInt(segment.getAttribute('data-layer'));
-                        handleSegmentClick(segment, segmentIndex, layerNum);
-                        console.log(`觸控點擊層 ${layerNum + 2}，索引: ${segmentIndex}`);
+                        // 處理滑鼠點擊
+                        segment.addEventListener('click', function(event) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            const now = Date.now();
+                            if (now - lastTouchTime < 300) return; // 防止觸控後的點擊事件
+                            const segmentIndex = parseInt(segment.getAttribute('data-index'));
+                            const layerNum = parseInt(segment.getAttribute('data-layer'));
+                            handleSegmentClick(segment, segmentIndex, layerNum);
+                            console.log(`滑鼠點擊層 ${layerNum + 2}，索引: ${segmentIndex}`);
+                        });
+
+                        // 處理觸控點擊
+                        segment.addEventListener('touchend', function(event) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            lastTouchTime = Date.now();
+                            const segmentIndex = parseInt(segment.getAttribute('data-index'));
+                            const layerNum = parseInt(segment.getAttribute('data-layer'));
+                            handleSegmentClick(segment, segmentIndex, layerNum);
+                            console.log(`觸控點擊層 ${layerNum + 2}，索引: ${segmentIndex}`);
+                        });
                     });
                 });
-            });
-        } else {
-            console.error('未找到足夠的層。僅找到 ' + targetLayers.length + ' 個層。');
-        }
+            } else {
+                console.error('未找到足夠的層。僅找到 ' + targetLayers.length + ' 個層。');
+            }
 
-        // 確保觸控事件後不觸發其他行為
-        document.querySelector('#static-svg').addEventListener('touchend', function(event) {
-            event.preventDefault();
+            // 確保觸控事件後不觸發其他行為
+            svgElement.addEventListener('touchstart', function(event) {
+                event.preventDefault();
+            });
         });
     </script>
     """
