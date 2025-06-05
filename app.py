@@ -43,10 +43,12 @@ def format_text(d, parent_key=""):
 
 def render_svg(svg, num):
     """渲染交互式 SVG 圖表，針對 id='layer4' 和 id='layer6' 的 <g> 標籤進行順時針或逆時針旋轉，支援按住滑鼠旋轉並移除殘影"""
+    # Validate SVG input
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
         return
     
+    # 分離 JavaScript 代碼，避免 f-string 嵌套問題
     js_code = """
     const rotations = { "layer4": 0, "layer6": 0 };
 
@@ -61,15 +63,17 @@ def render_svg(svg, num):
         return;
       }
       rotations[id] += deltaAngle;
-      const newRotation = rotations[id] % 360;
+      const newRotation = rotations[id] % 360; // 確保 0-359 範圍
       console.log(`計算 newRotation 為 ${id}: ${newRotation}, 累計旋轉: ${rotations[id]}`);
 
+      // 獲取層的邊界框中心作為旋轉點
       const bbox = layer.getBBox();
       const centerX = bbox.x + bbox.width / 2;
       const centerY = bbox.y + bbox.height / 2;
       const transformValue = "rotate(" + newRotation + " " + centerX + " " + centerY + ")";
       layer.setAttribute("transform", transformValue);
 
+      // 旋轉內部的 <text> 元素
       layer.querySelectorAll("text").forEach(text => {
         if (!text || !text.getAttribute) return;
         const x = parseFloat(text.getAttribute("x") || 0);
@@ -105,7 +109,7 @@ def render_svg(svg, num):
               event.preventDefault();
               event.stopPropagation();
               const deltaX = event.clientX - startX;
-              const deltaAngle = deltaX * 1.0;
+              const deltaAngle = deltaX * 1.0; // 調整靈敏度，1 像素 = 1 度
               rotateLayer(layer, deltaAngle);
               startX = event.clientX;
               console.log(`mousemove on ${id}, deltaX: ${deltaX}, deltaAngle: ${deltaAngle}`);
@@ -192,15 +196,18 @@ def render_svg(svg, num):
     
 def render_svg1(svg, num):
     """渲染靜態 SVG 圖表（可點擊同時著色第二、三、四層的十六分之一部分）"""
+    # Validate SVG input
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
         return
     
+    # JavaScript for click handling
     js_script = """
     <script>
         const coloredGroups = new Set();
-        let currentColors = [];
+        let currentColors = []; // Store the current pair of colors
 
+        // Function to generate a random hex color
         function getRandomColor() {
             const letters = '0123456789ABCDEF';
             let color = '#';
@@ -210,15 +217,18 @@ def render_svg1(svg, num):
             return color;
         }
 
+        // Function to generate two different random colors
         function generateTwoColors() {
             let color1 = getRandomColor();
             let color2 = getRandomColor();
+            // Ensure the two colors are different
             while (color1 === color2) {
                 color2 = getRandomColor();
             }
             return [color1, color2];
         }
 
+        // Find all segments across all groups
         const allGroups = document.querySelectorAll('#static-svg g');
         const targetLayers = [];
         allGroups.forEach((group, groupIndex) => {
@@ -228,25 +238,30 @@ def render_svg1(svg, num):
             }
         });
 
+        // Debug: Log the layers found
         console.log('Found ' + targetLayers.length + ' layers with segments:', targetLayers.map(l => ({ index: l.index, segmentCount: l.segments.length })));
 
+        // Ensure we have at least 4 layers to select the 2nd, 3rd, and 4th
         if (targetLayers.length >= 4) {
-            const layersToColor = [targetLayers[1], targetLayers[2], targetLayers[3]];
+            const layersToColor = [targetLayers[1], targetLayers[2], targetLayers[3]]; // 2nd, 3rd, 4th layers
 
+            // Add click handlers to all segments
             layersToColor.forEach((layer, layerNum) => {
                 layer.segments.forEach((segment, index) => {
                     segment.style.cursor = 'pointer';
                     segment.style.pointerEvents = 'all';
-                    segment.style.zIndex = '10';
+                    segment.style.zIndex = '10'; // Ensure segments are on top
                     segment.setAttribute('data-index', index);
-                    segment.setAttribute('data-layer', layerNum);
+                    segment.setAttribute('data-layer', layerNum); // Track which layer this segment belongs to
                     segment.addEventListener('click', function(event) {
                         event.stopPropagation();
                         const segmentIndex = parseInt(segment.getAttribute('data-index'));
                         const groupId = `group_${segmentIndex}`;
 
+                        // Debug: Log the click
                         console.log(`Clicked segment in layer ${parseInt(segment.getAttribute('data-layer')) + 2}, index: ${segmentIndex}`);
 
+                        // Check if this group of segments is already colored
                         const isColored = coloredGroups.has(groupId);
 
                         if (isColored) {
@@ -257,6 +272,7 @@ def render_svg1(svg, num):
                             });
                             coloredGroups.delete(groupId);
                         } else if (coloredGroups.size < 2) {
+                            // Generate new random colors if this is a new group
                             if (coloredGroups.size === 0 || currentColors.length === 0) {
                                 currentColors = generateTwoColors();
                                 console.log('Generated new colors:', currentColors);
@@ -268,6 +284,7 @@ def render_svg1(svg, num):
                                 }
                             });
                             coloredGroups.add(groupId);
+                            // Reset colors when both groups are filled
                             if (coloredGroups.size === 2) {
                                 currentColors = [];
                             }
@@ -382,6 +399,7 @@ with st.sidebar:
         manual = st.button('手動盤', use_container_width=True)
     with col2:
         instant = st.button('即時盤', use_container_width=True)
+
 
 @st.cache_data
 def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
@@ -552,37 +570,9 @@ with tabs[0]:
                           f"{config.ty_method(results['tn'])}{results['ttext'].get('太乙計', '')} - {results['ty'].kook(results['style'], results['tn']).get('文', '')} "
                           f"({results['ttext'].get('局式', {}).get('年', '')}) 五子元局:{results['wuyuan']} | \n"
                           f"紀元︰{results['ttext'].get('紀元', '')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} 定筭︰{results['setcal']} |")
-                
-                # 添加截圖功能
-                st.markdown("---")
-                if st.button("截圖並下載"):
-                    screenshot_js = """
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-                    <script>
-                        function takeScreenshot() {
-                            const element = document.querySelector('.stApp');
-                            html2canvas(element, {
-                                scale: 2, // 提高解析度
-                                useCORS: true,
-                                allowTaint: true,
-                                backgroundColor: '#ffffff'
-                            }).then(canvas => {
-                                var link = document.createElement('a');
-                                link.download = 'taiyi_screenshot.png';
-                                link.href = canvas.toDataURL('image/png');
-                                link.click();
-                            }).catch(err => {
-                                console.error('截圖失敗:', err);
-                            });
-                        }
-                        setTimeout(takeScreenshot, 500); // 延遲執行以確保頁面渲染完成
-                    </script>
-                    """
-                    components.html(screenshot_js)
-                    st.write("正在生成截圖，請稍後查看下載。")
-
         except Exception as e:
             st.error(f"生成盤局時發生錯誤：{str(e)}")
+     
 
 # 使用說明
 with tabs[1]:
