@@ -195,19 +195,16 @@ def render_svg(svg, num):
     html(html_content, height=num)
     
 def render_svg1(svg, num):
-    """渲染靜態 SVG 圖表（可點擊同時著色第二、三、四層的十六分之一部分）"""
-    # Validate SVG input
+    """渲染靜態 SVG 圖表（可點擊同時著色第二、三、四層的十六分之一部分），適配手機觸控交互並移除殘影"""
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
         return
     
-    # JavaScript for click handling
     js_script = """
     <script>
         const coloredGroups = new Set();
-        let currentColors = []; // Store the current pair of colors
+        let currentColors = [];
 
-        // Function to generate a random hex color
         function getRandomColor() {
             const letters = '0123456789ABCDEF';
             let color = '#';
@@ -217,18 +214,46 @@ def render_svg1(svg, num):
             return color;
         }
 
-        // Function to generate two different random colors
         function generateTwoColors() {
             let color1 = getRandomColor();
             let color2 = getRandomColor();
-            // Ensure the two colors are different
             while (color1 === color2) {
                 color2 = getRandomColor();
             }
             return [color1, color2];
         }
 
-        // Find all segments across all groups
+        function handleSegmentClick(segment, segmentIndex, layerNum) {
+            const groupId = `group_${segmentIndex}`;
+            console.log(`處理分段點擊，層 ${layerNum + 2}，索引: ${segmentIndex}`);
+
+            const isColored = coloredGroups.has(groupId);
+
+            if (isColored) {
+                layersToColor.forEach(l => {
+                    if (l.segments[segmentIndex]) {
+                        l.segments[segmentIndex].removeAttribute('fill');
+                    }
+                });
+                coloredGroups.delete(groupId);
+            } else if (coloredGroups.size < 2) {
+                if (coloredGroups.size === 0 || currentColors.length === 0) {
+                    currentColors = generateTwoColors();
+                    console.log('生成新顏色:', currentColors);
+                }
+                const colorToUse = currentColors[coloredGroups.size];
+                layersToColor.forEach(l => {
+                    if (l.segments[segmentIndex]) {
+                        l.segments[segmentIndex].setAttribute('fill', colorToUse);
+                    }
+                });
+                coloredGroups.add(groupId);
+                if (coloredGroups.size === 2) {
+                    currentColors = [];
+                }
+            }
+        }
+
         const allGroups = document.querySelectorAll('#static-svg g');
         const targetLayers = [];
         allGroups.forEach((group, groupIndex) => {
@@ -238,63 +263,47 @@ def render_svg1(svg, num):
             }
         });
 
-        // Debug: Log the layers found
-        console.log('Found ' + targetLayers.length + ' layers with segments:', targetLayers.map(l => ({ index: l.index, segmentCount: l.segments.length })));
+        console.log('找到 ' + targetLayers.length + ' 個帶分段的層:', targetLayers.map(l => ({ index: l.index, segmentCount: l.segments.length })));
 
-        // Ensure we have at least 4 layers to select the 2nd, 3rd, and 4th
         if (targetLayers.length >= 4) {
-            const layersToColor = [targetLayers[1], targetLayers[2], targetLayers[3]]; // 2nd, 3rd, 4th layers
+            const layersToColor = [targetLayers[1], targetLayers[2], targetLayers[3]];
 
-            // Add click handlers to all segments
             layersToColor.forEach((layer, layerNum) => {
                 layer.segments.forEach((segment, index) => {
                     segment.style.cursor = 'pointer';
                     segment.style.pointerEvents = 'all';
-                    segment.style.zIndex = '10'; // Ensure segments are on top
+                    segment.style.zIndex = '10';
                     segment.setAttribute('data-index', index);
-                    segment.setAttribute('data-layer', layerNum); // Track which layer this segment belongs to
+                    segment.setAttribute('data-layer', layerNum);
+
+                    // 處理滑鼠點擊
                     segment.addEventListener('click', function(event) {
+                        event.preventDefault();
                         event.stopPropagation();
                         const segmentIndex = parseInt(segment.getAttribute('data-index'));
-                        const groupId = `group_${segmentIndex}`;
+                        const layerNum = parseInt(segment.getAttribute('data-layer'));
+                        handleSegmentClick(segment, segmentIndex, layerNum);
+                    });
 
-                        // Debug: Log the click
-                        console.log(`Clicked segment in layer ${parseInt(segment.getAttribute('data-layer')) + 2}, index: ${segmentIndex}`);
-
-                        // Check if this group of segments is already colored
-                        const isColored = coloredGroups.has(groupId);
-
-                        if (isColored) {
-                            layersToColor.forEach(l => {
-                                if (l.segments[segmentIndex]) {
-                                    l.segments[segmentIndex].removeAttribute('fill');
-                                }
-                            });
-                            coloredGroups.delete(groupId);
-                        } else if (coloredGroups.size < 2) {
-                            // Generate new random colors if this is a new group
-                            if (coloredGroups.size === 0 || currentColors.length === 0) {
-                                currentColors = generateTwoColors();
-                                console.log('Generated new colors:', currentColors);
-                            }
-                            const colorToUse = currentColors[coloredGroups.size];
-                            layersToColor.forEach(l => {
-                                if (l.segments[segmentIndex]) {
-                                    l.segments[segmentIndex].setAttribute('fill', colorToUse);
-                                }
-                            });
-                            coloredGroups.add(groupId);
-                            // Reset colors when both groups are filled
-                            if (coloredGroups.size === 2) {
-                                currentColors = [];
-                            }
-                        }
+                    // 處理觸控點擊
+                    segment.addEventListener('touchstart', function(event) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        const segmentIndex = parseInt(segment.getAttribute('data-index'));
+                        const layerNum = parseInt(segment.getAttribute('data-layer'));
+                        handleSegmentClick(segment, segmentIndex, layerNum);
+                        console.log(`觸控點擊層 ${layerNum + 2}，索引: ${segmentIndex}`);
                     });
                 });
             });
         } else {
-            console.error('Not enough layers found. Found only ' + targetLayers.length + ' layers.');
+            console.error('未找到足夠的層。僅找到 ' + targetLayers.length + ' 個層。');
         }
+
+        // 確保觸控事件後不觸發其他行為
+        document.querySelector('#static-svg').addEventListener('touchend', function(event) {
+            event.preventDefault();
+        });
     </script>
     """
 
@@ -309,6 +318,20 @@ def render_svg1(svg, num):
         #static-svg {{ 
             margin-top: 10px;
             margin-bottom: 10px;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            touch-action: none; /* 禁用觸控縮放和滾動 */
+            -webkit-tap-highlight-color: transparent; /* 移除觸控高亮 */
+        }}
+        #static-svg * {{
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            touch-action: none;
+            -webkit-tap-highlight-color: transparent;
         }}
         #static-svg path, #static-svg polygon, #static-svg rect {{
             pointer-events: all !important;
