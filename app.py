@@ -552,34 +552,41 @@ with tabs[0]:
                           f"{config.ty_method(results['tn'])}{results['ttext'].get('太乙計', '')} - {results['ty'].kook(results['style'], results['tn']).get('文', '')} "
                           f"({results['ttext'].get('局式', {}).get('年', '')}) 五子元局:{results['wuyuan']} | \n"
                           f"紀元︰{results['ttext'].get('紀元', '')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} 定筭︰{results['setcal']} |")
-                
-                # 添加截圖功能
-                st.markdown("---")
-                if st.button("截圖並下載"):
-                    screenshot_js = """
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-                    <script>
-                        function takeScreenshot() {
-                            const element = document.querySelector('.stApp');
-                            html2canvas(element, {
-                                scale: 2, // 提高解析度
-                                useCORS: true,
-                                allowTaint: true,
-                                backgroundColor: '#ffffff'
-                            }).then(canvas => {
-                                var link = document.createElement('a');
-                                link.download = 'taiyi_screenshot.png';
-                                link.href = canvas.toDataURL('image/png');
-                                link.click();
-                            }).catch(err => {
-                                console.error('截圖失敗:', err);
-                            });
-                        }
-                        setTimeout(takeScreenshot, 500); // 延遲執行以確保頁面渲染完成
-                    </script>
-                    """
-                    components.html(screenshot_js)
-                    st.write("正在生成截圖，請稍後查看下載。")
+      
+      # 添加截圖功能
+      st.markdown("---")
+      if st.button("截圖並下載"):
+          screenshot_js = """
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+          <script>
+              function takeScreenshot() {
+                  const element = document.querySelector('.main .block-container');
+                  if (!element) {
+                      console.error('無法找到目標元素');
+                      return;
+                  }
+                  html2canvas(element, {
+                      scale: 2,
+                      useCORS: true,
+                      allowTaint: true,
+                      backgroundColor: '#ffffff',
+                      logging: true
+                  }).then(canvas => {
+                      const link = document.createElement('a');
+                      link.download = 'taiyi_screenshot.png';
+                      link.href = canvas.toDataURL('image/png');
+                      link.click();
+                      console.log('截圖生成並嘗試下載:', canvas.toDataURL('image/png').substring(0, 50) + '...');
+                  }).catch(err => {
+                      console.error('截圖失敗:', err);
+                      alert('截圖生成失敗，請使用瀏覽器手動截圖（按 PrtScn 或右鍵保存）。');
+                  });
+              }
+              setTimeout(takeScreenshot, 1500); // 延長至 1.5 秒確保渲染完成
+          </script>
+          """
+          components.html(screenshot_js, height=0)
+          st.write("正在生成截圖，請檢查瀏覽器下載或手動截圖。")
 
         except Exception as e:
             st.error(f"生成盤局時發生錯誤：{str(e)}")
