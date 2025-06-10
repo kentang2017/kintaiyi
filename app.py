@@ -366,20 +366,18 @@ BASE_URL_KINLIUREN = 'https://raw.githubusercontent.com/kentang2017/kinliuren/ma
 tabs = st.tabs(['🧮太乙排盤', '💬使用說明', '📜局數史例', '🔥災異統計', '📚古籍書目', '🆕更新日誌', '🚀看盤要領', '🔗連結'])
 
 # 側邊欄輸入
-# 側邊欄輸入
 with st.sidebar:
+    now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
     st.header("排盤參數設置")
     
-    # 使用 date_input 和 time_input 取代 number_input
-    selected_date = st.date_input("日期", value=datetime.datetime.now(pytz.timezone('Asia/Hong_Kong')).date())
-    selected_time = st.time_input("時間", value=datetime.datetime.now(pytz.timezone('Asia/Hong_Kong')).time())
-    
-    # 提取年、月、日、時、分
-    my = selected_date.year
-    mm = selected_date.month
-    md = selected_date.day
-    mh = selected_time.hour
-    mmin = selected_time.minute
+    col1, col2 = st.columns(2)
+    with col1:
+        my = st.number_input('年', min_value=0, max_value=2100, value=now.year, key="year")
+        mm = st.number_input('月', min_value=1, max_value=12, value=now.month, key="month")
+        md = st.number_input('日', min_value=1, max_value=31, value=now.day, key="day")
+    with col2:
+        mh = st.number_input('時', min_value=0, max_value=23, value=now.hour, key="hour")
+        mmin = st.number_input('分', min_value=0, max_value=59, value=now.minute, key="minute")
     
     option = st.selectbox('起盤方式', ('時計太乙', '年計太乙', '月計太乙', '日計太乙', '分計太乙', '太乙命法'))
     acum = st.selectbox('太乙積年數', ('太乙統宗', '太乙金鏡', '太乙淘金歌', '太乙局'))
@@ -396,9 +394,7 @@ with st.sidebar:
     tc_dict = {'有': 1, '無': 0}
     tc = tc_dict[ten_ching]
     
-    # 僅保留“即時盤”按鈕
     instant = st.button('即時盤', use_container_width=True)
-
 
 @st.cache_data
 def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
