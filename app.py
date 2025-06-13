@@ -17,61 +17,6 @@ from historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
 
-# 注入自定義 CSS
-def set_custom_css():
-    st.markdown("""
-        <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
-        /* 設置全域字體 */
-        body, h1, h2, h3, h4, h5, h6, p, div, span, .stMarkdown, .stText, .stSelectbox, .stNumberInput, .stButton, .stExpander, .stTabs {
-            font-family: 'Noto Sans TC', 'PingFang TC', 'Microsoft YaHei', sans-serif !important;
-        }
-        /* 強化暗黑模式 */
-        .stApp {
-            background-color: #1A1C23;
-            color: #E0E0E0;
-        }
-        .stSidebar {
-            background-color: #252730;
-        }
-        .stTabs [role="tab"] {
-            background-color: #2E3038;
-            color: #E0E0E0;
-        }
-        .stTabs [role="tab"][aria-selected="true"] {
-            background-color: #3A3C45;
-            color: #FFFFFF;
-        }
-        .stButton > button {
-            background-color: #3A3C45;
-            color: #FFFFFF;
-            border: 1px solid #555;
-        }
-        .stButton > button:hover {
-            background-color: #4A4C55;
-            color: #FFFFFF;
-        }
-        .stNumberInput input, .stSelectbox div[data-baseweb="select"] {
-            background-color: #2E3038;
-            color: #E0E0E0;
-            border: 1px solid #555;
-        }
-        .stExpander {
-            background-color: #2E3038;
-            color: #E0E0E0;
-        }
-        #interactive-svg text, #static-svg text {
-            font-family: 'Noto Sans TC', 'PingFang TC', 'Microsoft YaHei', sans-serif !important;
-            fill: #E0E0E0;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
-# 調用自定義 CSS
-set_custom_css()
-
-
-st.set_page_config(layout="wide", page_title="堅太乙 - 太乙排盤", initial_sidebar_state="expanded")
 # Initialize session state to control rendering
 if 'render_default' not in st.session_state:
     st.session_state.render_default = True
