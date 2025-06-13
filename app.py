@@ -560,7 +560,7 @@ with tabs[0]:
                           f"{results['gz']} |\n"
                           f"{config.kingyear(my)} |\n"
                           f"{config.ty_method(results['tn'])}{results['ttext'].get('太乙計', '')} - {results['ty'].kook(results['style'], results['tn']).get('文', '')} "
-                          f"({results['ttext'].get('局式', {}).get('年', '')}) 五子元局:{results['wuyuan']} | \n"
+                          f"({results['ttext'].get('局式', {}).get('年', '')}) \n五子元局:{results['wuyuan']} | \n"
                           f"紀元︰{results['ttext'].get('紀元', '')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} 定筭︰{results['setcal']} |")
         except Exception as e:
             st.error(f"生成盤局時發生錯誤：{str(e)}")
