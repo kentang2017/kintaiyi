@@ -36,14 +36,31 @@ CEREBRAS_MODEL_DESCRIPTIONS = {
 # System Prompt Management Functions
 def load_system_prompts():
     SYSTEM_PROMPTS_FILE = "system_prompts.json"
+    DEFAULT_SYSTEM_PROMPT = (
+        "你是一位太乙神數大師，熟悉《太乙秘書》、《太乙命法》歷史案例。請根據提供的太乙排盤數據，進行以下操作：\n"
+        "1. 解釋盤局的關鍵要素（主筭、客筭、始擊、太歲等）。\n"
+        "2. 結合《太乙秘書》中的理論，分析盤局的吉凶和潛在影響。\n"
+        "3. 若為太乙命法，評估命主的運勢和人生趨勢。\n"
+        "4. 提供實用的建議或應對策略。\n"
+        "請以清晰的結構（分段、標題）呈現，語言專業且易懂，適當引用歷史案例或經典理論。"
+    )
+    
     try:
-        with open(SYSTEM_PROMPTS_FILE, "r", encoding='utf-8') as f:
-            data = json.load(f)
-            logger.debug("Loaded system_prompts.json: %s", data)
-            return data
-    except (FileNotFoundError, json.JSONDecodeError) as e:
-        logger.error("Failed to load system_prompts.json: %s", str(e))
-        raise ValueError(f"無法讀取 {SYSTEM_PROMPTS_FILE}：{str(e)}")
+        with open(SYSTEM_PROMPTS_FILE, "r") as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        default_data = {
+            "prompts": [
+                {
+                    "name": "太乙大師",
+                    "content": DEFAULT_SYSTEM_PROMPT
+                }
+            ],
+            "selected": "太乙大師"
+        }
+        with open(SYSTEM_PROMPTS_FILE, "w") as f:
+            json.dump(default_data, f, indent=2)
+        return default_data
 
 def save_system_prompts(prompts_data):
     SYSTEM_PROMPTS_FILE = "system_prompts.json"
