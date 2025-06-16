@@ -52,11 +52,11 @@ def load_system_prompts():
         default_data = {
             "prompts": [
                 {
-                    "name": "太乙分析專家",
+                    "name": "太乙大師",
                     "content": DEFAULT_SYSTEM_PROMPT
                 }
             ],
-            "selected": "太乙分析專家"
+            "selected": "太乙大師"
         }
         with open(SYSTEM_PROMPTS_FILE, "w") as f:
             json.dump(default_data, f, indent=2)
