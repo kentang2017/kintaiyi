@@ -476,7 +476,7 @@ with st.sidebar:
             options=prompt_names,
             index=selected_index,
             key="qwen_system_prompt_selector",
-            help="選擇用於 qwen-3-32b 模型的系統提示，指導其分析太乙排盤結果"
+            help="選擇用於AI模型的系統提示，指導其分析太乙排盤結果"
         )
         
         system_prompts_data["selected"] = selected_name
@@ -536,7 +536,7 @@ with st.sidebar:
         new_prompt_content = st.text_area(
             "新提示內容",
             height=100,
-            placeholder="輸入 qwen-3-32b 的分析指令...",
+            placeholder="輸入AI分析指令...",
             key=content_key
         )
         if st.button("➕ 新增提示", key="add_qwen_prompt_button",
@@ -560,7 +560,7 @@ with st.sidebar:
             100, 10000,
             st.session_state.get("qwen_max_tokens", 4000),
             key="qwen_max_tokens_slider",
-            help="控制 qwen-3-32b 回應的最大長度"
+            help="控制AI回應的最大長度"
         )
         st.session_state.qwen_temperature = st.slider(
             "溫度 (專注 vs. 創意)",
@@ -745,8 +745,8 @@ with tabs[0]:
                           f"({results['ttext'].get('局式', {}).get('年', '')}) \n五子元局:{results['wuyuan']} | \n"
                           f"紀元︰{results['ttext'].get('紀元', '')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} 定筭︰{results['setcal']} |")
 
-                if st.button("🔍 使用AI(Qwen3)分析排盤結果", key="analyze_with_qwen"):
-                    with st.spinner("qwen-3-32b 正在分析太乙排盤結果..."):
+                if st.button("🔍 使用AI分析排盤結果", key="analyze_with_qwen"):
+                    with st.spinner("AI正在分析太乙排盤結果..."):
                         cerebras_api_key = st.secrets.get("CEREBRAS_API_KEY") or os.getenv("CEREBRAS_API_KEY")
                         if not cerebras_api_key:
                             st.error("CEREBRAS_API_KEY 未設置，請在 .streamlit/secrets.toml 或環境變量中設置。")
@@ -760,16 +760,16 @@ with tabs[0]:
                                 ]
                                 api_params = {
                                     "messages": messages,
-                                    "model": "qwen-3-32b",
+                                    "model": "llama-3.3-70b",
                                     "max_tokens": st.session_state.get("qwen_max_tokens", 4000),
                                     "temperature": st.session_state.get("qwen_temperature", 0.7)
                                 }
                                 response = client.get_chat_completion(**api_params)
                                 raw_response = response.choices[0].message.content
-                                with st.expander("qwen-3-32b 分析結果", expanded=True):
+                                with st.expander("AI分析結果", expanded=True):
                                     st.markdown(raw_response)
                             except Exception as e:
-                                st.error(f"調用 qwen-3-32b 時發生錯誤：{str(e)}")
+                                st.error(f"調用AI時發生錯誤：{str(e)}")
         except Exception as e:
             st.error(f"生成盤局時發生錯誤：{str(e)}")
 
