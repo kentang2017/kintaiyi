@@ -111,7 +111,7 @@ def format_taiyi_results_for_prompt(results):
         f"十天干歲始擊落宮: {results['tg_sj_su_predict']}",
         f"太歲值宿: {results['year_predict']}",
         f"三門五將: {results['three_door']} {results['five_generals']}",
-        f"推太乙在天外地內法: {results['ty'].ty_gong_dist(results['style'], results['tn'])}",
+        #f"推太乙在天外地內法: {results['ty'].ty_gong_dist(results['style'], results['tn'])}",
         f"推少多以占勝負: {results['ttext'].get('推少多以占勝負', '無')}",
         f"推太乙風雲飛鳥助戰: {results['home_vs_away3']}",
         f"《太乙秘書》: {results['ts']}",
