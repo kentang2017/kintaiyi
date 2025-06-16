@@ -459,7 +459,7 @@ with st.sidebar:
     instant = st.button('即時盤', use_container_width=True)
     
     st.markdown("---")
-    st.header("qwen-3-32b 設置")
+    st.header("AI設置")
     
     system_prompts_data = load_system_prompts()
     prompts_list = system_prompts_data.get("prompts", [])
