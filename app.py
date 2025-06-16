@@ -760,8 +760,8 @@ with tabs[0]:
                                 ]
                                 api_params = {
                                     "messages": messages,
-                                    "model": "llama-3.3-70b",
-                                    "max_tokens": st.session_state.get("qwen_max_tokens", 4000),
+                                    "model": "qwen-3-32b",
+                                    "max_tokens": st.session_state.get("qwen_max_tokens", 30000),
                                     "temperature": st.session_state.get("qwen_temperature", 0.7)
                                 }
                                 response = client.get_chat_completion(**api_params)
