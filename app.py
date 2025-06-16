@@ -762,7 +762,7 @@ with tabs[0]:
                                 ]
                                 api_params = {
                                     "messages": messages,
-                                    "model": "deepseek-r1-distill-llama-70b",
+                                    "model": "qwen-3-32b",
                                     "max_tokens": st.session_state.get("qwen_max_tokens", 100000),
                                     "temperature": st.session_state.get("qwen_temperature", 0.7)
                                 }
