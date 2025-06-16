@@ -37,7 +37,7 @@ CEREBRAS_MODEL_DESCRIPTIONS = {
 def load_system_prompts():
     SYSTEM_PROMPTS_FILE = "system_prompts.json"
     DEFAULT_SYSTEM_PROMPT = (
-        "你是一位太乙神數大師，熟悉《太乙秘書》和歷史案例。請根據提供的太乙排盤數據，進行以下操作：\n"
+        "你是一位太乙神數大師，熟悉《太乙秘書》、《太乙命法》歷史案例。請根據提供的太乙排盤數據，進行以下操作：\n"
         "1. 解釋盤局的關鍵要素（主筭、客筭、始擊、太歲等）。\n"
         "2. 結合《太乙秘書》中的理論，分析盤局的吉凶和潛在影響。\n"
         "3. 若為太乙命法，評估命主的運勢和人生趨勢。\n"
@@ -122,9 +122,6 @@ def format_taiyi_results_for_prompt(results):
             f"命法性別: {results['zhao']} ({results['sex_o']})",
             f"十二宮分析: {results['lifedisc']}",
             f"太乙十六神落宮: {results['lifedisc2']}",
-            f"陽九行限: {format_text(results['yjxx'])}",
-            f"百六行限: {format_text(results['blxx'])}",
-            f"值卦: 年卦 {results['ygua']}, 月卦 {results['mgua']}, 日卦 {results['dgua']}, 時卦 {results['hgua']}, 分卦 {results['mingua']}",
         ])
     return "\n\n".join(prompt_lines)
 
