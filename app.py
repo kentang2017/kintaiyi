@@ -745,7 +745,7 @@ with tabs[0]:
                           f"({results['ttext'].get('局式', {}).get('年', '')}) \n五子元局:{results['wuyuan']} | \n"
                           f"紀元︰{results['ttext'].get('紀元', '')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} 定筭︰{results['setcal']} |")
 
-                if st.button("🔍 使用 qwen-3-32b 分析排盤結果", key="analyze_with_qwen"):
+                if st.button("🔍 使用AI(Qwen3)分析排盤結果", key="analyze_with_qwen"):
                     with st.spinner("qwen-3-32b 正在分析太乙排盤結果..."):
                         cerebras_api_key = st.secrets.get("CEREBRAS_API_KEY") or os.getenv("CEREBRAS_API_KEY")
                         if not cerebras_api_key:
