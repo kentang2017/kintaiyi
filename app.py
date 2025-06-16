@@ -557,8 +557,8 @@ with st.sidebar:
     if st.toggle("🔧 高級設置", key="qwen_advanced_settings_toggle"):
         st.session_state.qwen_max_tokens = st.slider(
             "最大生成 Tokens",
-            100, 10000,
-            st.session_state.get("qwen_max_tokens", 4000),
+            4000, 100000,
+            st.session_state.get("qwen_max_tokens", 100000),
             key="qwen_max_tokens_slider",
             help="控制AI回應的最大長度"
         )
@@ -760,8 +760,8 @@ with tabs[0]:
                                 ]
                                 api_params = {
                                     "messages": messages,
-                                    "model": "qwen-3-32b",
-                                    "max_tokens": st.session_state.get("qwen_max_tokens", 30000),
+                                    "model": "deepseek-r1-distill-llama-70b",
+                                    "max_tokens": st.session_state.get("qwen_max_tokens", 100000),
                                     "temperature": st.session_state.get("qwen_temperature", 0.7)
                                 }
                                 response = client.get_chat_completion(**api_params)
