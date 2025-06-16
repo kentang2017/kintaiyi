@@ -141,7 +141,7 @@ def format_taiyi_results_for_prompt(results):
         raise ValueError(f"無法格式化太乙結果：{str(e)}")
 
 def render_svg(svg, num):
-    """渲染交互式 SVG 圖表，針對 id='layer4' 和 id='layer6' 的 <g> 標籤進行順時針或逆時針旋轉，支援按住滑鼠旋轉並移除� residual images"""
+    """渲染交互式 SVG 圖表，針對 id='layer4' 和 id='layer6' 的 <g> 標籤進行順時針或逆時針旋轉，支援按住滑鼠旋轉並移除殞地影像"""
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
         return
@@ -496,39 +496,43 @@ with st.sidebar:
         
         system_prompts_data["selected"] = selected_name
         
-        selected_content = ""
-        for prompt in prompts_list:
-            if prompt["name"] == selected_name:
-                selected_content = prompt["content"]
-                break
+        selected_content = next((prompt["content"] for prompt in prompts_list if prompt["name"] == selected_name), "")
         
+        # Initialize qwen_system_prompt if not set
         if 'qwen_system_prompt' not in st.session_state:
             st.session_state.qwen_system_prompt = selected_content
-        elif selected_name != st.session_state.get("last_selected_qwen_prompt"):
+        
+        # Update qwen_system_prompt only if the selected prompt changes
+        if selected_name != st.session_state.get("last_selected_qwen_prompt"):
             st.session_state.qwen_system_prompt = selected_content
+            st.session_state.last_selected_qwen_prompt = selected_name
+            logger.debug("Updated qwen_system_prompt to: %s", selected_content)
         
-        st.session_state.last_selected_qwen_prompt = selected_name
-        
+        # Use a unique key for the text_area to avoid conflicts
         new_content = st.text_area(
             "編輯系統提示",
             value=st.session_state.qwen_system_prompt,
             height=150,
             placeholder="範例：你是一位太乙神數專家，根據排盤數據提供詳細分析...",
-            key="qwen_system_prompt"
+            key=f"qwen_system_prompt_editor_{selected_name}"
         )
         
-        st.session_state.qwen_system_prompt = new_content
+        # Update session state only if the content has changed
+        if new_content != st.session_state.qwen_system_prompt:
+            st.session_state.qwen_system_prompt = new_content
+            logger.debug("User edited qwen_system_prompt to: %s", new_content)
         
         col1, col2 = st.columns(2)
         with col1:
             if st.button("💾 更新提示", key="update_qwen_prompt_button"):
                 for prompt in prompts_list:
                     if prompt["name"] == selected_name:
-                        prompt["content"] = new_content
+                        prompt["content"] = st.session_state.qwen_system_prompt
                         break
                 if save_system_prompts(system_prompts_data):
-                    st.toast(f"✅ 已更新儲存提示 '{selected_name}'！")
-                
+                    st.toast(f"✅ 已更新系統提示 '{selected_name}'！")
+                logger.debug("Saved updated prompt: %s", selected_name)
+        
         with col2:
             if st.button("❌ 刪除提示", key="delete_qwen_prompt_button", 
                         disabled=len(prompts_list) <= 1):
@@ -536,9 +540,12 @@ with st.sidebar:
                 system_prompts_data["prompts"] = prompts_list
                 if selected_name == selected_prompt and prompts_list:
                     system_prompts_data["selected"] = prompts_list[0]["name"]
+                    st.session_state.qwen_system_prompt = prompts_list[0]["content"]
+                    st.session_state.last_selected_qwen_prompt = prompts_list[0]["name"]
                 if save_system_prompts(system_prompts_data):
-                    st.toast(f"✅ 已刪除提示 '{selected_name}'！")
+                    st.toast(f"✅ 已刪除系統提示 '{selected_name}'！")
                     st.rerun()
+                logger.debug("Deleted prompt: %s", selected_name)
     
     if "qwen_form_key_suffix" not in st.session_state:
         st.session_state.qwen_form_key_suffix = 0
@@ -554,7 +561,7 @@ with st.sidebar:
             placeholder="輸入 qwen-3-32b 的分析指令...",
             key=content_key
         )
-        if st.button("✔️ 新增提示", key="add_qwen_prompt_button",
+        if st.button("➕ 新增提示", key="add_qwen_prompt_button",
                     disabled=not new_prompt_name or not new_prompt_content):
             if new_prompt_name in prompt_names:
                 st.error(f"提示名稱 '{new_prompt_name}' 已存在。")
@@ -564,31 +571,35 @@ with st.sidebar:
                     "content": new_prompt_content
                 })
                 system_prompts_data["prompts"] = prompts_list
+                system_prompts_data["selected"] = new_prompt_name
+                st.session_state.qwen_system_prompt = new_prompt_content
+                st.session_state.last_selected_qwen_prompt = new_prompt_name
                 if save_system_prompts(system_prompts_data):
                     st.session_state.qwen_form_key_suffix += 1
-                    st.toast(f"✅ 已新增提示 '{new_prompt_name}'！")
+                    st.toast(f"✅ 已新增系統提示 '{new_prompt_name}'！")
                     st.rerun()
+                logger.debug("Added new prompt: %s", new_prompt_name)
     
     if st.toggle("🔧 高級設置", key="qwen_advanced_settings_toggle"):
         st.session_state.qwen_max_tokens = st.slider(
             "最大生成 Tokens",
             100, 10000,
             st.session_state.get("qwen_max_tokens", 4000),
-            key="qwen_max_tokens",
+            key="qwen_max_tokens_slider",
             help="控制 qwen-3-32b 回應的最大長度"
         )
         st.session_state.qwen_temperature = st.slider(
-            "溫度 (選擇性與隨機性)",
+            "溫度 (專注 vs. 創意)",
             0.0, 1.5,
             st.session_state.get("qwen_temperature", 0.7),
             step=0.05,
-            key="qwen_temperature",
-            help="較低值 (如 0.2) 更專注，較高值 (如 0.8) 更具創意"
+            key="qwen_temperature_slider",
+            help="較低值 (如 0.2) 更確定性；較高值 (如 0.8) 更隨機"
         )
     
     st.markdown("---")
-    if st.toggle("🔍 除錯模式", key="debug_mode_toggle", help="顯示除錯資訊，例如 session state"):
-        st.subheader("🐞 除錯資訊")
+    if st.toggle("🔍 除錯模式", key="debug_mode_toggle", help="顯示除錯資訊，如 session state"):
+        st.subheader("🐛 除錯資訊")
         st.write("Session State:")
         st.json(st.session_state)
 
@@ -600,7 +611,7 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
     try:
         ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
         if style != 5:
-            ttext = ty.kook.get('ttext', None)
+            ttext = ty.pan(style, tn)
             kook = ty.kook(style, tn)
             sj_su_predict = f"始擊落{ty.sf_num(style, tn)}宿，{su_dist.get(ty.sf_num(style, tn))}"
             tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(style, tn)))
@@ -608,9 +619,9 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
             five_generals = ty.fivegenerals(style, tn)
             home_vs_away1 = ty.wc_n_sj(style, tn)
             genchart2 = ty.gen_gong(style, tn, tc)
-        if style == 5:
+        else:
             tn = 0
-            ttext = ty.kook.get('ttext', None)
+            ttext = ty.pan(3, 0)
             kook = ty.kook(3, 0)
             sj_su_predict = f"始擊落{ty.sf_num(3, 0)}宿，{su_dist.get(ty.sf_num(3, 0))}"
             tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(3, 0)))
@@ -736,7 +747,7 @@ with tabs[0]:
                         st.markdown(results["ts"])
                         st.title("史事記載︰")
                         st.markdown(results["ch"])
-                    print(f"{config.gendatetime(my, mm, md, mh, mmin)} {results['zhao']} - {results['ty'].taiyi_life(results['sex_o']).get('性別')} - {config.taiyi_name(0)[0]} - {results['ty'].accnum(0, 0)} | \n農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{results['gz']} |\n{config.kingyear(my)} |\n太乙命法 - {results['ty'].kook(0, 0).get('文')} ({results['ttext'].get('局式').get('年') if results['ttext'] else '無'}) | \n紀元︰{results['ttext'].get('紀元') if results['ttext'] else '無'} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} |")
+                    print(f"{config.gendatetime(my, mm, md, mh, mmin)} {results['zhao']} - {results['ty'].taiyi_life(results['sex_o']).get('性別')} - {config.taiyi_name(0)[0]} - {results['ty'].accnum(0, 0)} | \n農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{results['gz']} |\n{config.kingyear(my)} |\n太乙命法 - {results['ty'].kook(0, 0).get('文')} ({results['ttext'].get('局式', {}).get('年', '無') if results['ttext'] else '無'}) | \n紀元︰{results['ttext'].get('紀元', '無') if results['ttext'] else '無'} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} |")
                 else:
                     try:
                         start_pt2 = results["genchart2"][results["genchart2"].index('''viewBox="''')+22:].split(" ")[1]
@@ -758,7 +769,7 @@ with tabs[0]:
                         st.markdown(f"推太乙在天外地內法︰{results['ty'].ty_gong_dist(results['style'], results['tn'])}")
                         st.markdown(f"三門五將︰{results['three_door'] + results['five_generals']}")
                         st.markdown(f"推主客相關︰{results['home_vs_away1']}")
-                        st.markdown(f"推少多以占勝負︰{results['ttext'].get('推少多以占勝負') if results['ttext'] else '無'}")
+                        st.markdown(f"推少多以占勝負︰{results['ttext'].get('推少多以占勝負', '無') if results['ttext'] else '無'}")
                         st.markdown(f"推太乙風雲飛鳥助戰︰{results['home_vs_away3'] or '無'}")
                     print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(results['style'])[0]}數︰{results['ty'].accnum(results['style'], results['tn'])} | \n"
                           f"農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n"
@@ -869,7 +880,7 @@ st.markdown(
     }
 
     .stMarkdown [data-testid="stMarkdownContainer"] {
-        white-space: pre-wrap;
+        white-space: pre-wrap !important;
     }
 
     .stExpander {
@@ -887,10 +898,10 @@ st.markdown(
         border: 1px solid #ced4da;
     }
     html[data-theme="dark"] input[type="text"], 
-    html[data-theme="dark"] input[type="text"], textarea {
+    html[data-theme="dark"] textarea {
         border: 1px solid #4d5154;
     }
-
+    
     .stButton button {
         border-radius: 6px;
         font-weight: 500;
