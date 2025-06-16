@@ -4,7 +4,6 @@ import pytz
 from contextlib import contextmanager, redirect_stdout
 from io import StringIO
 import urllib.request
-import base64
 import json
 import jieqi
 import kintaiyi
@@ -106,13 +105,18 @@ def format_text(d, parent_key=""):
 def format_taiyi_results_for_prompt(results):
     """Format Taiyi calculation results into a prompt for the qwen-3-32b model."""
     try:
-        logger.debug("Formatting Taiyi results: %s", results)
+        logger.debug("Formatting Taiyi results: %s", json.dumps(results, default=str, ensure_ascii=False))
+        ttext = results.get('ttext', {}) or {}
+        if not isinstance(ttext, dict):
+            logger.warning("ttext is not a dictionary: %s", ttext)
+            ttext = {}
+        
         prompt_lines = [
             "以下是太乙排盤的計算結果，請根據這些數據提供詳細的分析和解釋：",
             f"日期時間: {results.get('gz', '未知')} (農曆: {results.get('lunard', '未知')})",
-            f"紀元: {results.get('ttext', {}).get('紀元', '無')}",
-            f"局式: {results.get('ttext', {}).get('局式', {}).get('年', '無')}",
-            f"太乙計: {config.ty_method(results.get('tn', 0))}{results.get('ttext', {}).get('太乙計', '')}",
+            f"紀元: {ttext.get('紀元', '無')}",
+            f"局式: {ttext.get('局式', {}).get('年', '無')}",
+            f"太乙計: {config.ty_method(results.get('tn', 0))}{ttext.get('太乙計', '')}",
             f"文: {results.get('kook', {}).get('文', '無')}",
             f"數: {results.get('kook_num', '無')}",
             f"主筭: {results.get('homecal', '無')}, 客筭: {results.get('awaycal', '無')}, 定筭: {results.get('setcal', '無')}",
@@ -121,8 +125,8 @@ def format_taiyi_results_for_prompt(results):
             f"太歲值宿: {results.get('year_predict', '無')}",
             f"三門五將: {results.get('three_door', '無')} {results.get('five_generals', '無')}",
             f"推太乙在天外地內法: {results.get('ty', None).ty_gong_dist(results.get('style', 0), results.get('tn', 0)) if results.get('ty') else '無'}",
-            f"推少多以占勝負: {results.get('ttext', {}).get('推少多以占勝負', '無') or '無'}",
-            f"推太乙風雲飛鳥助戰: {results.get('home_vs_away3', '無') or '無'}",
+            f"推少多以占勝負: {ttext.get('推少多以占勝負', '無')}",
+            f"推太乙風雲飛鳥助戰: {results.get('home_vs_away3', '無')}",
             f"《太乙秘書》: {results.get('ts', '無')}",
             f"史事記載: {results.get('ch', '無')}",
         ]
@@ -135,9 +139,11 @@ def format_taiyi_results_for_prompt(results):
                 f"百六行限: {format_text(results.get('blxx', {}))}",
                 f"值卦: 年卦 {results.get('ygua', '無')}, 月卦 {results.get('mgua', '無')}, 日卦 {results.get('dgua', '無')}, 時卦 {results.get('hgua', '無')}, 分卦 {results.get('mingua', '無')}",
             ])
-        return "\n\n".join([line for line in prompt_lines if line])
+        formatted_prompt = "\n\n".join([line for line in prompt_lines if line])
+        logger.debug("Formatted prompt: %s", formatted_prompt)
+        return formatted_prompt
     except Exception as e:
-        logger.error("Error formatting Taiyi results: %s", str(e))
+        logger.error("Error formatting Taiyi results: %s", str(e), exc_info=True)
         raise ValueError(f"無法格式化太乙結果：{str(e)}")
 
 def render_svg(svg, num):
@@ -498,17 +504,14 @@ with st.sidebar:
         
         selected_content = next((prompt["content"] for prompt in prompts_list if prompt["name"] == selected_name), "")
         
-        # Initialize qwen_system_prompt if not set
         if 'qwen_system_prompt' not in st.session_state:
             st.session_state.qwen_system_prompt = selected_content
         
-        # Update qwen_system_prompt only if the selected prompt changes
         if selected_name != st.session_state.get("last_selected_qwen_prompt"):
             st.session_state.qwen_system_prompt = selected_content
             st.session_state.last_selected_qwen_prompt = selected_name
             logger.debug("Updated qwen_system_prompt to: %s", selected_content)
         
-        # Use a unique key for the text_area to avoid conflicts
         new_content = st.text_area(
             "編輯系統提示",
             value=st.session_state.qwen_system_prompt,
@@ -517,7 +520,6 @@ with st.sidebar:
             key=f"qwen_system_prompt_editor_{selected_name}"
         )
         
-        # Update session state only if the content has changed
         if new_content != st.session_state.qwen_system_prompt:
             st.session_state.qwen_system_prompt = new_content
             logger.debug("User edited qwen_system_prompt to: %s", new_content)
@@ -611,7 +613,10 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
     try:
         ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
         if style != 5:
-            ttext = ty.pan(style, tn)
+            ttext = ty.pan(style, tn) or {}
+            if not isinstance(ttext, dict):
+                logger.warning("ttext is not a dictionary for style=%s, tn=%s: %s", style, tn, ttext)
+                ttext = {}
             kook = ty.kook(style, tn)
             sj_su_predict = f"始擊落{ty.sf_num(style, tn)}宿，{su_dist.get(ty.sf_num(style, tn))}"
             tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(style, tn)))
@@ -621,7 +626,10 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
             genchart2 = ty.gen_gong(style, tn, tc)
         else:
             tn = 0
-            ttext = ty.pan(3, 0)
+            ttext = ty.pan(3, 0) or {}
+            if not isinstance(ttext, dict):
+                logger.warning("ttext is not a dictionary for style=3, tn=0: %s", ttext)
+                ttext = {}
             kook = ty.kook(3, 0)
             sj_su_predict = f"始擊落{ty.sf_num(3, 0)}宿，{su_dist.get(ty.sf_num(3, 0))}"
             tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(3, 0)))
@@ -641,9 +649,9 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
         lifedisc2 = ty.stars_descriptions_text(4, 0)
         yc = ty.year_chin()
         year_predict = f"太歲{yc}值宿，{su_dist.get(yc)}"
-        home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法") if ttext else None
+        home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法", "無")
         ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
-        gz = f"{ttext.get('干支')[0]}年 {ttext.get('干支')[1]}月 {ttext.get('干支')[2]}日 {ttext.get('干支')[3]}時 {ttext.get('干支')[4]}分" if ttext else "未知"
+        gz = f"{ttext.get('干支', ['未知']*5)[0]}年 {ttext.get('干支', ['未知']*5)[1]}月 {ttext.get('干支', ['未知']*5)[2]}日 {ttext.get('干支', ['未知']*5)[3]}時 {ttext.get('干支', ['未知']*5)[4]}分"
         lunard = f"{cn2an.transform(str(config.lunar_date_d(my, mm, md).get('年')) + '年', 'an2cn')}{an2cn(config.lunar_date_d(my, mm, md).get('月'))}月{an2cn(config.lunar_date_d(my, mm, md).get('日'))}日"
         ch = chistory.get(my, "")
         tys = "".join([ts[i:i+25] + "\n" for i in range(0, len(ts), 25)])
@@ -695,10 +703,10 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
             "sex_o": sex_o,
             "ty": ty
         }
-        logger.debug("Generated Taiyi results: %s", results)
+        logger.debug("Generated Taiyi results: %s", json.dumps(results, default=str, ensure_ascii=False))
         return results
     except Exception as e:
-        logger.error("Error generating Taiyi results: %s", str(e))
+        logger.error("Error generating Taiyi results: %s", str(e), exc_info=True)
         raise
 
 # 創建標籤頁
@@ -718,6 +726,11 @@ with tabs[0]:
                 st.session_state.render_default = False
 
             if results:
+                # Debug: Display results dictionary if debug mode is enabled
+                if st.session_state.get("debug_mode_toggle"):
+                    with st.expander("Debug: Results Dictionary", expanded=False):
+                        st.json(results)
+                
                 if results["style"] == 5:
                     try:
                         start_pt = results["genchart1"][results["genchart1"].index('''viewBox="''')+22:].split(" ")[1]
@@ -747,7 +760,7 @@ with tabs[0]:
                         st.markdown(results["ts"])
                         st.title("史事記載︰")
                         st.markdown(results["ch"])
-                    print(f"{config.gendatetime(my, mm, md, mh, mmin)} {results['zhao']} - {results['ty'].taiyi_life(results['sex_o']).get('性別')} - {config.taiyi_name(0)[0]} - {results['ty'].accnum(0, 0)} | \n農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{results['gz']} |\n{config.kingyear(my)} |\n太乙命法 - {results['ty'].kook(0, 0).get('文')} ({results['ttext'].get('局式', {}).get('年', '無') if results['ttext'] else '無'}) | \n紀元︰{results['ttext'].get('紀元', '無') if results['ttext'] else '無'} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} |")
+                    print(f"{config.gendatetime(my, mm, md, mh, mmin)} {results['zhao']} - {results['ty'].taiyi_life(results['sex_o']).get('性別')} - {config.taiyi_name(0)[0]} - {results['ty'].accnum(0, 0)} | \n農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{results['gz']} |\n{config.kingyear(my)} |\n太乙命法 - {results['ty'].kook(0, 0).get('文')} ({results['ttext'].get('局式', {}).get('年', '無')}) | \n紀元︰{results['ttext'].get('紀元', '無')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} |")
                 else:
                     try:
                         start_pt2 = results["genchart2"][results["genchart2"].index('''viewBox="''')+22:].split(" ")[1]
@@ -769,15 +782,15 @@ with tabs[0]:
                         st.markdown(f"推太乙在天外地內法︰{results['ty'].ty_gong_dist(results['style'], results['tn'])}")
                         st.markdown(f"三門五將︰{results['three_door'] + results['five_generals']}")
                         st.markdown(f"推主客相關︰{results['home_vs_away1']}")
-                        st.markdown(f"推少多以占勝負︰{results['ttext'].get('推少多以占勝負', '無') if results['ttext'] else '無'}")
-                        st.markdown(f"推太乙風雲飛鳥助戰︰{results['home_vs_away3'] or '無'}")
+                        st.markdown(f"推少多以占勝負�：{results['ttext'].get('推少多以占勝負', '無')}")
+                        st.markdown(f"推太乙風雲飛鳥助戰︰{results['home_vs_away3']}")
                     print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(results['style'])[0]}數︰{results['ty'].accnum(results['style'], results['tn'])} | \n"
                           f"農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n"
                           f"{results['gz']} |\n"
                           f"{config.kingyear(my)} |\n"
-                          f"{config.ty_method(results['tn'])}{results['ttext'].get('太乙計', '') if results['ttext'] else ''} - {results['ty'].kook(results['style'], results['tn']).get('文', '')} "
-                          f"({results['ttext'].get('局式', {}).get('年', '') if results['ttext'] else ''}) \n五子元局:{results['wuyuan']} | \n"
-                          f"紀元︰{results['ttext'].get('紀元', '') if results['ttext'] else ''} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} 定筭︰{results['setcal']} |")
+                          f"{config.ty_method(results['tn'])}{results['ttext'].get('太乙計', '')} - {results['ty'].kook(results['style'], results['tn']).get('文', '')} "
+                          f"({results['ttext'].get('局式', {}).get('年', '')}) \n五子元局:{results['wuyuan']} | \n"
+                          f"紀元�：{results['ttext'].get('紀元', '')} | 主筭︰{results['homecal']} 客筭ﺷ{results['awaycal']} 定筭ﺷ{results['setcal']} |")
 
                 if st.button("🔍 使用 qwen-3-32b 分析排盤結果", key="analyze_with_qwen"):
                     with st.spinner("qwen-3-32b 正在分析太乙排盤結果..."):
@@ -804,10 +817,10 @@ with tabs[0]:
                                 with st.expander("qwen-3-32b 分析結果", expanded=True):
                                     st.markdown(raw_response)
                             except Exception as e:
-                                logger.error("Error calling qwen-3-32b: %s", str(e))
+                                logger.error("Error calling qwen-3-32b: %s", str(e), exc_info=True)
                                 st.error(f"調用 qwen-3-32b 時發生錯誤：{str(e)}\n請檢查日誌以獲取更多資訊。")
         except Exception as e:
-            logger.error("Error generating Taiyi chart: %s", str(e))
+            logger.error("Error generating Taiyi chart: %s", str(e), exc_info=True)
             st.error(f"生成盤局時發生錯誤：{str(e)}")
 
 # 使用說明
