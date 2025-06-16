@@ -16,6 +16,22 @@ from taiyimishu import taiyi_yingyang
 from historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
+from cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL
+
+# DEFAULT_MODEL is imported from cerebras_client
+CEREBRAS_MODEL_OPTIONS = [
+    "qwen-3-32b",
+    "llama-4-scout-17b-16e-instruct",
+    "llama3.1-8b",
+    "llama-3.3-70b"
+]
+CEREBRAS_MODEL_DESCRIPTIONS = {
+    "qwen-3-32b": "Cerebras: Fast inference, great for rapid iteration.",
+    "llama-4-scout-17b-16e-instruct": "Cerebras: Optimized for guided workflows.",
+    "llama3.1-8b": "Cerebras: Light and fast for quick tasks.",
+    "llama-3.3-70b": "Cerebras: Most capable for complex reasoning."
+}
+
 
 # Initialize session state to control rendering
 if 'render_default' not in st.session_state:
