@@ -18,6 +18,11 @@ import streamlit.components.v1 as components
 from streamlit.components.v1 import html
 from cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL
 import os
+import logging
+
+# Set up logging for debugging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 # Cerebras Model Options
 CEREBRAS_MODEL_OPTIONS = [
@@ -85,6 +90,8 @@ def get_file_content_as_string(base_url, path):
 
 def format_text(d, parent_key=""):
     """格式化字典為可讀的文本"""
+    if d is None:
+        return "無數據"
     items = []
     for k, v in d.items():
         new_key = f"{parent_key}{k}" if parent_key else k
@@ -98,38 +105,43 @@ def format_text(d, parent_key=""):
 
 def format_taiyi_results_for_prompt(results):
     """Format Taiyi calculation results into a prompt for the qwen-3-32b model."""
-    prompt_lines = [
-        "以下是太乙排盤的計算結果，請根據這些數據提供詳細的分析和解釋：",
-        f"日期時間: {results['gz']} (農曆: {results['lunard']})",
-        f"紀元: {results['ttext'].get('紀元', '無')}",
-        f"局式: {results['ttext'].get('局式', {}).get('年', '無')}",
-        f"太乙計: {config.ty_method(results['tn'])}{results['ttext'].get('太乙計', '')}",
-        f"文: {results['kook'].get('文', '無')}",
-        f"數: {results['kook_num']}",
-        f"主筭: {results['homecal']}, 客筭: {results['awaycal']}, 定筭: {results['setcal']}",
-        f"始擊值宿: {results['sj_su_predict']}",
-        f"十天干歲始擊落宮: {results['tg_sj_su_predict']}",
-        f"太歲值宿: {results['year_predict']}",
-        f"三門五將: {results['three_door']} {results['five_generals']}",
-        f"推太乙在天外地內法: {results['ty'].ty_gong_dist(results['style'], results['tn'])}",
-        f"推少多以占勝負: {results['ttext'].get('推少多以占勝負', '無')}",
-        f"推太乙風雲飛鳥助戰: {results['home_vs_away3']}",
-        f"《太乙秘書》: {results['ts']}",
-        f"史事記載: {results['ch']}",
-    ]
-    if results["style"] == 5:  # 太乙命法
-        prompt_lines.extend([
-            f"命法性別: {results['zhao']} ({results['sex_o']})",
-            f"十二宮分析: {results['lifedisc']}",
-            f"太乙十六神落宮: {results['lifedisc2']}",
-            f"陽九行限: {format_text(results['yjxx'])}",
-            f"百六行限: {format_text(results['blxx'])}",
-            f"值卦: 年卦 {results['ygua']}, 月卦 {results['mgua']}, 日卦 {results['dgua']}, 時卦 {results['hgua']}, 分卦 {results['mingua']}",
-        ])
-    return "\n\n".join(prompt_lines)
+    try:
+        logger.debug("Formatting Taiyi results: %s", results)
+        prompt_lines = [
+            "以下是太乙排盤的計算結果，請根據這些數據提供詳細的分析和解釋：",
+            f"日期時間: {results.get('gz', '未知')} (農曆: {results.get('lunard', '未知')})",
+            f"紀元: {results.get('ttext', {}).get('紀元', '無')}",
+            f"局式: {results.get('ttext', {}).get('局式', {}).get('年', '無')}",
+            f"太乙計: {config.ty_method(results.get('tn', 0))}{results.get('ttext', {}).get('太乙計', '')}",
+            f"文: {results.get('kook', {}).get('文', '無')}",
+            f"數: {results.get('kook_num', '無')}",
+            f"主筭: {results.get('homecal', '無')}, 客筭: {results.get('awaycal', '無')}, 定筭: {results.get('setcal', '無')}",
+            f"始擊值宿: {results.get('sj_su_predict', '無')}",
+            f"十天干歲始擊落宮: {results.get('tg_sj_su_predict', '無')}",
+            f"太歲值宿: {results.get('year_predict', '無')}",
+            f"三門五將: {results.get('three_door', '無')} {results.get('five_generals', '無')}",
+            f"推太乙在天外地內法: {results.get('ty', None).ty_gong_dist(results.get('style', 0), results.get('tn', 0)) if results.get('ty') else '無'}",
+            f"推少多以占勝負: {results.get('ttext', {}).get('推少多以占勝負', '無') or '無'}",
+            f"推太乙風雲飛鳥助戰: {results.get('home_vs_away3', '無') or '無'}",
+            f"《太乙秘書》: {results.get('ts', '無')}",
+            f"史事記載: {results.get('ch', '無')}",
+        ]
+        if results.get("style") == 5:  # 太乙命法
+            prompt_lines.extend([
+                f"命法性別: {results.get('zhao', '無')} ({results.get('sex_o', '無')})",
+                f"十二宮分析: {results.get('lifedisc', '無')}",
+                f"太乙十六神落宮: {results.get('lifedisc2', '無')}",
+                f"陽九行限: {format_text(results.get('yjxx', {}))}",
+                f"百六行限: {format_text(results.get('blxx', {}))}",
+                f"值卦: 年卦 {results.get('ygua', '無')}, 月卦 {results.get('mgua', '無')}, 日卦 {results.get('dgua', '無')}, 時卦 {results.get('hgua', '無')}, 分卦 {results.get('mingua', '無')}",
+            ])
+        return "\n\n".join([line for line in prompt_lines if line])
+    except Exception as e:
+        logger.error("Error formatting Taiyi results: %s", str(e))
+        raise ValueError(f"無法格式化太乙結果：{str(e)}")
 
 def render_svg(svg, num):
-    """渲染交互式 SVG 圖表，針對 id='layer4' 和 id='layer6' 的 <g> 標籤進行順時針或逆時針旋轉，支援按住滑鼠旋轉並移除殘影"""
+    """渲染交互式 SVG 圖表，針對 id='layer4' 和 id='layer6' 的 <g> 標籤進行順時針或逆時針旋轉，支援按住滑鼠旋轉並移除� residual images"""
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
         return
@@ -502,7 +514,7 @@ with st.sidebar:
             value=st.session_state.qwen_system_prompt,
             height=150,
             placeholder="範例：你是一位太乙神數專家，根據排盤數據提供詳細分析...",
-            key="qwen_system_editor"
+            key="qwen_system_prompt"
         )
         
         st.session_state.qwen_system_prompt = new_content
@@ -515,8 +527,8 @@ with st.sidebar:
                         prompt["content"] = new_content
                         break
                 if save_system_prompts(system_prompts_data):
-                    st.toast(f"✅ 已更新系統提示 '{selected_name}'！")
-        
+                    st.toast(f"✅ 已更新儲存提示 '{selected_name}'！")
+                
         with col2:
             if st.button("❌ 刪除提示", key="delete_qwen_prompt_button", 
                         disabled=len(prompts_list) <= 1):
@@ -525,7 +537,7 @@ with st.sidebar:
                 if selected_name == selected_prompt and prompts_list:
                     system_prompts_data["selected"] = prompts_list[0]["name"]
                 if save_system_prompts(system_prompts_data):
-                    st.toast(f"✅ 已刪除系統提示 '{selected_name}'！")
+                    st.toast(f"✅ 已刪除提示 '{selected_name}'！")
                     st.rerun()
     
     if "qwen_form_key_suffix" not in st.session_state:
@@ -542,7 +554,7 @@ with st.sidebar:
             placeholder="輸入 qwen-3-32b 的分析指令...",
             key=content_key
         )
-        if st.button("➕ 新增提示", key="add_qwen_prompt_button",
+        if st.button("✔️ 新增提示", key="add_qwen_prompt_button",
                     disabled=not new_prompt_name or not new_prompt_content):
             if new_prompt_name in prompt_names:
                 st.error(f"提示名稱 '{new_prompt_name}' 已存在。")
@@ -554,7 +566,7 @@ with st.sidebar:
                 system_prompts_data["prompts"] = prompts_list
                 if save_system_prompts(system_prompts_data):
                     st.session_state.qwen_form_key_suffix += 1
-                    st.toast(f"✅ 已新增系統提示 '{new_prompt_name}'！")
+                    st.toast(f"✅ 已新增提示 '{new_prompt_name}'！")
                     st.rerun()
     
     if st.toggle("🔧 高級設置", key="qwen_advanced_settings_toggle"):
@@ -562,113 +574,121 @@ with st.sidebar:
             "最大生成 Tokens",
             100, 10000,
             st.session_state.get("qwen_max_tokens", 4000),
-            key="qwen_max_tokens_slider",
+            key="qwen_max_tokens",
             help="控制 qwen-3-32b 回應的最大長度"
         )
         st.session_state.qwen_temperature = st.slider(
-            "溫度 (專注 vs. 創意)",
+            "溫度 (選擇性與隨機性)",
             0.0, 1.5,
             st.session_state.get("qwen_temperature", 0.7),
             step=0.05,
-            key="qwen_temperature_slider",
-            help="較低值 (如 0.2) 更確定性；較高值 (如 0.8) 更隨機"
+            key="qwen_temperature",
+            help="較低值 (如 0.2) 更專注，較高值 (如 0.8) 更具創意"
         )
     
     st.markdown("---")
-    if st.toggle("🔍 除錯模式", key="debug_mode_toggle", help="顯示除錯資訊，如 session state"):
-        st.subheader("🐛 除錯資訊")
+    if st.toggle("🔍 除錯模式", key="debug_mode_toggle", help="顯示除錯資訊，例如 session state"):
+        st.subheader("🐞 除錯資訊")
         st.write("Session State:")
         st.json(st.session_state)
 
 @st.cache_data
 def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
     """生成太乙計算結果，返回數據字典"""
-    ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
-    if style != 5:
-        ttext = ty.pan(style, tn)
-        kook = ty.kook(style, tn)
-        sj_su_predict = f"始擊落{ty.sf_num(style, tn)}宿，{su_dist.get(ty.sf_num(style, tn))}"
-        tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(style, tn)))
-        three_door = ty.threedoors(style, tn)
-        five_generals = ty.fivegenerals(style, tn)
-        home_vs_away1 = ty.wc_n_sj(style, tn)
-        genchart2 = ty.gen_gong(style, tn, tc)
-    if style == 5:
-        tn = 0
-        ttext = ty.pan(3, 0)
-        kook = ty.kook(3, 0)
-        sj_su_predict = f"始擊落{ty.sf_num(3, 0)}宿，{su_dist.get(ty.sf_num(3, 0))}"
-        tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(3, 0)))
-        three_door = ty.threedoors(3, 0)
-        five_generals = ty.fivegenerals(3, 0)
-        home_vs_away1 = ty.wc_n_sj(3, 0)
-        genchart2 = ty.gen_gong(3, tn, tc)
-    genchart1 = ty.gen_life_gong(sex_o)
-    kook_num = kook.get("數")
-    yingyang = kook.get("文")[0]
-    wuyuan = ty.get_five_yuan_kook(style, tn) if style != 5 else ""
-    homecal, awaycal, setcal = config.find_cal(yingyang, kook_num)
-    zhao = {"男": "乾造", "女": "坤造"}.get(sex_o)
-    life1 = ty.gongs_discription(sex_o)
-    life2 = ty.twostar_disc(sex_o)
-    lifedisc = ty.convert_gongs_text(life1, life2)
-    lifedisc2 = ty.stars_descriptions_text(4, 0)
-    yc = ty.year_chin()
-    year_predict = f"太歲{yc}值宿，{su_dist.get(yc)}"
-    home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
-    ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
-    gz = f"{ttext.get('干支')[0]}年 {ttext.get('干支')[1]}月 {ttext.get('干支')[2]}日 {ttext.get('干支')[3]}時 {ttext.get('干支')[4]}分"
-    lunard = f"{cn2an.transform(str(config.lunar_date_d(my, mm, md).get('年')) + '年', 'an2cn')}{an2cn(config.lunar_date_d(my, mm, md).get('月'))}月{an2cn(config.lunar_date_d(my, mm, md).get('日'))}日"
-    ch = chistory.get(my, "")
-    tys = "".join([ts[i:i+25] + "\n" for i in range(0, len(ts), 25)])
-    yjxx = ty.yangjiu_xingxian(sex_o)
-    blxx = ty.bailiu_xingxian(sex_o)
-    ygua = ty.year_gua()[1]
-    mgua = ty.month_gua()[1]
-    dgua = ty.day_gua()[1]
-    hgua = ty.hour_gua()[1]
-    mingua = ty.minute_gua()[1]
-    
-    return {
-        "ttext": ttext,
-        "kook": kook,
-        "sj_su_predict": sj_su_predict,
-        "tg_sj_su_predict": tg_sj_su_predict,
-        "three_door": three_door,
-        "five_generals": five_generals,
-        "home_vs_away1": home_vs_away1,
-        "genchart1": genchart1,
-        "genchart2": genchart2,
-        "kook_num": kook_num,
-        "yingyang": yingyang,
-        "wuyuan": wuyuan,
-        "homecal": homecal,
-        "awaycal": awaycal,
-        "setcal": setcal,
-        "zhao": zhao,
-        "life1": life1,
-        "life2": life2,
-        "lifedisc": lifedisc,
-        "lifedisc2": lifedisc2,
-        "year_predict": year_predict,
-        "home_vs_away3": home_vs_away3,
-        "ts": ts,
-        "gz": gz,
-        "lunard": lunard,
-        "ch": ch,
-        "tys": tys,
-        "yjxx": yjxx,
-        "blxx": blxx,
-        "ygua": ygua,
-        "mgua": mgua,
-        "dgua": dgua,
-        "hgua": hgua,
-        "mingua": mingua,
-        "style": style,
-        "tn": tn,
-        "sex_o": sex_o,
-        "ty": ty
-    }
+    logger.debug("Generating Taiyi results for: year=%s, month=%s, day=%s, hour=%s, minute=%s, style=%s, tn=%s, sex_o=%s, tc=%s",
+                 my, mm, md, mh, mmin, style, tn, sex_o, tc)
+    try:
+        ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
+        if style != 5:
+            ttext = ty.kook.get('ttext', None)
+            kook = ty.kook(style, tn)
+            sj_su_predict = f"始擊落{ty.sf_num(style, tn)}宿，{su_dist.get(ty.sf_num(style, tn))}"
+            tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(style, tn)))
+            three_door = ty.threedoors(style, tn)
+            five_generals = ty.fivegenerals(style, tn)
+            home_vs_away1 = ty.wc_n_sj(style, tn)
+            genchart2 = ty.gen_gong(style, tn, tc)
+        if style == 5:
+            tn = 0
+            ttext = ty.kook.get('ttext', None)
+            kook = ty.kook(3, 0)
+            sj_su_predict = f"始擊落{ty.sf_num(3, 0)}宿，{su_dist.get(ty.sf_num(3, 0))}"
+            tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(3, 0)))
+            three_door = ty.threedoors(3, 0)
+            five_generals = ty.fivegenerals(3, 0)
+            home_vs_away1 = ty.wc_n_sj(3, 0)
+            genchart2 = ty.gen_gong(3, tn, tc)
+        genchart1 = ty.gen_life_gong(sex_o)
+        kook_num = kook.get("數")
+        yingyang = kook.get("文")[0]
+        wuyuan = ty.get_five_yuan_kook(style, tn) if style != 5 else ""
+        homecal, awaycal, setcal = config.find_cal(yingyang, kook_num)
+        zhao = {"男": "乾造", "女": "坤造"}.get(sex_o)
+        life1 = ty.gongs_discription(sex_o)
+        life2 = ty.twostar_disc(sex_o)
+        lifedisc = ty.convert_gongs_text(life1, life2)
+        lifedisc2 = ty.stars_descriptions_text(4, 0)
+        yc = ty.year_chin()
+        year_predict = f"太歲{yc}值宿，{su_dist.get(yc)}"
+        home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法") if ttext else None
+        ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
+        gz = f"{ttext.get('干支')[0]}年 {ttext.get('干支')[1]}月 {ttext.get('干支')[2]}日 {ttext.get('干支')[3]}時 {ttext.get('干支')[4]}分" if ttext else "未知"
+        lunard = f"{cn2an.transform(str(config.lunar_date_d(my, mm, md).get('年')) + '年', 'an2cn')}{an2cn(config.lunar_date_d(my, mm, md).get('月'))}月{an2cn(config.lunar_date_d(my, mm, md).get('日'))}日"
+        ch = chistory.get(my, "")
+        tys = "".join([ts[i:i+25] + "\n" for i in range(0, len(ts), 25)])
+        yjxx = ty.yangjiu_xingxian(sex_o)
+        blxx = ty.bailiu_xingxian(sex_o)
+        ygua = ty.year_gua()[1]
+        mgua = ty.month_gua()[1]
+        dgua = ty.day_gua()[1]
+        hgua = ty.hour_gua()[1]
+        mingua = ty.minute_gua()[1]
+        
+        results = {
+            "ttext": ttext,
+            "kook": kook,
+            "sj_su_predict": sj_su_predict,
+            "tg_sj_su_predict": tg_sj_su_predict,
+            "three_door": three_door,
+            "five_generals": five_generals,
+            "home_vs_away1": home_vs_away1,
+            "genchart1": genchart1,
+            "genchart2": genchart2,
+            "kook_num": kook_num,
+            "yingyang": yingyang,
+            "wuyuan": wuyuan,
+            "homecal": homecal,
+            "awaycal": awaycal,
+            "setcal": setcal,
+            "zhao": zhao,
+            "life1": life1,
+            "life2": life2,
+            "lifedisc": lifedisc,
+            "lifedisc2": lifedisc2,
+            "year_predict": year_predict,
+            "home_vs_away3": home_vs_away3,
+            "ts": ts,
+            "gz": gz,
+            "lunard": lunard,
+            "ch": ch,
+            "tys": tys,
+            "yjxx": yjxx,
+            "blxx": blxx,
+            "ygua": ygua,
+            "mgua": mgua,
+            "dgua": dgua,
+            "hgua": hgua,
+            "mingua": mingua,
+            "style": style,
+            "tn": tn,
+            "sex_o": sex_o,
+            "ty": ty
+        }
+        logger.debug("Generated Taiyi results: %s", results)
+        return results
+    except Exception as e:
+        logger.error("Error generating Taiyi results: %s", str(e))
+        raise
 
 # 創建標籤頁
 tabs = st.tabs(['🧮太乙排盤', '💬使用說明', '📜局數史例', '🔥災異統計', '📚古籍書目', '🆕更新日誌', '🚀看盤要領', '🔗連結'])
@@ -716,7 +736,7 @@ with tabs[0]:
                         st.markdown(results["ts"])
                         st.title("史事記載︰")
                         st.markdown(results["ch"])
-                    print(f"{config.gendatetime(my, mm, md, mh, mmin)} {results['zhao']} - {results['ty'].taiyi_life(results['sex_o']).get('性別')} - {config.taiyi_name(0)[0]} - {results['ty'].accnum(0, 0)} | \n農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{results['gz']} |\n{config.kingyear(my)} |\n太乙命法 - {results['ty'].kook(0, 0).get('文')} ({results['ttext'].get('局式').get('年')}) | \n紀元︰{results['ttext'].get('紀元')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} |")
+                    print(f"{config.gendatetime(my, mm, md, mh, mmin)} {results['zhao']} - {results['ty'].taiyi_life(results['sex_o']).get('性別')} - {config.taiyi_name(0)[0]} - {results['ty'].accnum(0, 0)} | \n農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{results['gz']} |\n{config.kingyear(my)} |\n太乙命法 - {results['ty'].kook(0, 0).get('文')} ({results['ttext'].get('局式').get('年') if results['ttext'] else '無'}) | \n紀元︰{results['ttext'].get('紀元') if results['ttext'] else '無'} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} |")
                 else:
                     try:
                         start_pt2 = results["genchart2"][results["genchart2"].index('''viewBox="''')+22:].split(" ")[1]
@@ -738,15 +758,15 @@ with tabs[0]:
                         st.markdown(f"推太乙在天外地內法︰{results['ty'].ty_gong_dist(results['style'], results['tn'])}")
                         st.markdown(f"三門五將︰{results['three_door'] + results['five_generals']}")
                         st.markdown(f"推主客相關︰{results['home_vs_away1']}")
-                        st.markdown(f"推少多以占勝負︰{results['ttext'].get('推少多以占勝負')}")
-                        st.markdown(f"推太乙風雲飛鳥助戰︰{results['home_vs_away3']}")
+                        st.markdown(f"推少多以占勝負︰{results['ttext'].get('推少多以占勝負') if results['ttext'] else '無'}")
+                        st.markdown(f"推太乙風雲飛鳥助戰︰{results['home_vs_away3'] or '無'}")
                     print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(results['style'])[0]}數︰{results['ty'].accnum(results['style'], results['tn'])} | \n"
                           f"農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n"
                           f"{results['gz']} |\n"
                           f"{config.kingyear(my)} |\n"
-                          f"{config.ty_method(results['tn'])}{results['ttext'].get('太乙計', '')} - {results['ty'].kook(results['style'], results['tn']).get('文', '')} "
-                          f"({results['ttext'].get('局式', {}).get('年', '')}) \n五子元局:{results['wuyuan']} | \n"
-                          f"紀元︰{results['ttext'].get('紀元', '')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} 定筭︰{results['setcal']} |")
+                          f"{config.ty_method(results['tn'])}{results['ttext'].get('太乙計', '') if results['ttext'] else ''} - {results['ty'].kook(results['style'], results['tn']).get('文', '')} "
+                          f"({results['ttext'].get('局式', {}).get('年', '') if results['ttext'] else ''}) \n五子元局:{results['wuyuan']} | \n"
+                          f"紀元︰{results['ttext'].get('紀元', '') if results['ttext'] else ''} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} 定筭︰{results['setcal']} |")
 
                 if st.button("🔍 使用 qwen-3-32b 分析排盤結果", key="analyze_with_qwen"):
                     with st.spinner("qwen-3-32b 正在分析太乙排盤結果..."):
@@ -757,6 +777,7 @@ with tabs[0]:
                             try:
                                 client = CerebrasClient(api_key=cerebras_api_key)
                                 taiyi_prompt = format_taiyi_results_for_prompt(results)
+                                logger.debug("Taiyi prompt for qwen-3-32b: %s", taiyi_prompt)
                                 messages = [
                                     {"role": "system", "content": st.session_state.qwen_system_prompt},
                                     {"role": "user", "content": taiyi_prompt}
@@ -772,8 +793,10 @@ with tabs[0]:
                                 with st.expander("qwen-3-32b 分析結果", expanded=True):
                                     st.markdown(raw_response)
                             except Exception as e:
-                                st.error(f"調用 qwen-3-32b 時發生錯誤：{str(e)}")
+                                logger.error("Error calling qwen-3-32b: %s", str(e))
+                                st.error(f"調用 qwen-3-32b 時發生錯誤：{str(e)}\n請檢查日誌以獲取更多資訊。")
         except Exception as e:
+            logger.error("Error generating Taiyi chart: %s", str(e))
             st.error(f"生成盤局時發生錯誤：{str(e)}")
 
 # 使用說明
@@ -846,7 +869,7 @@ st.markdown(
     }
 
     .stMarkdown [data-testid="stMarkdownContainer"] {
-        white-space: pre-wrap !important;
+        white-space: pre-wrap;
     }
 
     .stExpander {
@@ -864,10 +887,10 @@ st.markdown(
         border: 1px solid #ced4da;
     }
     html[data-theme="dark"] input[type="text"], 
-    html[data-theme="dark"] textarea {
+    html[data-theme="dark"] input[type="text"], textarea {
         border: 1px solid #4d5154;
     }
-    
+
     .stButton button {
         border-radius: 6px;
         font-weight: 500;
