@@ -2,7 +2,7 @@ import os
 from cerebras.cloud.sdk import Cerebras
 
 # Default model to use across all functions
-DEFAULT_MODEL = "qwen-3-32b" # Updated to lowercase to match common Cerebras model IDs
+DEFAULT_MODEL = "qwen-3-235b" # Updated to lowercase to match common Cerebras model IDs
 
 class CerebrasClient:
     def __init__(self, api_key):
