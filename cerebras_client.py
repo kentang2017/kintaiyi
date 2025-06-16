@@ -2,7 +2,7 @@ import os
 from cerebras.cloud.sdk import Cerebras
 
 # Default model to use across all functions
-DEFAULT_MODEL = "qwen-3-32b" # Updated to lowercase to match common Cerebras model IDs
+DEFAULT_MODEL = "deepseek-r1-distill-llama-70b" # Updated to lowercase to match common Cerebras model IDs
 
 class CerebrasClient:
     def __init__(self, api_key):
@@ -34,7 +34,8 @@ class CerebrasClient:
         text_completion = self.client.completions.create(
             prompt=user_message,
             model=model,
-            max_tokens=4096 # Example, can be configured
+            max_completion_tokens=10240, # Example, can be configured
+            top_p=1
         )
         return text_completion
 
