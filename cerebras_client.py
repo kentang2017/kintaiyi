@@ -34,7 +34,7 @@ class CerebrasClient:
         text_completion = self.client.completions.create(
             prompt=user_message,
             model=model,
-            max_completion_tokens=10240, # Example, can be configured
+            max_completion_tokens=20480, # Example, can be configured
             top_p=1
         )
         return text_completion
