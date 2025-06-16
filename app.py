@@ -24,13 +24,15 @@ CEREBRAS_MODEL_OPTIONS = [
     "qwen-3-32b",
     "llama-4-scout-17b-16e-instruct",
     "llama3.1-8b",
-    "llama-3.3-70b"
+    "llama-3.3-70b",
+    "deepseek-r1-distill-llama-70b"
 ]
 CEREBRAS_MODEL_DESCRIPTIONS = {
     "qwen-3-32b": "Cerebras: Fast inference, great for rapid iteration.",
     "llama-4-scout-17b-16e-instruct": "Cerebras: Optimized for guided workflows.",
     "llama3.1-8b": "Cerebras: Light and fast for quick tasks.",
-    "llama-3.3-70b": "Cerebras: Most capable for complex reasoning."
+    "llama-3.3-70b": "Cerebras: Most capable for complex reasoning.",
+    "deepseek-r1-distill-llama-70b": "deepseek.", 
 }
 
 # System Prompt Management Functions
