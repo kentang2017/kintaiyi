@@ -612,6 +612,7 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
     life2 = ty.twostar_disc(sex_o)
     lifedisc = ty.convert_gongs_text(life1, life2)
     lifedisc2 = ty.stars_descriptions_text(4, 0)
+    lifedisc3 = ty.sixteen_gong_grades(4,0)
     yc = ty.year_chin()
     year_predict = f"太歲{yc}值宿，{su_dist.get(yc)}"
     home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
@@ -649,6 +650,7 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
         "life2": life2,
         "lifedisc": lifedisc,
         "lifedisc2": lifedisc2,
+        "lifedisc3": lifedisc3,
         "year_predict": year_predict,
         "home_vs_away3": home_vs_away3,
         "ts": ts,
@@ -701,6 +703,8 @@ with tabs[0]:
                         st.markdown(results["lifedisc"])
                         st.markdown("【太乙十六神落宮】")
                         st.markdown(results["lifedisc2"])
+                        st.markdown("【太乙十六神上中下等】")
+                        st.markdown(results["lifedisc3"])
                         st.markdown("【值卦】")
                         st.markdown(f"年卦：{results['ygua']}")
                         st.markdown(f"月卦：{results['mgua']}")
