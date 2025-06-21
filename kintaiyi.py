@@ -515,6 +515,7 @@ class Taiyi:
                  {self.skyyi(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"天乙"},
                  {self.earthyi(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"地乙"},
                  {self.flyfu1(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"飛符"},
+                 {self.zhifu(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"直符"},
                  {config.num2gong_life(config.wufu(self.accnum(ji_style,taiyi_acumyear))).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"五福"},
                  {config.num2gong_life(self.home_general(ji_style, taiyi_acumyear)).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"主大"},  
                  {config.num2gong_life(self.home_vgen(ji_style, taiyi_acumyear)).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"主參"},
@@ -1269,7 +1270,8 @@ class Taiyi:
                 if subcategory in taiyi_life_dict.twelve_gong_stars[category]:
                     combined_dict[category].append(taiyi_life_dict.twelve_gong_stars[category][subcategory])
         return combined_dict
-
+    
+    
     def sixteen_gong2(self, ji_style, taiyi_acumyear):
         original_dict = self.sixteen_gong1(ji_style, taiyi_acumyear)
         c = "五福,君基,臣基,民基,文昌,計神,小游,主大,客大,主參,客參,始擊,飛符,四神,天乙,地乙".split(",")
@@ -1293,6 +1295,16 @@ class Taiyi:
 
     def stars_descriptions_text(self, ji_style, taiyi_acumyear):
         alld = self.stars_descriptions(ji_style, taiyi_acumyear)
+        text = ""
+        for key, value in alld.items():
+            text += f"【{key}】\n{value}\n\n"
+        return text
+    
+    def sixteen_gong_grades(self, ji_style, taiyi_acumyear):
+        original_dict = self.sixteen_gong1(ji_style, taiyi_acumyear)
+        c = "五福,君基,臣基,民基,小游,文昌,主大,主參,計神,始擊,客大,客參,四神,天乙,地乙,直符".split(",")
+        a = {star: key for key, values in original_dict.items() for star in values if star in c}
+        alld = dict(zip(c,[config.multi_key_dict_get(taiyi_life_dict.sixteen_three_grades.get(i), a.get(i)) for i in c])) 
         text = ""
         for key, value in alld.items():
             text += f"【{key}】\n{value}\n\n"
@@ -1450,8 +1462,8 @@ if __name__ == '__main__':
     day = 16
     hour = 3
     minute = 0
-    print(Taiyi(year, month, day, hour, minute).pan(4,0))
-    #print(Taiyi(year, month, day, hour, minute).taiyi_life("男"))
+    #print(Taiyi(year, month, day, hour, minute).pan(4,0))
+    print(Taiyi(year, month, day, hour, minute).sixteen_gong_grades(3,0))
     #print(Taiyi(year, month, day, hour, minute).gongs_discription_list("男"))
     #print(Taiyi(year, month, day, hour, minute).gongs_discription("男"))
     #print(Taiyi(year, month, day, hour, minute).gongs_discription_list("男"))
