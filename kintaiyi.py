@@ -1336,7 +1336,7 @@ class Taiyi:
         #長生
         fly_lu = config.multi_key_dict_get({tuple(list("甲乙")):"亥", tuple(list("丙丁")):"寅", tuple(list("戊己")):"午", tuple(list("庚辛")):"巳",tuple(list("壬癸")):"申" }, gz[0][0])
         fly_horse = config.multi_key_dict_get({tuple(list("甲乙")):"亥", tuple(list("丙丁")):"寅", tuple(list("戊己")):"午", tuple(list("庚辛")):"巳",tuple(list("壬癸")):"申" }, gz[3][0])
-        blackfu = config.multi_key_dict_get(dict(zip(list("甲乙丙丁戊己庚辛壬癸"), list("寅卯子亥戌酉申未午巳"))), gz[3][0]),
+        blackfu = config.multi_key_dict_get(dict(zip(list("甲乙丙丁戊己庚辛壬癸"), list("寅卯子亥戌酉申未午巳"))), gz[3][0])
         pan = {
                 "性別":"{}{}".format(yy,sex),
                 "出生日期":config.gendatetime(self.year, self.month, self.day, self.hour, self.minute),
