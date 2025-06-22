@@ -1315,11 +1315,28 @@ class Taiyi:
         gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
         yz = gz[0][1]
         mz = gz[1][1]
+        dz = gz[2][1]
+        hz = gz[3][1]
         self.di_zhi = self.di_zhi
+        skypan = dict(zip(config.new_list(self.di_zhi, mz), config.new_list(list(reversed(self.di_zhi)), hz)))
         num= self.di_zhi.index(yz)
         yy = config.multi_key_dict_get({tuple(self.di_zhi[0::2]):"陽", tuple(self.di_zhi[1::2]):"陰"}, yz)
         direction =  config.multi_key_dict_get({("男陽","女陰"):"順", ("男陰", "女陽"):"逆"}, sex+yy)
-        arrangelist = {"順":config.new_list(config.new_list(self.di_zhi,yz), mz), "逆":config.new_list(list(reversed(config.new_list(self.di_zhi,yz))), mz)}.get(direction)
+        zhinum = dict(zip(self.di_zhi,range(1,13)))
+        #命宮排法
+        yz_arrange = dict(zip(range(1,13),config.new_list(self.di_zhi,yz)))[zhinum[yz]]
+        mz_arrange = dict(zip(range(1,13),config.new_list(self.di_zhi,yz_arrange)))[zhinum[mz]]
+        mz_arrange_r = dict(zip(range(1,13),config.new_list(list(reversed(self.di_zhi)),yz_arrange)))[zhinum[mz]]
+        #身宮排法
+        mz1_arrange = dict(zip(range(1,13),config.new_list(self.di_zhi,mz)))[zhinum[mz]]
+        dz_arrange =  dict(zip(range(1,13),config.new_list(self.di_zhi,mz1_arrange)))[zhinum[dz]]
+        dz_arrange_r = dict(zip(range(1,13),config.new_list(list(reversed(self.di_zhi)),dz_arrange)))[zhinum[dz]]
+        d_arrangelist = {"順":config.new_list(self.di_zhi, dz_arrange_r), "逆":config.new_list(self.di_zhi, dz_arrange)}.get(direction)
+        arrangelist = {"順":config.new_list(self.di_zhi, mz_arrange_r), "逆":config.new_list(self.di_zhi, mz_arrange)}.get(direction)
+        #長生
+        fly_lu = config.multi_key_dict_get({tuple(list("甲乙")):"亥", tuple(list("丙丁")):"寅", tuple(list("戊己")):"午", tuple(list("庚辛")):"巳",tuple(list("壬癸")):"申" }, gz[0][0])
+        fly_horse = config.multi_key_dict_get({tuple(list("甲乙")):"亥", tuple(list("丙丁")):"寅", tuple(list("戊己")):"午", tuple(list("庚辛")):"巳",tuple(list("壬癸")):"申" }, gz[3][0])
+        blackfu = config.multi_key_dict_get(dict(zip(list("甲乙丙丁戊己庚辛壬癸"), list("寅卯子亥戌酉申未午巳"))), gz[3][0]),
         pan = {
                 "性別":"{}{}".format(yy,sex),
                 "出生日期":config.gendatetime(self.year, self.month, self.day, self.hour, self.minute),
@@ -1328,6 +1345,12 @@ class Taiyi:
                 "紀元":self.jiyuan(0,0),
                 "太歲":self.taishui(0),
                 "命局":self.kook(0,0),
+                "安命宮":arrangelist[0],
+                "安身宮":d_arrangelist[0],
+                "飛祿":fly_lu,
+                "飛馬":fly_horse,
+                "黑符":blackfu,
+                "天盤":skypan,
                 "十二命宮排列":dict(zip(arrangelist, twelve_gongs)),
                 "陽九":config.yangjiu(self.year, self.month, self.day),
                 "百六":config.baliu(self.year, self.month, self.day),
