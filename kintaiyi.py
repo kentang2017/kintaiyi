@@ -37,6 +37,7 @@ class Taiyi:
         self.di_zhi_reversed = list(reversed(self.di_zhi))
         self.jiazi_list = config.jiazi()
         self.jigod_map = dict(zip(self.di_zhi, config.new_list(self.di_zhi_reversed, "寅")))
+        self.jigod_map_r = dict(zip(list(reversed(self.di_zhi)), config.new_list(self.di_zhi, "酉")))
         self.hegod_map = dict(zip(self.di_zhi, config.new_list(self.di_zhi_reversed, "丑")))
         self.l_num = [8, 8, 3, 3, 4, 4, 9, 9, 2, 2, 7, 7, 6, 6, 1, 1]
 
@@ -54,7 +55,12 @@ class Taiyi:
 
     def jigod(self, ji_style):
         """計神"""
-        return self.jigod_map.get(self.taishui(ji_style))
+        yy = self.kook( ji_style,0)["文"][0]
+        if yy == "陽":
+            j = self.jigod_map.get(self.taishui(ji_style))
+        if yy == "陰":
+            j = self.jigod_map_r.get(self.taishui(ji_style))
+        return  j
 
     def taishui(self, ji_style):
         """太歲"""
@@ -1481,13 +1487,17 @@ class Taiyi:
 if __name__ == '__main__':
     tic = time.perf_counter()
     year = 2025
-    month = 5
-    day = 16
-    hour = 3
-    minute = 0
-    #print(Taiyi(year, month, day, hour, minute).pan(4,0))
-    print(Taiyi(year, month, day, hour, minute).sixteen_gong_grades(3,0))
-    #print(Taiyi(year, month, day, hour, minute).gongs_discription_list("男"))
+    month = 7
+    day = 13
+    hour = 12
+    minute = 6
+    print(Taiyi(year, month, day, hour, minute).kingbase(3,0))
+    print(Taiyi(year, month, day, hour, minute).pan(3,0))
+    #life1 = Taiyi(year, month, day, hour, minute).gongs_discription("男")
+    #life2 = Taiyi(year, month, day, hour, minute).twostar_disc("男")
+    #print(Taiyi(year, month, day, hour, minute).convert_gongs_text(life1, life2))
+    #print(life1)
+    #print(Taiyi(year, month, day, hour, minute).taiyi_life("男"))
     #print(Taiyi(year, month, day, hour, minute).gongs_discription("男"))
     #print(Taiyi(year, month, day, hour, minute).gongs_discription_list("男"))
     #print(Taiyi(year, month, day, hour, minute).taiyi_life("男"))
