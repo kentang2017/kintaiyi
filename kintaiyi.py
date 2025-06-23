@@ -547,6 +547,43 @@ class Taiyi:
         overall = str(res.keys())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
         return {overall[i]:rrres[i] for i in range(0,13)}
 
+    def sixteen_gong11(self, ji_style, taiyi_acumyear):
+        """十六星分佈"""
+        dict1 = [{self.skyeyes(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"文昌"},
+                 {self.jigod(ji_style).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"計神"},
+                 {self.sf(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"始擊"},
+                 {self.kingbase(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"君基"}, 
+                 {self.officerbase(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"臣基"}, 
+                 {self.pplbase(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"民基"},
+                 {self.fgd(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"四神"},
+                 {self.skyyi(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"天乙"},
+                 {self.earthyi(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"地乙"},
+                 {self.flyfu1(ji_style, taiyi_acumyear).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥").replace("中", "辰"):"飛符"},
+                 {config.num2gong_life(config.wufu(self.accnum(ji_style,taiyi_acumyear))).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"五福"},
+                 {config.num2gong_life(self.home_general(ji_style, taiyi_acumyear)).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"主大"},  
+                 {config.num2gong_life(self.home_vgen(ji_style, taiyi_acumyear)).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"主參"},
+                 {config.num2gong_life(self.away_general(ji_style, taiyi_acumyear)).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"客大"},  
+                 {config.num2gong_life(self.away_vgen(ji_style, taiyi_acumyear)).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"客參"},
+                 {config.num2gong_life(config.smyo(self.accnum(ji_style,taiyi_acumyear))).replace("巽","辰").replace("坤","申").replace("艮","丑").replace("乾","亥"):"小游"},  
+                 ]
+        res = {"巳":"", "午":"", "未":"", "申":"", "酉":"", "戌":"", "亥":"", "子":"", "丑":"", "寅":"", "卯":"", "辰":"","中":""}
+        for dict in dict1:
+            for list in dict:
+                if list in res:
+                    try:
+                        res[list] += (dict[list])
+                    except TypeError:
+                        pass
+                else:
+                    try:
+                        res[list] = dict[list]
+                    except TypeError:
+                        pass
+        rres = str(res.values())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
+        rrres = [re.findall("..", i) for i in rres]
+        overall = str(res.keys())[11:].replace("([","").replace("'","").replace("])","").replace(" ", "").split(",")
+        return {overall[i]:rrres[i] for i in range(0,13)}
+    
     def sixteen_gong3(self, ji_style, taiyi_acumyear):
         """十六宮各星將，無十精"""
         if ji_style != 4:
@@ -1258,7 +1295,7 @@ class Taiyi:
         return c
     
     def gongs_discription_list(self, sex):
-        sixteengongs = self.sixteen_gong1(3,0)
+        sixteengongs = self.sixteen_gong11(3,0)
         t = self.gen_life_gong_list(sex)[1]
         stars = self.gen_life_gong_list(sex)[2]
         alld =  dict(zip(t, stars))
