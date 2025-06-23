@@ -1288,12 +1288,17 @@ class Taiyi:
         for key, values in b.items():
             c[key] = []
             for val in values:
-                sub_dict = [ k+"同宮。" + a[k] for k in a if k in val]
+                val_set = set(val)  # 轉成集合
+                sub_dict = [
+                    k + "同宮。" + a[k] 
+                    for k in a 
+                    if set(k) <= val_set  # k 是 val_set 的子集
+                ]
                 c[key].append(sub_dict)
         for key, values in c.items():
             c[key] = [item for item in values[0] if item]  # Remove empty lists
         return c
-    
+        
     def gongs_discription_list(self, sex):
         sixteengongs = self.sixteen_gong11(3,0)
         t = self.gen_life_gong_list(sex)[1]
