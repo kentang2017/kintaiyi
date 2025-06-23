@@ -611,8 +611,8 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
     life1 = ty.gongs_discription(sex_o)
     life2 = ty.twostar_disc(sex_o)
     lifedisc = ty.convert_gongs_text(life1, life2)
-    lifedisc2 = ty.stars_descriptions_text(4, 0)
-    lifedisc3 = ty.sixteen_gong_grades(4,0)
+    lifedisc2 = ty.stars_descriptions_text(3, 0)
+    lifedisc3 = ty.sixteen_gong_grades(3,0)
     yc = ty.year_chin()
     year_predict = f"太歲{yc}值宿，{su_dist.get(yc)}"
     home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
