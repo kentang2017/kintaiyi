@@ -428,7 +428,7 @@ def st_capture(output_func):
 st.set_page_config(
     layout="wide",
     page_title="堅太乙 - 太乙排盤",
-    page_icon="icon.png"
+    page_icon="icon.jpg"
 )
 # 定義基礎 URL
 BASE_URL_KINTAIYI = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/master/'
