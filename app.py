@@ -687,57 +687,66 @@ with tabs[0]:
                 results = gen_results(now.year, now.month, now.day, now.hour, now.minute, style, tn, sex_o, tc)
                 st.session_state.render_default = False
             else:
-                results = gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc)
-                st.session_state.render_default = False
-
+                if 1 <= mm <= 12:  # Re-validate month
+                    results = gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc)
+                    st.session_state.render_default = False
+                else:
+                    st.error("月份必須在 1-12 之間，請重新輸入。")
+                    results = None
             if results:
                 if results["style"] == 5:
-                    try:
-                        start_pt = results["genchart1"][results["genchart1"].index('''viewBox="''')+22:].split(" ")[1]
-                        if rotation == "轉動":
-                            render_svg(results["genchart1"], int(start_pt))
-                        else:
-                            render_svg1(results["genchart1"], int(start_pt))
-                    except (ValueError, IndexError) as e:
-                        st.error(f"Failed to parse SVG viewBox: {str(e)}")
+                    if results["genchart1"] and "svg" in results["genchart1"].lower():
+                        try:
+                            start_pt = results["genchart1"][results["genchart1"].index('''viewBox="''')+22:].split(" ")[1]
+                            if rotation == "轉動":
+                                render_svg(results["genchart1"], int(start_pt))
+                            else:
+                                render_svg1(results["genchart1"], int(start_pt))
+                        except (ValueError, IndexError) as e:
+                            st.error(f"Failed to parse SVG viewBox: {str(e)}")
+                    else:
+                        st.error("無效的 SVG 內容或數據")
                     with st.expander("解釋"):
                         st.title("《太乙命法》︰")
                         st.markdown("【十二宮分析】")
                         st.markdown(results["lifedisc"])
-                        st.markdown("   ")
+                        st.markdown(" ")
                         st.markdown("【太乙十六神落宮】")
                         st.markdown(results["lifedisc2"])
-                        st.markdown("   ")
+                        st.markdown(" ")
                         st.markdown("【太乙十六神上中下等】")
                         st.markdown(results["lifedisc3"])
-                        st.markdown("   ")
+                        st.markdown(" ")
                         st.markdown("【值卦】")
                         st.markdown(f"年卦：{results['ygua']}")
                         st.markdown(f"月卦：{results['mgua']}")
                         st.markdown(f"日卦：{results['dgua']}")
                         st.markdown(f"時卦：{results['hgua']}")
                         st.markdown(f"分卦：{results['mingua']}")
-                        st.markdown("   ")
+                        st.markdown(" ")
                         st.markdown("【陽九行限】")
                         st.markdown(format_text(results["yjxx"]))
-                        st.markdown("   ")
+                        st.markdown(" ")
                         st.markdown("【百六行限】")
                         st.markdown(format_text(results["blxx"]))
-                        st.markdown("   ")
+                        st.markdown(" ")
                         st.title("《太乙秘書》︰")
                         st.markdown(results["ts"])
                         st.title("史事記載︰")
                         st.markdown(results["ch"])
                     print(f"{config.gendatetime(my, mm, md, mh, mmin)} {results['zhao']} - {results['ty'].taiyi_life(results['sex_o']).get('性別')} - {config.taiyi_name(0)[0]} - {results['ty'].accnum(0, 0)} | \n農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{results['gz']} |\n{config.kingyear(my)} |\n太乙命法 - {results['ty'].kook(0, 0).get('文')} ({results['ttext'].get('局式').get('年')}) | \n紀元︰{results['ttext'].get('紀元')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} |")
                 else:
-                    try:
-                        start_pt2 = results["genchart2"][results["genchart2"].index('''viewBox="''')+22:].split(" ")[1]
-                        if rotation == "轉動":
-                            render_svg(results["genchart2"], int(start_pt2))
-                        else:
-                            render_svg1(results["genchart2"], int(start_pt2))
-                    except (ValueError, IndexError) as e:
-                        st.error(f"Failed to parse SVG viewBox: {str(e)}")
+                    if results["genchart2"] and "svg" in results["genchart2"].lower():
+                        try:
+                            start_pt2 = results["genchart2"][results["genchart2"].index('''viewBox="''')+22:].split(" ")[1]
+                            if rotation == "轉動":
+                                render_svg(results["genchart2"], int(start_pt2))
+                            else:
+                                render_svg1(results["genchart2"], int(start_pt2))
+                        except (ValueError, IndexError) as e:
+                            st.error(f"Failed to parse SVG viewBox: {str(e)}")
+                    else:
+                        st.error("無效的 SVG 內容或數據")
                     with st.expander("解釋"):
                         st.title("《太乙秘書》︰")
                         st.markdown(results["ts"])
@@ -748,12 +757,12 @@ with tabs[0]:
                         st.markdown(f"始擊值宿斷事︰{results['sj_su_predict']}")
                         st.markdown(f"十天干歲始擊落宮預測︰{results['tg_sj_su_predict']}")
                         st.markdown(f"推太乙在天外地內法︰{results['ty'].ty_gong_dist(results['style'], results['tn'])}")
-                        st.markdown(f"三門五將︰{results['three_door'] + results['five_generals']}")
+                        st.markdown(f"三門五將︰{results['three_door'] or '無'}{results['five_generals'] or ''}")
                         if results['three_door'] is None or results['five_generals'] is None:
                             st.warning("無法計算三門五將")
                         st.markdown(f"推主客相關︰{results['home_vs_away1']}")
-                        st.markdown(f"推少多以占勝負︰{results['ttext'].get('推少多以占勝負')}")
-                        st.markdown(f"推太乙風雲飛鳥助戰︰{results['home_vs_away3']}")
+                        st.markdown(f"推少多以占勝負︰{results['ttext'].get('推少多以占勝負', '無')}")
+                        st.markdown(f"推太乙風雲飛鳥助戰︰{results['home_vs_away3'] or '無'}")
                     print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(results['style'])[0]}數︰{results['ty'].accnum(results['style'], results['tn'])} | \n"
                           f"農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n"
                           f"{results['gz']} |\n"
@@ -761,7 +770,6 @@ with tabs[0]:
                           f"{config.ty_method(results['tn'])}{results['ttext'].get('太乙計', '')} - {results['ty'].kook(results['style'], results['tn']).get('文', '')} "
                           f"({results['ttext'].get('局式', {}).get('年', '')}) \n五子元局:{results['wuyuan']} | \n"
                           f"紀元︰{results['ttext'].get('紀元', '')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} 定筭︰{results['setcal']} |")
-
                 if st.button("🔍 使用AI分析排盤結果", key="analyze_with_qwen"):
                     with st.spinner("AI正在分析太乙排盤結果..."):
                         cerebras_api_key = st.secrets.get("CEREBRAS_API_KEY") or os.getenv("CEREBRAS_API_KEY")
