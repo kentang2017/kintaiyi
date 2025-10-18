@@ -573,99 +573,94 @@ with st.sidebar:
 @st.cache_data
 def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
     """生成太乙計算結果，返回數據字典"""
-    try:
-        ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
-        if style != 5:
-            ttext = ty.pan(style, tn)
-            kook = ty.kook(style, tn)
-            sj_su_predict = f"始擊落{ty.sf_num(style, tn)}宿，{su_dist.get(ty.sf_num(style, tn))}"
-            tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(style, tn)))
-            three_door = ty.threedoors(style, tn)
-            five_generals = ty.fivegenerals(style, tn)
-            home_vs_away1 = ty.wc_n_sj(style, tn)
-            genchart2 = ty.gen_gong(style, tn, tc)
-        if style == 5:
-            tn = 0
-            ttext = ty.pan(3, 0)
-            kook = ty.kook(3, 0)
-            sj_su_predict = f"始擊落{ty.sf_num(3, 0)}宿，{su_dist.get(ty.sf_num(3, 0))}"
-            tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(3, 0)))
-            three_door = ty.threedoors(3, 0)
-            five_generals = ty.fivegenerals(3, 0)
-            home_vs_away1 = ty.wc_n_sj(3, 0)
-            genchart2 = ty.gen_gong(3, tn, tc)
-        genchart1 = ty.gen_life_gong(sex_o)
-        kook_num = kook.get("數")
-        yingyang = kook.get("文")[0] if kook.get("文") else "無"
-        wuyuan = ty.get_five_yuan_kook(style, tn) if style != 5 else ""
-        homecal, awaycal, setcal = config.find_cal(yingyang, kook_num)
-        zhao = {"男": "乾造", "女": "坤造"}.get(sex_o)
-        life1 = ty.gongs_discription(sex_o)
-        life2 = ty.twostar_disc(sex_o)
-        lifedisc = ty.convert_gongs_text(life1, life2)
-        lifedisc2 = ty.stars_descriptions_text(4, 0)
-        lifedisc3 = ty.sixteen_gong_grades(4,0)
-        yc = ty.year_chin()
-        year_predict = f"太歲{yc}值宿，{su_dist.get(yc)}"
-        home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
-        ts = taiyi_yingyang.get(kook.get('文', '')[0:2]).get(kook.get('數'))
-        gz = f"{ttext.get('干支', ['無', '無', '無', '無', '無'])[0]}年 {ttext.get('干支', ['無'])[1]}月 {ttext.get('干支', ['無'])[2]}日 {ttext.get('干支', ['無'])[3]}時 {ttext.get('干支', ['無'])[4]}分"
-        lunard = f"{cn2an.transform(str(config.lunar_date_d(my, mm, md).get('年', 0)) + '年', 'an2cn')}{an2cn(config.lunar_date_d(my, mm, md).get('月', 0))}月{an2cn(config.lunar_date_d(my, mm, md).get('日', 0))}日"
-        ch = chistory.get(my, "")
-        tys = "".join([ts[i:i+25] + "\n" for i in range(0, len(ts), 25)])
-        yjxx = ty.yangjiu_xingxian(sex_o)
-        blxx = ty.bailiu_xingxian(sex_o)
-        ygua = ty.year_gua()[1] if ty.year_gua() else "無"
-        mgua = ty.month_gua()[1] if ty.month_gua() else "無"
-        dgua = ty.day_gua()[1] if ty.day_gua() else "無"
-        hgua = ty.hour_gua()[1] if ty.hour_gua() else "無"
-        mingua = ty.minute_gua()[1] if ty.minute_gua() else "無"
-        
-        return {
-            "ttext": ttext,
-            "kook": kook,
-            "sj_su_predict": sj_su_predict,
-            "tg_sj_su_predict": tg_sj_su_predict,
-            "three_door": three_door,
-            "five_generals": five_generals,
-            "home_vs_away1": home_vs_away1,
-            "genchart1": genchart1,
-            "genchart2": genchart2,
-            "kook_num": kook_num,
-            "yingyang": yingyang,
-            "wuyuan": wuyuan,
-            "homecal": homecal,
-            "awaycal": awaycal,
-            "setcal": setcal,
-            "zhao": zhao,
-            "life1": life1,
-            "life2": life2,
-            "lifedisc": lifedisc,
-            "lifedisc2": lifedisc2,
-            "lifedisc3": lifedisc3,
-            "year_predict": year_predict,
-            "home_vs_away3": home_vs_away3,
-            "ts": ts,
-            "gz": gz,
-            "lunard": lunard,
-            "ch": ch,
-            "tys": tys,
-            "yjxx": yjxx,
-            "blxx": blxx,
-            "ygua": ygua,
-            "mgua": mgua,
-            "dgua": dgua,
-            "hgua": hgua,
-            "mingua": mingua,
-            "style": style,
-            "tn": tn,
-            "sex_o": sex_o,
-            "ty": ty
-        }
-    except Exception as e:
-        st.error(f"生成結果時發生錯誤: {str(e)}. 請檢查輸入或 kintaiyi 庫。")
-        return None
-
+    ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
+    if style != 5:
+        ttext = ty.pan(style, tn)
+        kook = ty.kook(style, tn)
+        sj_su_predict = f"始擊落{ty.sf_num(style, tn)}宿，{su_dist.get(ty.sf_num(style, tn))}"
+        tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(style, tn)))
+        three_door = ty.threedoors(style, tn)
+        five_generals = ty.fivegenerals(style, tn)
+        home_vs_away1 = ty.wc_n_sj(style, tn)
+        genchart2 = ty.gen_gong(style, tn, tc)
+    if style == 5:
+        tn = 0
+        ttext = ty.pan(3, 0)
+        kook = ty.kook(3, 0)
+        sj_su_predict = f"始擊落{ty.sf_num(3, 0)}宿，{su_dist.get(ty.sf_num(3, 0))}"
+        tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(3, 0)))
+        three_door = ty.threedoors(3, 0)
+        five_generals = ty.fivegenerals(3, 0)
+        home_vs_away1 = ty.wc_n_sj(3, 0)
+        genchart2 = ty.gen_gong(3, tn, tc)
+    genchart1 = ty.gen_life_gong(sex_o)
+    kook_num = kook.get("數")
+    yingyang = kook.get("文")[0] if kook.get("文") else "無"
+    wuyuan = ty.get_five_yuan_kook(style, tn) if style != 5 else ""
+    homecal, awaycal, setcal = config.find_cal(yingyang, kook_num)
+    zhao = {"男": "乾造", "女": "坤造"}.get(sex_o)
+    life1 = ty.gongs_discription(sex_o)
+    life2 = ty.twostar_disc(sex_o)
+    lifedisc = ty.convert_gongs_text(life1, life2)
+    lifedisc2 = ty.stars_descriptions_text(4, 0)
+    lifedisc3 = ty.sixteen_gong_grades(4,0)
+    yc = ty.year_chin()
+    year_predict = f"太歲{yc}值宿，{su_dist.get(yc)}"
+    home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
+    ts = taiyi_yingyang.get(kook.get('文', '')[0:2]).get(kook.get('數'))
+    gz = f"{ttext.get('干支', ['無', '無', '無', '無', '無'])[0]}年 {ttext.get('干支', ['無'])[1]}月 {ttext.get('干支', ['無'])[2]}日 {ttext.get('干支', ['無'])[3]}時 {ttext.get('干支', ['無'])[4]}分"
+    lunard = f"{cn2an.transform(str(config.lunar_date_d(my, mm, md).get('年', 0)) + '年', 'an2cn')}{an2cn(config.lunar_date_d(my, mm, md).get('月', 0))}月{an2cn(config.lunar_date_d(my, mm, md).get('日', 0))}日"
+    ch = chistory.get(my, "")
+    tys = "".join([ts[i:i+25] + "\n" for i in range(0, len(ts), 25)])
+    yjxx = ty.yangjiu_xingxian(sex_o)
+    blxx = ty.bailiu_xingxian(sex_o)
+    ygua = ty.year_gua()[1] if ty.year_gua() else "無"
+    mgua = ty.month_gua()[1] if ty.month_gua() else "無"
+    dgua = ty.day_gua()[1] if ty.day_gua() else "無"
+    hgua = ty.hour_gua()[1] if ty.hour_gua() else "無"
+    mingua = ty.minute_gua()[1] if ty.minute_gua() else "無"
+    
+    return {
+        "ttext": ttext,
+        "kook": kook,
+        "sj_su_predict": sj_su_predict,
+        "tg_sj_su_predict": tg_sj_su_predict,
+        "three_door": three_door,
+        "five_generals": five_generals,
+        "home_vs_away1": home_vs_away1,
+        "genchart1": genchart1,
+        "genchart2": genchart2,
+        "kook_num": kook_num,
+        "yingyang": yingyang,
+        "wuyuan": wuyuan,
+        "homecal": homecal,
+        "awaycal": awaycal,
+        "setcal": setcal,
+        "zhao": zhao,
+        "life1": life1,
+        "life2": life2,
+        "lifedisc": lifedisc,
+        "lifedisc2": lifedisc2,
+        "lifedisc3": lifedisc3,
+        "year_predict": year_predict,
+        "home_vs_away3": home_vs_away3,
+        "ts": ts,
+        "gz": gz,
+        "lunard": lunard,
+        "ch": ch,
+        "tys": tys,
+        "yjxx": yjxx,
+        "blxx": blxx,
+        "ygua": ygua,
+        "mgua": mgua,
+        "dgua": dgua,
+        "hgua": hgua,
+        "mingua": mingua,
+        "style": style,
+        "tn": tn,
+        "sex_o": sex_o,
+        "ty": ty
+    }
 # 創建標籤頁
 tabs = st.tabs(['🧮太乙排盤', '💬使用說明', '📜局數史例', '🔥災異統計', '📚古籍書目', '🆕更新日誌', '🚀看盤要領', '🔗連結'])
 
