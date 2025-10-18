@@ -776,7 +776,6 @@ with tabs[1]:
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "instruction.md"))
 
 # 太乙局數史例
-# 太乙局數史例
 with tabs[2]:
     try:
         with open('example.json', "r", encoding="utf-8") as f:  # Add encoding="utf-8"
