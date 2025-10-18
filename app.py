@@ -19,6 +19,9 @@ from streamlit.components.v1 import html
 from cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL
 import os
 
+os.environ["STREAMLIT_SERVER_ENABLE_CORS"] = "false"
+os.environ["STREAMLIT_SERVER_ENABLE_WEBSOCKET_COMPRESSION"] = "false"
+
 # Cerebras Model Options
 CEREBRAS_MODEL_OPTIONS = [
     "qwen-3-32b",
