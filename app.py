@@ -776,21 +776,15 @@ with tabs[1]:
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "instruction.md"))
 
 # 太乙局數史例
+# 太乙局數史例
 with tabs[2]:
     try:
-        if os.path.exists('example.json'):
-            with open('example.json', "r", encoding="utf-8-sig") as f:
-                data = f.read()
-        else:
-            # Default content if file is missing
-            default_data = '{"events": [{"start_date": "2025-01-01", "text": "預設歷史事件"}]}'
-            with open('example.json', "w", encoding="utf-8") as f:
-                f.write(default_data)
-            data = default_data
+        with open('example.json', "r", encoding="utf-8") as f:  # Add encoding="utf-8"
+            data = f.read()
         timeline(data, height=600)
         with st.expander("列表"):
             st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "example.md"))
-    except (UnicodeDecodeError, json.JSONDecodeError) as e:
+    except UnicodeDecodeError as e:
         st.error(f"無法讀取 example.json: {str(e)}. 請檢查文件編碼並確保為 UTF-8。使用預設數據繼續。")
         default_data = '{"events": [{"start_date": "2025-01-01", "text": "預設歷史事件"}]}'
         timeline(default_data, height=600)
