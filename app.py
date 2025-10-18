@@ -749,6 +749,8 @@ with tabs[0]:
                         st.markdown(f"十天干歲始擊落宮預測︰{results['tg_sj_su_predict']}")
                         st.markdown(f"推太乙在天外地內法︰{results['ty'].ty_gong_dist(results['style'], results['tn'])}")
                         st.markdown(f"三門五將︰{results['three_door'] + results['five_generals']}")
+                        if results['three_door'] is None or results['five_generals'] is None:
+                            st.warning("無法計算三門五將")
                         st.markdown(f"推主客相關︰{results['home_vs_away1']}")
                         st.markdown(f"推少多以占勝負︰{results['ttext'].get('推少多以占勝負')}")
                         st.markdown(f"推太乙風雲飛鳥助戰︰{results['home_vs_away3']}")
