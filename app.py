@@ -585,6 +585,10 @@ with st.sidebar:
 @st.cache_data
 def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
     """生成太乙計算結果，返回數據字典"""
+    # Validate date inputs inside the function for extra safety
+    if not (1 <= mm <= 12 and 1 <= md <= 31 and 0 <= mh <= 23 and 0 <= mmin <= 59):
+        raise ValueError("無效的日期或時間輸入 (月份:1-12, 日:1-31, 時:0-23, 分:0-59)")
+    
     ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
     if style != 5:
         ttext = ty.pan(style, tn)
@@ -606,11 +610,14 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
         home_vs_away1 = ty.wc_n_sj(3, 0)
         genchart2 = ty.gen_gong(3, tn, tc)
     genchart1 = ty.gen_life_gong(sex_o)
-    kook_num = kook.get("數")
-    yingyang = kook.get("文")[0]
+    
+    # Safe access for kook fields to avoid NoneType errors
+    kook_num = kook.get("數", 0)  # Default to 0 or appropriate value
+    kook_wen = kook.get("文", "")  # Default to empty string
+    yingyang = kook_wen[0] if kook_wen and len(kook_wen) > 0 else "無"
     wuyuan = ty.get_five_yuan_kook(style, tn) if style != 5 else ""
     homecal, awaycal, setcal = config.find_cal(yingyang, kook_num)
-    zhao = {"男": "乾造", "女": "坤造"}.get(sex_o)
+    zhao = {"男": "乾造", "女": "坤造"}.get(sex_o, "未知")
     life1 = ty.gongs_discription(sex_o)
     life2 = ty.twostar_disc(sex_o)
     lifedisc = ty.convert_gongs_text(life1, life2)
@@ -619,19 +626,25 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
     yc = ty.year_chin()
     year_predict = f"太歲{yc}值宿，{su_dist.get(yc)}"
     home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
-    ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
-    gz = f"{ttext.get('干支')[0]}年 {ttext.get('干支')[1]}月 {ttext.get('干支')[2]}日 {ttext.get('干支')[3]}時 {ttext.get('干支')[4]}分"
-    lunard = f"{cn2an.transform(str(config.lunar_date_d(my, mm, md).get('年')) + '年', 'an2cn')}{an2cn(config.lunar_date_d(my, mm, md).get('月'))}月{an2cn(config.lunar_date_d(my, mm, md).get('日'))}日"
+    
+    # Safe access for ts to avoid subscript on None
+    kook_wen_slice = kook_wen[0:2] if kook_wen and len(kook_wen) >= 2 else "無"
+    ts = taiyi_yingyang.get(kook_wen_slice, {}).get(kook.get('數'), "無")
+    
+    gz = f"{ttext.get('干支', ['無', '無', '無', '無', '無'])[0]}年 {ttext.get('干支', ['無'])[1]}月 {ttext.get('干支', ['無'])[2]}日 {ttext.get('干支', ['無'])[3]}時 {ttext.get('干支', ['無'])[4]}分"
+    # Safe lunar date handling
+    lunar_d = config.lunar_date_d(my, mm, md) or {'年': 0, '月': 0, '日': 0}
+    lunard = f"{cn2an.transform(str(lunar_d.get('年')) + '年', 'an2cn')}{an2cn(lunar_d.get('月'))}月{an2cn(lunar_d.get('日'))}日"
     ch = chistory.get(my, "")
     tys = "".join([ts[i:i+25] + "\n" for i in range(0, len(ts), 25)])
     yjxx = ty.yangjiu_xingxian(sex_o)
     blxx = ty.bailiu_xingxian(sex_o)
-    ygua = ty.year_gua()[1]
-    mgua = ty.month_gua()[1]
-    dgua = ty.day_gua()[1]
-    hgua = ty.hour_gua()[1]
-    mingua = ty.minute_gua()[1]
-    
+    ygua = ty.year_gua()[1] if ty.year_gua() else "無"
+    mgua = ty.month_gua()[1] if ty.month_gua() else "無"
+    dgua = ty.day_gua()[1] if ty.day_gua() else "無"
+    hgua = ty.hour_gua()[1] if ty.hour_gua() else "無"
+    mingua = ty.minute_gua()[1] if ty.minute_gua() else "無"
+   
     return {
         "ttext": ttext,
         "kook": kook,
@@ -797,8 +810,10 @@ with tabs[0]:
                                     st.markdown(raw_response)
                             except Exception as e:
                                 st.error(f"調用AI時發生錯誤：{str(e)}")
+        except ValueError as ve:
+            st.error(f"輸入驗證錯誤：{str(ve)}")
         except Exception as e:
-            st.error(f"生成盤局時發生錯誤：{str(e)}")
+            st.error(f"生成盤局時發生錯誤：{str(e)}"
 
 # 使用說明
 with tabs[1]:
