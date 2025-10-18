@@ -437,32 +437,59 @@ BASE_URL_KINLIUREN = 'https://raw.githubusercontent.com/kentang2017/kinliuren/ma
 # 側邊欄輸入
 with st.sidebar:
     st.header("排盤參數設置")
-    
+   
     now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
     col1, col2 = st.columns(2)
     with col1:
         my = st.number_input('年', min_value=0, max_value=2100, value=now.year, key="year")
-        mm = st.number_input('月', min_value=1, max_value=12, value=now.month, key="month")
-        md = st.number_input('日', min_value=1, max_value=31, value=now.day, key="day")
+        
+        def clamp_month():
+            if st.session_state.month < 1:
+                st.session_state.month = 1
+            elif st.session_state.month > 12:
+                st.session_state.month = 12
+        
+        mm = st.number_input('月', min_value=1, max_value=12, value=now.month, key="month", on_change=clamp_month)
+        
+        def clamp_day():
+            if st.session_state.day < 1:
+                st.session_state.day = 1
+            elif st.session_state.day > 31:
+                st.session_state.day = 31
+        
+        md = st.number_input('日', min_value=1, max_value=31, value=now.day, key="day", on_change=clamp_day)
     with col2:
-        mh = st.number_input('時', min_value=0, max_value=23, value=now.hour, key="hour")
-        mmin = st.number_input('分', min_value=0, max_value=59, value=now.minute, key="minute")
-    
+        def clamp_hour():
+            if st.session_state.hour < 0:
+                st.session_state.hour = 0
+            elif st.session_state.hour > 23:
+                st.session_state.hour = 23
+        
+        mh = st.number_input('時', min_value=0, max_value=23, value=now.hour, key="hour", on_change=clamp_hour)
+        
+        def clamp_minute():
+            if st.session_state.minute < 0:
+                st.session_state.minute = 0
+            elif st.session_state.minute > 59:
+                st.session_state.minute = 59
+        
+        mmin = st.number_input('分', min_value=0, max_value=59, value=now.minute, key="minute", on_change=clamp_minute)
+   
     option = st.selectbox('起盤方式', ('時計太乙', '年計太乙', '月計太乙', '日計太乙', '分計太乙', '太乙命法'))
     acum = st.selectbox('太乙積年數', ('太乙統宗', '太乙金鏡', '太乙淘金歌', '太乙局'))
     ten_ching = st.selectbox('太乙十精', ('無', '有'))
     sex_o = st.selectbox('太乙命法性別', ('男', '女'))
     rotation = st.selectbox('轉盤', ('固定', '轉動'))
-    
+   
     num_dict = {'時計太乙': 3, '年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '分計太乙': 4, '太乙命法': 5}
     style = num_dict[option]
     tn_dict = {'太乙統宗': 0, '太乙金鏡': 1, '太乙淘金歌': 2, '太乙局': 3}
     tn = tn_dict[acum]
     tc_dict = {'有': 1, '無': 0}
     tc = tc_dict[ten_ching]
-    
+   
     instant = st.button('即時盤', use_container_width=True)
-    
+   
     st.markdown("---")
     st.header("AI設置")
     
@@ -583,67 +610,68 @@ with st.sidebar:
         st.json(st.session_state)
 
 @st.cache_data
+@st.cache_data
 def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
     """生成太乙計算結果，返回數據字典"""
-    # Validate date inputs inside the function for extra safety
-    if not (1 <= mm <= 12 and 1 <= md <= 31 and 0 <= mh <= 23 and 0 <= mmin <= 59):
-        raise ValueError("無效的日期或時間輸入 (月份:1-12, 日:1-31, 時:0-23, 分:0-59)")
+    # Extra validation (though UI clamping should prevent this)
+    if not (1 <= mm <= 12):
+        raise ValueError("月份必須在 1-12 之間")
+    if not (1 <= md <= 31):
+        raise ValueError("日期必須在 1-31 之間")
+    if not (0 <= mh <= 23):
+        raise ValueError("小時必須在 0-23 之間")
+    if not (0 <= mmin <= 59):
+        raise ValueError("分鐘必須在 0-59 之間")
     
     ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
     if style != 5:
-        ttext = ty.pan(style, tn)
-        kook = ty.kook(style, tn)
-        sj_su_predict = f"始擊落{ty.sf_num(style, tn)}宿，{su_dist.get(ty.sf_num(style, tn))}"
-        tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(style, tn)))
-        three_door = ty.threedoors(style, tn)
-        five_generals = ty.fivegenerals(style, tn)
-        home_vs_away1 = ty.wc_n_sj(style, tn)
-        genchart2 = ty.gen_gong(style, tn, tc)
+        ttext = ty.pan(style, tn) or {}  # Default to empty dict if None
+        kook = ty.kook(style, tn) or {}  # Default to empty dict if None
+        sj_su_predict = f"始擊落{ty.sf_num(style, tn)}宿，{su_dist.get(ty.sf_num(style, tn), '無')}" if ty.sf_num(style, tn) else "無"
+        tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(style, tn)), "無") if config.gangzhi(my, mm, md, mh, mmin) else "無"
+        three_door = ty.threedoors(style, tn) or "無"
+        five_generals = ty.fivegenerals(style, tn) or ""
+        home_vs_away1 = ty.wc_n_sj(style, tn) or "無"
+        genchart2 = ty.gen_gong(style, tn, tc) or ""  # Default to empty string if None
     if style == 5:
         tn = 0
-        ttext = ty.pan(3, 0)
-        kook = ty.kook(3, 0)
-        sj_su_predict = f"始擊落{ty.sf_num(3, 0)}宿，{su_dist.get(ty.sf_num(3, 0))}"
-        tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(3, 0)))
-        three_door = ty.threedoors(3, 0)
-        five_generals = ty.fivegenerals(3, 0)
-        home_vs_away1 = ty.wc_n_sj(3, 0)
-        genchart2 = ty.gen_gong(3, tn, tc)
-    genchart1 = ty.gen_life_gong(sex_o)
-    
-    # Safe access for kook fields to avoid NoneType errors
-    kook_num = kook.get("數", 0)  # Default to 0 or appropriate value
-    kook_wen = kook.get("文", "")  # Default to empty string
-    yingyang = kook_wen[0] if kook_wen and len(kook_wen) > 0 else "無"
+        ttext = ty.pan(3, 0) or {}
+        kook = ty.kook(3, 0) or {}
+        sj_su_predict = f"始擊落{ty.sf_num(3, 0)}宿，{su_dist.get(ty.sf_num(3, 0), '無')}" if ty.sf_num(3, 0) else "無"
+        tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(3, 0)), "無") if config.gangzhi(my, mm, md, mh, mmin) else "無"
+        three_door = ty.threedoors(3, 0) or "無"
+        five_generals = ty.fivegenerals(3, 0) or ""
+        home_vs_away1 = ty.wc_n_sj(3, 0) or "無"
+        genchart2 = ty.gen_gong(3, tn, tc) or ""
+    genchart1 = ty.gen_life_gong(sex_o) or ""
+    kook_num = kook.get("數", 0)
+    kook_wen = kook.get("文", "")
+    yingyang = kook_wen[0] if kook_wen else "無"
     wuyuan = ty.get_five_yuan_kook(style, tn) if style != 5 else ""
     homecal, awaycal, setcal = config.find_cal(yingyang, kook_num)
     zhao = {"男": "乾造", "女": "坤造"}.get(sex_o, "未知")
-    life1 = ty.gongs_discription(sex_o)
-    life2 = ty.twostar_disc(sex_o)
-    lifedisc = ty.convert_gongs_text(life1, life2)
-    lifedisc2 = ty.stars_descriptions_text(4, 0)
-    lifedisc3 = ty.sixteen_gong_grades(4,0)
-    yc = ty.year_chin()
-    year_predict = f"太歲{yc}值宿，{su_dist.get(yc)}"
-    home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
-    
-    # Safe access for ts to avoid subscript on None
-    kook_wen_slice = kook_wen[0:2] if kook_wen and len(kook_wen) >= 2 else "無"
-    ts = taiyi_yingyang.get(kook_wen_slice, {}).get(kook.get('數'), "無")
-    
+    life1 = ty.gongs_discription(sex_o) or {}
+    life2 = ty.twostar_disc(sex_o) or {}
+    lifedisc = ty.convert_gongs_text(life1, life2) or "無"
+    lifedisc2 = ty.stars_descriptions_text(4, 0) or "無"
+    lifedisc3 = ty.sixteen_gong_grades(4,0) or "無"
+    yc = ty.year_chin() or "無"
+    year_predict = f"太歲{yc}值宿，{su_dist.get(yc, '無')}"
+    home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法", "無")
+    kook_wen_slice = kook_wen[0:2] if len(kook_wen) >= 2 else "無"
+    ts = taiyi_yingyang.get(kook_wen_slice, {}).get(kook.get('數', 0), "無")
     gz = f"{ttext.get('干支', ['無', '無', '無', '無', '無'])[0]}年 {ttext.get('干支', ['無'])[1]}月 {ttext.get('干支', ['無'])[2]}日 {ttext.get('干支', ['無'])[3]}時 {ttext.get('干支', ['無'])[4]}分"
-    # Safe lunar date handling
-    lunar_d = config.lunar_date_d(my, mm, md) or {'年': 0, '月': 0, '日': 0}
-    lunard = f"{cn2an.transform(str(lunar_d.get('年')) + '年', 'an2cn')}{an2cn(lunar_d.get('月'))}月{an2cn(lunar_d.get('日'))}日"
-    ch = chistory.get(my, "")
+    lunar_d = config.lunar_date_d(my, mm, md) or {'年': '無', '月': '無', '日': '無'}
+    lunard = f"{cn2an.transform(str(lunar_d['年']) + '年', 'an2cn')}{an2cn(lunar_d['月'])}月{an2cn(lunar_d['日'])}日"
+    ch = chistory.get(my, "") or "無"
     tys = "".join([ts[i:i+25] + "\n" for i in range(0, len(ts), 25)])
-    yjxx = ty.yangjiu_xingxian(sex_o)
-    blxx = ty.bailiu_xingxian(sex_o)
-    ygua = ty.year_gua()[1] if ty.year_gua() else "無"
-    mgua = ty.month_gua()[1] if ty.month_gua() else "無"
-    dgua = ty.day_gua()[1] if ty.day_gua() else "無"
-    hgua = ty.hour_gua()[1] if ty.hour_gua() else "無"
-    mingua = ty.minute_gua()[1] if ty.minute_gua() else "無"
+    yjxx = ty.yangjiu_xingxian(sex_o) or {}
+    blxx = ty.bailiu_xingxian(sex_o) or {}
+    ygua = ty.year_gua()[1] if ty.year_gua() and len(ty.year_gua()) > 1 else "無"
+    mgua = ty.month_gua()[1] if ty.month_gua() and len(ty.month_gua()) > 1 else "無"
+    dgua = ty.day_gua()[1] if ty.day_gua() and len(ty.day_gua()) > 1 else "無"
+    hgua = ty.hour_gua()[1] if ty.hour_gua() and len(ty.hour_gua()) > 1 else "無"
+    mingua = ty.minute_gua()[1] if ty.minute_gua() and len(ty.minute_gua()) > 1 else "無"
    
     return {
         "ttext": ttext,
