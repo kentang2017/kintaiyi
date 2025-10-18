@@ -813,7 +813,7 @@ with tabs[0]:
         except ValueError as ve:
             st.error(f"輸入驗證錯誤：{str(ve)}")
         except Exception as e:
-            st.error(f"生成盤局時發生錯誤：{str(e)}"
+            st.error(f"生成盤局時發生錯誤：{str(e)}")
 
 # 使用說明
 with tabs[1]:
