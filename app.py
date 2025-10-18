@@ -48,7 +48,7 @@ def load_system_prompts():
     )
     
     try:
-        with open(SYSTEM_PROMPTS_FILE, "r") as f:
+        with open(SYSTEM_PROMPTS_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         default_data = {
@@ -60,15 +60,15 @@ def load_system_prompts():
             ],
             "selected": "太乙大師"
         }
-        with open(SYSTEM_PROMPTS_FILE, "w") as f:
-            json.dump(default_data, f, indent=2)
+        with open(SYSTEM_PROMPTS_FILE, "w", encoding="utf-8") as f:
+            json.dump(default_data, f, indent=2, ensure_ascii=False)
         return default_data
 
 def save_system_prompts(prompts_data):
     SYSTEM_PROMPTS_FILE = "system_prompts.json"
     try:
-        with open(SYSTEM_PROMPTS_FILE, "w") as f:
-            json.dump(prompts_data, f, indent=2)
+        with open(SYSTEM_PROMPTS_FILE, "w", encoding="utf-8") as f:
+            json.dump(prompts_data, f, indent=2, ensure_ascii=False)
         return True
     except Exception as e:
         st.error(f"錯誤儲存提示：{e}")
@@ -176,7 +176,6 @@ def render_svg(svg, num):
 
           let isRotating = false;
           let startX = 0;
-
           layer.addEventListener("mousedown", (event) => {
             event.preventDefault();
             event.stopPropagation();
@@ -185,7 +184,6 @@ def render_svg(svg, num):
             const bbox = layer.getBBox();
             console.log(`mousedown on ${id}, startX: ${startX}, clientX: ${event.clientX}, clientY: ${event.clientY}, bbox:`, bbox);
           });
-
           layer.addEventListener("mousemove", (event) => {
             if (isRotating) {
               event.preventDefault();
@@ -197,19 +195,16 @@ def render_svg(svg, num):
               console.log(`mousemove on ${id}, deltaX: ${deltaX}, deltaAngle: ${deltaAngle}`);
             }
           });
-
           layer.addEventListener("mouseup", (event) => {
             event.preventDefault();
             event.stopPropagation();
             isRotating = false;
             console.log(`mouseup on ${id}`);
           });
-
           layer.addEventListener("mouseleave", () => {
             isRotating = false;
             console.log(`mouseleave on ${id}`);
           });
-
           layer.addEventListener("click", (event) => {
             if (!isRotating) {
               event.preventDefault();
@@ -230,7 +225,6 @@ def render_svg(svg, num):
       setupEventListeners();
       console.log("SVG 渲染完成，事件監聽器已設置");
     });
-
     window.addEventListener("load", () => {
       console.log("SVG 已完全載入");
       ["layer4", "layer6"].forEach(id => {
@@ -240,7 +234,6 @@ def render_svg(svg, num):
       });
     });
     """
-
     html_content = f"""
     <div style="margin: 0; padding: 0;">
       <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {num} {num}" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
@@ -275,18 +268,17 @@ def render_svg(svg, num):
     </style>
     """
     html(html_content, height=num)
-    
+   
 def render_svg1(svg, num):
     """渲染靜態 SVG 圖表（可點擊同時著色第二、三、四層的十六分之一部分）"""
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
         return
-    
+   
     js_script = """
     <script>
         const coloredGroups = new Set();
         let currentColors = [];
-
         function getRandomColor() {
             const letters = '0123456789ABCDEF';
             let color = '#';
@@ -295,7 +287,6 @@ def render_svg1(svg, num):
             }
             return color;
         }
-
         function generateTwoColors() {
             let color1 = getRandomColor();
             let color2 = getRandomColor();
@@ -304,7 +295,6 @@ def render_svg1(svg, num):
             }
             return [color1, color2];
         }
-
         const allGroups = document.querySelectorAll('#static-svg g');
         const targetLayers = [];
         allGroups.forEach((group, groupIndex) => {
@@ -313,12 +303,9 @@ def render_svg1(svg, num):
                 targetLayers.push({ group: group, index: groupIndex, segments: Array.from(segments) });
             }
         });
-
         console.log('Found ' + targetLayers.length + ' layers with segments:', targetLayers.map(l => ({ index: l.index, segmentCount: l.segments.length })));
-
         if (targetLayers.length >= 4) {
             const layersToColor = [targetLayers[1], targetLayers[2], targetLayers[3]];
-
             layersToColor.forEach((layer, layerNum) => {
                 layer.segments.forEach((segment, index) => {
                     segment.style.cursor = 'pointer';
@@ -330,11 +317,8 @@ def render_svg1(svg, num):
                         event.stopPropagation();
                         const segmentIndex = parseInt(segment.getAttribute('data-index'));
                         const groupId = `group_${segmentIndex}`;
-
                         console.log(`Clicked segment in layer ${parseInt(segment.getAttribute('data-layer')) + 2}, index: ${segmentIndex}`);
-
                         const isColored = coloredGroups.has(groupId);
-
                         if (isColored) {
                             layersToColor.forEach(l => {
                                 if (l.segments[segmentIndex]) {
@@ -366,7 +350,6 @@ def render_svg1(svg, num):
         }
     </script>
     """
-
     html_content = f"""
     <div style="margin: 0; padding: 0;">
       <svg id="static-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {num} {num}" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
@@ -375,7 +358,7 @@ def render_svg1(svg, num):
       {js_script}
     </div>
     <style>
-        #static-svg {{ 
+        #static-svg {{
             margin-top: 10px;
             margin-bottom: 10px;
         }}
@@ -430,6 +413,7 @@ st.set_page_config(
     page_title="堅太乙 - 太乙排盤",
     page_icon="icon.jpg"
 )
+
 # 定義基礎 URL
 BASE_URL_KINTAIYI = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/master/'
 BASE_URL_KINLIUREN = 'https://raw.githubusercontent.com/kentang2017/kinliuren/master/'
@@ -520,7 +504,7 @@ with st.sidebar:
                     st.toast(f"✅ 已更新系統提示 '{selected_name}'！")
         
         with col2:
-            if st.button("❌ 刪除提示", key="delete_qwen_prompt_button", 
+            if st.button("❌ 刪除提示", key="delete_qwen_prompt_button",
                         disabled=len(prompts_list) <= 1):
                 prompts_list = [p for p in prompts_list if p["name"] != selected_name]
                 system_prompts_data["prompts"] = prompts_list
@@ -689,7 +673,6 @@ with tabs[0]:
             else:
                 results = gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc)
                 st.session_state.render_default = False
-
             if results:
                 if results["style"] == 5:
                     try:
@@ -704,26 +687,26 @@ with tabs[0]:
                         st.title("《太乙命法》︰")
                         st.markdown("【十二宮分析】")
                         st.markdown(results["lifedisc"])
-                        st.markdown("   ")
+                        st.markdown(" ")
                         st.markdown("【太乙十六神落宮】")
                         st.markdown(results["lifedisc2"])
-                        st.markdown("   ")
+                        st.markdown(" ")
                         st.markdown("【太乙十六神上中下等】")
                         st.markdown(results["lifedisc3"])
-                        st.markdown("   ")
+                        st.markdown(" ")
                         st.markdown("【值卦】")
                         st.markdown(f"年卦：{results['ygua']}")
                         st.markdown(f"月卦：{results['mgua']}")
                         st.markdown(f"日卦：{results['dgua']}")
                         st.markdown(f"時卦：{results['hgua']}")
                         st.markdown(f"分卦：{results['mingua']}")
-                        st.markdown("   ")
+                        st.markdown(" ")
                         st.markdown("【陽九行限】")
                         st.markdown(format_text(results["yjxx"]))
-                        st.markdown("   ")
+                        st.markdown(" ")
                         st.markdown("【百六行限】")
                         st.markdown(format_text(results["blxx"]))
-                        st.markdown("   ")
+                        st.markdown(" ")
                         st.title("《太乙秘書》︰")
                         st.markdown(results["ts"])
                         st.title("史事記載︰")
