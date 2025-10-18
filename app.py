@@ -783,7 +783,7 @@ with tabs[0]:
                                 taiyi_prompt = format_taiyi_results_for_prompt(results)
                                 messages = [
                                     {"role": "system", "content": st.session_state.qwen_system_prompt},
-                                    {"role": "user", content": taiyi_prompt}
+                                    {"role": "user", "content": taiyi_prompt}
                                 ]
                                 api_params = {
                                     "messages": messages,
