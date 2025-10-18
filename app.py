@@ -700,11 +700,11 @@ with tabs[0]:
                 results = gen_results(now.year, now.month, now.day, now.hour, now.minute, style, tn, sex_o, tc)
                 st.session_state.render_default = False
             else:
-                if 1 <= mm <= 12:  # Ensure month is valid
+                if 1 <= mm <= 12 and 1 <= md <= 31 and 0 <= mh <= 23 and 0 <= mmin <= 59:
                     results = gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc)
                     st.session_state.render_default = False
                 else:
-                    st.error("月份必須在 1-12 之間，請重新輸入。")
+                    st.error("無效的日期或時間輸入 (月份:1-12, 日:1-31, 時:0-23, 分:0-59)。請修正後重試。")
                     results = None
             if results:
                 if results["style"] == 5:
