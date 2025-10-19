@@ -752,6 +752,21 @@ with tabs[0]:
                         st.markdown(f"推主客相關︰{results['home_vs_away1']}")
                         st.markdown(f"推少多以占勝負︰{results['ttext'].get('推少多以占勝負')}")
                         st.markdown(f"推太乙風雲飛鳥助戰︰{results['home_vs_away3']}")
+                        st.markdown(f"推孤單以占成敗:{results['ttext'].get('推孤單以占成敗')}")
+                        st.markdown(f"推陰陽以占厄會︰{results['ttext'].get('推陰陽以占厄會')}")
+                        st.markdown(f"明天子巡狩之期術︰{results['ttext'].get('明天子巡狩之期術')}")
+                        st.markdown(f"明君基太乙所主術︰{results['ttext'].get('明君基太乙所主術')}")
+                        st.markdown(f"明臣基太乙所主術︰{results['ttext'].get('明臣基太乙所主術')}")
+                        st.markdown(f"明民基太乙所主術︰{results['ttext'].get('明民基太乙所主術')}")
+                        st.markdown(f"明五福太乙所主術︰{results['ttext'].get('明五福太乙所主術')}")
+                        st.markdown(f"明五福吉算所主術︰{results['ttext'].get('明五福吉算所主術')}")
+                        st.markdown(f"明天乙太乙所主術︰{results['ttext'].get('明天乙太乙所主術')}")
+                        st.markdown(f"明地乙太乙所主術︰{results['ttext'].get('明地乙太乙所主術')}")
+                        st.markdown(f"明值符太乙所主術︰{results['ttext'].get('明值符太乙所主術')}")
+
+
+
+                    
                     print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(results['style'])[0]}數︰{results['ty'].accnum(results['style'], results['tn'])} | \n"
                           f"農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n"
                           f"{results['gz']} |\n"
