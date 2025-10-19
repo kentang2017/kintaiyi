@@ -19,9 +19,6 @@ from streamlit.components.v1 import html
 from cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL
 import os
 
-os.environ["STREAMLIT_SERVER_ENABLE_CORS"] = "false"
-os.environ["STREAMLIT_SERVER_ENABLE_WEBSOCKET_COMPRESSION"] = "false"
-
 # Cerebras Model Options
 CEREBRAS_MODEL_OPTIONS = [
     "qwen-3-32b",
@@ -51,7 +48,7 @@ def load_system_prompts():
     )
     
     try:
-        with open(SYSTEM_PROMPTS_FILE, "r", encoding="utf-8") as f:
+        with open(SYSTEM_PROMPTS_FILE, "r") as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         default_data = {
@@ -63,15 +60,15 @@ def load_system_prompts():
             ],
             "selected": "太乙大師"
         }
-        with open(SYSTEM_PROMPTS_FILE, "w", encoding="utf-8") as f:
-            json.dump(default_data, f, indent=2, ensure_ascii=False)
+        with open(SYSTEM_PROMPTS_FILE, "w") as f:
+            json.dump(default_data, f, indent=2)
         return default_data
 
 def save_system_prompts(prompts_data):
     SYSTEM_PROMPTS_FILE = "system_prompts.json"
     try:
-        with open(SYSTEM_PROMPTS_FILE, "w", encoding="utf-8") as f:
-            json.dump(prompts_data, f, indent=2, ensure_ascii=False)
+        with open(SYSTEM_PROMPTS_FILE, "w") as f:
+            json.dump(prompts_data, f, indent=2)
         return True
     except Exception as e:
         st.error(f"錯誤儲存提示：{e}")
@@ -179,6 +176,7 @@ def render_svg(svg, num):
 
           let isRotating = false;
           let startX = 0;
+
           layer.addEventListener("mousedown", (event) => {
             event.preventDefault();
             event.stopPropagation();
@@ -187,6 +185,7 @@ def render_svg(svg, num):
             const bbox = layer.getBBox();
             console.log(`mousedown on ${id}, startX: ${startX}, clientX: ${event.clientX}, clientY: ${event.clientY}, bbox:`, bbox);
           });
+
           layer.addEventListener("mousemove", (event) => {
             if (isRotating) {
               event.preventDefault();
@@ -198,16 +197,19 @@ def render_svg(svg, num):
               console.log(`mousemove on ${id}, deltaX: ${deltaX}, deltaAngle: ${deltaAngle}`);
             }
           });
+
           layer.addEventListener("mouseup", (event) => {
             event.preventDefault();
             event.stopPropagation();
             isRotating = false;
             console.log(`mouseup on ${id}`);
           });
+
           layer.addEventListener("mouseleave", () => {
             isRotating = false;
             console.log(`mouseleave on ${id}`);
           });
+
           layer.addEventListener("click", (event) => {
             if (!isRotating) {
               event.preventDefault();
@@ -228,6 +230,7 @@ def render_svg(svg, num):
       setupEventListeners();
       console.log("SVG 渲染完成，事件監聽器已設置");
     });
+
     window.addEventListener("load", () => {
       console.log("SVG 已完全載入");
       ["layer4", "layer6"].forEach(id => {
@@ -237,6 +240,7 @@ def render_svg(svg, num):
       });
     });
     """
+
     html_content = f"""
     <div style="margin: 0; padding: 0;">
       <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {num} {num}" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
@@ -271,17 +275,18 @@ def render_svg(svg, num):
     </style>
     """
     html(html_content, height=num)
-   
+    
 def render_svg1(svg, num):
     """渲染靜態 SVG 圖表（可點擊同時著色第二、三、四層的十六分之一部分）"""
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
         return
-   
+    
     js_script = """
     <script>
         const coloredGroups = new Set();
         let currentColors = [];
+
         function getRandomColor() {
             const letters = '0123456789ABCDEF';
             let color = '#';
@@ -290,6 +295,7 @@ def render_svg1(svg, num):
             }
             return color;
         }
+
         function generateTwoColors() {
             let color1 = getRandomColor();
             let color2 = getRandomColor();
@@ -298,6 +304,7 @@ def render_svg1(svg, num):
             }
             return [color1, color2];
         }
+
         const allGroups = document.querySelectorAll('#static-svg g');
         const targetLayers = [];
         allGroups.forEach((group, groupIndex) => {
@@ -306,9 +313,12 @@ def render_svg1(svg, num):
                 targetLayers.push({ group: group, index: groupIndex, segments: Array.from(segments) });
             }
         });
+
         console.log('Found ' + targetLayers.length + ' layers with segments:', targetLayers.map(l => ({ index: l.index, segmentCount: l.segments.length })));
+
         if (targetLayers.length >= 4) {
             const layersToColor = [targetLayers[1], targetLayers[2], targetLayers[3]];
+
             layersToColor.forEach((layer, layerNum) => {
                 layer.segments.forEach((segment, index) => {
                     segment.style.cursor = 'pointer';
@@ -320,8 +330,11 @@ def render_svg1(svg, num):
                         event.stopPropagation();
                         const segmentIndex = parseInt(segment.getAttribute('data-index'));
                         const groupId = `group_${segmentIndex}`;
+
                         console.log(`Clicked segment in layer ${parseInt(segment.getAttribute('data-layer')) + 2}, index: ${segmentIndex}`);
+
                         const isColored = coloredGroups.has(groupId);
+
                         if (isColored) {
                             layersToColor.forEach(l => {
                                 if (l.segments[segmentIndex]) {
@@ -353,6 +366,7 @@ def render_svg1(svg, num):
         }
     </script>
     """
+
     html_content = f"""
     <div style="margin: 0; padding: 0;">
       <svg id="static-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {num} {num}" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
@@ -361,7 +375,7 @@ def render_svg1(svg, num):
       {js_script}
     </div>
     <style>
-        #static-svg {{
+        #static-svg {{ 
             margin-top: 10px;
             margin-bottom: 10px;
         }}
@@ -416,7 +430,6 @@ st.set_page_config(
     page_title="堅太乙 - 太乙排盤",
     page_icon="icon.jpg"
 )
-
 # 定義基礎 URL
 BASE_URL_KINTAIYI = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/master/'
 BASE_URL_KINLIUREN = 'https://raw.githubusercontent.com/kentang2017/kinliuren/master/'
@@ -507,7 +520,7 @@ with st.sidebar:
                     st.toast(f"✅ 已更新系統提示 '{selected_name}'！")
         
         with col2:
-            if st.button("❌ 刪除提示", key="delete_qwen_prompt_button",
+            if st.button("❌ 刪除提示", key="delete_qwen_prompt_button", 
                         disabled=len(prompts_list) <= 1):
                 prompts_list = [p for p in prompts_list if p["name"] != selected_name]
                 system_prompts_data["prompts"] = prompts_list
@@ -570,7 +583,6 @@ with st.sidebar:
         st.json(st.session_state)
 
 @st.cache_data
-@st.cache_data
 def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
     """生成太乙計算結果，返回數據字典"""
     ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
@@ -595,7 +607,7 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
         genchart2 = ty.gen_gong(3, tn, tc)
     genchart1 = ty.gen_life_gong(sex_o)
     kook_num = kook.get("數")
-    yingyang = kook.get("文")[0] if kook.get("文") else "無"
+    yingyang = kook.get("文")[0]
     wuyuan = ty.get_five_yuan_kook(style, tn) if style != 5 else ""
     homecal, awaycal, setcal = config.find_cal(yingyang, kook_num)
     zhao = {"男": "乾造", "女": "坤造"}.get(sex_o)
@@ -607,18 +619,18 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
     yc = ty.year_chin()
     year_predict = f"太歲{yc}值宿，{su_dist.get(yc)}"
     home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
-    ts = taiyi_yingyang.get(kook.get('文', '')[0:2]).get(kook.get('數'))
-    gz = f"{ttext.get('干支', ['無', '無', '無', '無', '無'])[0]}年 {ttext.get('干支', ['無'])[1]}月 {ttext.get('干支', ['無'])[2]}日 {ttext.get('干支', ['無'])[3]}時 {ttext.get('干支', ['無'])[4]}分"
-    lunard = f"{cn2an.transform(str(config.lunar_date_d(my, mm, md).get('年', 0)) + '年', 'an2cn')}{an2cn(config.lunar_date_d(my, mm, md).get('月', 0))}月{an2cn(config.lunar_date_d(my, mm, md).get('日', 0))}日"
+    ts = taiyi_yingyang.get(kook.get('文')[0:2]).get(kook.get('數'))
+    gz = f"{ttext.get('干支')[0]}年 {ttext.get('干支')[1]}月 {ttext.get('干支')[2]}日 {ttext.get('干支')[3]}時 {ttext.get('干支')[4]}分"
+    lunard = f"{cn2an.transform(str(config.lunar_date_d(my, mm, md).get('年')) + '年', 'an2cn')}{an2cn(config.lunar_date_d(my, mm, md).get('月'))}月{an2cn(config.lunar_date_d(my, mm, md).get('日'))}日"
     ch = chistory.get(my, "")
     tys = "".join([ts[i:i+25] + "\n" for i in range(0, len(ts), 25)])
     yjxx = ty.yangjiu_xingxian(sex_o)
     blxx = ty.bailiu_xingxian(sex_o)
-    ygua = ty.year_gua()[1] if ty.year_gua() else "無"
-    mgua = ty.month_gua()[1] if ty.month_gua() else "無"
-    dgua = ty.day_gua()[1] if ty.day_gua() else "無"
-    hgua = ty.hour_gua()[1] if ty.hour_gua() else "無"
-    mingua = ty.minute_gua()[1] if ty.minute_gua() else "無"
+    ygua = ty.year_gua()[1]
+    mgua = ty.month_gua()[1]
+    dgua = ty.day_gua()[1]
+    hgua = ty.hour_gua()[1]
+    mingua = ty.minute_gua()[1]
     
     return {
         "ttext": ttext,
@@ -661,6 +673,7 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
         "sex_o": sex_o,
         "ty": ty
     }
+
 # 創建標籤頁
 tabs = st.tabs(['🧮太乙排盤', '💬使用說明', '📜局數史例', '🔥災異統計', '📚古籍書目', '🆕更新日誌', '🚀看盤要領', '🔗連結'])
 
@@ -668,7 +681,7 @@ tabs = st.tabs(['🧮太乙排盤', '💬使用說明', '📜局數史例', '�
 with tabs[0]:
     output = st.empty()
     with st_capture(output.code):
-        #try:
+        try:
             if instant:
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
                 results = gen_results(now.year, now.month, now.day, now.hour, now.minute, style, tn, sex_o, tc)
@@ -676,6 +689,7 @@ with tabs[0]:
             else:
                 results = gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc)
                 st.session_state.render_default = False
+
             if results:
                 if results["style"] == 5:
                     try:
@@ -690,26 +704,26 @@ with tabs[0]:
                         st.title("《太乙命法》︰")
                         st.markdown("【十二宮分析】")
                         st.markdown(results["lifedisc"])
-                        st.markdown(" ")
+                        st.markdown("   ")
                         st.markdown("【太乙十六神落宮】")
                         st.markdown(results["lifedisc2"])
-                        st.markdown(" ")
+                        st.markdown("   ")
                         st.markdown("【太乙十六神上中下等】")
                         st.markdown(results["lifedisc3"])
-                        st.markdown(" ")
+                        st.markdown("   ")
                         st.markdown("【值卦】")
                         st.markdown(f"年卦：{results['ygua']}")
                         st.markdown(f"月卦：{results['mgua']}")
                         st.markdown(f"日卦：{results['dgua']}")
                         st.markdown(f"時卦：{results['hgua']}")
                         st.markdown(f"分卦：{results['mingua']}")
-                        st.markdown(" ")
+                        st.markdown("   ")
                         st.markdown("【陽九行限】")
                         st.markdown(format_text(results["yjxx"]))
-                        st.markdown(" ")
+                        st.markdown("   ")
                         st.markdown("【百六行限】")
                         st.markdown(format_text(results["blxx"]))
-                        st.markdown(" ")
+                        st.markdown("   ")
                         st.title("《太乙秘書》︰")
                         st.markdown(results["ts"])
                         st.title("史事記載︰")
@@ -771,8 +785,8 @@ with tabs[0]:
                                     st.markdown(raw_response)
                             except Exception as e:
                                 st.error(f"調用AI時發生錯誤：{str(e)}")
-        #except Exception as e:
-        #    st.error(f"生成盤局時發生錯誤：{str(e)}")
+        except Exception as e:
+            st.error(f"生成盤局時發生錯誤：{str(e)}")
 
 # 使用說明
 with tabs[1]:
@@ -780,18 +794,11 @@ with tabs[1]:
 
 # 太乙局數史例
 with tabs[2]:
-    try:
-        with open('example.json', "r", encoding="utf-8") as f:  # Add encoding="utf-8"
-            data = f.read()
-        timeline(data, height=600)
-        with st.expander("列表"):
-            st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "example.md"))
-    except UnicodeDecodeError as e:
-        st.error(f"無法讀取 example.json: {str(e)}. 請檢查文件編碼並確保為 UTF-8。使用預設數據繼續。")
-        default_data = '{"events": [{"start_date": "2025-01-01", "text": "預設歷史事件"}]}'
-        timeline(default_data, height=600)
-        with st.expander("列表"):
-            st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "example.md"))
+    with open('example.json', "r") as f:
+        data = f.read()
+    timeline(data, height=600)
+    with st.expander("列表"):
+        st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "example.md"))
 
 # 災害統計
 with tabs[3]:
