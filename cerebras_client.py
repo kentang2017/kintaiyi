@@ -2,7 +2,9 @@ import os
 from cerebras.cloud.sdk import Cerebras
 
 # Default model to use across all functions
-DEFAULT_MODEL = "deepseek-r1-distill-llama-70b" # Updated to lowercase to match common Cerebras model IDs
+#DEFAULT_MODEL = "deepseek-r1-distill-llama-70b" # Updated to lowercase to match common Cerebras model IDs
+DEFAULT_MODEL = "gpt-oss-120b"
+
 
 class CerebrasClient:
     def __init__(self, api_key):
