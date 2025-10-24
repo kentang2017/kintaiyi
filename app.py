@@ -681,7 +681,7 @@ tabs = st.tabs(['🧮太乙排盤', '💬使用說明', '📜局數史例', '�
 with tabs[0]:
     output = st.empty()
     with st_capture(output.code):
-        try:
+        #try:
             if instant:
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
                 results = gen_results(now.year, now.month, now.day, now.hour, now.minute, style, tn, sex_o, tc)
@@ -800,8 +800,8 @@ with tabs[0]:
                                     st.markdown(raw_response)
                             except Exception as e:
                                 st.error(f"調用AI時發生錯誤：{str(e)}")
-        except Exception as e:
-            st.error(f"生成盤局時發生錯誤：{str(e)}")
+        #except Exception as e:
+        #    st.error(f"生成盤局時發生錯誤：{str(e)}")
 
 # 使用說明
 with tabs[1]:
