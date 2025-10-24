@@ -1099,7 +1099,7 @@ class Taiyi:
         k = [an2cn(i) for i in list(self.geteightdoors(ji_style, taiyi_acumyear).keys())]
         v = list(self.geteightdoors(ji_style, taiyi_acumyear).values())
         eightdoors = dict(zip(k,v))
-        eightddors_status = dict(zip(k, list(jieqi.gong_wangzhuai().values())))
+        eightddors_status = dict(zip(k, list(jieqi.gong_wangzhuai(jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)).values())))
         return [[i,eightdoors.get(i)+"門", eightddors_status.get(i)] for i in config.new_list(list(eightdoors.keys()), "二")]
 
     #陽九行限
