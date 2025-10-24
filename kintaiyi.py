@@ -303,28 +303,28 @@ class Taiyi:
         ty_jc = list(map(lambda x: x == taiyi, config.tyjc)).count(True)
         wc_jc1  = list(map(lambda x: x == wancheong, config.jc1)).count(True)
         wc_order = config.new_list(config.num, wc_num)
-        if wc_jc == 1 and ty_jc != 1 and wc_jc1 !=1 :
-            return sum(wc_order[: wc_order.index(taiyi)]) +1
-        if wc_jc !=1 and ty_jc != 1 and wc_jc1 ==1:
-            return sum(wc_order[: wc_order.index(taiyi)])
-        if wc_jc != 1 and ty_jc ==1 and wc_jc1 !=1:
-            return sum(wc_order[: wc_order.index(taiyi)])
-        if wc_jc ==1 and ty_jc ==1 and wc_jc1 !=1 and wc_jc == ty_jc and wc_jc1 == wc_jc:
-            return sum(wc_order[wc_order.index(taiyi):])+1
-        if wc_jc ==1 and ty_jc ==1 and wc_jc1 !=1 and wc_jc == ty_jc and wc_jc1 != wc_jc:
-            return sum(wc_order[:wc_order.index(taiyi)])+1
-        if wc_jc ==1 and ty_jc ==1 and wc_jc1 !=1 and wc_jc != ty_jc:
-            return sum(wc_order[wc_order.index(ty_jc):])+1
-        if wc_jc !=1 and ty_jc ==1 and wc_jc1 ==1 and taiyi != wc_order[wc_jc] and wc_jc1 != wc_jc:
-            return sum(wc_order[: wc_order.index(taiyi)])
-        if wc_jc !=1 and ty_jc ==1 and wc_jc1 ==1 and taiyi == wc_order[wc_jc] and wc_jc1 == wc_jc:
-            return taiyi
-        if wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and taiyi != wc_num:
-            return sum(wc_order[: wc_order.index(taiyi)])
-        if wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and taiyi == wc_num:
-            return taiyi
-        else:
-            return taiyi
+        #if wc_jc == 1 and ty_jc != 1 and wc_jc1 !=1 :
+        #    return sum(wc_order[: wc_order.index(taiyi)]) +1
+        #if wc_jc !=1 and ty_jc != 1 and wc_jc1 ==1:
+        #    return sum(wc_order[: wc_order.index(taiyi)])
+        #if wc_jc != 1 and ty_jc ==1 and wc_jc1 !=1:
+        #    return sum(wc_order[: wc_order.index(taiyi)])
+        #if wc_jc ==1 and ty_jc ==1 and wc_jc1 !=1 and wc_jc == ty_jc and wc_jc1 == wc_jc:
+        #    return sum(wc_order[wc_order.index(taiyi):])+1
+        #if wc_jc ==1 and ty_jc ==1 and wc_jc1 !=1 and wc_jc == ty_jc and wc_jc1 != wc_jc:
+        #    return sum(wc_order[:wc_order.index(taiyi)])+1
+        #if wc_jc ==1 and ty_jc ==1 and wc_jc1 !=1 and wc_jc != ty_jc:
+        #    return sum(wc_order[wc_order.index(ty_jc):])+1
+        #if wc_jc !=1 and ty_jc ==1 and wc_jc1 ==1 and taiyi != wc_order[wc_jc] and wc_jc1 != wc_jc:
+        #    return sum(wc_order[: wc_order.index(taiyi)])
+        #if wc_jc !=1 and ty_jc ==1 and wc_jc1 ==1 and taiyi == wc_order[wc_jc] and wc_jc1 == wc_jc:
+        #    return taiyi
+        #if wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and taiyi != wc_num:
+        #    return sum(wc_order[: wc_order.index(taiyi)])
+        #if wc_jc !=1 and ty_jc !=1 and wc_jc1 !=1 and taiyi == wc_num:
+        return taiyi
+        #else:
+        #    return taiyi
 
     def home_general(self, ji_style, taiyi_acumyear):
         """主大將"""
