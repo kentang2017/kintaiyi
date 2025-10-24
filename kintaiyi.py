@@ -1496,7 +1496,7 @@ class Taiyi:
                 "十天干歲始擊落宮預測": config.multi_key_dict_get (tengan_shiji, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[0][0]).get(config.Ganzhiwuxing(self.sf(ji_style, taiyi_acumyear))),
                 "八門值事":config.eight_door(self.accnum(ji_style, taiyi_acumyear)),
                 "八門分佈":self.geteightdoors(ji_style, taiyi_acumyear),
-                "八宮旺衰":jieqi.gong_wangzhuai(),
+                "八宮旺衰":jieqi.gong_wangzhuai(jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)),
                 "推太乙當時法": self.shensha(ji_style, taiyi_acumyear),
                 "推三門具不具":self.threedoors(ji_style, taiyi_acumyear),
                 "推五將發不發":self.fivegenerals(ji_style, taiyi_acumyear),
