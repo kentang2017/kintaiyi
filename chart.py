@@ -192,7 +192,7 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
     # Set the donut's radii and number of divisions for each layer
     inner_radius = 3
     layer_gap = 31.5  # Gap between layers
-    num_divisions = [1, 8, 16, 16, 16,28]
+    num_divisions = [1, 8, 16, 16, 16, 28]
     # Define the data for each layer
     #general = dict(zip(list("貴蛇雀合勾龍空虎常玄陰后"),re.findall('..', '貴人螣蛇朱雀六合勾陳青龍天空白虎常侍玄武太陰太后')))
     #skygeneral = [general.get(i) for i in skygeneral]
@@ -210,12 +210,25 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
     ]
     rotation_angle = 248
 
+    # Define the degrees for the 28 constellations
+    degrees = [11, 19, 9, 5, 8, 15, 9, 24, 8, 12, 10, 20, 16, 13, 12, 13, 12, 9, 15, 1, 11, 30, 5, 17, 8, 18, 17, 13]
+
+    # Calculate cumulative angles for the sixth layer
+    cumulative = [0]
+    for deg in degrees:
+        cumulative.append(cumulative[-1] + deg)
+
     for layer_index, divisions in enumerate(num_divisions):
         layer_group = draw.Group(id=f'layer{layer_index + 1}')  # Group each layer for independent movement
 
         for division in range(divisions):
-            start_angle = (360 / divisions) * division + rotation_angle
-            end_angle = (360 / divisions) * (division + 1) + rotation_angle
+            if layer_index == 5:  # Sixth layer with uneven divisions
+                start_angle = cumulative[division] + rotation_angle
+                end_angle = cumulative[division + 1] + rotation_angle
+            else:
+                start_angle = (360 / divisions) * division + rotation_angle
+                end_angle = (360 / divisions) * (division + 1) + rotation_angle
+
             label = data[layer_index][division]
 
             inner = inner_radius + layer_index * layer_gap
@@ -237,12 +250,12 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
             layer_group.append(path)
 
             # Add labels to the pie slices
-            label_x = (inner + outer) / 2 * math.cos(math.radians((start_angle + end_angle) / 2))
-            label_y = (inner + outer) / 2 * math.sin(math.radians((start_angle + end_angle) / 2))
+            mid_angle = (start_angle + end_angle) / 2
+            label_x = (inner + outer) / 2 * math.cos(math.radians(mid_angle))
+            label_y = (inner + outer) / 2 * math.sin(math.radians(mid_angle))
             label_text = draw.Text(label, 9, label_x, label_y, center=1, fill='white')
             layer_group.append(label_text)
 
         # Append the group for this layer to the main drawing
         d.append(layer_group)
     return d.as_svg().replace('''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
-
