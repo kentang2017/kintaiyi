@@ -185,7 +185,7 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
     return d.as_svg().replace('''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
 
 #第一層中間, 第二層八門
-def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeight):
+def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeight, degrees):
     # ... [rest of your setup code remains the same]
     # Create an SVG drawing canvas
     d = draw.Drawing(400, 400, origin="center")
@@ -211,7 +211,7 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
     rotation_angle = 248
 
     # Define the degrees for the 28 constellations
-    degrees =[12.1,9.65,17.28,5.67,7.94,20.37,8.37,24.15,6.76,11.12,8.68,14.95,17.39,8.65,17.09,12.41,15.59,11.09,16.79,5.15,7.09,32.67,1.51,12.62,6.06,17.35,19.33,17.60]
+    #degrees =[12.1,9.65,17.28,5.67,7.94,20.37,8.37,24.15,6.76,11.12,8.68,14.95,17.39,8.65,17.09,12.41,15.59,11.09,16.79,5.15,7.09,32.67,1.51,12.62,6.06,17.35,19.33,17.60]
 
     # Calculate cumulative angles for the sixth layer
     cumulative = [0]
@@ -259,5 +259,6 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
         # Append the group for this layer to the main drawing
         d.append(layer_group)
     return d.as_svg().replace('''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
+
 
 
