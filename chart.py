@@ -211,7 +211,7 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
     rotation_angle = 248
 
     # Define the degrees for the 28 constellations
-    degrees = [11, 19, 9, 5, 8, 15, 9, 24, 8, 12, 10, 20, 16, 13, 12, 13, 12, 9, 15, 1, 11, 30, 5, 17, 8, 18, 17, 13]
+    degrees = [12, 9, 15, 5, 5, 18, 11, 26, 8, 12, 10, 17, 16, 9, 16, 12, 14, 11, 17, 2, 9, 33, 4, 15, 7, 18, 18, 17]
 
     # Calculate cumulative angles for the sixth layer
     cumulative = [0]
@@ -259,3 +259,4 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
         # Append the group for this layer to the main drawing
         d.append(layer_group)
     return d.as_svg().replace('''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
+
