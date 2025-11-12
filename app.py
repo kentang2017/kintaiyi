@@ -278,58 +278,25 @@ def render_svg(svg, num):
     """
     html(html_content, height=num)
     
-def render_svg1():
-    num = 400  # SVG 尺寸
+def render_svg1(svg, num):
+    """渲染靜態 SVG 圖表（可點擊第2、3、4層的十六分之一部分，最多同時上色4個區域）"""
+    if not svg or 'svg' not in svg.lower():
+        st.error("Invalid SVG content provided")
+        return
 
-    # 假設有 4 個不同區域（groupId 0~3），每個區域由多個 segment 組成
-    # 這裡用簡單的 4 個矩形示範，你可替換成自己的 layersToColor 結構
-    layersToColor = [
-        type('Layer', (), {'segments': [None] * 4})(),  # 模擬 layer
-    ]
-    # 產生 4 個 segment（矩形）
-    segments = []
-    for i in range(4):
-        rect = Element('rect')
-        rect.set('x', str(i * 100))
-        rect.set('y', '0')
-        rect.set('width', '100')
-        rect.set('height', '100')
-        rect.set('data-group', str(i))  # 關鍵：每個區域有獨一 groupId
-        rect.set('stroke', '#666')
-        rect.set('stroke-width', '1')
-        segments.append(rect)
-
-    # 模擬 layersToColor[0].segments = segments
-    layersToColor[0].segments = segments
-
-    # 轉成 SVG 字串
-    svg_root = Element('svg')
-    svg_root.set('id', 'static-svg')
-    svg_root.set('xmlns', 'http://www.w3.org/2000/svg')
-    svg_root.set('viewBox', f'0 0 {num} {num}')
-    svg_root.set('width', '100%')
-    svg_root.set('height', 'auto')
-    svg_root.set('style', 'max-height:400px;display:block;margin:0 auto;')
-
-    for seg in segments:
-        svg_root.append(seg)
-
-    svg = tostring(svg_root, encoding='unicode')
-
-    # ==================== 優化版 JavaScript ====================
     js_script = """
     <script>
-        // 工具：生成兩種互補色
-        function generateTwoColors() {
-            const hue1 = Math.floor(Math.random() * 360);
-            const hue2 = (hue1 + 180 + Math.floor(Math.random() * 60)) % 360;
+        // ---------- 工具函式 ----------
+        function generateFourColors() {
+            const baseHue = Math.floor(Math.random() * 360);
             return [
-                `hsl(${hue1}, 80%, 60%)`,
-                `hsl(${hue2}, 80%, 60%)`
+                `hsl(${baseHue}, 80%, 60%)`,
+                `hsl(${(baseHue + 90) % 360}, 80%, 60%)`,
+                `hsl(${(baseHue + 180) % 360}, 80%, 60%)`,
+                `hsl(${(baseHue + 270) % 360}, 80%, 60%)`
             ];
         }
 
-        // 簡易 Toast 提示
         function showToast(msg, duration = 1500) {
             const toast = document.createElement('div');
             toast.textContent = msg;
@@ -342,12 +309,12 @@ def render_svg1():
             setTimeout(() => toast.remove(), duration);
         }
 
-        // 狀態管理
+        // ---------- 狀態 ----------
         const coloredGroups = new Set();     // 已上色的 groupId
         const groupColorMap = new Map();     // groupId → color
-        let currentColors = [];              // [colorA, colorB]
+        let currentColors = [];              // 最多 4 種顏色
 
-        // 移除某 group 的顏色
+        // 移除某 group 的 fill
         function removeColorFromGroup(groupId) {
             document.querySelectorAll(`[data-group="${groupId}"]`).forEach(el => {
                 el.removeAttribute('fill');
@@ -356,7 +323,7 @@ def render_svg1():
 
         // 為某 group 上色
         function addColorToGroup(groupId) {
-            const color = currentColors[coloredGroups.size];  // 0 → colorA, 1 → colorB
+            const color = currentColors[coloredGroups.size % 4]; // 0~3
             groupColorMap.set(groupId, color);
             coloredGroups.add(groupId);
             document.querySelectorAll(`[data-group="${groupId}"]`).forEach(el => {
@@ -364,7 +331,7 @@ def render_svg1():
             });
         }
 
-        // 點擊處理主邏輯
+        // ---------- 主點擊處理 ----------
         function handleClick(event) {
             const el = event.target;
             const groupId = el.dataset.group;
@@ -377,77 +344,94 @@ def render_svg1():
                 removeColorFromGroup(groupId);
                 coloredGroups.delete(groupId);
                 groupColorMap.delete(groupId);
-                showToast('取消上色');
-            } else if (coloredGroups.size >= 2) {
-                // 超過 2 個：移除最舊的（FIFO）
+                showToast('已取消上色');
+            } else if (coloredGroups.size >= 4) {
+                // 超過 4 個 → 踢掉最舊的
                 const oldest = coloredGroups.keys().next().value;
                 removeColorFromGroup(oldest);
                 coloredGroups.delete(oldest);
                 groupColorMap.delete(oldest);
-                // 生成新色（若已被清空）
+
                 if (currentColors.length === 0) {
-                    currentColors = generateTwoColors();
+                    currentColors = generateFourColors();
                 }
                 addColorToGroup(groupId);
                 showToast('已替換最舊區域');
             } else {
                 // 正常上色
                 if (coloredGroups.size === 0) {
-                    currentColors = generateTwoColors();
-                    console.log('Generated colors:', currentColors);
+                    currentColors = generateFourColors();
+                    console.log('Generated 4 colors:', currentColors);
                 }
                 addColorToGroup(groupId);
                 showToast('已上色');
             }
         }
 
-        // 初始化：綁定事件
+        // ---------- 初始化 ----------
         document.addEventListener('DOMContentLoaded', () => {
             const svg = document.getElementById('static-svg');
-            const elements = svg.querySelectorAll('path, polygon, rect');
-            elements.forEach(el => {
-                el.style.cursor = 'pointer';
-                el.style.transition = 'fill 0.2s ease';
-                el.addEventListener('click', handleClick);
+            if (!svg) return;
+
+            const allGroups = svg.querySelectorAll('g');
+            const targetLayers = [];
+
+            // 只取第 2、3、4 個 <g>（索引 1~3）
+            allGroups.forEach((group, index) => {
+                const segments = group.querySelectorAll('path, polygon, rect');
+                if (segments.length > 0 && index >= 1 && index <= 3) {
+                    targetLayers.push({
+                        group: group,
+                        index: index,
+                        segments: Array.from(segments)
+                    });
+                }
+            });
+
+            if (targetLayers.length < 3) {
+                console.error('Not enough layers found for coloring. Found:', targetLayers.length);
+                return;
+            }
+
+            const layersToColor = [targetLayers[0], targetLayers[1], targetLayers[2]];
+
+            // 為每個 segment 加上 data-group（同一索引 = 同一 group）
+            layersToColor.forEach(layer => {
+                layer.segments.forEach((segment, segIndex) => {
+                    const groupId = `group_${segIndex}`;
+                    segment.setAttribute('data-group', groupId);
+                    segment.style.cursor = 'pointer';
+                    segment.style.transition = 'fill 0.2s ease';
+                    if (!segment.hasAttribute('stroke')) {
+                        segment.setAttribute('stroke', '#666');
+                        segment.setAttribute('stroke-width', '1');
+                    }
+                    segment.addEventListener('click', handleClick);
+                });
             });
         });
     </script>
     """
 
-    # ==================== CSS 樣式 ====================
-    style = """
+    html_content = f"""
+    <div style="margin: 0; padding: 0;">
+      <svg id="static-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {num} {num}" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
+        {svg}
+      </svg>
+      {js_script}
+    </div>
     <style>
-        #static-svg {
+        #static-svg {{ 
             margin-top: 10px;
             margin-bottom: 10px;
-        }
-        #static-svg path,
-        #static-svg polygon,
-        #static-svg rect {
+        }}
+        #static-svg path, #static-svg polygon, #static-svg rect {{
             pointer-events: all !important;
             cursor: pointer !important;
-        }
+        }}
     </style>
     """
-
-    # ==================== 組合 HTML ====================
-    html_content = f"""
-    <div style="margin:0;padding:0;">
-      {svg}
-      {js_script}
-      {style}
-    </div>
-    """
-
-    # 使用 Streamlit 的 html() 顯示
-    try:
-        import streamlit as st
-        st.html(html_content, height=num)
-    except ImportError:
-        # 若非 Streamlit 環境，回傳 Flask Response
-        return Response(html_content, mimetype='text/html')
-
-    return None  # Streamlit 已處理顯示
+    html(html_content, height=num)
 
 def timeline(data, height=800):
     """渲染時間線組件"""
