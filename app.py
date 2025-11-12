@@ -298,13 +298,16 @@ def render_svg1(svg, num):
             return color;
         }
 
-        function generateTwoColors() {
-            let color1 = getRandomColor();
-            let color2 = getRandomColor();
-            while (color1 === color2) {
-                color2 = getRandomColor();
+        function generateFourColors() {
+            let colors = [];
+            for (let i = 0; i < 4; i++) {
+                let newColor = getRandomColor();
+                while (colors.includes(newColor)) {
+                    newColor = getRandomColor();
+                }
+                colors.push(newColor);
             }
-            return [color1, color2];
+            return colors;
         }
 
         const allGroups = document.querySelectorAll('#static-svg g');
@@ -344,9 +347,9 @@ def render_svg1(svg, num):
                                 }
                             });
                             coloredGroups.delete(groupId);
-                        } else if (coloredGroups.size < 2) {
+                        } else if (coloredGroups.size < 4) {
                             if (coloredGroups.size === 0 || currentColors.length === 0) {
-                                currentColors = generateTwoColors();
+                                currentColors = generateFourColors();
                                 console.log('Generated new colors:', currentColors);
                             }
                             const colorToUse = currentColors[coloredGroups.size];
@@ -356,7 +359,7 @@ def render_svg1(svg, num):
                                 }
                             });
                             coloredGroups.add(groupId);
-                            if (coloredGroups.size === 2) {
+                            if (coloredGroups.size === 4) {
                                 currentColors = [];
                             }
                         }
