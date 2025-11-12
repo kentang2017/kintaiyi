@@ -279,7 +279,7 @@ def render_svg(svg, num):
     html(html_content, height=num)
     
 def render_svg1(svg, num):
-    """渲染靜態 SVG 圖表（可點擊第2、3、4層的十六分之一部分，最多同時上色4個區域）"""
+    """渲染靜態 SVG 圖表（可點擊第2、3、4層的十六分之一部分，最多同時上色2個區域）"""
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
         return
@@ -287,13 +287,12 @@ def render_svg1(svg, num):
     js_script = """
     <script>
         // ---------- 工具函式 ----------
-        function generateFourColors() {
-            const baseHue = Math.floor(Math.random() * 360);
+        function generateTwoColors() {
+            const hue1 = Math.floor(Math.random() * 360);
+            const hue2 = (hue1 + 180 + Math.floor(Math.random() * 60)) % 360;
             return [
-                `hsl(${baseHue}, 80%, 60%)`,
-                `hsl(${(baseHue + 90) % 360}, 80%, 60%)`,
-                `hsl(${(baseHue + 180) % 360}, 80%, 60%)`,
-                `hsl(${(baseHue + 270) % 360}, 80%, 60%)`
+                `hsl(${hue1}, 80%, 60%)`,
+                `hsl(${hue2}, 80%, 60%)`
             ];
         }
 
@@ -310,20 +309,20 @@ def render_svg1(svg, num):
         }
 
         // ---------- 狀態 ----------
-        const coloredGroups = new Set();     // 已上色的 groupId
+        const coloredGroups = new Set();     // 已上色的 groupId (e.g., "group_0")
         const groupColorMap = new Map();     // groupId → color
-        let currentColors = [];              // 最多 4 種顏色
+        let currentColors = [];              // [colorA, colorB]
 
-        // 移除某 group 的 fill
+        // 移除某 group 所有 segment 的 fill
         function removeColorFromGroup(groupId) {
             document.querySelectorAll(`[data-group="${groupId}"]`).forEach(el => {
                 el.removeAttribute('fill');
             });
         }
 
-        // 為某 group 上色
+        // 為某 group 上色（所有同 group 的 segment）
         function addColorToGroup(groupId) {
-            const color = currentColors[coloredGroups.size % 4]; // 0~3
+            const color = currentColors[coloredGroups.size];  // 0 → A, 1 → B
             groupColorMap.set(groupId, color);
             coloredGroups.add(groupId);
             document.querySelectorAll(`[data-group="${groupId}"]`).forEach(el => {
@@ -345,23 +344,23 @@ def render_svg1(svg, num):
                 coloredGroups.delete(groupId);
                 groupColorMap.delete(groupId);
                 showToast('已取消上色');
-            } else if (coloredGroups.size >= 4) {
-                // 超過 4 個 → 踢掉最舊的
+            } else if (coloredGroups.size >= 2) {
+                // 替換最舊的
                 const oldest = coloredGroups.keys().next().value;
                 removeColorFromGroup(oldest);
                 coloredGroups.delete(oldest);
                 groupColorMap.delete(oldest);
 
                 if (currentColors.length === 0) {
-                    currentColors = generateFourColors();
+                    currentColors = generateTwoColors();
                 }
                 addColorToGroup(groupId);
                 showToast('已替換最舊區域');
             } else {
                 // 正常上色
                 if (coloredGroups.size === 0) {
-                    currentColors = generateFourColors();
-                    console.log('Generated 4 colors:', currentColors);
+                    currentColors = generateTwoColors();
+                    console.log('Generated colors:', currentColors);
                 }
                 addColorToGroup(groupId);
                 showToast('已上色');
@@ -376,7 +375,7 @@ def render_svg1(svg, num):
             const allGroups = svg.querySelectorAll('g');
             const targetLayers = [];
 
-            // 只取第 2、3、4 個 <g>（索引 1~3）
+            // 收集第 2、3、4 個 <g> 層（索引 1,2,3）
             allGroups.forEach((group, index) => {
                 const segments = group.querySelectorAll('path, polygon, rect');
                 if (segments.length > 0 && index >= 1 && index <= 3) {
@@ -393,7 +392,7 @@ def render_svg1(svg, num):
                 return;
             }
 
-            const layersToColor = [targetLayers[0], targetLayers[1], targetLayers[2]];
+            const layersToColor = [targetLayers[0], targetLayers[1], targetLayers[2]]; // 第2,3,4層
 
             // 為每個 segment 加上 data-group（同一索引 = 同一 group）
             layersToColor.forEach(layer => {
