@@ -279,136 +279,93 @@ def render_svg(svg, num):
     html(html_content, height=num)
     
 def render_svg1(svg, num):
-    """渲染靜態 SVG 圖表（可點擊第2、3、4層的十六分之一部分，最多同時上色2個區域）"""
+    """渲染靜態 SVG 圖表（可點擊同時著色第二、三、四層的十六分之一部分）"""
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
         return
-
+    
     js_script = """
     <script>
-        // ---------- 工具函式 ----------
+        const coloredGroups = new Set();
+        let currentColors = [];
+
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
         function generateTwoColors() {
-            const hue1 = Math.floor(Math.random() * 360);
-            const hue2 = (hue1 + 180 + Math.floor(Math.random() * 60)) % 360;
-            return [
-                `hsl(${hue1}, 80%, 60%)`,
-                `hsl(${hue2}, 80%, 60%)`
-            ];
-        }
-
-        function showToast(msg, duration = 1500) {
-            const toast = document.createElement('div');
-            toast.textContent = msg;
-            Object.assign(toast.style, {
-                position: 'fixed', top: '20px', left: '50%', transform: 'translateX(-50%)',
-                background: 'rgba(0,0,0,0.75)', color: '#fff', padding: '8px 16px',
-                borderRadius: '4px', fontSize: '14px', zIndex: 9999
-            });
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), duration);
-        }
-
-        // ---------- 狀態 ----------
-        const coloredGroups = new Set();     // 已上色的 groupId (e.g., "group_0")
-        const groupColorMap = new Map();     // groupId → color
-        let currentColors = [];              // [colorA, colorB]
-
-        // 移除某 group 所有 segment 的 fill
-        function removeColorFromGroup(groupId) {
-            document.querySelectorAll(`[data-group="${groupId}"]`).forEach(el => {
-                el.removeAttribute('fill');
-            });
-        }
-
-        // 為某 group 上色（所有同 group 的 segment）
-        function addColorToGroup(groupId) {
-            const color = currentColors[coloredGroups.size];  // 0 → A, 1 → B
-            groupColorMap.set(groupId, color);
-            coloredGroups.add(groupId);
-            document.querySelectorAll(`[data-group="${groupId}"]`).forEach(el => {
-                el.setAttribute('fill', color);
-            });
-        }
-
-        // ---------- 主點擊處理 ----------
-        function handleClick(event) {
-            const el = event.target;
-            const groupId = el.dataset.group;
-            if (!groupId) return;
-
-            const isColored = coloredGroups.has(groupId);
-
-            if (isColored) {
-                // 取消上色
-                removeColorFromGroup(groupId);
-                coloredGroups.delete(groupId);
-                groupColorMap.delete(groupId);
-                showToast('已取消上色');
-            } else if (coloredGroups.size >= 2) {
-                // 替換最舊的
-                const oldest = coloredGroups.keys().next().value;
-                removeColorFromGroup(oldest);
-                coloredGroups.delete(oldest);
-                groupColorMap.delete(oldest);
-
-                if (currentColors.length === 0) {
-                    currentColors = generateTwoColors();
-                }
-                addColorToGroup(groupId);
-                showToast('已替換最舊區域');
-            } else {
-                // 正常上色
-                if (coloredGroups.size === 0) {
-                    currentColors = generateTwoColors();
-                    console.log('Generated colors:', currentColors);
-                }
-                addColorToGroup(groupId);
-                showToast('已上色');
+            let color1 = getRandomColor();
+            let color2 = getRandomColor();
+            while (color1 === color2) {
+                color2 = getRandomColor();
             }
+            return [color1, color2];
         }
 
-        // ---------- 初始化 ----------
-        document.addEventListener('DOMContentLoaded', () => {
-            const svg = document.getElementById('static-svg');
-            if (!svg) return;
-
-            const allGroups = svg.querySelectorAll('g');
-            const targetLayers = [];
-
-            // 收集第 2、3、4 個 <g> 層（索引 1,2,3）
-            allGroups.forEach((group, index) => {
-                const segments = group.querySelectorAll('path, polygon, rect');
-                if (segments.length > 0 && index >= 1 && index <= 3) {
-                    targetLayers.push({
-                        group: group,
-                        index: index,
-                        segments: Array.from(segments)
-                    });
-                }
-            });
-
-            if (targetLayers.length < 3) {
-                console.error('Not enough layers found for coloring. Found:', targetLayers.length);
-                return;
+        const allGroups = document.querySelectorAll('#static-svg g');
+        const targetLayers = [];
+        allGroups.forEach((group, groupIndex) => {
+            const segments = group.querySelectorAll('path, polygon, rect');
+            if (segments.length > 0) {
+                targetLayers.push({ group: group, index: groupIndex, segments: Array.from(segments) });
             }
+        });
 
-            const layersToColor = [targetLayers[0], targetLayers[1], targetLayers[2]]; // 第2,3,4層
+        console.log('Found ' + targetLayers.length + ' layers with segments:', targetLayers.map(l => ({ index: l.index, segmentCount: l.segments.length })));
 
-            // 為每個 segment 加上 data-group（同一索引 = 同一 group）
-            layersToColor.forEach(layer => {
-                layer.segments.forEach((segment, segIndex) => {
-                    const groupId = `group_${segIndex}`;
-                    segment.setAttribute('data-group', groupId);
+        if (targetLayers.length >= 4) {
+            const layersToColor = [targetLayers[1], targetLayers[2], targetLayers[3]];
+
+            layersToColor.forEach((layer, layerNum) => {
+                layer.segments.forEach((segment, index) => {
                     segment.style.cursor = 'pointer';
-                    segment.style.transition = 'fill 0.2s ease';
-                    if (!segment.hasAttribute('stroke')) {
-                        segment.setAttribute('stroke', '#666');
-                        segment.setAttribute('stroke-width', '1');
-                    }
-                    segment.addEventListener('click', handleClick);
+                    segment.style.pointerEvents = 'all';
+                    segment.style.zIndex = '10';
+                    segment.setAttribute('data-index', index);
+                    segment.setAttribute('data-layer', layerNum);
+                    segment.addEventListener('click', function(event) {
+                        event.stopPropagation();
+                        const segmentIndex = parseInt(segment.getAttribute('data-index'));
+                        const groupId = `group_${segmentIndex}`;
+
+                        console.log(`Clicked segment in layer ${parseInt(segment.getAttribute('data-layer')) + 2}, index: ${segmentIndex}`);
+
+                        const isColored = coloredGroups.has(groupId);
+
+                        if (isColored) {
+                            layersToColor.forEach(l => {
+                                if (l.segments[segmentIndex]) {
+                                    l.segments[segmentIndex].removeAttribute('fill');
+                                }
+                            });
+                            coloredGroups.delete(groupId);
+                        } else if (coloredGroups.size < 2) {
+                            if (coloredGroups.size === 0 || currentColors.length === 0) {
+                                currentColors = generateTwoColors();
+                                console.log('Generated new colors:', currentColors);
+                            }
+                            const colorToUse = currentColors[coloredGroups.size];
+                            layersToColor.forEach(l => {
+                                if (l.segments[segmentIndex]) {
+                                    l.segments[segmentIndex].setAttribute('fill', colorToUse);
+                                }
+                            });
+                            coloredGroups.add(groupId);
+                            if (coloredGroups.size === 2) {
+                                currentColors = [];
+                            }
+                        }
+                    });
                 });
             });
-        });
+        } else {
+            console.error('Not enough layers found. Found only ' + targetLayers.length + ' layers.');
+        }
     </script>
     """
 
@@ -426,7 +383,10 @@ def render_svg1(svg, num):
         }}
         #static-svg path, #static-svg polygon, #static-svg rect {{
             pointer-events: all !important;
-            cursor: pointer !important;
+            z-index: 10 !important;
+        }}
+        .stCodeBlock {{
+            margin-bottom: 10px !important;
         }}
     </style>
     """
