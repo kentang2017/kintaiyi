@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import datetime
 import pytz
@@ -17,7 +18,8 @@ from historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
 from cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL
-import os
+from flask import Response
+from xml.etree.ElementTree import Element, SubElement, tostring
 
 # Cerebras Model Options
 CEREBRAS_MODEL_OPTIONS = [
@@ -276,119 +278,176 @@ def render_svg(svg, num):
     """
     html(html_content, height=num)
     
-def render_svg1(svg, num):
-    """渲染靜態 SVG 圖表（可點擊同時著色第二、三、四層的十六分之一部分）"""
-    if not svg or 'svg' not in svg.lower():
-        st.error("Invalid SVG content provided")
-        return
-    
+def render_svg1():
+    num = 400  # SVG 尺寸
+
+    # 假設有 4 個不同區域（groupId 0~3），每個區域由多個 segment 組成
+    # 這裡用簡單的 4 個矩形示範，你可替換成自己的 layersToColor 結構
+    layersToColor = [
+        type('Layer', (), {'segments': [None] * 4})(),  # 模擬 layer
+    ]
+    # 產生 4 個 segment（矩形）
+    segments = []
+    for i in range(4):
+        rect = Element('rect')
+        rect.set('x', str(i * 100))
+        rect.set('y', '0')
+        rect.set('width', '100')
+        rect.set('height', '100')
+        rect.set('data-group', str(i))  # 關鍵：每個區域有獨一 groupId
+        rect.set('stroke', '#666')
+        rect.set('stroke-width', '1')
+        segments.append(rect)
+
+    # 模擬 layersToColor[0].segments = segments
+    layersToColor[0].segments = segments
+
+    # 轉成 SVG 字串
+    svg_root = Element('svg')
+    svg_root.set('id', 'static-svg')
+    svg_root.set('xmlns', 'http://www.w3.org/2000/svg')
+    svg_root.set('viewBox', f'0 0 {num} {num}')
+    svg_root.set('width', '100%')
+    svg_root.set('height', 'auto')
+    svg_root.set('style', 'max-height:400px;display:block;margin:0 auto;')
+
+    for seg in segments:
+        svg_root.append(seg)
+
+    svg = tostring(svg_root, encoding='unicode')
+
+    # ==================== 優化版 JavaScript ====================
     js_script = """
     <script>
-        const coloredGroups = new Set();
-        let currentColors = [];
-
-        function getRandomColor() {
-            const letters = '0123456789ABCDEF';
-            let color = '#';
-            for (let i = 0; i < 6; i++) {
-                color += letters[Math.floor(Math.random() * 16)];
-            }
-            return color;
-        }
-
+        // 工具：生成兩種互補色
         function generateTwoColors() {
-            let color1 = getRandomColor();
-            let color2 = getRandomColor();
-            while (color1 === color2) {
-                color2 = getRandomColor();
-            }
-            return [color1, color2];
+            const hue1 = Math.floor(Math.random() * 360);
+            const hue2 = (hue1 + 180 + Math.floor(Math.random() * 60)) % 360;
+            return [
+                `hsl(${hue1}, 80%, 60%)`,
+                `hsl(${hue2}, 80%, 60%)`
+            ];
         }
 
-        const allGroups = document.querySelectorAll('#static-svg g');
-        const targetLayers = [];
-        allGroups.forEach((group, groupIndex) => {
-            const segments = group.querySelectorAll('path, polygon, rect');
-            if (segments.length > 0) {
-                targetLayers.push({ group: group, index: groupIndex, segments: Array.from(segments) });
-            }
-        });
-
-        console.log('Found ' + targetLayers.length + ' layers with segments:', targetLayers.map(l => ({ index: l.index, segmentCount: l.segments.length })));
-
-        if (targetLayers.length >= 4) {
-            const layersToColor = [targetLayers[1], targetLayers[2], targetLayers[3]];
-
-            layersToColor.forEach((layer, layerNum) => {
-                layer.segments.forEach((segment, index) => {
-                    segment.style.cursor = 'pointer';
-                    segment.style.pointerEvents = 'all';
-                    segment.style.zIndex = '10';
-                    segment.setAttribute('data-index', index);
-                    segment.setAttribute('data-layer', layerNum);
-                    segment.addEventListener('click', function(event) {
-                        event.stopPropagation();
-                        const segmentIndex = parseInt(segment.getAttribute('data-index'));
-                        const groupId = `group_${segmentIndex}`;
-
-                        console.log(`Clicked segment in layer ${parseInt(segment.getAttribute('data-layer')) + 2}, index: ${segmentIndex}`);
-
-                        const isColored = coloredGroups.has(groupId);
-
-                        if (isColored) {
-                            layersToColor.forEach(l => {
-                                if (l.segments[segmentIndex]) {
-                                    l.segments[segmentIndex].removeAttribute('fill');
-                                }
-                            });
-                            coloredGroups.delete(groupId);
-                        } else if (coloredGroups.size < 2) {
-                            if (coloredGroups.size === 0 || currentColors.length === 0) {
-                                currentColors = generateTwoColors();
-                                console.log('Generated new colors:', currentColors);
-                            }
-                            const colorToUse = currentColors[coloredGroups.size];
-                            layersToColor.forEach(l => {
-                                if (l.segments[segmentIndex]) {
-                                    l.segments[segmentIndex].setAttribute('fill', colorToUse);
-                                }
-                            });
-                            coloredGroups.add(groupId);
-                            if (coloredGroups.size === 2) {
-                                currentColors = [];
-                            }
-                        }
-                    });
-                });
+        // 簡易 Toast 提示
+        function showToast(msg, duration = 1500) {
+            const toast = document.createElement('div');
+            toast.textContent = msg;
+            Object.assign(toast.style, {
+                position: 'fixed', top: '20px', left: '50%', transform: 'translateX(-50%)',
+                background: 'rgba(0,0,0,0.75)', color: '#fff', padding: '8px 16px',
+                borderRadius: '4px', fontSize: '14px', zIndex: 9999
             });
-        } else {
-            console.error('Not enough layers found. Found only ' + targetLayers.length + ' layers.');
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), duration);
         }
+
+        // 狀態管理
+        const coloredGroups = new Set();     // 已上色的 groupId
+        const groupColorMap = new Map();     // groupId → color
+        let currentColors = [];              // [colorA, colorB]
+
+        // 移除某 group 的顏色
+        function removeColorFromGroup(groupId) {
+            document.querySelectorAll(`[data-group="${groupId}"]`).forEach(el => {
+                el.removeAttribute('fill');
+            });
+        }
+
+        // 為某 group 上色
+        function addColorToGroup(groupId) {
+            const color = currentColors[coloredGroups.size];  // 0 → colorA, 1 → colorB
+            groupColorMap.set(groupId, color);
+            coloredGroups.add(groupId);
+            document.querySelectorAll(`[data-group="${groupId}"]`).forEach(el => {
+                el.setAttribute('fill', color);
+            });
+        }
+
+        // 點擊處理主邏輯
+        function handleClick(event) {
+            const el = event.target;
+            const groupId = el.dataset.group;
+            if (!groupId) return;
+
+            const isColored = coloredGroups.has(groupId);
+
+            if (isColored) {
+                // 取消上色
+                removeColorFromGroup(groupId);
+                coloredGroups.delete(groupId);
+                groupColorMap.delete(groupId);
+                showToast('取消上色');
+            } else if (coloredGroups.size >= 2) {
+                // 超過 2 個：移除最舊的（FIFO）
+                const oldest = coloredGroups.keys().next().value;
+                removeColorFromGroup(oldest);
+                coloredGroups.delete(oldest);
+                groupColorMap.delete(oldest);
+                // 生成新色（若已被清空）
+                if (currentColors.length === 0) {
+                    currentColors = generateTwoColors();
+                }
+                addColorToGroup(groupId);
+                showToast('已替換最舊區域');
+            } else {
+                // 正常上色
+                if (coloredGroups.size === 0) {
+                    currentColors = generateTwoColors();
+                    console.log('Generated colors:', currentColors);
+                }
+                addColorToGroup(groupId);
+                showToast('已上色');
+            }
+        }
+
+        // 初始化：綁定事件
+        document.addEventListener('DOMContentLoaded', () => {
+            const svg = document.getElementById('static-svg');
+            const elements = svg.querySelectorAll('path, polygon, rect');
+            elements.forEach(el => {
+                el.style.cursor = 'pointer';
+                el.style.transition = 'fill 0.2s ease';
+                el.addEventListener('click', handleClick);
+            });
+        });
     </script>
     """
 
-    html_content = f"""
-    <div style="margin: 0; padding: 0;">
-      <svg id="static-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {num} {num}" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
-        {svg}
-      </svg>
-      {js_script}
-    </div>
+    # ==================== CSS 樣式 ====================
+    style = """
     <style>
-        #static-svg {{ 
+        #static-svg {
             margin-top: 10px;
             margin-bottom: 10px;
-        }}
-        #static-svg path, #static-svg polygon, #static-svg rect {{
+        }
+        #static-svg path,
+        #static-svg polygon,
+        #static-svg rect {
             pointer-events: all !important;
-            z-index: 10 !important;
-        }}
-        .stCodeBlock {{
-            margin-bottom: 10px !important;
-        }}
+            cursor: pointer !important;
+        }
     </style>
     """
-    html(html_content, height=num)
+
+    # ==================== 組合 HTML ====================
+    html_content = f"""
+    <div style="margin:0;padding:0;">
+      {svg}
+      {js_script}
+      {style}
+    </div>
+    """
+
+    # 使用 Streamlit 的 html() 顯示
+    try:
+        import streamlit as st
+        st.html(html_content, height=num)
+    except ImportError:
+        # 若非 Streamlit 環境，回傳 Flask Response
+        return Response(html_content, mimetype='text/html')
+
+    return None  # Streamlit 已處理顯示
 
 def timeline(data, height=800):
     """渲染時間線組件"""
