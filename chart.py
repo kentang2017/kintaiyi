@@ -185,6 +185,7 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
     return d.as_svg().replace('''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
 
 #第一層中間, 第二層八門
+#第一層中間, 第二層八門
 def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeight, degrees):
     # ... [rest of your setup code remains the same]
     # Create an SVG drawing canvas
@@ -218,6 +219,11 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
     for deg in degrees:
         cumulative.append(cumulative[-1] + deg)
 
+    # Define colors for the 28 constellations based on their attributes
+    colors = ['green', 'gold', 'brown', 'orange', 'blue', 'red', 'black', 'green', 'gold', 'brown', 'orange', 'blue', 'red', 'black', 'green', 'gold', 'brown', 'orange', 'blue', 'red', 'black', 'green', 'gold', 'brown', 'orange', 'blue', 'red', 'black']
+
+    dark_colors = ['black', 'blue', 'red', 'brown', 'green']
+
     for layer_index, divisions in enumerate(num_divisions):
         layer_group = draw.Group(id=f'layer{layer_index + 1}')  # Group each layer for independent movement
 
@@ -240,7 +246,15 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
             start_inner_x, start_inner_y = inner * math.cos(math.radians(start_angle)), inner * math.sin(math.radians(start_angle))
             end_inner_x, end_inner_y = inner * math.cos(math.radians(end_angle)), inner * math.sin(math.radians(end_angle))
 
-            path = draw.Path(stroke='white', stroke_width=1.8, fill='black')
+            # Set fill color based on layer
+            if layer_index == 5:  # twentyeight layer
+                fill_color = 'black'
+                text_fill = colors[division]
+            else:
+                fill_color = 'black'
+                text_fill = 'white'
+
+            path = draw.Path(stroke='white', stroke_width=1.8, fill=fill_color)
             path.M(start_inner_x, start_inner_y)  # Move to the start point on the inner radius
             path.L(start_outer_x, start_outer_y)  # Line to the start point on the outer radius
             path.A(outer, outer, 0, 0, 1, end_outer_x, end_outer_y)  # Outer arc
@@ -253,12 +267,11 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
             mid_angle = (start_angle + end_angle) / 2
             label_x = (inner + outer) / 2 * math.cos(math.radians(mid_angle))
             label_y = (inner + outer) / 2 * math.sin(math.radians(mid_angle))
-            label_text = draw.Text(label, 9, label_x, label_y, center=1, fill='white')
+            label_text = draw.Text(label, 9, label_x, label_y, center=1, fill=text_fill)
             layer_group.append(label_text)
 
         # Append the group for this layer to the main drawing
         d.append(layer_group)
     return d.as_svg().replace('''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
-
 
 
