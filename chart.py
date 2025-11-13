@@ -204,7 +204,7 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
 
 
 # ====================  gen_chart_hour（新增 rotate_28 參數） ====================
-def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeight, degrees, rotate_28=-7):
+def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeight, degrees, rotate_28=-6):
     """
     rotate_28: 28宿旋轉角度（度）
                正數 → 逆時針（擰後）
@@ -287,6 +287,7 @@ if __name__ == "__main__":
         with open(filename, "w", encoding="utf-8") as f:
             f.write(svg)
         print(f"已產生：{filename}（28宿旋轉 {rotate}°）")
+
 
 
 
