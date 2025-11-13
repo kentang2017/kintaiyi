@@ -228,7 +228,7 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
     inner_radius = 3
     layer_gap = 31.5
     num_divisions = [1, 8, 16, 16, 16, 28]
-    rotation_angle = 200
+    rotation_angle = 230
 
     data = [
         [first_layer],
@@ -284,5 +284,6 @@ if __name__ == "__main__":
         f.write(svg)
     print("測試完成！請打開 test_eight_gates.svg 確認八門顏色：")
     print("   休門→藍, 生/死→棕, 傷/杜→綠, 景→紅, 驚/開→金")
+
 
 
