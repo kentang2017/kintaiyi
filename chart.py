@@ -191,21 +191,18 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
     layer_gap = 31.5
     num_divisions = [1, 8, 16, 16, 16, 28]
     
-    # 28宿完整列表（必須與 twentyeight 順序一致）
-    constellations = ['角', '亢', '氐', '房', '心', '尾', '箕', '斗', '牛', '女', '虛', '危', '室', '壁', '奎', '婁', '胃', '昴', '畢', '觜', '參', '井', '鬼', '柳', '星', '張', '翼', '軫']
-
-    # 背景填色字典
+    # === 顏色字典：以「宿名」為 key，不依賴順序 ===
     fill_colors = {
-        '角': 'green', '斗': 'green', '奎': 'green', '井': 'green',           # 木
-        '尾': 'red', '室': 'red', '觜': 'red', '翼': 'red',                 # 火
-        '亢': 'gold', '牛': 'gold', '婁': 'gold', '鬼': 'gold',             # 金
-        '箕': 'blue', '壁': 'blue', '參': 'blue', '軫': 'blue',             # 月
-        '氐': 'brown', '女': 'brown', '胃': 'brown', '柳': 'brown',         # 土
-        '房': 'orange', '虛': 'orange', '昴': 'orange', '星': 'orange',     # 日
-        '心': 'silver', '危': 'silver', '畢': 'silver', '張': 'silver',     # 特殊銀色
+        '角': 'green', '斗': 'green', '奎': 'green', '井': 'green',
+        '尾': 'red',   '室': 'red', '觜': 'red', '翼': 'red',
+        '亢': 'gold',  '牛': 'gold', '婁': 'gold', '鬼': 'gold',
+        '箕': 'blue',  '壁': 'blue', '參': 'blue', '軫': 'blue',
+        '氐': 'brown', '女': 'brown', '胃': 'brown', '柳': 'brown',
+        '房': 'orange','虛': 'orange','昴': 'orange','星': 'orange',
+        '心': 'silver','危': 'silver','畢': 'silver','張': 'silver',
     }
 
-    # 文字顏色字典（確保可讀性）
+    # 文字顏色（根據背景可讀性）
     text_colors = {
         'green': 'white',
         'red': 'white',
@@ -214,6 +211,7 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
         'brown': 'white',
         'orange': 'black',
         'silver': 'black',
+        'black': 'white',  # 預防
     }
 
     data = [
@@ -222,7 +220,7 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
         skygeneral,
         [['巳','大神','楚'], ['午','大威','荊州'], ['未','天道','秦'], ['坤','大武','梁州'], ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'], ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'], ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
         sixth_layer,
-        twentyeight  # 應該是 ['角', '亢', '氐', ...] 長度為28
+        twentyeight  # ← 動態列表，可能從「斗」或「井」開始
     ]
     rotation_angle = 248
 
@@ -235,7 +233,7 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
         layer_group = draw.Group(id=f'layer{layer_index + 1}')
 
         for division in range(divisions):
-            if layer_index == 5:  # 第6層：28宿
+            if layer_index == 5:
                 start_angle = cumulative[division] + rotation_angle
                 end_angle = cumulative[division + 1] + rotation_angle
             else:
@@ -247,7 +245,7 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
             inner = inner_radius + layer_index * layer_gap
             outer = inner_radius + (layer_index + 1) * layer_gap
 
-            # 計算邊界點
+            # 計算座標
             start_outer_x = outer * math.cos(math.radians(start_angle))
             start_outer_y = outer * math.sin(math.radians(start_angle))
             end_outer_x = outer * math.cos(math.radians(end_angle))
@@ -257,16 +255,16 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
             end_inner_x = inner * math.cos(math.radians(end_angle))
             end_inner_y = inner * math.sin(math.radians(end_angle))
 
-            # 決定填色與文字顏色
+            # === 關鍵：用 label（即宿名）查顏色 ===
             if layer_index == 5:
-                const_name = constellations[division]
-                fill_color = fill_colors.get(const_name, 'black')
+                const_name = label  # twentyeight[division] 就是宿名
+                fill_color = fill_colors.get(const_name, 'gray')  # 沒對應到就灰色
                 text_fill = text_colors.get(fill_color, 'white')
             else:
                 fill_color = 'black'
                 text_fill = 'white'
 
-            # 繪製扇形
+            # 繪製路徑
             path = draw.Path(stroke='white', stroke_width=1.8, fill=fill_color)
             path.M(start_inner_x, start_inner_y)
             path.L(start_outer_x, start_outer_y)
@@ -288,5 +286,3 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
     return d.as_svg().replace(
         '''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', ""
     )
-
-
