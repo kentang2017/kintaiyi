@@ -1,11 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-太乙盤 SVG 產生器
-正確上色：
-- 第4層（16宮）根據地支上色
-- 第2層（八門）根據八門規則上色
-- 第6層（28宿）根據宿名上色
-"""
 
 import drawsvg as draw
 import math
@@ -32,13 +25,13 @@ CONSTELLATION_COLORS = {
     '心': 'silver','危': 'silver','畢': 'silver','張': 'silver',
 }
 
-# 八門顏色（新增）
+# 八門顏色（根據第一個字）
 EIGHT_GATES_COLORS = {
-    '景門': 'red',
-    '驚門': 'gold', '開門': 'gold',
-    '生門': 'brown', '死門': 'brown',
-    '休門': 'blue',
-    '杜門': 'green', '傷門': 'green',
+    '景': 'red',
+    '驚': 'gold', '開': 'gold',
+    '生': 'brown', '死': 'brown',
+    '休': 'blue',
+    '杜': 'green', '傷': 'green',
 }
 
 # 文字顏色（可讀性）
@@ -64,8 +57,8 @@ def _format_label(raw):
 def _get_branch_key(raw_label):
     """提取地支/八卦（第一個字）"""
     if isinstance(raw_label, list) and raw_label:
-        return raw_label[0]
-    return raw_label
+        return str(raw_label[0])[0]  # 強制取第一個字
+    return str(raw_label)[0] if raw_label else ''
 
 def _draw_sector(group, start, end, inner, outer, raw_label,
                  is_16_palace=False, is_28_layer=False, is_second_layer=False):
@@ -80,15 +73,20 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
     eix = inner * math.cos(math.radians(end))
     eiy = inner * math.sin(math.radians(end))
 
-    # ---- 顏色邏輯：優先級：第二層 > 16宮 > 28宿 > 預設 ----
+    # ---- 顏色邏輯 ----
     if is_second_layer:
-        key = raw_label[0] if isinstance(raw_label, list) else raw_label
+        # 八門：支援 '休'、'休門'、['休門']、['休門', '資訊'] → 取第一個字
+        if isinstance(raw_label, list) and raw_label:
+            first_str = str(raw_label[0])
+        else:
+            first_str = str(raw_label)
+        key = first_str[0] if first_str else ''
         fill = EIGHT_GATES_COLORS.get(key, 'gray')
     elif is_16_palace:
         key = _get_branch_key(raw_label)
         fill = BRANCH_COLORS.get(key, 'gray')
     elif is_28_layer:
-        key = raw_label if isinstance(raw_label, str) else raw_label[0]
+        key = raw_label[0] if isinstance(raw_label, list) and raw_label else str(raw_label)
         fill = CONSTELLATION_COLORS.get(key, 'gray')
     else:
         fill = 'black'
@@ -125,7 +123,7 @@ def gen_chart(first_layer, second_layer, sixth_layer):
 
     data = [
         [first_layer],
-        second_layer,  # 第2層：八門 → 根據八門上色
+        second_layer,  # 第2層：八門
         [['巳','大神','楚'], ['午','大威','荊州'], ['未','天道','秦'], ['坤','大武','梁州'],
          ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'],
          ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'],
@@ -144,7 +142,7 @@ def gen_chart(first_layer, second_layer, sixth_layer):
 
             _draw_sector(layer, start, end, inner, outer, raw,
                          is_16_palace=(layer_idx == 2),
-                         is_second_layer=(layer_idx == 1))  # 第2層
+                         is_second_layer=(layer_idx == 1))
         d.append(layer)
 
     return d.as_svg().replace(
@@ -160,10 +158,10 @@ def gen_chart_life(second_layer, twelve, sixth_layer):
     rotation_angle = 248
 
     data = [
-        [second_layer],  # 第1層
-        twelve,          # 第2層（八門）
-        ['巳','午','未','申','酉','戌','亥','子','丑','寅','卯','辰'],  # 第3層
-        sixth_layer      # 第4層
+        [second_layer],
+        twelve,
+        ['巳','午','未','申','酉','戌','亥','子','丑','寅','卯','辰'],
+        sixth_layer
     ]
 
     for layer_idx, divs in enumerate(num_divisions):
@@ -177,7 +175,7 @@ def gen_chart_life(second_layer, twelve, sixth_layer):
 
             _draw_sector(layer, start, end, inner, outer, raw,
                          is_16_palace=(layer_idx == 2),
-                         is_second_layer=(layer_idx == 1))  # 第2層
+                         is_second_layer=(layer_idx == 1))
         d.append(layer)
 
     return d.as_svg().replace(
@@ -194,8 +192,8 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
 
     data = [
         [first_layer],
-        second_layer,  # 八門
-        golden,        # 第3層
+        second_layer,
+        golden,
         [['巳','大神','楚'], ['午','大威','荊州'], ['未','天道','秦'], ['坤','大武','梁州'],
          ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'],
          ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'],
@@ -214,7 +212,7 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
 
             _draw_sector(layer, start, end, inner, outer, raw,
                          is_16_palace=(layer_idx == 3),
-                         is_second_layer=(layer_idx == 1))  # 第2層
+                         is_second_layer=(layer_idx == 1))
         d.append(layer)
 
     return d.as_svg().replace(
@@ -231,8 +229,8 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
 
     data = [
         [first_layer],
-        second_layer,  # 八門
-        skygeneral,    # 第3層
+        second_layer,
+        skygeneral,
         [['巳','大神','楚'], ['午','大威','荊州'], ['未','天道','秦'], ['坤','大武','梁州'],
          ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'],
          ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'],
@@ -241,7 +239,6 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
         twentyeight
     ]
 
-    # 28宿累積角度
     cumulative = [0]
     for deg in degrees:
         cumulative.append(cumulative[-1] + deg)
@@ -249,7 +246,7 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
     for layer_idx, divs in enumerate(num_divisions):
         layer = draw.Group(id=f'layer{layer_idx+1}')
         for div in range(divs):
-            if layer_idx == 5:  # 28宿
+            if layer_idx == 5:
                 start = cumulative[div] + rotation_angle
                 end   = cumulative[div + 1] + rotation_angle
             else:
@@ -269,3 +266,26 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
     return d.as_svg().replace(
         '''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
 
+
+# ====================  測試範例 ====================
+if __name__ == "__main__":
+    # 測試各種格式的八門輸入
+    test_second_layer = [
+        '休門',           # str + 門
+        ['生門'],         # list + 門
+        ['傷'],           # list + 單字
+        '杜門',           # str + 門
+        ['景門', '資訊'], # list + 門 + 資訊
+        '死',             # str + 單字
+        '驚門',           # str + 門
+        ['開']            # list + 單字
+    ]
+
+    svg = gen_chart(
+        first_layer="太乙",
+        second_layer=test_second_layer,
+        sixth_layer=['角'] * 28
+    )
+    with open("test_eight_gates_colored.svg", "w", encoding="utf-8") as f:
+        f.write(svg)
+    print("測試完成！請打開 test_eight_gates_colored.svg 確認八門顏色正確。")
