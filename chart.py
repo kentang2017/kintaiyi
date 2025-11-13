@@ -3,7 +3,7 @@
 太乙盤 SVG 產生器
 正確上色：
 - 第4層（16宮）根據地支上色
-- 第2層（八門）黑色
+- 第2層（八門）根據八門規則上色
 - 第6層（28宿）根據宿名上色
 """
 
@@ -11,7 +11,7 @@ import drawsvg as draw
 import math
 
 # ======================  共用顏色設定  ======================
-# 地支/八卦 → 16宮 & 第二層（但第二層不使用）
+# 地支/八卦 → 16宮
 BRANCH_COLORS = {
     '子': 'blue',  '亥': 'blue',
     '丑': 'brown', '未': 'brown', '辰': 'brown', '戌': 'brown',
@@ -30,6 +30,15 @@ CONSTELLATION_COLORS = {
     '氐': 'brown', '女': 'brown', '胃': 'brown', '柳': 'brown',
     '房': 'orange','虛': 'orange','昴': 'orange','星': 'orange',
     '心': 'silver','危': 'silver','畢': 'silver','張': 'silver',
+}
+
+# 八門顏色（新增）
+EIGHT_GATES_COLORS = {
+    '景': 'red',
+    '驚': 'gold', '開': 'gold',
+    '生': 'brown', '死': 'brown',
+    '休': 'blue',
+    '杜': 'green', '傷': 'green',
 }
 
 # 文字顏色（可讀性）
@@ -59,7 +68,7 @@ def _get_branch_key(raw_label):
     return raw_label
 
 def _draw_sector(group, start, end, inner, outer, raw_label,
-                 is_16_palace=False, is_28_layer=False):
+                 is_16_palace=False, is_28_layer=False, is_second_layer=False):
     """共用繪製扇形 + 標籤"""
     # ---- 座標 ----
     sox = outer * math.cos(math.radians(start))
@@ -71,8 +80,11 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
     eix = inner * math.cos(math.radians(end))
     eiy = inner * math.sin(math.radians(end))
 
-    # ---- 顏色邏輯 ----
-    if is_16_palace:
+    # ---- 顏色邏輯：優先級：第二層 > 16宮 > 28宿 > 預設 ----
+    if is_second_layer:
+        key = raw_label[0] if isinstance(raw_label, list) else raw_label
+        fill = EIGHT_GATES_COLORS.get(key, 'gray')
+    elif is_16_palace:
         key = _get_branch_key(raw_label)
         fill = BRANCH_COLORS.get(key, 'gray')
     elif is_28_layer:
@@ -80,6 +92,7 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
         fill = CONSTELLATION_COLORS.get(key, 'gray')
     else:
         fill = 'black'
+    
     text_fill = TEXT_COLORS.get(fill, 'white')
 
     # ---- 路徑 ----
@@ -112,7 +125,7 @@ def gen_chart(first_layer, second_layer, sixth_layer):
 
     data = [
         [first_layer],
-        second_layer,  # 第2層：八門 → 黑色
+        second_layer,  # 第2層：八門 → 根據八門上色
         [['巳','大神','楚'], ['午','大威','荊州'], ['未','天道','秦'], ['坤','大武','梁州'],
          ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'],
          ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'],
@@ -130,7 +143,8 @@ def gen_chart(first_layer, second_layer, sixth_layer):
             outer = inner_radius + (layer_idx + 1) * layer_gap
 
             _draw_sector(layer, start, end, inner, outer, raw,
-                         is_16_palace=(layer_idx == 2))  # 第4層（索引2）
+                         is_16_palace=(layer_idx == 2),
+                         is_second_layer=(layer_idx == 1))  # 第2層
         d.append(layer)
 
     return d.as_svg().replace(
@@ -147,7 +161,7 @@ def gen_chart_life(second_layer, twelve, sixth_layer):
 
     data = [
         [second_layer],  # 第1層
-        twelve,          # 第2層
+        twelve,          # 第2層（八門）
         ['巳','午','未','申','酉','戌','亥','子','丑','寅','卯','辰'],  # 第3層
         sixth_layer      # 第4層
     ]
@@ -162,7 +176,8 @@ def gen_chart_life(second_layer, twelve, sixth_layer):
             outer = inner_radius + (layer_idx + 1) * layer_gap
 
             _draw_sector(layer, start, end, inner, outer, raw,
-                         is_16_palace=(layer_idx == 2))  # 第3層是16宮
+                         is_16_palace=(layer_idx == 2),
+                         is_second_layer=(layer_idx == 1))  # 第2層
         d.append(layer)
 
     return d.as_svg().replace(
@@ -198,7 +213,8 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
             outer = inner_radius + (layer_idx + 1) * layer_gap
 
             _draw_sector(layer, start, end, inner, outer, raw,
-                         is_16_palace=(layer_idx == 3))  # 第4層
+                         is_16_palace=(layer_idx == 3),
+                         is_second_layer=(layer_idx == 1))  # 第2層
         d.append(layer)
 
     return d.as_svg().replace(
@@ -245,8 +261,9 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
             outer = inner_radius + (layer_idx + 1) * layer_gap
 
             _draw_sector(layer, start, end, inner, outer, raw,
-                         is_16_palace=(layer_idx == 3),   # 第4層
-                         is_28_layer=(layer_idx == 5))    # 第6層
+                         is_16_palace=(layer_idx == 3),
+                         is_second_layer=(layer_idx == 1),
+                         is_28_layer=(layer_idx == 5))
         d.append(layer)
 
     return d.as_svg().replace(
