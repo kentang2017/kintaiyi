@@ -185,50 +185,57 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
     return d.as_svg().replace('''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
 
 #第一層中間, 第二層八門
-#第一層中間, 第二層八門
 def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeight, degrees):
-    # ... [rest of your setup code remains the same]
-    # Create an SVG drawing canvas
     d = draw.Drawing(400, 400, origin="center")
-    # Set the donut's radii and number of divisions for each layer
     inner_radius = 3
-    layer_gap = 31.5  # Gap between layers
+    layer_gap = 31.5
     num_divisions = [1, 8, 16, 16, 16, 28]
-    # Define the data for each layer
-    #general = dict(zip(list("貴蛇雀合勾龍空虎常玄陰后"),re.findall('..', '貴人螣蛇朱雀六合勾陳青龍天空白虎常侍玄武太陰太后')))
-    #skygeneral = [general.get(i) for i in skygeneral]
+    
+    # 28宿完整列表（必須與 twentyeight 順序一致）
+    constellations = ['角', '亢', '氐', '房', '心', '尾', '箕', '斗', '牛', '女', '虛', '危', '室', '壁', '奎', '婁', '胃', '昴', '畢', '觜', '參', '井', '鬼', '柳', '星', '張', '翼', '軫']
+
+    # 背景填色字典
+    fill_colors = {
+        '角': 'green', '斗': 'green', '奎': 'green', '井': 'green',           # 木
+        '尾': 'red', '室': 'red', '觜': 'red', '翼': 'red',                 # 火
+        '亢': 'gold', '牛': 'gold', '婁': 'gold', '鬼': 'gold',             # 金
+        '箕': 'blue', '壁': 'blue', '參': 'blue', '軫': 'blue',             # 月
+        '氐': 'brown', '女': 'brown', '胃': 'brown', '柳': 'brown',         # 土
+        '房': 'orange', '虛': 'orange', '昴': 'orange', '星': 'orange',     # 日
+        '心': 'silver', '危': 'silver', '畢': 'silver', '張': 'silver',     # 特殊銀色
+    }
+
+    # 文字顏色字典（確保可讀性）
+    text_colors = {
+        'green': 'white',
+        'red': 'white',
+        'gold': 'black',
+        'blue': 'white',
+        'brown': 'white',
+        'orange': 'black',
+        'silver': 'black',
+    }
+
     data = [
         [first_layer],
         second_layer,
         skygeneral,
         [['巳','大神','楚'], ['午','大威','荊州'], ['未','天道','秦'], ['坤','大武','梁州'], ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'], ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'], ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
-         #[['巳'], ['午'], ['未'], ['坤'], ['申'], ['酉'], ['戌'], ['乾'], ['亥'], ['子'], ['丑'], ['艮'], ['寅'], ['卯'], ['辰'], ['巽']],
-        #[['大神','楚'], ['大威','荊州'], ['天道','秦'], ['大武','梁州'], ['武德','晉'], ['太簇','趙雍'], ['陰主','魯'], ['陰德','冀州'],['大義','衛'], ['地主','齊兗'], ['陽德','吳'], ['和德','青州'], ['呂申','燕'], ['高叢','徐州'], ['太陽','鄭'], ['大炅','揚州']],
-        #[['巳','大神'], ['午','大威'], ['未','天道'], ['坤','大武'], ['申','武德'], ['酉','太簇'], ['戌','陰主'], ['乾','陰德'], ['亥','大義'], ['子','地主'], ['丑','陽德'], ['艮','和德'], ['寅','呂申'], ['卯','高叢'], ['辰','太陽'], ['巽','大炅']],
-        #['楚', '荊州', '秦', '梁州', '晉', '趙雍', '魯', '冀州', '衛', '齊兗', '吳', '青州', '燕', '徐州', '鄭', '揚州'],
         sixth_layer,
-        twentyeight
+        twentyeight  # 應該是 ['角', '亢', '氐', ...] 長度為28
     ]
     rotation_angle = 248
 
-    # Define the degrees for the 28 constellations
-    #degrees =[12.1,9.65,17.28,5.67,7.94,20.37,8.37,24.15,6.76,11.12,8.68,14.95,17.39,8.65,17.09,12.41,15.59,11.09,16.79,5.15,7.09,32.67,1.51,12.62,6.06,17.35,19.33,17.60]
-
-    # Calculate cumulative angles for the sixth layer
+    # 累積角度
     cumulative = [0]
     for deg in degrees:
         cumulative.append(cumulative[-1] + deg)
 
-    # Define colors for the 28 constellations based on their attributes
-    colors = ['green', 'gold', 'brown', 'orange', 'blue', 'red', 'black', 'green', 'gold', 'brown', 'orange', 'blue', 'red', 'black', 'green', 'gold', 'brown', 'orange', 'blue', 'red', 'black', 'green', 'gold', 'brown', 'orange', 'blue', 'red', 'black']
-
-    dark_colors = ['black', 'blue', 'red', 'brown', 'green']
-
     for layer_index, divisions in enumerate(num_divisions):
-        layer_group = draw.Group(id=f'layer{layer_index + 1}')  # Group each layer for independent movement
+        layer_group = draw.Group(id=f'layer{layer_index + 1}')
 
         for division in range(divisions):
-            if layer_index == 5:  # Sixth layer with uneven divisions
+            if layer_index == 5:  # 第6層：28宿
                 start_angle = cumulative[division] + rotation_angle
                 end_angle = cumulative[division + 1] + rotation_angle
             else:
@@ -240,38 +247,46 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
             inner = inner_radius + layer_index * layer_gap
             outer = inner_radius + (layer_index + 1) * layer_gap
 
-            # Calculate start and end points for both inner and outer arcs
-            start_outer_x, start_outer_y = outer * math.cos(math.radians(start_angle)), outer * math.sin(math.radians(start_angle))
-            end_outer_x, end_outer_y = outer * math.cos(math.radians(end_angle)), outer * math.sin(math.radians(end_angle))
-            start_inner_x, start_inner_y = inner * math.cos(math.radians(start_angle)), inner * math.sin(math.radians(start_angle))
-            end_inner_x, end_inner_y = inner * math.cos(math.radians(end_angle)), inner * math.sin(math.radians(end_angle))
+            # 計算邊界點
+            start_outer_x = outer * math.cos(math.radians(start_angle))
+            start_outer_y = outer * math.sin(math.radians(start_angle))
+            end_outer_x = outer * math.cos(math.radians(end_angle))
+            end_outer_y = outer * math.sin(math.radians(end_angle))
+            start_inner_x = inner * math.cos(math.radians(start_angle))
+            start_inner_y = inner * math.sin(math.radians(start_angle))
+            end_inner_x = inner * math.cos(math.radians(end_angle))
+            end_inner_y = inner * math.sin(math.radians(end_angle))
 
-            # Set fill color based on layer
-            if layer_index == 5:  # twentyeight layer
-                fill_color = 'black'
-                text_fill = colors[division]
+            # 決定填色與文字顏色
+            if layer_index == 5:
+                const_name = constellations[division]
+                fill_color = fill_colors.get(const_name, 'black')
+                text_fill = text_colors.get(fill_color, 'white')
             else:
                 fill_color = 'black'
                 text_fill = 'white'
 
+            # 繪製扇形
             path = draw.Path(stroke='white', stroke_width=1.8, fill=fill_color)
-            path.M(start_inner_x, start_inner_y)  # Move to the start point on the inner radius
-            path.L(start_outer_x, start_outer_y)  # Line to the start point on the outer radius
-            path.A(outer, outer, 0, 0, 1, end_outer_x, end_outer_y)  # Outer arc
-            path.L(end_inner_x, end_inner_y)  # Line to the end point on the inner radius
-            path.A(inner, inner, 0, 0, 0, start_inner_x, start_inner_y)  # Inner arc
-            path.Z()  # Close the path
+            path.M(start_inner_x, start_inner_y)
+            path.L(start_outer_x, start_outer_y)
+            path.A(outer, outer, 0, 0, 1, end_outer_x, end_outer_y)
+            path.L(end_inner_x, end_inner_y)
+            path.A(inner, inner, 0, 0, 0, start_inner_x, start_inner_y)
+            path.Z()
             layer_group.append(path)
 
-            # Add labels to the pie slices
+            # 標籤
             mid_angle = (start_angle + end_angle) / 2
             label_x = (inner + outer) / 2 * math.cos(math.radians(mid_angle))
             label_y = (inner + outer) / 2 * math.sin(math.radians(mid_angle))
             label_text = draw.Text(label, 9, label_x, label_y, center=1, fill=text_fill)
             layer_group.append(label_text)
 
-        # Append the group for this layer to the main drawing
         d.append(layer_group)
-    return d.as_svg().replace('''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
+
+    return d.as_svg().replace(
+        '''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', ""
+    )
 
 
