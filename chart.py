@@ -34,11 +34,11 @@ CONSTELLATION_COLORS = {
 
 # 八門顏色（新增）
 EIGHT_GATES_COLORS = {
-    '景': 'red',
-    '驚': 'gold', '開': 'gold',
-    '生': 'brown', '死': 'brown',
-    '休': 'blue',
-    '杜': 'green', '傷': 'green',
+    '景門': 'red',
+    '驚門': 'gold', '開門': 'gold',
+    '生門': 'brown', '死門': 'brown',
+    '休門': 'blue',
+    '杜門': 'green', '傷門': 'green',
 }
 
 # 文字顏色（可讀性）
@@ -268,3 +268,4 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
 
     return d.as_svg().replace(
         '''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
+
