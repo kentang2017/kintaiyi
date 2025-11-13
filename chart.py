@@ -3,7 +3,6 @@ import drawsvg as draw
 import math
 
 # ======================  共用顏色設定  ======================
-# 地支/八卦 → 第4層 & 第5層
 BRANCH_COLORS = {
     '子': 'blue',  '亥': 'blue',
     '丑': 'brown', '未': 'brown', '辰': 'brown', '戌': 'brown',
@@ -13,7 +12,6 @@ BRANCH_COLORS = {
     '乾': 'gold',  '坤': 'brown', '艮': 'brown', '巽': 'green',
 }
 
-# 28宿顏色
 CONSTELLATION_COLORS = {
     '角': 'green', '斗': 'green', '奎': 'green', '井': 'green',
     '尾': 'red',   '室': 'red', '觜': 'red', '翼': 'red',
@@ -24,7 +22,6 @@ CONSTELLATION_COLORS = {
     '心': 'silver','危': 'silver','畢': 'silver','張': 'silver',
 }
 
-# 文字顏色（可讀性）
 TEXT_COLORS = {
     'blue':  'white',
     'brown': 'white',
@@ -39,16 +36,16 @@ TEXT_COLORS = {
 # =========================================================
 
 def _format_label(raw):
-    """list → 換行字串"""
-    if isinstance(raw, list):
+    """list → 換行字串，字串直接回傳"""
+    if isinstance(raw, (list, tuple)):
         return '\n'.join(str(x) for x in raw)
     return str(raw)
 
 def _get_branch_key(raw_label):
-    """提取地支/八卦（第一個字）"""
-    if isinstance(raw_label, list) and raw_label:
-        return raw_label[0]
-    return raw_label
+    """安全提取地支/八卦（第一個字）"""
+    if isinstance(raw_label, (list, tuple)) and raw_label:
+        return str(raw_label[0])
+    return str(raw_label)
 
 def _draw_sector(group, start, end, inner, outer, raw_label,
                  is_branch_layer=False, is_28_layer=False):
@@ -63,12 +60,11 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
     eix = inner * math.cos(math.radians(end))
     eiy = inner * math.sin(math.radians(end))
 
-    # ---- 顏色邏輯 ----
+    # ---- 顏色 ----
+    key = _get_branch_key(raw_label)
     if is_branch_layer:
-        key = _get_branch_key(raw_label)
         fill = BRANCH_COLORS.get(key, 'gray')
     elif is_28_layer:
-        key = raw_label if isinstance(raw_label, str) else raw_label[0]
         fill = CONSTELLATION_COLORS.get(key, 'gray')
     else:
         fill = 'black'
@@ -99,17 +95,20 @@ def gen_chart(first_layer, second_layer, sixth_layer):
     d = draw.Drawing(400, 400, origin="center")
     inner_radius = 13
     layer_gap = 45
-    num_divisions = [1, 8, 16, 16]  # 4層
+    num_divisions = [1, 8, 16, 16]
     rotation_angle = 248
+
+    # 確保 sixth_layer 是 str list
+    sixth_layer = [str(x) for x in sixth_layer]
 
     data = [
         [first_layer],
-        second_layer,  # 第2層：八門 → 黑色
+        second_layer,
         [['巳','大神','楚'], ['午','大威','荊州'], ['未','天道','秦'], ['坤','大武','梁州'],
          ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'],
          ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'],
-         ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],  # 第3層 → 16宮
-        sixth_layer  # 第4層 → 複製第3層顏色
+         ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
+        sixth_layer  # 第5層
     ]
 
     for layer_idx, divs in enumerate(num_divisions):
@@ -121,7 +120,6 @@ def gen_chart(first_layer, second_layer, sixth_layer):
             inner = inner_radius + layer_idx * layer_gap
             outer = inner_radius + (layer_idx + 1) * layer_gap
 
-            # 第3層 & 第4層 都用 BRANCH_COLORS
             _draw_sector(layer, start, end, inner, outer, raw,
                          is_branch_layer=(layer_idx in (2, 3)))
         d.append(layer)
@@ -135,14 +133,16 @@ def gen_chart_life(second_layer, twelve, sixth_layer):
     d = draw.Drawing(380, 380, origin="center")
     inner_radius = 12
     layer_gap = 35
-    num_divisions = [1, 12, 12, 12]  # 4層
+    num_divisions = [1, 12, 12, 12]
     rotation_angle = 248
+
+    sixth_layer = [str(x) for x in sixth_layer]
 
     data = [
         [second_layer],
         twelve,
-        ['巳','午','未','申','酉','戌','亥','子','丑','寅','卯','辰'],  # 第3層 → 16宮
-        sixth_layer  # 第4層 → 複製第3層顏色
+        ['巳','午','未','申','酉','戌','亥','子','丑','寅','卯','辰'],
+        sixth_layer
     ]
 
     for layer_idx, divs in enumerate(num_divisions):
@@ -167,8 +167,10 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
     d = draw.Drawing(400, 400, origin="center")
     inner_radius = 3
     layer_gap = 31.5
-    num_divisions = [1, 8, 8, 16, 16]  # 5層
+    num_divisions = [1, 8, 8, 16, 16]
     rotation_angle = 248
+
+    sixth_layer = [str(x) for x in sixth_layer]
 
     data = [
         [first_layer],
@@ -177,8 +179,8 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
         [['巳','大神','楚'], ['午','大威','荊州'], ['未','天道','秦'], ['坤','大武','梁州'],
          ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'],
          ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'],
-         ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],  # 第4層
-        sixth_layer  # 第5層 → 複製第4層顏色
+         ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
+        sixth_layer
     ]
 
     for layer_idx, divs in enumerate(num_divisions):
@@ -203,8 +205,12 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
     d = draw.Drawing(400, 400, origin="center")
     inner_radius = 3
     layer_gap = 31.5
-    num_divisions = [1, 8, 16, 16, 16, 28]  # 6層
+    num_divisions = [1, 8, 16, 16, 16, 28]
     rotation_angle = 248
+
+    # 強制轉 str
+    sixth_layer = [str(x) for x in sixth_layer]
+    twentyeight = [str(x) for x in twentyeight]
 
     data = [
         [first_layer],
@@ -213,12 +219,11 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
         [['巳','大神','楚'], ['午','大威','荊州'], ['未','天道','秦'], ['坤','大武','梁州'],
          ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'],
          ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'],
-         ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],  # 第4層
-        sixth_layer,  # 第5層 → 複製第4層顏色
-        twentyeight   # 第6層 → 28宿
+         ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
+        sixth_layer,
+        twentyeight
     ]
 
-    # 28宿累積角度
     cumulative = [0]
     for deg in degrees:
         cumulative.append(cumulative[-1] + deg)
@@ -226,7 +231,7 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
     for layer_idx, divs in enumerate(num_divisions):
         layer = draw.Group(id=f'layer{layer_idx+1}')
         for div in range(divs):
-            if layer_idx == 5:  # 28宿
+            if layer_idx == 5:
                 start = cumulative[div] + rotation_angle
                 end   = cumulative[div + 1] + rotation_angle
             else:
@@ -238,7 +243,7 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeig
             outer = inner_radius + (layer_idx + 1) * layer_gap
 
             _draw_sector(layer, start, end, inner, outer, raw,
-                         is_branch_layer=(layer_idx in (3, 4)),  # 第4 & 第5層
+                         is_branch_layer=(layer_idx in (3, 4)),
                          is_28_layer=(layer_idx == 5))
         d.append(layer)
 
