@@ -279,20 +279,20 @@ def render_svg(svg, num):
     html(html_content, height=num)
     
 def render_svg1(svg, num):
-    """渲染靜態 SVG 圖表（可點擊同時著色第2、3、4層的對應扇形，並可取消還原五行色）"""
+    """渲染靜態 SVG 圖表（僅對第2、3層（八門 + 另一層）啟用點擊上色，第4層（16宮）完全保留原五行色）"""
     if not svg or 'svg' not in svg.lower():
         st.error("Invalid SVG content provided")
         return
 
     js_script = """
     <script>
-        const coloredGroups = new Map();  // groupId -> { color, originalColors: [seg1_orig, seg2_orig, seg3_orig] }
+        const coloredGroups = new Map();  // groupId -> { color, originalColors: [seg1_orig, seg2_orig] }
         let currentColors = [];
 
         function getRandomColor() {
             const letters = '0123456789ABCDEF';
             let color = '#';
-            for (let i = 0; i < 6; i++) {
+            for (let i = 0; i = 6; i++) {
                 color += letters[Math.floor(Math.random() * 16)];
             }
             return color;
@@ -310,76 +310,93 @@ def render_svg1(svg, num):
             return colors;
         }
 
-        // 找到所有 layer group
-        const allGroups = document.querySelectorAll('#static-svg g[id^="layer"]');
-        const targetLayers = [];
-        allGroups.forEach((group, idx) => {
-            const paths = group.querySelectorAll('path');
-            if (paths.length > 0) {
-                targetLayers.push({ group, index: idx, paths: Array.from(paths) });
-            }
-        });
+        // === 只選取第2、3層（layer2, layer3）===
+        const layer2 = document.querySelector('#static-svg #layer2');
+        const layer3 = document.querySelector('#static-svg #layer3');
 
-        if (targetLayers.length >= 4) {
-            const layersToColor = [targetLayers[1], targetLayers[2], targetLayers[3]]; // 第2,3,4層
+        if (!layer2 || !layer3) {
+            console.error("layer2 or layer3 not found!");
+            return;
+        }
 
-            layersToColor.forEach((layer, layerNum) => {
-                layer.paths.forEach((path, index) => {
-                    // 儲存原始顏色
-                    const originalFill = path.getAttribute('fill') || 'black';
-                    path.setAttribute('data-original-fill', originalFill);
-                    path.style.cursor = 'pointer';
+        const paths2 = Array.from(layer2.querySelectorAll('path'));
+        const paths3 = Array.from(layer3.querySelectorAll('path'));
 
-                    path.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        const groupId = `group_${index}`;
+        // 確保兩層段數相同
+        const maxSegments = Math.min(paths2.length, paths3.length);
 
-                        if (coloredGroups.has(groupId)) {
-                            // === 取消上色：還原原始五行色 ===
-                            const info = coloredGroups.get(groupId);
-                            layersToColor.forEach((l, i) => {
-                                if (l.paths[index]) {
-                                    l.paths[index].setAttribute('fill', info.originalColors[i]);
-                                }
-                            });
-                            coloredGroups.delete(groupId);
-                        } else if (coloredGroups.size < 4) {
-                            // === 上色：記錄原始顏色 + 套用隨機色 ===
-                            if (coloredGroups.size === 0) {
-                                currentColors = generateFourColors();
-                            }
-                            const colorToUse = currentColors[coloredGroups.size];
-                            const originalColors = layersToColor.map(l => 
-                                l.paths[index]?.getAttribute('data-original-fill') || 'black'
-                            );
+        for (let i = 0; i < maxSegments; i++) {
+            const seg2 = paths2[i];
+            const seg3 = paths3[i];
 
-                            layersToColor.forEach((l, i) => {
-                                if (l.paths[index]) {
-                                    l.paths[index].setAttribute('fill', colorToUse);
-                                }
-                            });
+            // 儲存原始顏色
+            const orig2 = seg2.getAttribute('fill') || 'black';
+            const orig3 = seg3.getAttribute('fill') || 'black';
+            seg2.setAttribute('data-original-fill', orig2);
+            seg3.setAttribute('data-original-fill', orig3);
 
-                            coloredGroups.set(groupId, {
-                                color: colorToUse,
-                                originalColors: originalColors
-                            });
-
-                            if (coloredGroups.size === 4) {
-                                currentColors = [];
-                            }
-                        }
-                    });
-                });
+            // 設定互動
+            [seg2, seg3].forEach(seg => {
+                seg.style.cursor = 'pointer';
+                seg.setAttribute('data-index', i);
             });
-        } else {
-            console.error('Not enough layers found:', targetLayers.length);
+
+            // 任一被點擊都觸發
+            seg2.addEventListener('click', handleClick.bind(null, i));
+            seg3.addEventListener('click', handleClick.bind(null, i));
+        }
+
+        function handleClick(index, e) {
+            e.stopPropagation();
+            const groupId = `group_${index}`;
+
+            if (coloredGroups.has(groupId)) {
+                // === 取消上色：還原原始顏色 ===
+                const info = coloredGroups.get(groupId);
+                if (paths2[index]) paths2[index].setAttribute('fill', info.originalColors[0]);
+                if (paths3[index]) paths3[index].setAttribute('fill', info.originalColors[1]);
+                coloredGroups.delete(groupId);
+            } else if (coloredGroups.size < 4) {
+                // === 上色 ===
+                if (coloredGroups.size === 0) {
+                    currentColors = generateFourColors();
+                }
+                const colorToUse = currentColors[coloredGroups.size];
+
+                const originalColors = [
+                    paths2[index]?.getAttribute('data-original-fill') || 'black',
+                    paths3[index]?.getAttribute('data-original-fill') || 'black'
+                ];
+
+                if (paths2[index]) paths2[index].setAttribute('fill', colorToUse);
+                if (paths3[index]) paths3[index].setAttribute('fill', colorToUse);
+
+                coloredGroups.set(groupId, {
+                    color: colorToUse,
+                    originalColors: originalColors
+                });
+
+                if (coloredGroups.size === 4) {
+                    currentColors = [];
+                }
+            }
+        }
+
+        // === 第4層（16宮）完全不參與互動 ===
+        const layer4 = document.querySelector('#static-svg #layer4');
+        if (layer4) {
+            const paths4 = layer4.querySelectorAll('path');
+            paths4.forEach(p => {
+                p.style.pointerEvents = 'none';  // 不可點
+                p.style.cursor = 'default';
+            });
         }
     </script>
     """
 
     html_content = f"""
     <div style="margin: 0; padding: 0;">
-      <svg id="static-svg" xmlns="http://www.w.org/2000/svg" viewBox="0 0 {num} {num}" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
+      <svg id="static-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {num} {num}" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
         {svg}
       </svg>
       {js_script}
@@ -390,11 +407,14 @@ def render_svg1(svg, num):
             margin-bottom: 10px;
         }}
         #static-svg path {{
-            pointer-events: all !important;
             transition: fill 0.2s ease;
         }}
         #static-svg path:hover {{
-            opacity: 0.8;
+            opacity: 0.9;
+        }}
+        /* 確保第4層永遠保留原色 */
+        #static-svg #layer4 path {{
+            pointer-events: none !important;
         }}
     </style>
     """
