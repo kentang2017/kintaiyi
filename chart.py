@@ -1,252 +1,288 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Nov  2 16:46:02 2023
+
 @author: kentang
 """
 
 import drawsvg as draw
-import math, re
+import math
+import re
 
-# ======================  共用顏色設定  ======================
-# 第2層（八門）顏色 → 以地支/八卦為 key
-BRANCH_COLORS = {
-    '子': 'blue', '亥': 'blue',
-    '丑': 'brown', '未': 'brown', '辰': 'brown', '戌': 'brown',
-    '寅': 'green', '卯': 'green',
-    '巳': 'red',   '午': 'red',
-    '申': 'gold',  '酉': 'gold',
-    '乾': 'gold',  '坤': 'brown', '艮': 'brown', '巽': 'green',
-}
-
-# 28宿顏色
-CONSTELLATION_COLORS = {
-    '角': 'green', '斗': 'green', '奎': 'green', '井': 'green',
-    '尾': 'red',   '室': 'red', '觜': 'red', '翼': 'red',
-    '亢': 'gold',  '牛': 'gold', '婁': 'gold', '鬼': 'gold',
-    '箕': 'blue',  '壁': 'blue', '參': 'blue', '軫': 'blue',
-    '氐': 'brown', '女': 'brown', '胃': 'brown', '柳': 'brown',
-    '房': 'orange','虛': 'orange','昴': 'orange','星': 'orange',
-    '心': 'silver','危': 'silver','畢': 'silver','張': 'silver',
-}
-
-# 文字顏色（可讀性）
-TEXT_COLORS = {
-    'blue':  'white',
-    'brown': 'white',
-    'green': 'white',
-    'red':   'white',
-    'gold':  'black',
-    'orange':'black',
-    'silver':'black',
-    'black': 'white',
-    'gray':  'white',
-}
-# =========================================================
-
-def _format_label(raw):
-    """list → '\n'.join，字串直接回傳"""
-    if isinstance(raw, list):
-        return '\n'.join(str(x) for x in raw)
-    return str(raw)
-
-def _draw_sector(group, layer_idx, div, start, end, inner, outer,
-                 raw_label, is_branch_layer=False, is_28_layer=False):
-    """共用繪製扇形 + 標籤（支援 list）"""
-    # ---- 座標 ----
-    sox = outer * math.cos(math.radians(start))
-    soy = outer * math.sin(math.radians(start))
-    eox = outer * math.cos(math.radians(end))
-    eoy = outer * math.sin(math.radians(end))
-    six = inner * math.cos(math.radians(start))
-    siy = inner * math.sin(math.radians(start))
-    eix = inner * math.cos(math.radians(end))
-    eiy = inner * math.sin(math.radians(end))
-
-    # ---- 顏色 ----
-    if is_branch_layer:
-        key = raw_label[0] if isinstance(raw_label, list) else raw_label
-        fill = BRANCH_COLORS.get(key, 'gray')
-    elif is_28_layer:
-        fill = CONSTELLATION_COLORS.get(raw_label, 'gray')
-    else:
-        fill = 'black'
-    text_fill = TEXT_COLORS.get(fill, 'white')
-
-    # ---- 路徑 ----
-    p = draw.Path(stroke='white', stroke_width=1.8, fill=fill)
-    p.M(six, siy)
-    p.L(sox, soy)
-    p.A(outer, outer, 0, 0, 1, eox, eoy)
-    p.L(eix, eiy)
-    p.A(inner, inner, 0, 0, 0, six, siy)
-    p.Z()
-    group.append(p)
-
-    # ---- 標籤（支援換行）----
-    label_str = _format_label(raw_label)
-    mid = (start + end) / 2
-    tx = (inner + outer) / 2 * math.cos(math.radians(mid))
-    ty = (inner + outer) / 2 * math.sin(math.radians(mid))
-    t = draw.Text(label_str, 9, tx, ty, center=1, fill=text_fill,
-                  font_family='sans-serif')
-    group.append(t)
-
-
-# ====================  gen_chart  ====================
+#第一層中間, 第二層八門
 def gen_chart(first_layer, second_layer, sixth_layer):
+    # ... [rest of your setup code remains the same]
+    # Create an SVG drawing canvas
     d = draw.Drawing(400, 400, origin="center")
+    # Set the donut's radii and number of divisions for each layer
     inner_radius = 13
-    layer_gap = 45
+    layer_gap = 45  # Gap between layers
     num_divisions = [1, 8, 16, 16]
-
+    # Define the data for each layer
+    #general = dict(zip(list("貴蛇雀合勾龍空虎常玄陰后"),re.findall('..', '貴人螣蛇朱雀六合勾陳青龍天空白虎常侍玄武太陰太后')))
+    #skygeneral = [general.get(i) for i in skygeneral]
     data = [
         [first_layer],
         second_layer,
-        [['巳','大神','楚'], ['午','大威','荊州'], ['未','天道','秦'], ['坤','大武','梁州'],
-         ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'],
-         ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'],
-         ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
-        sixth_layer
+         [['巳','大神','楚'], ['午','大威','荊州'], ['未','天道','秦'], ['坤','大武','梁州'], ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'], ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'], ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
+        #[['巳','大神'], ['午','大威'], ['未','天道'], ['坤','大武'], ['申','武德'], ['酉','太簇'], ['戌','陰主'], ['乾','陰德'], ['亥','大義'], ['子','地主'], ['丑','陽德'], ['艮','和德'], ['寅','呂申'], ['卯','高叢'], ['辰','太陽'], ['巽','大炅']],
+        #['楚', '荊州', '秦', '梁州', '晉', '趙雍', '魯', '冀州', '衛', '齊兗', '吳', '青州', '燕', '徐州', '鄭', '揚州'],
+        sixth_layer,
     ]
     rotation_angle = 248
+    for layer_index, divisions in enumerate(num_divisions):
+        layer_group = draw.Group(id=f'layer{layer_index + 1}')  # Group each layer for independent movement
 
-    for layer_idx, divs in enumerate(num_divisions):
-        layer = draw.Group(id=f'layer{layer_idx+1}')
-        for div in range(divs):
-            start = (360 / divs) * div + rotation_angle
-            end   = (360 / divs) * (div + 1) + rotation_angle
-            raw = data[layer_idx][div]
+        for division in range(divisions):
+            start_angle = (360 / divisions) * division + rotation_angle
+            end_angle = (360 / divisions) * (division + 1) + rotation_angle
+            label = data[layer_index][division]
 
-            inner = inner_radius + layer_idx * layer_gap
-            outer = inner_radius + (layer_idx + 1) * layer_gap
+            inner = inner_radius + layer_index * layer_gap
+            outer = inner_radius + (layer_index + 1) * layer_gap
 
-            _draw_sector(layer, layer_idx, div, start, end,
-                         inner, outer, raw,
-                         is_branch_layer=(layer_idx == 1))
-        d.append(layer)
+            # Calculate start and end points for both inner and outer arcs
+            start_outer_x, start_outer_y = outer * math.cos(math.radians(start_angle)), outer * math.sin(math.radians(start_angle))
+            end_outer_x, end_outer_y = outer * math.cos(math.radians(end_angle)), outer * math.sin(math.radians(end_angle))
+            start_inner_x, start_inner_y = inner * math.cos(math.radians(start_angle)), inner * math.sin(math.radians(start_angle))
+            end_inner_x, end_inner_y = inner * math.cos(math.radians(end_angle)), inner * math.sin(math.radians(end_angle))
 
-    return d.as_svg().replace(
-        '''<path d="M-4.86988571440686,-12.053390109368236 L-21.72718241812291,-53.776663564873665 A58,58,0,0,1,-21.727182418122876,-53.77666356487368 L-4.869885714406852,-12.053390109368237 A13,13,0,0,0,-4.86988571440686,-12.053390109368236 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
+            path = draw.Path(stroke='white', stroke_width=1.8, fill='black')
+            path.M(start_inner_x, start_inner_y)  # Move to the start point on the inner radius
+            path.L(start_outer_x, start_outer_y)  # Line to the start point on the outer radius
+            path.A(outer, outer, 0, 0, 1, end_outer_x, end_outer_y)  # Outer arc
+            path.L(end_inner_x, end_inner_y)  # Line to the end point on the inner radius
+            path.A(inner, inner, 0, 0, 0, start_inner_x, start_inner_y)  # Inner arc
+            path.Z()  # Close the path
+            layer_group.append(path)
 
+            # Add labels to the pie slices
+            label_x = (inner + outer) / 2 * math.cos(math.radians((start_angle + end_angle) / 2))
+            label_y = (inner + outer) / 2 * math.sin(math.radians((start_angle + end_angle) / 2))
+            label_text = draw.Text(label, 9, label_x, label_y, center=1, fill='white')
+            layer_group.append(label_text)
 
-# ====================  gen_chart_life  ====================
+        # Append the group for this layer to the main drawing
+        d.append(layer_group)
+    # ... [rest of your code remains the same]
+
+    return d.as_svg().replace('''<path d="M-4.86988571440686,-12.053390109368236 L-21.72718241812291,-53.776663564873665 A58,58,0,0,1,-21.727182418122876,-53.77666356487368 L-4.869885714406852,-12.053390109368237 A13,13,0,0,0,-4.86988571440686,-12.053390109368236 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
+
+#太乙命法盤
 def gen_chart_life(second_layer, twelve, sixth_layer):
+    # ... [rest of your setup code remains the same]
+    # Create an SVG drawing canvas
     d = draw.Drawing(380, 380, origin="center")
+    # Set the donut's radii and number of divisions for each layer
     inner_radius = 12
-    layer_gap = 35
+    layer_gap = 35  # Gap between layers
     num_divisions = [1, 12, 12, 12]
-
+    # Define the data for each layer
+    #general = dict(zip(list("貴蛇雀合勾龍空虎常玄陰后"),re.findall('..', '貴人螣蛇朱雀六合勾陳青龍天空白虎常侍玄武太陰太后')))
+    #skygeneral = [general.get(i) for i in skygeneral]
     data = [
         [second_layer],
         twelve,
-        ['巳','午','未','申','酉','戌','亥','子','丑','寅','卯','辰'],
+         ['巳', '午', '未', '申', '酉', '戌', '亥', '子', '丑', '寅','卯', '辰'],
+        #[['巳','大神'], ['午','大威'], ['未','天道'], ['坤','大武'], ['申','武德'], ['酉','太簇'], ['戌','陰主'], ['乾','陰德'], ['亥','大義'], ['子','地主'], ['丑','陽德'], ['艮','和德'], ['寅','呂申'], ['卯','高叢'], ['辰','太陽'], ['巽','大炅']],
+        #['楚', '荊州', '秦', '梁州', '晉', '趙雍', '魯', '冀州', '衛', '齊兗', '吳', '青州', '燕', '徐州', '鄭', '揚州'],
         sixth_layer
     ]
     rotation_angle = 248
+    for layer_index, divisions in enumerate(num_divisions):
+        layer_group = draw.Group(id=f'layer{layer_index + 1}')  # Group each layer for independent movement
 
-    for layer_idx, divs in enumerate(num_divisions):
-        layer = draw.Group(id=f'layer{layer_idx+1}')
-        for div in range(divs):
-            start = (360 / divs) * div + rotation_angle
-            end   = (360 / divs) * (div + 1) + rotation_angle
-            raw = data[layer_idx][div]
+        for division in range(divisions):
+            start_angle = (360 / divisions) * division + rotation_angle
+            end_angle = (360 / divisions) * (division + 1) + rotation_angle
+            label = data[layer_index][division]
 
-            inner = inner_radius + layer_idx * layer_gap
-            outer = inner_radius + (layer_idx + 1) * layer_gap
+            inner = inner_radius + layer_index * layer_gap
+            outer = inner_radius + (layer_index + 1) * layer_gap
 
-            # 這裡 second_layer 是第 0 層
-            _draw_sector(layer, layer_idx, div, start, end,
-                         inner, outer, raw,
-                         is_branch_layer=(layer_idx == 0))
-        d.append(layer)
+            # Calculate start and end points for both inner and outer arcs
+            start_outer_x, start_outer_y = outer * math.cos(math.radians(start_angle)), outer * math.sin(math.radians(start_angle))
+            end_outer_x, end_outer_y = outer * math.cos(math.radians(end_angle)), outer * math.sin(math.radians(end_angle))
+            start_inner_x, start_inner_y = inner * math.cos(math.radians(start_angle)), inner * math.sin(math.radians(start_angle))
+            end_inner_x, end_inner_y = inner * math.cos(math.radians(end_angle)), inner * math.sin(math.radians(end_angle))
 
-    return d.as_svg().replace(
-        '''<path d="M-4.495279120990947,-11.126206254801447 L-17.606509890547876,-43.577641164639005 A47,47,0,0,1,-17.606509890547848,-43.57764116463901 L-4.49527912099094,-11.12620625480145 A12,12,0,0,0,-4.495279120990947,-11.126206254801447 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
+            path = draw.Path(stroke='white', stroke_width=1.8, fill='black')
+            path.M(start_inner_x, start_inner_y)  # Move to the start point on the inner radius
+            path.L(start_outer_x, start_outer_y)  # Line to the start point on the outer radius
+            path.A(outer, outer, 0, 0, 1, end_outer_x, end_outer_y)  # Outer arc
+            path.L(end_inner_x, end_inner_y)  # Line to the end point on the inner radius
+            path.A(inner, inner, 0, 0, 0, start_inner_x, start_inner_y)  # Inner arc
+            path.Z()  # Close the path
+            layer_group.append(path)
 
+            # Add labels to the pie slices
+            label_x = (inner + outer) / 2 * math.cos(math.radians((start_angle + end_angle) / 2))
+            label_y = (inner + outer) / 2 * math.sin(math.radians((start_angle + end_angle) / 2))
+            label_text = draw.Text(label, 9, label_x, label_y, center=1, fill='white')
+            layer_group.append(label_text)
 
-# ====================  gen_chart_day  ====================
+        # Append the group for this layer to the main drawing
+        d.append(layer_group)
+    # ... [rest of your code remains the same]
+    return d.as_svg().replace('''<path d="M-4.495279120990947,-11.126206254801447 L-17.606509890547876,-43.577641164639005 A47,47,0,0,1,-17.606509890547848,-43.57764116463901 L-4.49527912099094,-11.12620625480145 A12,12,0,0,0,-4.495279120990947,-11.126206254801447 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
+#日家太乙盤
+#第一層中間, 第二層八門
 def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
+    # ... [rest of your setup code remains the same]
+    # Create an SVG drawing canvas
     d = draw.Drawing(400, 400, origin="center")
+    # Set the donut's radii and number of divisions for each layer
     inner_radius = 3
-    layer_gap = 31.5
+    layer_gap = 31.5  # Gap between layers
     num_divisions = [1, 8, 8, 16, 16]
-
+    # Define the data for each layer
+    #general = dict(zip(list("貴蛇雀合勾龍空虎常玄陰后"),re.findall('..', '貴人螣蛇朱雀六合勾陳青龍天空白虎常侍玄武太陰太后')))
+    #skygeneral = [general.get(i) for i in skygeneral]
     data = [
         [first_layer],
         second_layer,
         golden,
-        [['巳','大神','楚'], ['午','大威','荊州'], ['未','天道','秦'], ['坤','大武','梁州'],
-         ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'],
-         ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'],
-         ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
-        sixth_layer
+        [['巳','大神','楚'], ['午','大威','荊州'], ['未','天道','秦'], ['坤','大武','梁州'], ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'], ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'], ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
+        #[['巳','大神'], ['午','大威'], ['未','天道'], ['坤','大武'], ['申','武德'], ['酉','太簇'], ['戌','陰主'], ['乾','陰德'], ['亥','大義'], ['子','地主'], ['丑','陽德'], ['艮','和德'], ['寅','呂申'], ['卯','高叢'], ['辰','太陽'], ['巽','大炅']],
+        #['楚', '荊州', '秦', '梁州', '晉', '趙雍', '魯', '冀州', '衛', '齊兗', '吳', '青州', '燕', '徐州', '鄭', '揚州'],
+        sixth_layer,
     ]
     rotation_angle = 248
+    for layer_index, divisions in enumerate(num_divisions):
+        layer_group = draw.Group(id=f'layer{layer_index + 1}')  # Group each layer for independent movement
 
-    for layer_idx, divs in enumerate(num_divisions):
-        layer = draw.Group(id=f'layer{layer_idx+1}')
-        for div in range(divs):
-            start = (360 / divs) * div + rotation_angle
-            end   = (360 / divs) * (div + 1) + rotation_angle
-            raw = data[layer_idx][div]
+        for division in range(divisions):
+            start_angle = (360 / divisions) * division + rotation_angle
+            end_angle = (360 / divisions) * (division + 1) + rotation_angle
+            label = data[layer_index][division]
 
-            inner = inner_radius + layer_idx * layer_gap
-            outer = inner_radius + (layer_idx + 1) * layer_gap
+            inner = inner_radius + layer_index * layer_gap
+            outer = inner_radius + (layer_index + 1) * layer_gap
 
-            _draw_sector(layer, layer_idx, div, start, end,
-                         inner, outer, raw,
-                         is_branch_layer=(layer_idx == 1))
-        d.append(layer)
+            # Calculate start and end points for both inner and outer arcs
+            start_outer_x, start_outer_y = outer * math.cos(math.radians(start_angle)), outer * math.sin(math.radians(start_angle))
+            end_outer_x, end_outer_y = outer * math.cos(math.radians(end_angle)), outer * math.sin(math.radians(end_angle))
+            start_inner_x, start_inner_y = inner * math.cos(math.radians(start_angle)), inner * math.sin(math.radians(start_angle))
+            end_inner_x, end_inner_y = inner * math.cos(math.radians(end_angle)), inner * math.sin(math.radians(end_angle))
 
-    return d.as_svg().replace(
-        '''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
+            path = draw.Path(stroke='white', stroke_width=1.8, fill='black')
+            path.M(start_inner_x, start_inner_y)  # Move to the start point on the inner radius
+            path.L(start_outer_x, start_outer_y)  # Line to the start point on the outer radius
+            path.A(outer, outer, 0, 0, 1, end_outer_x, end_outer_y)  # Outer arc
+            path.L(end_inner_x, end_inner_y)  # Line to the end point on the inner radius
+            path.A(inner, inner, 0, 0, 0, start_inner_x, start_inner_y)  # Inner arc
+            path.Z()  # Close the path
+            layer_group.append(path)
 
+            # Add labels to the pie slices
+            label_x = (inner + outer) / 2 * math.cos(math.radians((start_angle + end_angle) / 2))
+            label_y = (inner + outer) / 2 * math.sin(math.radians((start_angle + end_angle) / 2))
+            label_text = draw.Text(label, 9, label_x, label_y, center=1, fill='white')
+            layer_group.append(label_text)
 
-# ====================  gen_chart_hour  ====================
+        # Append the group for this layer to the main drawing
+        d.append(layer_group)
+    return d.as_svg().replace('''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
+
+#第一層中間, 第二層八門
 def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer, twentyeight, degrees):
     d = draw.Drawing(400, 400, origin="center")
     inner_radius = 3
     layer_gap = 31.5
     num_divisions = [1, 8, 16, 16, 16, 28]
+    
+    # === 顏色字典：以「宿名」為 key，不依賴順序 ===
+    fill_colors = {
+        '角': 'green', '斗': 'green', '奎': 'green', '井': 'green',
+        '尾': 'red',   '室': 'red', '觜': 'red', '翼': 'red',
+        '亢': 'gold',  '牛': 'gold', '婁': 'gold', '鬼': 'gold',
+        '箕': 'blue',  '壁': 'blue', '參': 'blue', '軫': 'blue',
+        '氐': 'brown', '女': 'brown', '胃': 'brown', '柳': 'brown',
+        '房': 'orange','虛': 'orange','昴': 'orange','星': 'orange',
+        '心': 'silver','危': 'silver','畢': 'silver','張': 'silver',
+    }
+
+    # 文字顏色（根據背景可讀性）
+    text_colors = {
+        'green': 'white',
+        'red': 'white',
+        'gold': 'black',
+        'blue': 'white',
+        'brown': 'white',
+        'orange': 'black',
+        'silver': 'black',
+        'black': 'white',  # 預防
+    }
 
     data = [
         [first_layer],
         second_layer,
         skygeneral,
-        [['巳','大神','楚'], ['午','大威','荊州'], ['未','天道','秦'], ['坤','大武','梁州'],
-         ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'],
-         ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'],
-         ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
+        [['巳','大神','楚'], ['午','大威','荊州'], ['未','天道','秦'], ['坤','大武','梁州'], ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'], ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'], ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
         sixth_layer,
-        twentyeight
+        twentyeight  # ← 動態列表，可能從「斗」或「井」開始
     ]
     rotation_angle = 248
 
-    # 28宿累積角度
+    # 累積角度
     cumulative = [0]
     for deg in degrees:
         cumulative.append(cumulative[-1] + deg)
 
-    for layer_idx, divs in enumerate(num_divisions):
-        layer = draw.Group(id=f'layer{layer_idx+1}')
-        for div in range(divs):
-            if layer_idx == 5:   # 28宿
-                start = cumulative[div] + rotation_angle
-                end   = cumulative[div + 1] + rotation_angle
+    for layer_index, divisions in enumerate(num_divisions):
+        layer_group = draw.Group(id=f'layer{layer_index + 1}')
+
+        for division in range(divisions):
+            if layer_index == 5:
+                start_angle = cumulative[division] + rotation_angle
+                end_angle = cumulative[division + 1] + rotation_angle
             else:
-                start = (360 / divs) * div + rotation_angle
-                end   = (360 / divs) * (div + 1) + rotation_angle
+                start_angle = (360 / divisions) * division + rotation_angle
+                end_angle = (360 / divisions) * (division + 1) + rotation_angle
 
-            raw = data[layer_idx][div]
+            label = data[layer_index][division]
 
-            inner = inner_radius + layer_idx * layer_gap
-            outer = inner_radius + (layer_idx + 1) * layer_gap
+            inner = inner_radius + layer_index * layer_gap
+            outer = inner_radius + (layer_index + 1) * layer_gap
 
-            _draw_sector(layer, layer_idx, div, start, end,
-                         inner, outer, raw,
-                         is_branch_layer=(layer_idx == 1),
-                         is_28_layer=(layer_idx == 5))
-        d.append(layer)
+            # 計算座標
+            start_outer_x = outer * math.cos(math.radians(start_angle))
+            start_outer_y = outer * math.sin(math.radians(start_angle))
+            end_outer_x = outer * math.cos(math.radians(end_angle))
+            end_outer_y = outer * math.sin(math.radians(end_angle))
+            start_inner_x = inner * math.cos(math.radians(start_angle))
+            start_inner_y = inner * math.sin(math.radians(start_angle))
+            end_inner_x = inner * math.cos(math.radians(end_angle))
+            end_inner_y = inner * math.sin(math.radians(end_angle))
+
+            # === 關鍵：用 label（即宿名）查顏色 ===
+            if layer_index == 5:
+                const_name = label  # twentyeight[division] 就是宿名
+                fill_color = fill_colors.get(const_name, 'gray')  # 沒對應到就灰色
+                text_fill = text_colors.get(fill_color, 'white')
+            else:
+                fill_color = 'black'
+                text_fill = 'white'
+
+            # 繪製路徑
+            path = draw.Path(stroke='white', stroke_width=1.8, fill=fill_color)
+            path.M(start_inner_x, start_inner_y)
+            path.L(start_outer_x, start_outer_y)
+            path.A(outer, outer, 0, 0, 1, end_outer_x, end_outer_y)
+            path.L(end_inner_x, end_inner_y)
+            path.A(inner, inner, 0, 0, 0, start_inner_x, start_inner_y)
+            path.Z()
+            layer_group.append(path)
+
+            # 標籤
+            mid_angle = (start_angle + end_angle) / 2
+            label_x = (inner + outer) / 2 * math.cos(math.radians(mid_angle))
+            label_y = (inner + outer) / 2 * math.sin(math.radians(mid_angle))
+            label_text = draw.Text(label, 9, label_x, label_y, center=1, fill=text_fill)
+            layer_group.append(label_text)
+
+        d.append(layer_group)
 
     return d.as_svg().replace(
-        '''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
+        '''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', ""
+            )
