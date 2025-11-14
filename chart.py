@@ -140,7 +140,38 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
 
 
 # ====================  其餘 gen_chart* 函數不變 ====================
-# （gen_chart, gen_chart_life, gen_chart_day 保持原樣）
+def gen_chart_life(second_layer, twelve, sixth_layer):
+    d = draw.Drawing(380, 380, origin="center")
+    inner_radius = 12
+    layer_gap = 35
+    num_divisions = [1, 12, 12, 12]          # 第 3 層 = index 2
+    rotation_angle = 248
+
+    data = [
+        [second_layer],
+        twelve,                              # 第 2 層
+        ['巳','午','未','申','酉','戌','亥','子','丑','寅','卯','辰'],  # 第 3 層（地支）
+        sixth_layer
+    ]
+
+    for layer_idx, divs in enumerate(num_divisions):
+        layer = draw.Group(id=f'layer{layer_idx+1}')
+        for div in range(divs):
+            start = (360 / divs) * div + rotation_angle
+            end   = (360 / divs) * (div + 1) + rotation_angle
+            raw = data[layer_idx][div]
+            inner = inner_radius + layer_idx * layer_gap
+            outer = inner_radius + (layer_idx + 1) * layer_gap
+
+            _draw_sector(layer, start, end, inner, outer, raw,
+                         is_16_palace=(layer_idx == 2),   # 第 4 層（index 3）是 16 宮
+                         is_second_layer=(layer_idx == 1),
+                         is_third_layer=(layer_idx == 2)) # 第 3 層
+        d.append(layer)
+
+    return d.as_svg().replace(
+        '''<path d="M-4.495279120990947,-11.126206254801447 L-17.606509890547876,-43.577641164639005 A47,47,0,0,1,-17.606509890547848,-43.57764116463901 L-4.49527912099094,-11.12620625480145 A12,12,0,0,0,-4.495279120990947,-11.126206254801447 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
+
 
 # ====================  gen_chart_hour ====================
 def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
@@ -232,3 +263,4 @@ if __name__ == "__main__":
         f.write(svg)
     print("動態盤局 + 多五行衝突 測試完成！")
     print("優先級：木 > 火 > 金 > 水 > 土")
+
