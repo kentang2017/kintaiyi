@@ -317,6 +317,15 @@ class Taiyi:
         """始擊落宮"""
         return dict(zip(range(1, 73), config.sf_list)).get(self.kook(ji_style, taiyi_acumyear).get("數"))
 
+    def su_obj_num(self, ji_style, taiyi_acumyear, obj):
+        """始擊值"""
+        #sf = self.sf(ji_style, taiyi_acumyear)
+        sf_z = dict(zip(config.gong, range(1, 17))).get(obj)
+        sf_su = config.su_gong.get(obj)
+        yc_num = dict(zip(config.su, range(1, 29))).get(self.year_chin())
+        total = yc_num + sf_z
+        return dict(zip(range(1, 29), config.new_list(config.su, sf_su))).get(total if total <= 28 else total - 28)
+    
     def sf_num(self, ji_style, taiyi_acumyear):
         """始擊值"""
         sf = self.sf(ji_style, taiyi_acumyear)
