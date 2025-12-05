@@ -459,7 +459,7 @@ with st.sidebar:
     sex_o = st.selectbox('太乙命法性別', ('男', '女'))
     rotation = st.selectbox('轉盤', ('固定', '轉動'))
     
-    num_dict = {'時計太乙': 3, '年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '分計太乙': 4, '太乙分計命法':5, '太乙命法': 3}
+    num_dict = {'時計太乙': 3, '年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '分計太乙': 4, '太乙分計命法':6, '太乙命法': 5}
     style = num_dict[option]
     tn_dict = {'太乙統宗': 0, '太乙金鏡': 1, '太乙淘金歌': 2, '太乙局': 3}
     tn = tn_dict[acum]
@@ -605,7 +605,7 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
         life2 = ty.twostar_disc(sex_o, 3)
         lifedisc2 = ty.stars_descriptions_text(3, 0)
         lifedisc3 = ty.sixteen_gong_grades(3,0)
-    if style == 5:
+    if style == 6:
         tn = 0
         ttext = ty.pan(3, 0)
         kook = ty.kook(3, 0)
@@ -618,6 +618,21 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
         genchart1 = ty.gen_life_gong(sex_o, 4)
         life1 = ty.gongs_discription(sex_o, 4)
         life2 = ty.twostar_disc(sex_o, 4)
+        lifedisc2 = ty.stars_descriptions_text(4, 0)
+        lifedisc3 = ty.sixteen_gong_grades(4,0)
+    if style == 5:
+        tn = 0
+        ttext = ty.pan(3, 0)
+        kook = ty.kook(3, 0)
+        sj_su_predict = f"始擊落{ty.sf_num(3, 0)}宿，{su_dist.get(ty.sf_num(3, 0))}"
+        tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(3, 0)))
+        three_door = ty.threedoors(3, 0)
+        five_generals = ty.fivegenerals(3, 0)
+        home_vs_away1 = ty.wc_n_sj(3, 0)
+        genchart2 = ty.gen_gong(3, tn, tc)
+        genchart1 = ty.gen_life_gong(sex_o, 3)
+        life1 = ty.gongs_discription(sex_o, 3)
+        life2 = ty.twostar_disc(sex_o, 3)
         lifedisc2 = ty.stars_descriptions_text(4, 0)
         lifedisc3 = ty.sixteen_gong_grades(4,0)
     kook_num = kook.get("數")
@@ -701,7 +716,7 @@ with tabs[0]:
                 st.session_state.render_default = False
 
             if results:
-                if results["style"] == 5:
+                if results["style"] == 5 or results["style"] == 6:
                     try:
                         start_pt = results["genchart1"][results["genchart1"].index('''viewBox="''')+22:].split(" ")[1]
                         if rotation == "轉動":
@@ -774,9 +789,7 @@ with tabs[0]:
                         st.markdown(f"明地乙太乙所主術︰{results['ttext'].get('明地乙太乙所主術')}")
                         st.markdown(f"明值符太乙所主術︰{results['ttext'].get('明值符太乙所主術')}")
 
-
-
-                    
+                
                     print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(results['style'])[0]}數︰{results['ty'].accnum(results['style'], results['tn'])} | \n"
                           f"農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n"
                           f"{results['gz']} |\n"
