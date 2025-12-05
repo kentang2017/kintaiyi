@@ -453,13 +453,13 @@ with st.sidebar:
         mh = st.number_input('時', min_value=0, max_value=23, value=now.hour, key="hour")
         mmin = st.number_input('分', min_value=0, max_value=59, value=now.minute, key="minute")
     
-    option = st.selectbox('起盤方式', ('時計太乙', '年計太乙', '月計太乙', '日計太乙', '分計太乙', '太乙命法', '太乙命法(魔改)'))
+    option = st.selectbox('起盤方式', ('時計太乙', '年計太乙', '月計太乙', '日計太乙', '分計太乙', '太乙命法', '太乙分計命法'))
     acum = st.selectbox('太乙積年數', ('太乙統宗', '太乙金鏡', '太乙淘金歌', '太乙局'))
     ten_ching = st.selectbox('太乙十精', ('無', '有'))
     sex_o = st.selectbox('太乙命法性別', ('男', '女'))
     rotation = st.selectbox('轉盤', ('固定', '轉動'))
     
-    num_dict = {'時計太乙': 3, '年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '分計太乙': 4, '太乙命法':6, '太乙命法(魔改)': 5}
+    num_dict = {'時計太乙': 3, '年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '分計太乙': 4, '太乙分計命法':6, '太乙命法': 3}
     style = num_dict[option]
     tn_dict = {'太乙統宗': 0, '太乙金鏡': 1, '太乙淘金歌': 2, '太乙局': 3}
     tn = tn_dict[acum]
@@ -591,7 +591,7 @@ with st.sidebar:
 def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
     """生成太乙計算結果，返回數據字典"""
     ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
-    if style != 5 or style == 6:
+    if style != 5:
         ttext = ty.pan(style, tn)
         kook = ty.kook(style, tn)
         sj_su_predict = f"始擊落{ty.sf_num(style, tn)}宿，{su_dist.get(ty.sf_num(style, tn))}"
@@ -625,10 +625,7 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
     wuyuan = ty.get_five_yuan_kook(style, tn) if style != 5 else ""
     homecal, awaycal, setcal = config.find_cal(yingyang, kook_num)
     zhao = {"男": "乾造", "女": "坤造"}.get(sex_o)
-    
     lifedisc = ty.convert_gongs_text(life1, life2)
-    
-    
     yc = ty.year_chin()
     year_predict = f"太歲{yc}值宿，{su_dist.get(yc)}"
     home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
