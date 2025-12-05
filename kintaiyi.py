@@ -1284,19 +1284,19 @@ class Taiyi:
             new_degrees = [star_degrees.get(i) for i in self.twenty_eightstar(ji_style, taiyi_acumyear)]
             return chart.gen_chart_hour( list(sixteengongs.values())[-1]+[" "," "], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg,list(sixteengongs.values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear), new_degrees)
 #太乙命法
-    def gen_life_gong(self, sex, h):
+    def gen_life_gong(self, sex):
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
         dict1 = self.taiyi_life(sex).get("十二命宮排列")
         res.update(dict1)
         sg = list(res.values())
-        return chart.gen_chart_life( list(self.sixteen_gong11(h,0).values())[-1], sg, [self.sixteen_gong11(h,0).get(i) for i in list(res.keys())])
+        return chart.gen_chart_life( list(self.sixteen_gong11(4,0).values())[-1], sg, [self.sixteen_gong11(4,0).get(i) for i in list(res.keys())])
 
-    def gen_life_gong_list(self, sex, h): #3hour, 4minute
+    def gen_life_gong_list(self, sex):
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
         dict1 = self.taiyi_life(sex).get("十二命宮排列")
         res.update(dict1)
         sg = list(res.values())
-        return  list(self.sixteen_gong11(h,0).values())[-1], sg, [self.sixteen_gong11(h,0).get(i) for i in list(res.keys())]
+        return  list(self.sixteen_gong11(4,0).values())[-1], sg, [self.sixteen_gong11(4,0).get(i) for i in list(res.keys())]
 
     def convert_gongs_text(self, a, b):
         c = {}
@@ -1332,9 +1332,9 @@ class Taiyi:
             formatted_text += "\n"
         return formatted_text
         
-    def twostar_disc(self, sex, h):
+    def twostar_disc(self, sex):
         a = taiyi_life_dict.twostars
-        b = self.gongs_discription_list(sex, h)
+        b = self.gongs_discription_list(sex)
         b = {key: [''.join(value)] for key, value in b.items()}
         c = {}
         for key, values in b.items():
@@ -1351,18 +1351,18 @@ class Taiyi:
             c[key] = [item for item in values[0] if item]  # Remove empty lists
         return c
         
-    def gongs_discription_list(self, sex, h):
+    def gongs_discription_list(self, sex):
         sixteengongs = self.sixteen_gong11(3,0)
-        t = self.gen_life_gong_list(sex, h)[1]
-        stars = self.gen_life_gong_list(sex,h)[2]
+        t = self.gen_life_gong_list(sex)[1]
+        stars = self.gen_life_gong_list(sex)[2]
         alld =  dict(zip(t, stars))
         for key, value in alld.items():
             if not value:
                 alld[key] = ["空格"]
         return alld
     
-    def gongs_discription(self, sex, h):
-        alld = self.gongs_discription_list(sex, h)
+    def gongs_discription(self, sex):
+        alld = self.gongs_discription_list(sex)
         combined_dict = {}
         for category, subcategories in alld.items():
             combined_dict[category] = []
