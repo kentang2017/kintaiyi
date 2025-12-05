@@ -1289,14 +1289,14 @@ class Taiyi:
         dict1 = self.taiyi_life(sex).get("十二命宮排列")
         res.update(dict1)
         sg = list(res.values())
-        return chart.gen_chart_life( list(self.sixteen_gong11(4,0).values())[-1], sg, [self.sixteen_gong11(4,0).get(i) for i in list(res.keys())])
+        return chart.gen_chart_life( list(self.sixteen_gong11(3,0).values())[-1], sg, [self.sixteen_gong11(3,0).get(i) for i in list(res.keys())])
 
     def gen_life_gong_list(self, sex):
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
         dict1 = self.taiyi_life(sex).get("十二命宮排列")
         res.update(dict1)
         sg = list(res.values())
-        return  list(self.sixteen_gong11(4,0).values())[-1], sg, [self.sixteen_gong11(4,0).get(i) for i in list(res.keys())]
+        return  list(self.sixteen_gong11(3,0).values())[-1], sg, [self.sixteen_gong11(3,0).get(i) for i in list(res.keys())]
 
     def convert_gongs_text(self, a, b):
         c = {}
