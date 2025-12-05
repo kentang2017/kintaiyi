@@ -602,6 +602,9 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
         genchart2 = ty.gen_gong(style, tn, tc)
         genchart1 = ty.gen_life_gong(sex_o, 3)
         life1 = ty.gongs_discription(sex_o, 3)
+        life2 = ty.twostar_disc(sex_o, 3)
+        lifedisc2 = ty.stars_descriptions_text(3, 0)
+        lifedisc3 = ty.sixteen_gong_grades(3,0)
     if style == 5:
         tn = 0
         ttext = ty.pan(3, 0)
@@ -614,15 +617,18 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
         genchart2 = ty.gen_gong(3, tn, tc)
         genchart1 = ty.gen_life_gong(sex_o, 4)
         life1 = ty.gongs_discription(sex_o, 4)
+        life2 = ty.twostar_disc(sex_o, 4)
+        lifedisc2 = ty.stars_descriptions_text(4, 0)
+        lifedisc3 = ty.sixteen_gong_grades(4,0)
     kook_num = kook.get("數")
     yingyang = kook.get("文")[0]
     wuyuan = ty.get_five_yuan_kook(style, tn) if style != 5 else ""
     homecal, awaycal, setcal = config.find_cal(yingyang, kook_num)
     zhao = {"男": "乾造", "女": "坤造"}.get(sex_o)
-    life2 = ty.twostar_disc(sex_o)
+    
     lifedisc = ty.convert_gongs_text(life1, life2)
-    lifedisc2 = ty.stars_descriptions_text(4, 0)
-    lifedisc3 = ty.sixteen_gong_grades(4,0)
+    
+    
     yc = ty.year_chin()
     year_predict = f"太歲{yc}值宿，{su_dist.get(yc)}"
     home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
