@@ -103,11 +103,11 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
 
 
 # ====================  gen_chart  ====================
-def gen_chart(first_layer, second_layer, sixth_layer):
-    d = draw.Drawing(400, 400, origin="center")
+def gen_chart(first_layer, second_layer, sixth_layer, sevenstars):
+    d = draw.Drawing(500, 500, origin="center")
     inner_radius = 13
     layer_gap = 45
-    num_divisions = [1, 8, 16, 16]
+    num_divisions = [1, 8, 16, 16, 12]
     rotation_angle = 248
 
     data = [
@@ -117,7 +117,8 @@ def gen_chart(first_layer, second_layer, sixth_layer):
          ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'],
          ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'],
          ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
-        sixth_layer
+        sixth_layer,
+        sevenstars
     ]
 
     for layer_idx, divs in enumerate(num_divisions):
@@ -173,11 +174,11 @@ def gen_chart_life(second_layer, twelve, sixth_layer):
 
 
 # ====================  gen_chart_day  ====================
-def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
-    d = draw.Drawing(400, 400, origin="center")
+def gen_chart_day(first_layer, second_layer, golden, sixth_layer, seven_stars):
+    d = draw.Drawing(500, 500, origin="center")
     inner_radius = 3
     layer_gap = 31.5
-    num_divisions = [1, 8, 8, 16, 16]          # 第 3 層 = index 2
+    num_divisions = [1, 8, 8, 16, 16, 12]          # 第 3 層 = index 2
     rotation_angle = 248
 
     data = [
@@ -188,7 +189,8 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
          ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'],
          ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'],
          ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
-        sixth_layer
+        sixth_layer, 
+        seven_stars
     ]
 
     for layer_idx, divs in enumerate(num_divisions):
@@ -212,16 +214,16 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
 
 # ====================  gen_chart_hour（支援 rotate_28） ====================
 def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
-                   twentyeight,degrees, rotate_28=0):
+                   twentyeight, seven_stars, degrees, rotate_28=0):
     """
     rotate_28: 28宿旋轉角度（度）
                正數 → 逆時針（擰後）
                負數 → 順時針（擰前）
     """
-    d = draw.Drawing(400, 400, origin="center")
+    d = draw.Drawing(500, 500, origin="center")
     inner_radius = 3
     layer_gap = 31.5
-    num_divisions = [1, 8, 16, 16, 16, 28]   # 第 3 層 = index 2
+    num_divisions = [1, 8, 16, 16, 16, 28, 12]   # 第 3 層 = index 2
     rotation_angle = 248
 
     data = [
@@ -233,7 +235,8 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
          ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'],
          ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
         sixth_layer,
-        twentyeight
+        twentyeight,
+        seven_stars
     ]
 
     cumulative = [0]
