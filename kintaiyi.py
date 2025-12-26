@@ -77,8 +77,7 @@ def find_stars(year, month, day, hour, minute):
         boo = {"月孛":gong[person.mean_lilith["sign_num"]]}
     else:
         boo = {"月孛":""}
-    # 直接讀取各天體位置（返回字典）
-    return {"太陽":gong[person.sun["sign_num"]],
+    stars = {"太陽":gong[person.sun["sign_num"]],
      "月亮":gong[person.moon["sign_num"]],
      "水星":gong[person.mercury["sign_num"]],
      "金星":gong[person.venus["sign_num"]],
@@ -88,6 +87,7 @@ def find_stars(year, month, day, hour, minute):
      "羅睺":gong[person.mean_node["sign_num"]],
      "計都":(person.mean_node["sign_num"] + 6) % 12,
      } | boo
+    return stars
 
 
 
