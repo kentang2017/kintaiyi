@@ -86,20 +86,6 @@ def find_stars(year, month, day, hour, minute):
         "木星": gong[person.jupiter["sign_num"]],
         "土星": gong[person.saturn["sign_num"]],
     }
-    # 羅睺（平均北交點）
-    if person.mean_north_lunar_node is not None:
-        rahu_sign = person.mean_north_lunar_node["sign_num"]
-        stars["羅睺"] = gong[rahu_sign]
-        ketu_sign = (rahu_sign + 6) % 12
-        stars["計都"] = gong[ketu_sign]
-    else:
-        stars["羅睺"] = "計算失敗"
-        stars["計都"] = "計算失敗"
-    # 月孛
-    if hasattr(person, "mean_lilith") and person.mean_lilith is not None:
-        stars["月孛"] = gong[person.mean_lilith["sign_num"]]
-    else:
-        stars["月孛"] = ""
     return stars
 
 
