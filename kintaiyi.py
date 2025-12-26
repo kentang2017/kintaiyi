@@ -6,6 +6,7 @@ Created on Sat Aug 27 18:11:44 2022
 Optimized for performance
 """
 import re
+import os
 import time
 import itertools
 from datetime import date
@@ -24,6 +25,8 @@ from kerykeion import AstrologicalSubject
 import astropy.units as u
 from astropy.coordinates import SkyCoord, FK5
 from astropy.time import Time
+
+os.environ["KERYKION_GEONAMES_USERNAME"] = "kinyeah"  # 例如 "myastro123"
 
 def get_xiu_degrees(year):
     ra_deg = [
@@ -69,27 +72,34 @@ def find_stars(year, month, day, hour, minute):
         day=day,
         hour=hour,
         minute=minute,
-        city="Hong Kong", 
-        nation="CN"
+        lng=114.1694,           # 香港經度
+        lat=22.3193,            # 香港緯度
+        tz_str="Asia/Hong_Kong" # 香港時區
     )
-    gong = dict(zip(range(0, 13), list("戌酉申未午巳辰卯寅丑子亥")))
-    if hasattr(person, "mean_lilith") and person.mean_lilith is not None:
-        boo = {"月孛":gong[person.mean_lilith["sign_num"]]}
+    gong = dict(zip(range(12), list("戌酉申未午巳辰卯寅丑子亥")))
+    stars = {
+        "太陽": gong[person.sun["sign_num"]],
+        "月亮": gong[person.moon["sign_num"]],
+        "水星": gong[person.mercury["sign_num"]],
+        "金星": gong[person.venus["sign_num"]],
+        "火星": gong[person.mars["sign_num"]],
+        "木星": gong[person.jupiter["sign_num"]],
+        "土星": gong[person.saturn["sign_num"]],
+    }
+    # 羅睺（平均北交點）
+    if person.mean_north_lunar_node is not None:
+        rahu_sign = person.mean_north_lunar_node["sign_num"]
+        stars["羅睺"] = gong[rahu_sign]
+        ketu_sign = (rahu_sign + 6) % 12
+        stars["計都"] = gong[ketu_sign]
     else:
-        boo = {"月孛":""}
-    ketu = (person.mean_node["sign_num"] + 6) % 12
-    if ketu > 12:
-        ketu = ketu - 12
-    stars = {"太陽":gong[person.sun["sign_num"]],
-     "月亮":gong[person.moon["sign_num"]],
-     "水星":gong[person.mercury["sign_num"]],
-     "金星":gong[person.venus["sign_num"]],
-     "火星":gong[person.mars["sign_num"]],
-     "木星":gong[person.jupiter["sign_num"]],
-     "土星":gong[person.saturn["sign_num"]],
-     "羅睺":gong[person.mean_node["sign_num"]],
-     "計都":gong[ketu],
-     } 
+        stars["羅睺"] = "計算失敗"
+        stars["計都"] = "計算失敗"
+    # 月孛
+    if hasattr(person, "mean_lilith") and person.mean_lilith is not None:
+        stars["月孛"] = gong[person.mean_lilith["sign_num"]]
+    else:
+        stars["月孛"] = ""
     return stars
 
 
