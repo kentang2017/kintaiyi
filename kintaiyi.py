@@ -20,7 +20,7 @@ import chart
 import jieqi
 import taiyi_life_dict
 from jieqi import jieqi_name
-
+from kerykeion import AstrologicalSubject
 import astropy.units as u
 from astropy.coordinates import SkyCoord, FK5
 from astropy.time import Time
@@ -59,6 +59,31 @@ def get_xiu_degrees(year):
         du = delta * (365.25 / 360)
         degrees.append(round(du, 2))
     return degrees
+
+
+def find_stars(year, month, day, hour, minute):
+    person = AstrologicalSubject(
+        name="X",
+        year=year,
+        month=month,
+        day=day,
+        hour=hour,
+        minute=minute,
+        city="Hong Kong", 
+        nation="CN"
+    )
+    gong = dict(zip(range(0, 13), list("戌酉申未午巳辰卯寅丑子亥")))
+    # 直接讀取各天體位置（返回字典）
+    return {"太陽":gong[person.sun["sign_num"]],
+     "月亮":gong[person.moon["sign_num"]],
+     "水星":gong[person.mercury["sign_num"]],
+     "金星":gong[person.venus["sign_num"]],
+     "火星":gong[person.mars["sign_num"]],
+     "木星":gong[person.jupiter["sign_num"]],
+     "土星":gong[person.saturn["sign_num"]],
+     }
+
+
 
 class Taiyi:
     """太乙起盤主要函數"""
@@ -1253,14 +1278,47 @@ class Taiyi:
         return year_chin
 
     def gen_gong(self, ji_style, taiyi_acumyear, tenching): #有十精1, 無十精0
+        res2 = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
+        stars = find_stars(self.year, self.month, self.day, self.hour, self.minute)
         sixteengongs = {0: self.sixteen_gong3( ji_style, taiyi_acumyear), 1:self.sixteen_gong( ji_style, taiyi_acumyear) }.get(tenching)
+        for planet, zhi in stars.items():
+            if res2[zhi] == " ":           # 原本是空的
+                res2[zhi] = planet
+            else:                          # 已有行星，追加
+                res2[zhi] += planet        # 或 res2[zhi] += " " + planet
+        ss = [list(res2.values())]
+        # 定義所有可能的行星名稱（按長度從長到短排序，避免錯拆）
+        planets = ['太陽', '月亮', '水星', '金星', '火星', '木星', '土星']
+        
+        # 轉換函數
+        def split_planets(cell):
+            if cell == ' ' or not cell:
+                return []
+            # 依序嘗試匹配最長的行星名
+            result = []
+            remaining = cell
+            while remaining:
+                matched = False
+                for p in planets:
+                    if remaining.startswith(p):
+                        result.append(p)
+                        remaining = remaining[len(p):]
+                        matched = True
+                        break
+                if not matched:
+                    # 如果有意外字元（理論上不會），直接中斷
+                    break
+            return result
+        
+        # 應用到整個結構
+        ss1 = [[split_planets(cell) for cell in row] for row in ss]
         if ji_style in [0,1]:
-            return chart.gen_chart( list(sixteengongs.values())[-1], self.geteightdoors_text2(ji_style, taiyi_acumyear), list(sixteengongs.values())[:-1])
+            return chart.gen_chart( list(sixteengongs.values())[-1], self.geteightdoors_text2(ji_style, taiyi_acumyear), list(sixteengongs.values())[:-1], ss1)
         if ji_style in [2]:
             dict1 = config.gpan1(self.year, self.month, self.day, self.hour, self.minute)
             middle = dict1[0][1]
             ng = dict1[1]
-            return chart.gen_chart_day( list(sixteengongs.values())[-1] + [middle], self.geteightdoors_text2(ji_style, taiyi_acumyear), ng, list(sixteengongs.values())[:-1])
+            return chart.gen_chart_day( list(sixteengongs.values())[-1] + [middle], self.geteightdoors_text2(ji_style, taiyi_acumyear), ng, list(sixteengongs.values())[:-1], ss1)
         if ji_style in [3,4]:
             #j_q = jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)
             #d = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]
@@ -1277,12 +1335,15 @@ class Taiyi:
             #three_passes = [i[0]+self.lr().result(0).get("三傳").get(i)[0]+self.lr().result(0).get("三傳").get(i)[1][0] for i in ['初傳','中傳','末傳']]
             res = {"巳":" ", "午":" ", "未":" ", "坤":" ", "申":" ", "酉":" ", "戌":" ", "乾":" ", "亥":" ", "子":" ", "丑":" ", "艮":" ","寅":" ", "卯":" ", "辰":" ", "巽":" "}
             res1 = {"巳":" ", "午":" ", "未":" ", "坤":" ", "申":" ", "酉":" ", "戌":" ", "乾":" ", "亥":" ", "子":" ", "丑":" ", "艮":" ","寅":" ", "卯":" ", "辰":" ", "巽":" "}
+            
+            
             res.update(general)
             res1.update(earth_sky)
+            
             sg = [[list(res.values())[i], list(res1.values())[i] ] for i in range(0,len(list(res.values())))]
             star_degrees = dict(zip(config.su,get_xiu_degrees(self.year)))
             new_degrees = [star_degrees.get(i) for i in self.twenty_eightstar(ji_style, taiyi_acumyear)]
-            return chart.gen_chart_hour( list(sixteengongs.values())[-1]+[" "," "], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg,list(sixteengongs.values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear), new_degrees)
+            return chart.gen_chart_hour( list(sixteengongs.values())[-1]+[" "," "], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg,list(sixteengongs.values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear), ss1[0], new_degrees)
 #太乙命法
     def gen_life_gong(self, sex):
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
@@ -1581,12 +1642,12 @@ class Taiyi:
 if __name__ == '__main__':
     tic = time.perf_counter()
     year = 2025
-    month = 7
-    day = 13
-    hour = 12
+    month = 12
+    day = 26
+    hour = 22
     minute = 6
-    print(Taiyi(year, month, day, hour, minute).kingbase(3,0))
-    print(Taiyi(year, month, day, hour, minute).pan(3,0))
+    #print(Taiyi(year, month, day, hour, minute).kingbase(3,0))
+    #print(Taiyi(year, month, day, hour, minute).pan(3,0))
     #life1 = Taiyi(year, month, day, hour, minute).gongs_discription("男")
     #life2 = Taiyi(year, month, day, hour, minute).twostar_disc("男")
     #print(Taiyi(year, month, day, hour, minute).convert_gongs_text(life1, life2))
@@ -1595,7 +1656,7 @@ if __name__ == '__main__':
     #print(Taiyi(year, month, day, hour, minute).gongs_discription("男"))
     #print(Taiyi(year, month, day, hour, minute).gongs_discription_list("男"))
     #print(Taiyi(year, month, day, hour, minute).taiyi_life("男"))
-    #print(Taiyi(year, month, day, hour, minute).gen_gong(3,0))
+    print(Taiyi(year, month, day, hour, minute).gen_gong(3,0,0))
     #print(Taiyi(year, month, day, hour, minute).geteightdoors_text2(2,0))
     #print(Taiyi(year, month, day, hour, minute).yangjiu_xingxian("男"))
     #print(Taiyi(year, month, day, hour, minute).kook(0, 0))
