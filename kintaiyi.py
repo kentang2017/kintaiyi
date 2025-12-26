@@ -89,7 +89,7 @@ def find_stars(year, month, day, hour, minute):
      "土星":gong[person.saturn["sign_num"]],
      "羅睺":gong[person.mean_node["sign_num"]],
      "計都":gong[ketu],
-     } | boo
+     } 
     return stars
 
 
