@@ -1278,7 +1278,7 @@ class Taiyi:
         return year_chin
 
     def gen_gong(self, ji_style, taiyi_acumyear, tenching): #有十精1, 無十精0
-        res2 = {"辰":" ", "巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" "}
+        res2 = { "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" ", "巳":" "}
         stars = find_stars(self.year, self.month, self.day, self.hour, self.minute)
         sixteengongs = {0: self.sixteen_gong3( ji_style, taiyi_acumyear), 1:self.sixteen_gong( ji_style, taiyi_acumyear) }.get(tenching)
         for planet, zhi in stars.items():
