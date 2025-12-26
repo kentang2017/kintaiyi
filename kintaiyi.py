@@ -77,6 +77,9 @@ def find_stars(year, month, day, hour, minute):
         boo = {"月孛":gong[person.mean_lilith["sign_num"]]}
     else:
         boo = {"月孛":""}
+    ketu = (person.mean_node["sign_num"] + 6) % 12
+    if ketu > 12:
+        ketu = ketu - 12
     stars = {"太陽":gong[person.sun["sign_num"]],
      "月亮":gong[person.moon["sign_num"]],
      "水星":gong[person.mercury["sign_num"]],
@@ -85,7 +88,7 @@ def find_stars(year, month, day, hour, minute):
      "木星":gong[person.jupiter["sign_num"]],
      "土星":gong[person.saturn["sign_num"]],
      "羅睺":gong[person.mean_node["sign_num"]],
-     "計都":gong[(person.mean_node["sign_num"] + 6) % 12],
+     "計都":gong[ketu],
      } | boo
     return stars
 
