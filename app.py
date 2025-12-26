@@ -20,6 +20,8 @@ from streamlit.components.v1 import html
 from cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL
 from flask import Response
 from xml.etree.ElementTree import Element, SubElement, tostring
+from kerykeion import AstrologicalSubject
+
 
 # Cerebras Model Options
 CEREBRAS_MODEL_OPTIONS = [
