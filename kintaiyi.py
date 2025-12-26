@@ -74,19 +74,19 @@ def find_stars(year, month, day, hour, minute):
     )
     gong = dict(zip(range(0, 13), list("戌酉申未午巳辰卯寅丑子亥")))
     if hasattr(person, "mean_lilith") and person.mean_lilith is not None:
-        boo = {"孛":gong[person.mean_lilith["sign_num"]]}
+        boo = {"月孛":gong[person.mean_lilith["sign_num"]]}
     else:
-        boo = {"孛":""}
+        boo = {"月孛":""}
     # 直接讀取各天體位置（返回字典）
-    return {"日":gong[person.sun["sign_num"]],
-     "月":gong[person.moon["sign_num"]],
-     "水":gong[person.mercury["sign_num"]],
-     "金":gong[person.venus["sign_num"]],
-     "火":gong[person.mars["sign_num"]],
-     "木":gong[person.jupiter["sign_num"]],
-     "土":gong[person.saturn["sign_num"]],
-     "羅":gong[person.mean_node["sign_num"]],
-     "計":(person.mean_node["sign_num"] + 6) % 12,
+    return {"太陽":gong[person.sun["sign_num"]],
+     "月亮":gong[person.moon["sign_num"]],
+     "水星":gong[person.mercury["sign_num"]],
+     "金星":gong[person.venus["sign_num"]],
+     "火星":gong[person.mars["sign_num"]],
+     "木星":gong[person.jupiter["sign_num"]],
+     "土星":gong[person.saturn["sign_num"]],
+     "羅睺":gong[person.mean_node["sign_num"]],
+     "計都":(person.mean_node["sign_num"] + 6) % 12,
      } | boo
 
 
@@ -1294,7 +1294,7 @@ class Taiyi:
                 res2[zhi] += planet        # 或 res2[zhi] += " " + planet
         ss = [list(res2.values())]
         # 定義所有可能的行星名稱（按長度從長到短排序，避免錯拆）
-        planets = ['日', '月', '水', '金', '火', '木', '土', '孛', '羅','計']
+        planets = ['太陽', '月亮', '水星', '金星', '火星', '木星', '土星', '月孛', '羅睺','計都']
         
         # 轉換函數
         def split_planets(cell):
