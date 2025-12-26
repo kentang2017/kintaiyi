@@ -212,7 +212,7 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer):
 
 # ====================  gen_chart_hour（支援 rotate_28） ====================
 def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
-                   twentyeight, degrees, rotate_28=0):
+                   twentyeight, seven_stars ,degrees, rotate_28=0):
     """
     rotate_28: 28宿旋轉角度（度）
                正數 → 逆時針（擰後）
@@ -221,7 +221,7 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
     d = draw.Drawing(400, 400, origin="center")
     inner_radius = 3
     layer_gap = 31.5
-    num_divisions = [1, 8, 16, 16, 16, 28]   # 第 3 層 = index 2
+    num_divisions = [1, 8, 16, 16, 16, 28, 12]   # 第 3 層 = index 2
     rotation_angle = 248
 
     data = [
@@ -234,6 +234,7 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
          ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
         sixth_layer,
         twentyeight
+        seven_stars
     ]
 
     cumulative = [0]
@@ -296,3 +297,4 @@ if __name__ == "__main__":
     with open("test_life_third_layer.svg", "w", encoding="utf-8") as f:
         f.write(svg_life)
     print("已產生 test_life_third_layer.svg（第 3 層為地支，已上色）")
+
