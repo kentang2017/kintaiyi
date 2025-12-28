@@ -140,18 +140,19 @@ def gen_chart(first_layer, second_layer, sixth_layer, sevenstars):
 
 
 # ====================  gen_chart_life  ====================
-def gen_chart_life(second_layer, twelve, sixth_layer):
+def gen_chart_life(second_layer, twelve, sixth_layer, sevenstars):
     d = draw.Drawing(380, 380, origin="center")
     inner_radius = 12
     layer_gap = 35
-    num_divisions = [1, 12, 12, 12]          # 第 3 層 = index 2
+    num_divisions = [1, 12, 12, 12, 12]          # 第 3 層 = index 2
     rotation_angle = 248
 
     data = [
         [second_layer],
         twelve,                              # 第 2 層
         ['巳','午','未','申','酉','戌','亥','子','丑','寅','卯','辰'],  # 第 3 層（地支）
-        sixth_layer
+        sixth_layer,
+        sevenstars
     ]
 
     for layer_idx, divs in enumerate(num_divisions):
@@ -299,5 +300,6 @@ if __name__ == "__main__":
     with open("test_life_third_layer.svg", "w", encoding="utf-8") as f:
         f.write(svg_life)
     print("已產生 test_life_third_layer.svg（第 3 層為地支，已上色）")
+
 
 
