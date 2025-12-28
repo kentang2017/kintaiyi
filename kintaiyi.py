@@ -1353,7 +1353,7 @@ class Taiyi:
     def gen_life_gong(self, sex):
         res2 = { "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" ", "巳":" "}
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
-                for planet, zhi in stars.items():
+        for planet, zhi in stars.items():
             if res2[zhi] == " ":           # 原本是空的
                 res2[zhi] = planet
             else:                          # 已有行星，追加
