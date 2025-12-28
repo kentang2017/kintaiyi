@@ -1351,6 +1351,7 @@ class Taiyi:
             return chart.gen_chart_hour( list(sixteengongs.values())[-1]+[" "," "], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg,list(sixteengongs.values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear), ss1[0], new_degrees)
 #太乙命法
     def gen_life_gong(self, sex):
+        stars = find_stars(self.year, self.month, self.day, self.hour, self.minute)
         res2 = { "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" ", "巳":" "}
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
         for planet, zhi in stars.items():
