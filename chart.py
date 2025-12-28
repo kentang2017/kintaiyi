@@ -141,7 +141,7 @@ def gen_chart(first_layer, second_layer, sixth_layer, sevenstars):
 
 # ====================  gen_chart_life  ====================
 def gen_chart_life(second_layer, twelve, sixth_layer, sevenstars):
-    d = draw.Drawing(500, 500, origin="center")
+    d = draw.Drawing(450, 450, origin="center")
     inner_radius = 12
     layer_gap = 35
     num_divisions = [1, 12, 12, 12, 12]          # 第 3 層 = index 2
@@ -300,6 +300,7 @@ if __name__ == "__main__":
     with open("test_life_third_layer.svg", "w", encoding="utf-8") as f:
         f.write(svg_life)
     print("已產生 test_life_third_layer.svg（第 3 層為地支，已上色）")
+
 
 
 
