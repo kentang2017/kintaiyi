@@ -1352,10 +1352,41 @@ class Taiyi:
 #太乙命法
     def gen_life_gong(self, sex):
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
+                for planet, zhi in stars.items():
+            if res2[zhi] == " ":           # 原本是空的
+                res2[zhi] = planet
+            else:                          # 已有行星，追加
+                res2[zhi] += planet        # 或 res2[zhi] += " " + planet
+        ss = [list(res2.values())]
+        # 定義所有可能的行星名稱（按長度從長到短排序，避免錯拆）
+        planets = ['太陽', '月亮', '水星', '金星', '火星', '木星', '土星', '月孛', '羅睺','計都']
+        
+        # 轉換函數
+        def split_planets(cell):
+            if cell == ' ' or not cell:
+                return []
+            # 依序嘗試匹配最長的行星名
+            result = []
+            remaining = cell
+            while remaining:
+                matched = False
+                for p in planets:
+                    if remaining.startswith(p):
+                        result.append(p)
+                        remaining = remaining[len(p):]
+                        matched = True
+                        break
+                if not matched:
+                    # 如果有意外字元（理論上不會），直接中斷
+                    break
+            return result
+        
+        # 應用到整個結構
+        ss1 = [[split_planets(cell) for cell in row] for row in ss]
         dict1 = self.taiyi_life(sex).get("十二命宮排列")
         res.update(dict1)
         sg = list(res.values())
-        return chart.gen_chart_life( list(self.sixteen_gong11(4,0).values())[-1], sg, [self.sixteen_gong11(4,0).get(i) for i in list(res.keys())])
+        return chart.gen_chart_life( list(self.sixteen_gong11(4,0).values())[-1], sg, [self.sixteen_gong11(4,0).get(i) for i in list(res.keys())], ss1)
 
     def gen_life_gong_list(self, sex):
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
