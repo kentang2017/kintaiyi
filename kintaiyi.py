@@ -78,13 +78,13 @@ def find_stars(year, month, day, hour, minute):
     )
     gong = dict(zip(range(12), list("戌酉申未午巳辰卯寅丑子亥")))
     stars = {
-        "太陽": gong[person.sun["sign_num"]],
-        "月亮": gong[person.moon["sign_num"]],
-        "水星": gong[person.mercury["sign_num"]],
-        "金星": gong[person.venus["sign_num"]],
-        "火星": gong[person.mars["sign_num"]],
-        "木星": gong[person.jupiter["sign_num"]],
-        "土星": gong[person.saturn["sign_num"]],
+        "日": gong[person.sun["sign_num"]],
+        "月": gong[person.moon["sign_num"]],
+        "辰星": gong[person.mercury["sign_num"]],
+        "太白": gong[person.venus["sign_num"]],
+        "熒惑": gong[person.mars["sign_num"]],
+        "歲星": gong[person.jupiter["sign_num"]],
+        "填星": gong[person.saturn["sign_num"]],
     }
     return stars
 
