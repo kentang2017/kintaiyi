@@ -1361,7 +1361,7 @@ class Taiyi:
                 res2[zhi] += planet        # 或 res2[zhi] += " " + planet
         ss = [list(res2.values())]
         # 定義所有可能的行星名稱（按長度從長到短排序，避免錯拆）
-        planets = ['太陽', '月亮', '水星', '金星', '火星', '木星', '土星', '月孛', '羅睺','計都']
+        planets = ['日', '月', '辰星', '太白', '熒惑', '歲星', '填星', '月孛', '羅睺','計都']
         
         # 轉換函數
         def split_planets(cell):
