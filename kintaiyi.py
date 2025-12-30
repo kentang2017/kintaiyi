@@ -78,8 +78,8 @@ def find_stars(year, month, day, hour, minute):
     )
     gong = dict(zip(range(12), list("戌酉申未午巳辰卯寅丑子亥")))
     stars = {
-        "日": gong[person.sun["sign_num"]],
-        "月": gong[person.moon["sign_num"]],
+        "日　": gong[person.sun["sign_num"]],
+        "月　": gong[person.moon["sign_num"]],
         "辰星": gong[person.mercury["sign_num"]],
         "太白": gong[person.venus["sign_num"]],
         "熒惑": gong[person.mars["sign_num"]],
@@ -1293,7 +1293,7 @@ class Taiyi:
                 res2[zhi] += planet        # 或 res2[zhi] += " " + planet
         ss = [list(res2.values())]
         # 定義所有可能的行星名稱（按長度從長到短排序，避免錯拆）
-        planets = ['太陽', '月亮', '水星', '金星', '火星', '木星', '土星', '月孛', '羅睺','計都']
+        planets = ['日　', '月　', '辰星', '太白', '熒惑', '歲星', '填星', '月孛', '羅睺','計都']
         
         # 轉換函數
         def split_planets(cell):
