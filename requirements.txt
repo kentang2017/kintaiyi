@@ -7,7 +7,7 @@ streamlit-browser-session-storage==0.0.12
 sxtwl==2.0.6
 streamlit-aggrid==0.3.3
 ephem==4.1.3
-cn2an==0.5.17
+cn2an==0.5.23
 pytz==2025.2
 bidict==0.22.1
 drawsvg==2.3.0
