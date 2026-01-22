@@ -21,6 +21,8 @@ from cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MO
 from flask import Response
 from xml.etree.ElementTree import Element, SubElement, tostring
 
+st.config.set_option("server.websocketPingInterval", 120)   # 每 120 秒 ping 一次（預設 30s）
+st.config.set_option("server.websocketPingTimeout", 30)     # ping 失敗後 30 秒就 timeout（預設較長）
 
 # Cerebras Model Options
 CEREBRAS_MODEL_OPTIONS = [
