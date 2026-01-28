@@ -8,5 +8,4 @@ font = "sans serif"
 
 [server]
 websocketPingInterval = 120
-websocketPingTimeout = 30
 disconnectedSessionTTL = 120
