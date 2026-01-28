@@ -1,6 +1,6 @@
 pendulum==2.1.2
 cerebras-cloud-sdk
-streamlit==1.52.0
+streamlit==1.53.1
 streamlit-screen-stats==0.0.82
 streamlit-local-storage==0.0.25
 streamlit-browser-session-storage==0.0.12
