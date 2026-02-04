@@ -15,7 +15,6 @@ import numpy as np
 from cn2an import an2cn
 from taiyidict import tengan_shiji, su_dist
 import kinliuren
-from kinliuren import kinliuren
 import config
 import chart
 import jieqi
@@ -1694,7 +1693,7 @@ if __name__ == '__main__':
     #print(Taiyi(year, month, day, hour, minute).gongs_discription("男"))
     #print(Taiyi(year, month, day, hour, minute).gongs_discription_list("男"))
     #print(Taiyi(year, month, day, hour, minute).taiyi_life("男"))
-    print(Taiyi(year, month, day, hour, minute).gen_gong(3,0,0))
+    print(Taiyi(year, month, day, hour, minute).gen_gong(4,0,0))
     #print(Taiyi(year, month, day, hour, minute).geteightdoors_text2(2,0))
     #print(Taiyi(year, month, day, hour, minute).yangjiu_xingxian("男"))
     #print(Taiyi(year, month, day, hour, minute).kook(0, 0))
