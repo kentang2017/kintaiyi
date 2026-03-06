@@ -26,14 +26,14 @@ st.config.set_option("server.websocketPingTimeout", 30)     # ping 失敗後 30 
 
 # Cerebras Model Options
 CEREBRAS_MODEL_OPTIONS = [
-    "qwen-3-32b",
+    "qwen-3-235b-a22b-thinking-2507",
     "llama-4-scout-17b-16e-instruct",
     "llama3.1-8b",
     "llama-3.3-70b",
     "deepseek-r1-distill-llama-70b"
 ]
 CEREBRAS_MODEL_DESCRIPTIONS = {
-    "qwen-3-32b": "Cerebras: Fast inference, great for rapid iteration.",
+    "qwen-3-235b-a22b-thinking-2507": "Cerebras: Fast inference, great for rapid iteration.",
     "llama-4-scout-17b-16e-instruct": "Cerebras: Optimized for guided workflows.",
     "llama3.1-8b": "Cerebras: Light and fast for quick tasks.",
     "llama-3.3-70b": "Cerebras: Most capable for complex reasoning.",
@@ -104,7 +104,7 @@ def format_text(d, parent_key=""):
     return "\n\n".join(items) + "\n\n"
 
 def format_taiyi_results_for_prompt(results):
-    """Format Taiyi calculation results into a prompt for the qwen-3-32b model."""
+    """Format Taiyi calculation results into a prompt for the AI model."""
     prompt_lines = [
         "以下是太乙排盤的計算結果，請根據這些數據提供詳細的分析和解釋：",
         f"日期時間: {results['gz']} (農曆: {results['lunard']})",
@@ -798,7 +798,7 @@ with tabs[0]:
                                 ]
                                 api_params = {
                                     "messages": messages,
-                                    "model": "qwen-3-32b",
+                                    "model": DEFAULT_CEREBRAS_MODEL,
                                     "max_tokens": st.session_state.get("qwen_max_tokens", 200000),
                                     "temperature": st.session_state.get("qwen_temperature", 0.7)
                                 }
