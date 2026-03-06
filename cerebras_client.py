@@ -3,7 +3,7 @@ from cerebras.cloud.sdk import Cerebras
 
 # Default model to use across all functions
 #DEFAULT_MODEL = "deepseek-r1-distill-llama-70b" # Updated to lowercase to match common Cerebras model IDs
-DEFAULT_MODEL = "qwen-3-235b-a22b-thinking-2507"
+DEFAULT_MODEL = "qwen-3-235b-a22b-instruct-2507"
 
 
 class CerebrasClient:
