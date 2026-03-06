@@ -798,7 +798,7 @@ with tabs[0]:
                                 ]
                                 api_params = {
                                     "messages": messages,
-                                    "model": DEFAULT_CEREBRAS_MODEL,
+                                    "model": "qwen-3-32b",
                                     "max_tokens": st.session_state.get("qwen_max_tokens", 200000),
                                     "temperature": st.session_state.get("qwen_temperature", 0.7)
                                 }
