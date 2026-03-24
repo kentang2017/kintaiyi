@@ -154,5 +154,10 @@ def version() -> None:
     typer.echo(f"kintaiyi {__version__}")
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """Entry point for the CLI."""
     app()
+
+
+if __name__ == "__main__":
+    main()
