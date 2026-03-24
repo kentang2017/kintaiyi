@@ -1,52 +1,353 @@
-﻿# **Python 太乙神數 Kintaiyi 堅太乙 年計 月計 日計 時計 分計 命法**
-[![Python](https://img.shields.io/pypi/pyversions/kintaiyi)](https://pypi.org/project/kintaiyi/)
-[![PIP](https://img.shields.io/pypi/v/kintaiyi)](https://pypi.org/project/kintaiyi/)
-[![Downloads](https://img.shields.io/pypi/dm/kintaiyi)](https://pypi.org/project/kintaiyi/)
-[![TG Me](https://img.shields.io/badge/chat-on%20telegram-blue)](https://t.me/haizhonggum)
-[![TG Channel](https://img.shields.io/badge/chat-on%20telegram-red)](https://t.me/numerology_coding)
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg?logo=paypal&style=flat-square)](https://www.paypal.me/kinyeah)&nbsp;
+<div align="center">
 
-![alt text](https://github.com/kentang2017/kintaiyi/blob/master/pic/Untitled-1.png)
-[![taiyishenshu](https://github.com/user-attachments/assets/84e345b2-29c9-407d-a2de-808ed407d5b5)](https://www.youtube.com/watch?v=FKnPu8FOIlc)
+# 🌟 Python 太乙神數 | Kintaiyi 堅太乙
 
- ## 1. 導讀 Introduction
-太乙神數是古代漢族占卜術的一種，與遁甲，六壬合稱三式，是推算天時以及歷史變化規律的術數學。周武王時以術數"卜世三十，卜年八百"推之，至邵雍形成歷史哲學而大備。據太乙神數推算，上古時有一年冬至日半夜，恰好日月合璧、五星連珠，定為甲子年、甲子月、甲子日、甲子時，稱作太極上元，上元甲子以來的年數，叫太乙積年。由太乙積年再求出太乙流年和太歲值卦，以斷本年各月的氣運凶吉，預測一些重大政治事件和天災人禍。採用五元六紀，三百六十年為一大周期，七十二年為一小周期，太乙每宮居三年，不入中宮，二十四年轉一周，七十二年遊三期。
+### 三千年古法，一行代碼重現 — 最正宗的開源太乙神數排盤工具
 
-太乙以一為太極生二目(主、客目)，二目生主客大小客與計神共八將。太乙乃天地之神，其星在太乙之前，統十六神而知風雨、水旱、兵革之事。昔黃帝與蚩尤大戰，適逢大霧，以霧書昏風後相，造指南車克之，是以取太乙之法，傳至今三千餘年，例目以為術數。外閱龍圖，內演龜文，凡天地之所以設君臣父子，之所以立陰陽，太乙了然演數則理昭著，太乙周行流運六十四卦，貴神入門十精之星，使經緯錯縮表理，集為一書。延續至今三千餘年不衰，為當今社會預測、決斷，提供了寶貴依據。
+*The most authentic open-source Taiyi Shenshu (太乙神數) divination engine in Python*
 
-相傳太乙式產生于黃帝戰蚩尤時。其法大扺本于《易緯.乾鑿度》太乙行九宮法。採用五元六紀，三百六十年為一大周期，七十二年為一小周期，太乙每宮居三年，不入中宮，二十四年轉一周，七十二年遊三期。太乙以一為太極生二目(主、客目)，二目生主客大小客與計神共八將。(與易經太極分二儀，二儀生四象，四象生八卦相仿)。以太乙八將所乘十六神之方位關系定出格局。可佔內外祝福。又臨四時之分野，可佔水旱疾疫。再推三基五福大小遊二限，可預測古今治亂。又可推出年卦、月卦等。
+[![PyPI version](https://img.shields.io/pypi/v/kintaiyi?color=blue&label=PyPI)](https://pypi.org/project/kintaiyi/)
+[![Python](https://img.shields.io/pypi/pyversions/kintaiyi?label=Python)](https://pypi.org/project/kintaiyi/)
+[![Downloads](https://img.shields.io/pypi/dm/kintaiyi?color=green&label=Downloads)](https://pypi.org/project/kintaiyi/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub stars](https://img.shields.io/github/stars/kentang2017/kintaiyi?style=social)](https://github.com/kentang2017/kintaiyi)
+[![Telegram](https://img.shields.io/badge/Telegram-Channel-blue?logo=telegram)](https://t.me/numerology_coding)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg?logo=paypal&style=flat-square)](https://www.paypal.me/kinyeah)
 
-因應現代都市人的需求，與時並進，就時計太乙的基礎上，下開分計太乙，至於果效，留待閣下驗證。
+<br/>
 
-Tai Yi Shen Shu is a form of divination from China. It is also one of the Three Styles (三式; sānshì; 'three styles') of divination, the others being Da Liu Ren and Qi Men Dun Jia. Tai Yi Shen Shu is used to predict macroscopic events like wars or the meaning of supernovae. One form of Tai Yi Shen Shu has been popularized over the centuries to predict personal fortunes. Genghis Khan, emperor of China, referred to Tai Yi at one point to decide whether or not his planned invasion of Japan would succeed. When the Tai Yi count indicated that invasion would prove unsuccessful, Khan decided not to invade Japan that year. Numerous similar examples abound in classical Chinese literature, especially among the dynastic histories.
+[🚀 **立即在線體驗 Live Demo**](https://kintaiyi.streamlitapp.com) &nbsp;|&nbsp; [🎬 **YouTube 演示**](https://www.youtube.com/watch?v=FKnPu8FOIlc) &nbsp;|&nbsp; [📦 **PyPI**](https://pypi.org/project/kintaiyi/)
 
-The methodology is quite similar to the other arts with a rotating heavenly plate and fixed earthly plate. While the art makes use of the 8 trigrams as well as the 64 hexagrams as a foundation, analysis is conducted from the Tai Yi Cosmic Board and the array of symbols found thereon, with special reference to the position of symbols in specific palaces. Important symbols include the Calculator, the Scholar, Tai Yi and Tai Yi, for example.
+<br/>
 
-A number of spirits rotate around the sixteen palaces of the Tai Yi cosmic board, of which there are 72 cosmic boards for the Yin Dun period of each year, and 72 cosmic boards for the Yang Dun period of the year. The spirits land in different palaces with each configuration of the cosmic board. Each cosmic board contains a number of "counts" or numbers – the Host Count and the Guest Count taking primary importance over the Fixed Count.
+![太乙神數盤圖](https://github.com/kentang2017/kintaiyi/blob/master/pic/Untitled-1.png?raw=true)
 
-含史事對照的多功能太鳦排盤 https://kintaiyi.streamlitapp.com (欲窮千里目，麻煩國內朋友擔條梯子看。)
+[![YouTube 影片演示](https://github.com/user-attachments/assets/84e345b2-29c9-407d-a2de-808ed407d5b5)](https://www.youtube.com/watch?v=FKnPu8FOIlc)
 
-Taiyishenshu, one of the Ancient Chinese Divinations, along with Qimendunjia and Dailiuren known as "three styles".
+</div>
 
+---
 
-## 2. 安裝套件 Installation
-```python
-	pip install kintaiyi
-	pip install --upgrade sxtwl, numpy, ephem, cn2an 
+## ✨ 亮點 Highlights
+
+- 🔮 **六種計法齊備** — 年計、月計、日計、時計、分計、命法，覆蓋所有太乙推算場景
+- 📜 **四大古法並存** — 太乙統宗、太乙金鏡、太乙淘金歌、太乙局，正宗古法不簡化
+- 📊 **輸出內容豐富** — 干支、局式、神煞、二十八宿、八門、八宮旺衰、兵陣預測、歷史年號對應
+- 🏯 **歷史年號對照** — 內建完整中國歷代紀年與農曆換算
+- 🖥️ **多種使用方式** — Python API + Typer CLI + Streamlit 圖形介面，各取所需
+- 🤖 **AI 智能分析** — 整合 Cerebras AI，可自動解讀盤面
+
+---
+
+## 📖 簡介 Introduction
+
+**太乙神數**，與奇門遁甲、大六壬合稱「三式」，是中國古代最高層次的術數體系之一，專門用於推算天時國運與歷史變化規律。其法源於《易緯·乾鑿度》太乙行九宮法，相傳始於黃帝戰蚩尤之時，延續至今三千餘年。
+
+**Kintaiyi 堅太乙**，取「堅守古法」之意。本套件嚴格依照古籍記載實現演算法，不做簡化、不作省略，旨在為太乙神數的研究者與愛好者提供一套**可驗證、可復現**的開源工具。無論是年運推算、國事預測，還是個人命理，皆可一鍵排盤。
+
+> **Tai Yi Shen Shu** is one of the "Three Styles" (三式) of ancient Chinese divination, alongside Qi Men Dun Jia and Da Liu Ren. This open-source library faithfully implements the classical algorithms without simplification, enabling researchers and enthusiasts to study, verify, and apply this millennia-old wisdom with modern tools.
+
+---
+
+## 🚀 快速開始 Quick Start
+
+### 安裝 Installation
+
+```bash
+pip install kintaiyi
 ```
-## 3. 起課方式 Quickstart
-```python
-	from kintaiyi import kintaiyi
-    	year = 1552
-    	month = 9
-    	day = 24
-    	hour = 0
-    	minute = 0
-	ji = 0 # 0 為年計；1 為月計；2 為日計：3 為時計；4 為分計
-	method = 1 # 0 太乙統宗; 1: 太乙金鏡; 2: 太乙淘金歌; 3: 太乙局
-    	print(Taiyi(year, month, day, hour, minute).kook(ji, method))
-    
-	{'太乙計': '年計', '太乙公式類別': '太乙金鏡', '公元日期': '1552年9月24日0時', '干支': ['壬子', '庚戌', '丙戌', '戊子', '甲子'], '農曆': {'年': 1552, '月': 9, '日': 7}, '年號': '明世宗朱厚熜 嘉靖三十一年', '紀元': '第四紀第四戊子元', '太歲': '子', '局式': {'文': '陽遁十三局', '數': 13, '年': '理天', '積年數': 1938109}, '五子元局': '陽遁二百二十九局', '陽九': '子', '百六': '丑', '太乙落宮': 6, '太乙': '兌', '天乙': '巳', '地乙': '乾', '四神': '中', '直符': '巽', '文昌': ['巽', ''], '始擊': '辰', '主算': [18, ['三才足數', '上和']], '主將': 8, '主參': 4, '客算': [19, ['三才足數', '雜重陽']], '客將': 9, '客參': 7, '定算': [19, ['三才足數', '雜重陽']], '合神': '丑', '計神': '寅', '定目': '辰', '君基': '酉', '臣基': '酉', '民基': '申', '五福': '坤', '帝符': '辰', '太尊': '子', '飛鳥': 4, '三風': 1, '五風': 5, '八風': 6, '大游': 5, '小游': 1, '二十八宿值日': '翼', '太歲二十八宿': '翼', '太歲值宿斷事': '陰陽失序，多雨水。', '始擊二十八宿': '心', '始擊值宿斷事': '太子、諸王有憂。', '十天干歲始擊落宮預測': '中國有兵。', '八門值事': '傷', '八門分佈': {6: '傷', 1: '杜', 8: '景', 3: '死', 4: '驚', 9: '開', 2: '休', 7: '生'}, '八宮旺衰': {7: '旺', 6: '相', 1: '胎', 8: '沒', 3: '死', 4: '囚', 9: '休', 2: '廢'}, '推太乙當時法': '太乙時計才顯示', '推三門具不具': '三門具。', '推五將發不發': '五將發。', '推主客相闗法': '主尅客，主勝', '推多少以占勝負': '客以多筭臨少，主人敗也。', '推太乙風雲飛鳥助戰法': '飛鳥扶主人陣者，主人勝', '推雷公入水': '子', '推臨津問道': '卯', '推獅子反擲': '卯', '推白雲捲空': '申', '推猛虎相拒': '未', '推白龍得雲': '戌', '推回軍無言': '酉'}
+
+選裝 CLI 或 Web 界面（Optional extras）：
+
+```bash
+pip install kintaiyi[cli]       # 命令列工具 (Typer CLI)
+pip install kintaiyi[app]       # Streamlit 圖形介面
+pip install kintaiyi[cli,app]   # 全部安裝
 ```
-## **4. 微信公眾號**
-![alt text](https://raw.githubusercontent.com/kentang2017/kinliuren/refs/heads/master/pic/%E5%9C%96%E7%89%87_20260316084147.jpg)
+
+### Python 程式碼範例
+
+```python
+from kintaiyi.kintaiyi import Taiyi
+
+# 排一個年計太乙盤 (Calculate a yearly Taiyi board)
+result = Taiyi(2026, 3, 24, 12, 30).pan(ji_style=0, method=1)
+print(result["太乙計"])       # → 年計
+print(result["局式"])         # → {'文': '陽遁...', '數': ..., ...}
+print(result["二十八宿值日"])  # → 二十八宿值日星
+print(result["推主客相闗法"])  # → 主客勝負判斷
+```
+
+### CLI 命令列範例
+
+```bash
+# 年計排盤
+kintaiyi calculate --date 2026-03-24 --time 12:30 --mode year --method 1
+
+# 日計排盤，輸出 JSON
+kintaiyi calculate --date 2026-03-24 --time 12:30 --mode day --output json
+
+# 命法推算
+kintaiyi calculate --date 1990-05-15 --time 08:00 --mode life --sex male
+```
+
+### Streamlit 一鍵啟動
+
+```bash
+pip install kintaiyi[app]
+streamlit run app.py
+```
+
+---
+
+## 📋 支援功能 Features
+
+### 計法模式 Calculation Modes
+
+| 模式 Mode | ji_style | 說明 Description |
+|-----------|----------|-----------------|
+| 年計 Year | `0` | 推算年運、國運大勢 |
+| 月計 Month | `1` | 推算月份氣運吉凶 |
+| 日計 Day | `2` | 推算日課吉凶 |
+| 時計 Hour | `3` | 推算時辰吉凶 |
+| 分計 Minute | `4` | 現代延伸，精確至分鐘 |
+| 命法 Life | `5` | 個人命理推算 |
+
+### 古法公式 Taiyi Methods
+
+| 方法 Method | method | 來源 Source |
+|------------|--------|------------|
+| 太乙統宗 | `0` | 《太乙統宗寶鑑》 |
+| 太乙金鏡 | `1` | 《太乙金鏡式經》 |
+| 太乙淘金歌 | `2` | 《太乙淘金歌》 |
+| 太乙局 | `3` | 《太乙局》 |
+
+### 輸出內容 Output Fields
+
+盤面輸出涵蓋以下資訊（Output includes but is not limited to）：
+
+- **基本資訊** — 公元日期、農曆、干支五柱、歷史年號
+- **局式** — 陰陽遁、局數、積年數、紀元
+- **太乙諸神** — 太乙、天乙、地乙、四神、直符、文昌、計神、合神
+- **主客算** — 主算、客算、定算，含三才數與格局判斷
+- **八門八宮** — 八門值事與分佈、八宮旺衰
+- **二十八宿** — 值日宿、太歲宿、始擊宿及斷事
+- **兵陣預測** — 推主客相關法、飛鳥助戰法、風雲諸法
+- **七大兵法** — 雷公入水、臨津問道、獅子反擲、白雲捲空、猛虎相拒、白龍得雲、回軍無言
+
+---
+
+## 🖼️ 截圖與演示 Screenshots & Demo
+
+### 線上演示 Live Demo
+
+👉 [**https://kintaiyi.streamlitapp.com**](https://kintaiyi.streamlitapp.com)
+
+> 📌 大陸用戶可能需要使用 VPN 訪問 *(Mainland China users may need a VPN)*
+
+### 盤圖預覽 Board Preview
+
+<div align="center">
+
+![太乙九宮分野圖](https://github.com/kentang2017/kintaiyi/blob/master/pic/%E5%A4%AA%E4%B9%99%E4%B9%9D%E5%AE%AE%E5%88%86%E9%87%8E%E5%9C%96.jpg?raw=true)
+
+*太乙九宮分野圖 — Taiyi Nine Palace Sector Diagram*
+
+</div>
+
+---
+
+## 📦 安裝 Installation
+
+### 環境要求 Requirements
+
+- Python ≥ 3.10
+
+### 基本安裝
+
+```bash
+pip install kintaiyi
+```
+
+### 可選依賴 Optional Extras
+
+```bash
+# CLI 命令列工具（基於 Typer）
+pip install kintaiyi[cli]
+
+# Streamlit 圖形介面（完整 Web 應用）
+pip install kintaiyi[app]
+
+# Flask Web 後端
+pip install kintaiyi[web]
+
+# 開發環境（pytest + ruff）
+pip install kintaiyi[dev]
+```
+
+### 從源碼安裝 Install from Source
+
+```bash
+git clone https://github.com/kentang2017/kintaiyi.git
+cd kintaiyi
+pip install -e ".[cli,app,dev]"
+```
+
+---
+
+## 🔧 進階使用 Advanced Usage
+
+### CLI 完整參數 CLI Options
+
+```
+kintaiyi calculate [OPTIONS]
+```
+
+| 參數 Option | 縮寫 | 說明 Description | 預設值 Default |
+|-------------|------|-----------------|---------------|
+| `--year` | `-y` | 公元年 Year | 當前年份 |
+| `--month` | `-m` | 月 Month | 當前月份 |
+| `--day` | `-d` | 日 Day | 當前日期 |
+| `--hour` | `-H` | 時 Hour (0-23) | 當前小時 |
+| `--minute` | `-M` | 分 Minute (0-59) | 當前分鐘 |
+| `--date` | | 日期 YYYY-MM-DD | — |
+| `--time` | | 時間 HH:MM | — |
+| `--mode` | | 計法模式 | `year` |
+| `--method` | | 古法公式 (0-3) | `0` |
+| `--output` | `-o` | 輸出格式 (text/json/markdown) | `text` |
+| `--sex` | `-s` | 性別（命法時必填：male/female） | — |
+
+```bash
+# 查看版本
+kintaiyi version
+
+# 使用個別參數
+kintaiyi calculate --year 1552 --month 9 --day 24 --hour 0 --minute 0 --mode year --method 1
+
+# 使用日期字串 + JSON 輸出
+kintaiyi calculate --date 2026-03-24 --time 12:30 --mode day --output json
+
+# Markdown 表格輸出
+kintaiyi calculate --date 2026-03-24 --time 12:30 --mode hour --output markdown
+```
+
+### Python API
+
+```python
+from kintaiyi.kintaiyi import Taiyi
+
+# 建立太乙物件
+taiyi = Taiyi(year=2026, month=3, day=24, hour=12, minute=30)
+
+# 排盤 — ji_style: 0=年計, 1=月計, 2=日計, 3=時計, 4=分計
+#        method:   0=統宗, 1=金鏡, 2=淘金歌, 3=太乙局
+result = taiyi.pan(ji_style=0, method=1)
+
+# 命法推算 (Python API 使用中文 "男"/"女"；CLI 使用 male/female)
+life_result = taiyi.taiyi_life(sex="男")  # "男" or "女"
+
+# 結果為 dict，可直接轉 JSON
+import json
+print(json.dumps(result, ensure_ascii=False, indent=2))
+```
+
+### 輸出範例 Sample Output
+
+```python
+from kintaiyi.kintaiyi import Taiyi
+
+result = Taiyi(1552, 9, 24, 0, 0).pan(ji_style=0, method=1)
+
+# result 為 dict，包含：
+# {
+#   "太乙計": "年計",
+#   "太乙公式類別": "太乙金鏡",
+#   "公元日期": "1552年9月24日0時",
+#   "干支": ["壬子", "庚戌", "丙戌", "戊子", "甲子"],
+#   "農曆": {"年": 1552, "月": 9, "日": 7},
+#   "年號": "明世宗朱厚熜 嘉靖三十一年",
+#   "局式": {"文": "陽遁十三局", "數": 13, ...},
+#   "太乙落宮": 6,
+#   "太乙": "兌",
+#   "二十八宿值日": "翼",
+#   "推主客相闗法": "主尅客，主勝",
+#   ...
+# }
+```
+
+---
+
+## 🤝 貢獻指南 Contributing
+
+我們歡迎所有形式的貢獻！*All contributions are welcome!*
+
+- 🐛 **Bug 回報** — 提交 [Issue](https://github.com/kentang2017/kintaiyi/issues)
+- ✨ **新功能** — 歡迎 PR 添加新古法、新計法
+- 📚 **課例驗證** — 提供歷史課例以驗證演算法準確性
+- 🌐 **翻譯** — 協助翻譯文檔或術語
+- ⭐ **Star** — 最簡單的支持方式！
+
+### 開發環境設置
+
+```bash
+git clone https://github.com/kentang2017/kintaiyi.git
+cd kintaiyi
+pip install -e ".[dev]"
+
+# 運行測試
+pytest
+
+# 代碼格式化
+ruff check src/ --fix
+ruff format src/
+```
+
+---
+
+## 💬 聯絡與社群 Contact & Community
+
+| 渠道 Channel | 連結 Link |
+|-------------|----------|
+| 📢 Telegram 頻道 | [numerology_coding](https://t.me/numerology_coding) |
+| 💬 Telegram 私訊 | [haizhonggum](https://t.me/haizhonggum) |
+| 🐛 GitHub Issues | [提交問題](https://github.com/kentang2017/kintaiyi/issues) |
+| 💰 PayPal 捐助 | [paypal.me/kinyeah](https://www.paypal.me/kinyeah) |
+
+### 微信公眾號 WeChat Official Account
+
+<div align="center">
+
+![微信公眾號](https://raw.githubusercontent.com/kentang2017/kinliuren/refs/heads/master/pic/%E5%9C%96%E7%89%87_20260316084147.jpg)
+
+</div>
+
+---
+
+<div align="center">
+
+### ⭐ 喜歡這個專案？請給個 Star 支持！
+
+### *Enjoying Kintaiyi? Give us a ⭐ on GitHub!*
+
+[![Star this repo](https://img.shields.io/github/stars/kentang2017/kintaiyi?style=social)](https://github.com/kentang2017/kintaiyi)
+
+</div>
+
+---
+
+## 📄 License
+
+本專案採用 [MIT License](https://opensource.org/licenses/MIT) 開源協議。
+
+This project is licensed under the MIT License.
+
+---
+
+## 🔗 相關專案 Related Projects
+
+| 專案 Project | 說明 Description | 連結 Link |
+|-------------|-----------------|----------|
+| 🔮 **堅奇門 kinqimen** | Python 奇門遁甲排盤 — Qi Men Dun Jia | [GitHub](https://github.com/kentang2017/kinqimen) |
+| 🎴 **堅六壬 kinliuren** | Python 大六壬排盤 — Da Liu Ren | [GitHub](https://github.com/kentang2017/kinliuren) |
+
+> 三式齊備，古法傳承 — *The Three Styles of Chinese divination, all open-sourced.*
