@@ -5,7 +5,6 @@ import pytz
 from contextlib import contextmanager, redirect_stdout
 from io import StringIO
 import urllib.request
-import base64
 import json
 from kintaiyi import jieqi
 from kintaiyi import kintaiyi
@@ -18,11 +17,6 @@ from kintaiyi.historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
 from kintaiyi.cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL
-from flask import Response
-from xml.etree.ElementTree import Element, SubElement, tostring
-
-st.config.set_option("server.websocketPingInterval", 120)   # 每 120 秒 ping 一次（預設 30s）
-st.config.set_option("server.websocketPingTimeout", 30)     # ping 失敗後 30 秒就 timeout（預設較長）
 
 # Cerebras Model Options
 CEREBRAS_MODEL_OPTIONS = [
@@ -474,6 +468,14 @@ with st.sidebar:
     st.markdown("---")
     st.header("AI設置")
     
+    selected_model = st.selectbox(
+        "AI 模型",
+        options=CEREBRAS_MODEL_OPTIONS,
+        index=0,
+        key="cerebras_model_selector",
+        help="\n".join(f"• {k}: {v}" for k, v in CEREBRAS_MODEL_DESCRIPTIONS.items())
+    )
+    
     system_prompts_data = load_system_prompts()
     prompts_list = system_prompts_data.get("prompts", [])
     prompt_names = [prompt["name"] for prompt in prompts_list]
@@ -798,7 +800,7 @@ with tabs[0]:
                                 ]
                                 api_params = {
                                     "messages": messages,
-                                    "model": "qwen-3-32b",
+                                    "model": selected_model,
                                     "max_tokens": st.session_state.get("qwen_max_tokens", 200000),
                                     "temperature": st.session_state.get("qwen_temperature", 0.7)
                                 }
