@@ -7,17 +7,17 @@ from io import StringIO
 import urllib.request
 import base64
 import json
-import jieqi
-import kintaiyi
-import config
+from kintaiyi import jieqi
+from kintaiyi import kintaiyi
+from kintaiyi import config
 import cn2an
 from cn2an import an2cn
-from taiyidict import tengan_shiji, su_dist
-from taiyimishu import taiyi_yingyang
-from historytext import chistory
+from kintaiyi.taiyidict import tengan_shiji, su_dist
+from kintaiyi.taiyimishu import taiyi_yingyang
+from kintaiyi.historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
-from cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL
+from kintaiyi.cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL
 from flask import Response
 from xml.etree.ElementTree import Element, SubElement, tostring
 
