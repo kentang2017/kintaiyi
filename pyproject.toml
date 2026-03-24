@@ -68,7 +68,7 @@ kintaiyi = "kintaiyi.cli:main"
 [project.urls]
 Homepage = "https://github.com/kentang2017/kintaiyi"
 Repository = "https://github.com/kentang2017/kintaiyi"
-Documentation = "https://github.com/kentang2017/kintaiyi#readme"
+Documentation = "https://github.com/kentang2017/kintaiyi/wiki"
 
 [tool.setuptools.packages.find]
 where = ["src"]
