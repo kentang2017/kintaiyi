@@ -21,4 +21,5 @@ __all__: list[str] = [
     "ruler",
     "kinliuren",
     "cerebras_client",
+    "cli",
 ]
