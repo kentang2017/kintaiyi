@@ -24,6 +24,253 @@ import streamlit.components.v1 as components
 from streamlit.components.v1 import html
 from kintaiyi.cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL
 
+# --- i18n: Translation dictionaries ---
+TRANSLATIONS = {
+    "zh": {
+        "page_title": "堅太乙 - 太乙排盤",
+        "lang_label": "語言 Language",
+        "param_header": "排盤參數設置",
+        "year": "年",
+        "month": "月",
+        "day": "日",
+        "hour": "時",
+        "minute": "分",
+        "chart_method": "起盤方式",
+        "acc_years": "太乙積年數",
+        "ten_essences": "太乙十精",
+        "life_gender": "太乙命法性別",
+        "rotation_label": "轉盤",
+        "instant_btn": "即時盤",
+        "ai_settings": "AI設置",
+        "ai_model": "AI 模型",
+        "select_prompt": "選擇系統提示",
+        "select_prompt_help": "選擇用於AI模型的系統提示，指導其分析太乙排盤結果",
+        "edit_prompt": "編輯系統提示",
+        "edit_prompt_placeholder": "範例：你是一位太乙神數專家，根據排盤數據提供詳細分析...",
+        "update_prompt": "💾 更新提示",
+        "delete_prompt": "❌ 刪除提示",
+        "add_prompt_expander": "➕ 新增提示",
+        "add_prompt_btn": "➕ 新增提示",
+        "new_prompt_name": "新提示名稱",
+        "new_prompt_content": "新提示內容",
+        "new_prompt_placeholder": "輸入AI分析指令...",
+        "prompt_exists": "提示名稱 '{}' 已存在。",
+        "prompt_updated": "✅ 已更新系統提示 '{}'！",
+        "prompt_deleted": "✅ 已刪除系統提示 '{}'！",
+        "prompt_added": "✅ 已新增系統提示 '{}'！",
+        "advanced_settings": "🔧 高級設置",
+        "max_tokens": "最大生成 Tokens",
+        "max_tokens_help": "控制AI回應的最大長度",
+        "temperature": "溫度 (專注 vs. 創意)",
+        "temperature_help": "較低值 (如 0.2) 更確定性；較高值 (如 0.8) 更隨機",
+        "debug_mode": "🔍 除錯模式",
+        "debug_help": "顯示除錯資訊，如 session state",
+        "debug_info": "🐛 除錯資訊",
+        # Tabs
+        "tab_chart": "🧮太乙排盤",
+        "tab_instructions": "💬使用說明",
+        "tab_history": "📜局數史例",
+        "tab_disaster": "🔥災異統計",
+        "tab_books": "📚古籍書目",
+        "tab_updates": "🆕更新日誌",
+        "tab_guide": "🚀看盤要領",
+        "tab_links": "🔗連結",
+        # Main content
+        "explanation": "解釋",
+        "taiyi_life_title": "《太乙命法》︰",
+        "twelve_palaces": "【十二宮分析】",
+        "sixteen_gods": "【太乙十六神落宮】",
+        "sixteen_grades": "【太乙十六神上中下等】",
+        "hexagram": "【值卦】",
+        "year_hex": "年卦：",
+        "month_hex": "月卦：",
+        "day_hex": "日卦：",
+        "hour_hex": "時卦：",
+        "minute_hex": "分卦：",
+        "yang_nine": "【陽九行限】",
+        "bai_liu": "【百六行限】",
+        "taiyi_mishu": "《太乙秘書》︰",
+        "history_records": "史事記載︰",
+        "chart_analysis": "太乙盤局分析︰",
+        "year_star_predict": "太歲值宿斷事︰",
+        "start_star_predict": "始擊值宿斷事︰",
+        "ten_stem_predict": "十天干歲始擊落宮預測︰",
+        "sky_ground_method": "推太乙在天外地內法︰",
+        "three_five": "三門五將︰",
+        "home_away": "推主客相關︰",
+        "win_loss": "推少多以占勝負︰",
+        "wind_cloud": "推太乙風雲飛鳥助戰︰",
+        "solitary": "推孤單以占成敗:",
+        "yin_yang_adversity": "推陰陽以占厄會︰",
+        "emperor_tour": "明天子巡狩之期術︰",
+        "ruler_base": "明君基太乙所主術︰",
+        "minister_base": "明臣基太乙所主術︰",
+        "people_base": "明民基太乙所主術︰",
+        "five_blessings": "明五福太乙所主術︰",
+        "five_blessings_calc": "明五福吉算所主術︰",
+        "heaven_yi": "明天乙太乙所主術︰",
+        "earth_yi": "明地乙太乙所主術︰",
+        "zhifu": "明值符太乙所主術︰",
+        # AI
+        "ai_analyze_btn": "🔍 使用AI分析排盤結果",
+        "ai_analyzing": "AI正在分析太乙排盤結果...",
+        "ai_key_missing": "CEREBRAS_API_KEY 未設置，請在 .streamlit/secrets.toml 或環境變量中設置。",
+        "ai_error": "調用AI時發生錯誤：{}",
+        "gen_error": "生成盤局時發生錯誤：{}",
+        "ai_result": "AI分析結果",
+        "list_label": "列表",
+        "save_error": "錯誤儲存提示：{}",
+        # Print labels
+        "lunar_label": "農曆",
+        "taiyi_life_method": "太乙命法",
+        "epoch_label": "紀元",
+        "home_calc": "主筭",
+        "away_calc": "客筭",
+        "set_calc": "定筭",
+        "five_yuan": "五子元局",
+        "acc_prefix": "積",
+        "acc_suffix": "數",
+    },
+    "en": {
+        "page_title": "KinTaiYi - Taiyi Divination Chart",
+        "lang_label": "語言 Language",
+        "param_header": "Chart Parameters",
+        "year": "Year",
+        "month": "Month",
+        "day": "Day",
+        "hour": "Hour",
+        "minute": "Minute",
+        "chart_method": "Chart Method",
+        "acc_years": "Accumulated Years",
+        "ten_essences": "Taiyi Ten Essences",
+        "life_gender": "Life Method Gender",
+        "rotation_label": "Rotation",
+        "instant_btn": "Instant Chart",
+        "ai_settings": "AI Settings",
+        "ai_model": "AI Model",
+        "select_prompt": "Select System Prompt",
+        "select_prompt_help": "Select a system prompt for the AI model to guide Taiyi chart analysis",
+        "edit_prompt": "Edit System Prompt",
+        "edit_prompt_placeholder": "Example: You are a Taiyi expert, provide detailed analysis based on chart data...",
+        "update_prompt": "💾 Update Prompt",
+        "delete_prompt": "❌ Delete Prompt",
+        "add_prompt_expander": "➕ Add Prompt",
+        "add_prompt_btn": "➕ Add Prompt",
+        "new_prompt_name": "New Prompt Name",
+        "new_prompt_content": "New Prompt Content",
+        "new_prompt_placeholder": "Enter AI analysis instructions...",
+        "prompt_exists": "Prompt name '{}' already exists.",
+        "prompt_updated": "✅ Updated system prompt '{}'!",
+        "prompt_deleted": "✅ Deleted system prompt '{}'!",
+        "prompt_added": "✅ Added system prompt '{}'!",
+        "advanced_settings": "🔧 Advanced Settings",
+        "max_tokens": "Max Generation Tokens",
+        "max_tokens_help": "Control the maximum length of AI responses",
+        "temperature": "Temperature (Focus vs. Creative)",
+        "temperature_help": "Lower values (e.g. 0.2) more deterministic; higher values (e.g. 0.8) more random",
+        "debug_mode": "🔍 Debug Mode",
+        "debug_help": "Show debug info such as session state",
+        "debug_info": "🐛 Debug Info",
+        # Tabs
+        "tab_chart": "🧮 Taiyi Chart",
+        "tab_instructions": "💬 Instructions",
+        "tab_history": "📜 Historical Examples",
+        "tab_disaster": "🔥 Disaster Statistics",
+        "tab_books": "📚 Ancient Books",
+        "tab_updates": "🆕 Update Log",
+        "tab_guide": "🚀 Chart Guide",
+        "tab_links": "🔗 Links",
+        # Main content
+        "explanation": "Explanation",
+        "taiyi_life_title": "Taiyi Life Method:",
+        "twelve_palaces": "[Twelve Palaces Analysis]",
+        "sixteen_gods": "[Taiyi Sixteen Gods Palace Positions]",
+        "sixteen_grades": "[Taiyi Sixteen Gods Grades]",
+        "hexagram": "[Hexagrams]",
+        "year_hex": "Year Hexagram: ",
+        "month_hex": "Month Hexagram: ",
+        "day_hex": "Day Hexagram: ",
+        "hour_hex": "Hour Hexagram: ",
+        "minute_hex": "Minute Hexagram: ",
+        "yang_nine": "[Yang Nine Cycle Limit]",
+        "bai_liu": "[Bai Liu Cycle Limit]",
+        "taiyi_mishu": "Taiyi Secret Book:",
+        "history_records": "Historical Records:",
+        "chart_analysis": "Taiyi Chart Analysis:",
+        "year_star_predict": "Year Star Prediction: ",
+        "start_star_predict": "Start Strike Star Prediction: ",
+        "ten_stem_predict": "Ten Stems Start Strike Prediction: ",
+        "sky_ground_method": "Taiyi Sky-Ground Method: ",
+        "three_five": "Three Doors & Five Generals: ",
+        "home_away": "Home vs Away Analysis: ",
+        "win_loss": "Win-Loss Prediction: ",
+        "wind_cloud": "Wind-Cloud Battle Support: ",
+        "solitary": "Solitary Success-Failure: ",
+        "yin_yang_adversity": "Yin-Yang Adversity: ",
+        "emperor_tour": "Emperor Tour Period: ",
+        "ruler_base": "Ruler Base Method: ",
+        "minister_base": "Minister Base Method: ",
+        "people_base": "People Base Method: ",
+        "five_blessings": "Five Blessings Method: ",
+        "five_blessings_calc": "Five Blessings Calculation: ",
+        "heaven_yi": "Heaven Yi Method: ",
+        "earth_yi": "Earth Yi Method: ",
+        "zhifu": "Zhifu Method: ",
+        # AI
+        "ai_analyze_btn": "🔍 Analyze with AI",
+        "ai_analyzing": "AI is analyzing the Taiyi chart...",
+        "ai_key_missing": "CEREBRAS_API_KEY not set. Please set it in .streamlit/secrets.toml or environment variables.",
+        "ai_error": "Error calling AI: {}",
+        "gen_error": "Error generating chart: {}",
+        "ai_result": "AI Analysis Result",
+        "list_label": "List",
+        "save_error": "Error saving prompt: {}",
+        # Print labels
+        "lunar_label": "Lunar",
+        "taiyi_life_method": "Taiyi Life",
+        "epoch_label": "Epoch",
+        "home_calc": "Home Calc",
+        "away_calc": "Away Calc",
+        "set_calc": "Set Calc",
+        "five_yuan": "Five Yuan Cycle",
+        "acc_prefix": "Acc. ",
+        "acc_suffix": " Count",
+    },
+}
+
+OPTION_LABELS = {
+    "en": {
+        "時計太乙": "Hourly Taiyi",
+        "年計太乙": "Yearly Taiyi",
+        "月計太乙": "Monthly Taiyi",
+        "日計太乙": "Daily Taiyi",
+        "分計太乙": "Minute Taiyi",
+        "太乙命法": "Taiyi Life Method",
+        "太乙統宗": "Taiyi Tongzong",
+        "太乙金鏡": "Taiyi Jinjing",
+        "太乙淘金歌": "Taiyi Taojin Song",
+        "太乙局": "Taiyi Bureau",
+        "有": "Yes",
+        "無": "No",
+        "男": "Male",
+        "女": "Female",
+        "固定": "Fixed",
+        "轉動": "Rotating",
+    },
+}
+
+def t(key):
+    """Get translated UI text for the current language."""
+    lang = st.session_state.get("lang", "zh")
+    return TRANSLATIONS.get(lang, TRANSLATIONS["zh"]).get(key, key)
+
+def to(option):
+    """Translate a selectbox option value for display."""
+    lang = st.session_state.get("lang", "zh")
+    if lang == "zh":
+        return option
+    return OPTION_LABELS.get(lang, {}).get(option, option)
+
 # Cerebras Model Options
 CEREBRAS_MODEL_OPTIONS = [
     "qwen-3-235b-a22b-instruct-2507",
@@ -76,7 +323,7 @@ def save_system_prompts(prompts_data):
             json.dump(prompts_data, f, indent=2)
         return True
     except Exception as e:
-        st.error(f"錯誤儲存提示：{e}")
+        st.error(t("save_error").format(e))
         return False
 
 # Initialize session state to control rendering
@@ -432,10 +679,14 @@ def st_capture(output_func):
         stdout.write = new_write
         yield
 
+# Initialize language in session state
+if "lang" not in st.session_state:
+    st.session_state.lang = "zh"
+
 # Streamlit 頁面配置
 st.set_page_config(
     layout="wide",
-    page_title="堅太乙 - 太乙排盤",
+    page_title=t("page_title"),
     page_icon="icon.jpg"
 )
 # 定義基礎 URL
@@ -444,23 +695,35 @@ BASE_URL_KINLIUREN = 'https://raw.githubusercontent.com/kentang2017/kinliuren/ma
 
 # 側邊欄輸入
 with st.sidebar:
-    st.header("排盤參數設置")
+    lang_choice = st.radio(
+        t("lang_label"),
+        ["中文", "English"],
+        index=0 if st.session_state.lang == "zh" else 1,
+        horizontal=True,
+        key="lang_radio",
+    )
+    new_lang = "zh" if lang_choice == "中文" else "en"
+    if new_lang != st.session_state.lang:
+        st.session_state.lang = new_lang
+        st.rerun()
+
+    st.header(t("param_header"))
     
     now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
     col1, col2 = st.columns(2)
     with col1:
-        my = st.number_input('年', min_value=0, max_value=2100, value=now.year, key="year")
-        mm = st.number_input('月', min_value=1, max_value=12, value=now.month, key="month")
-        md = st.number_input('日', min_value=1, max_value=31, value=now.day, key="day")
+        my = st.number_input(t("year"), min_value=0, max_value=2100, value=now.year, key="year")
+        mm = st.number_input(t("month"), min_value=1, max_value=12, value=now.month, key="month")
+        md = st.number_input(t("day"), min_value=1, max_value=31, value=now.day, key="day")
     with col2:
-        mh = st.number_input('時', min_value=0, max_value=23, value=now.hour, key="hour")
-        mmin = st.number_input('分', min_value=0, max_value=59, value=now.minute, key="minute")
+        mh = st.number_input(t("hour"), min_value=0, max_value=23, value=now.hour, key="hour")
+        mmin = st.number_input(t("minute"), min_value=0, max_value=59, value=now.minute, key="minute")
     
-    option = st.selectbox('起盤方式', ('時計太乙', '年計太乙', '月計太乙', '日計太乙', '分計太乙', '太乙命法'))
-    acum = st.selectbox('太乙積年數', ('太乙統宗', '太乙金鏡', '太乙淘金歌', '太乙局'))
-    ten_ching = st.selectbox('太乙十精', ('無', '有'))
-    sex_o = st.selectbox('太乙命法性別', ('男', '女'))
-    rotation = st.selectbox('轉盤', ('固定', '轉動'))
+    option = st.selectbox(t("chart_method"), ('時計太乙', '年計太乙', '月計太乙', '日計太乙', '分計太乙', '太乙命法'), format_func=to)
+    acum = st.selectbox(t("acc_years"), ('太乙統宗', '太乙金鏡', '太乙淘金歌', '太乙局'), format_func=to)
+    ten_ching = st.selectbox(t("ten_essences"), ('無', '有'), format_func=to)
+    sex_o = st.selectbox(t("life_gender"), ('男', '女'), format_func=to)
+    rotation = st.selectbox(t("rotation_label"), ('固定', '轉動'), format_func=to)
     
     num_dict = {'時計太乙': 3, '年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '分計太乙': 4, '太乙命法': 5}
     style = num_dict[option]
@@ -469,13 +732,13 @@ with st.sidebar:
     tc_dict = {'有': 1, '無': 0}
     tc = tc_dict[ten_ching]
     
-    instant = st.button('即時盤', use_container_width=True)
+    instant = st.button(t("instant_btn"), use_container_width=True)
     
     st.markdown("---")
-    st.header("AI設置")
+    st.header(t("ai_settings"))
     
     selected_model = st.selectbox(
-        "AI 模型",
+        t("ai_model"),
         options=CEREBRAS_MODEL_OPTIONS,
         index=0,
         key="cerebras_model_selector",
@@ -493,11 +756,11 @@ with st.sidebar:
             selected_index = prompt_names.index(selected_prompt)
         
         selected_name = st.selectbox(
-            "選擇系統提示",
+            t("select_prompt"),
             options=prompt_names,
             index=selected_index,
             key="qwen_system_prompt_selector",
-            help="選擇用於AI模型的系統提示，指導其分析太乙排盤結果"
+            help=t("select_prompt_help")
         )
         
         system_prompts_data["selected"] = selected_name
@@ -516,10 +779,10 @@ with st.sidebar:
         st.session_state.last_selected_qwen_prompt = selected_name
         
         new_content = st.text_area(
-            "編輯系統提示",
+            t("edit_prompt"),
             value=st.session_state.qwen_system_prompt,
             height=150,
-            placeholder="範例：你是一位太乙神數專家，根據排盤數據提供詳細分析...",
+            placeholder=t("edit_prompt_placeholder"),
             key="qwen_system_editor"
         )
         
@@ -527,23 +790,23 @@ with st.sidebar:
         
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("💾 更新提示", key="update_qwen_prompt_button"):
+            if st.button(t("update_prompt"), key="update_qwen_prompt_button"):
                 for prompt in prompts_list:
                     if prompt["name"] == selected_name:
                         prompt["content"] = new_content
                         break
                 if save_system_prompts(system_prompts_data):
-                    st.toast(f"✅ 已更新系統提示 '{selected_name}'！")
+                    st.toast(t("prompt_updated").format(selected_name))
         
         with col2:
-            if st.button("❌ 刪除提示", key="delete_qwen_prompt_button", 
+            if st.button(t("delete_prompt"), key="delete_qwen_prompt_button", 
                         disabled=len(prompts_list) <= 1):
                 prompts_list = [p for p in prompts_list if p["name"] != selected_name]
                 system_prompts_data["prompts"] = prompts_list
                 if selected_name == selected_prompt and prompts_list:
                     system_prompts_data["selected"] = prompts_list[0]["name"]
                 if save_system_prompts(system_prompts_data):
-                    st.toast(f"✅ 已刪除系統提示 '{selected_name}'！")
+                    st.toast(t("prompt_deleted").format(selected_name))
                     st.rerun()
     
     if "qwen_form_key_suffix" not in st.session_state:
@@ -552,18 +815,18 @@ with st.sidebar:
     name_key = f"new_qwen_prompt_name_{st.session_state.qwen_form_key_suffix}"
     content_key = f"new_qwen_prompt_content_{st.session_state.qwen_form_key_suffix}"
     
-    with st.expander("➕ 新增提示", expanded=False):
-        new_prompt_name = st.text_input("新提示名稱", key=name_key)
+    with st.expander(t("add_prompt_expander"), expanded=False):
+        new_prompt_name = st.text_input(t("new_prompt_name"), key=name_key)
         new_prompt_content = st.text_area(
-            "新提示內容",
+            t("new_prompt_content"),
             height=100,
-            placeholder="輸入AI分析指令...",
+            placeholder=t("new_prompt_placeholder"),
             key=content_key
         )
-        if st.button("➕ 新增提示", key="add_qwen_prompt_button",
+        if st.button(t("add_prompt_btn"), key="add_qwen_prompt_button",
                     disabled=not new_prompt_name or not new_prompt_content):
             if new_prompt_name in prompt_names:
-                st.error(f"提示名稱 '{new_prompt_name}' 已存在。")
+                st.error(t("prompt_exists").format(new_prompt_name))
             else:
                 prompts_list.append({
                     "name": new_prompt_name,
@@ -572,29 +835,29 @@ with st.sidebar:
                 system_prompts_data["prompts"] = prompts_list
                 if save_system_prompts(system_prompts_data):
                     st.session_state.qwen_form_key_suffix += 1
-                    st.toast(f"✅ 已新增系統提示 '{new_prompt_name}'！")
+                    st.toast(t("prompt_added").format(new_prompt_name))
                     st.rerun()
     
-    if st.toggle("🔧 高級設置", key="qwen_advanced_settings_toggle"):
+    if st.toggle(t("advanced_settings"), key="qwen_advanced_settings_toggle"):
         st.session_state.qwen_max_tokens = st.slider(
-            "最大生成 Tokens",
+            t("max_tokens"),
             40000, 200000,
             st.session_state.get("qwen_max_tokens", 200000),
             key="qwen_max_tokens_slider",
-            help="控制AI回應的最大長度"
+            help=t("max_tokens_help")
         )
         st.session_state.qwen_temperature = st.slider(
-            "溫度 (專注 vs. 創意)",
+            t("temperature"),
             0.0, 1.5,
             st.session_state.get("qwen_temperature", 0.7),
             step=0.05,
             key="qwen_temperature_slider",
-            help="較低值 (如 0.2) 更確定性；較高值 (如 0.8) 更隨機"
+            help=t("temperature_help")
         )
     
     st.markdown("---")
-    if st.toggle("🔍 除錯模式", key="debug_mode_toggle", help="顯示除錯資訊，如 session state"):
-        st.subheader("🐛 除錯資訊")
+    if st.toggle(t("debug_mode"), key="debug_mode_toggle", help=t("debug_help")):
+        st.subheader(t("debug_info"))
         st.write("Session State:")
         st.json(st.session_state)
 
@@ -691,7 +954,7 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
     }
 
 # 創建標籤頁
-tabs = st.tabs(['🧮太乙排盤', '💬使用說明', '📜局數史例', '🔥災異統計', '📚古籍書目', '🆕更新日誌', '🚀看盤要領', '🔗連結'])
+tabs = st.tabs([t('tab_chart'), t('tab_instructions'), t('tab_history'), t('tab_disaster'), t('tab_books'), t('tab_updates'), t('tab_guide'), t('tab_links')])
 
 # 太乙排盤
 with tabs[0]:
@@ -716,35 +979,35 @@ with tabs[0]:
                             render_svg1(results["genchart1"], int(start_pt))
                     except (ValueError, IndexError) as e:
                         st.error(f"Failed to parse SVG viewBox: {str(e)}")
-                    with st.expander("解釋"):
-                        st.title("《太乙命法》︰")
-                        st.markdown("【十二宮分析】")
+                    with st.expander(t("explanation")):
+                        st.title(t("taiyi_life_title"))
+                        st.markdown(t("twelve_palaces"))
                         st.markdown(results["lifedisc"])
                         st.markdown("   ")
-                        st.markdown("【太乙十六神落宮】")
+                        st.markdown(t("sixteen_gods"))
                         st.markdown(results["lifedisc2"])
                         st.markdown("   ")
-                        st.markdown("【太乙十六神上中下等】")
+                        st.markdown(t("sixteen_grades"))
                         st.markdown(results["lifedisc3"])
                         st.markdown("   ")
-                        st.markdown("【值卦】")
-                        st.markdown(f"年卦：{results['ygua']}")
-                        st.markdown(f"月卦：{results['mgua']}")
-                        st.markdown(f"日卦：{results['dgua']}")
-                        st.markdown(f"時卦：{results['hgua']}")
-                        st.markdown(f"分卦：{results['mingua']}")
+                        st.markdown(t("hexagram"))
+                        st.markdown(f"{t('year_hex')}{results['ygua']}")
+                        st.markdown(f"{t('month_hex')}{results['mgua']}")
+                        st.markdown(f"{t('day_hex')}{results['dgua']}")
+                        st.markdown(f"{t('hour_hex')}{results['hgua']}")
+                        st.markdown(f"{t('minute_hex')}{results['mingua']}")
                         st.markdown("   ")
-                        st.markdown("【陽九行限】")
+                        st.markdown(t("yang_nine"))
                         st.markdown(format_text(results["yjxx"]))
                         st.markdown("   ")
-                        st.markdown("【百六行限】")
+                        st.markdown(t("bai_liu"))
                         st.markdown(format_text(results["blxx"]))
                         st.markdown("   ")
-                        st.title("《太乙秘書》︰")
+                        st.title(t("taiyi_mishu"))
                         st.markdown(results["ts"])
-                        st.title("史事記載︰")
+                        st.title(t("history_records"))
                         st.markdown(results["ch"])
-                    print(f"{config.gendatetime(my, mm, md, mh, mmin)} {results['zhao']} - {results['ty'].taiyi_life(results['sex_o']).get('性別')} - {config.taiyi_name(0)[0]} - {results['ty'].accnum(0, 0)} | \n農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{results['gz']} |\n{config.kingyear(my)} |\n太乙命法 - {results['ty'].kook(0, 0).get('文')} ({results['ttext'].get('局式').get('年')}) | \n紀元︰{results['ttext'].get('紀元')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} |")
+                    print(f"{config.gendatetime(my, mm, md, mh, mmin)} {results['zhao']} - {results['ty'].taiyi_life(results['sex_o']).get('性別')} - {config.taiyi_name(0)[0]} - {results['ty'].accnum(0, 0)} | \n{t('lunar_label')}︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{results['gz']} |\n{config.kingyear(my)} |\n{t('taiyi_life_method')} - {results['ty'].kook(0, 0).get('文')} ({results['ttext'].get('局式').get('年')}) | \n{t('epoch_label')}︰{results['ttext'].get('紀元')} | {t('home_calc')}︰{results['homecal']} {t('away_calc')}︰{results['awaycal']} |")
                 else:
                     try:
                         start_pt2 = results["genchart2"][results["genchart2"].index('''viewBox="''')+22:].split(" ")[1]
@@ -754,48 +1017,48 @@ with tabs[0]:
                             render_svg1(results["genchart2"], int(start_pt2))
                     except (ValueError, IndexError) as e:
                         st.error(f"Failed to parse SVG viewBox: {str(e)}")
-                    with st.expander("解釋"):
-                        st.title("《太乙秘書》︰")
+                    with st.expander(t("explanation")):
+                        st.title(t("taiyi_mishu"))
                         st.markdown(results["ts"])
-                        st.title("史事記載︰")
+                        st.title(t("history_records"))
                         st.markdown(results["ch"])
-                        st.title("太乙盤局分析︰")
-                        st.markdown(f"太歲值宿斷事︰{results['year_predict']}")
-                        st.markdown(f"始擊值宿斷事︰{results['sj_su_predict']}")
-                        st.markdown(f"十天干歲始擊落宮預測︰{results['tg_sj_su_predict']}")
-                        st.markdown(f"推太乙在天外地內法︰{results['ty'].ty_gong_dist(results['style'], results['tn'])}")
-                        st.markdown(f"三門五將︰{results['three_door'] + results['five_generals']}")
-                        st.markdown(f"推主客相關︰{results['home_vs_away1']}")
-                        st.markdown(f"推少多以占勝負︰{results['ttext'].get('推少多以占勝負')}")
-                        st.markdown(f"推太乙風雲飛鳥助戰︰{results['home_vs_away3']}")
-                        st.markdown(f"推孤單以占成敗:{results['ttext'].get('推孤單以占成敗')}")
-                        st.markdown(f"推陰陽以占厄會︰{results['ttext'].get('推陰陽以占厄會')}")
-                        st.markdown(f"明天子巡狩之期術︰{results['ttext'].get('明天子巡狩之期術')}")
-                        st.markdown(f"明君基太乙所主術︰{results['ttext'].get('明君基太乙所主術')}")
-                        st.markdown(f"明臣基太乙所主術︰{results['ttext'].get('明臣基太乙所主術')}")
-                        st.markdown(f"明民基太乙所主術︰{results['ttext'].get('明民基太乙所主術')}")
-                        st.markdown(f"明五福太乙所主術︰{results['ttext'].get('明五福太乙所主術')}")
-                        st.markdown(f"明五福吉算所主術︰{results['ttext'].get('明五福吉算所主術')}")
-                        st.markdown(f"明天乙太乙所主術︰{results['ttext'].get('明天乙太乙所主術')}")
-                        st.markdown(f"明地乙太乙所主術︰{results['ttext'].get('明地乙太乙所主術')}")
-                        st.markdown(f"明值符太乙所主術︰{results['ttext'].get('明值符太乙所主術')}")
+                        st.title(t("chart_analysis"))
+                        st.markdown(f"{t('year_star_predict')}{results['year_predict']}")
+                        st.markdown(f"{t('start_star_predict')}{results['sj_su_predict']}")
+                        st.markdown(f"{t('ten_stem_predict')}{results['tg_sj_su_predict']}")
+                        st.markdown(f"{t('sky_ground_method')}{results['ty'].ty_gong_dist(results['style'], results['tn'])}")
+                        st.markdown(f"{t('three_five')}{results['three_door'] + results['five_generals']}")
+                        st.markdown(f"{t('home_away')}{results['home_vs_away1']}")
+                        st.markdown(f"{t('win_loss')}{results['ttext'].get('推少多以占勝負')}")
+                        st.markdown(f"{t('wind_cloud')}{results['home_vs_away3']}")
+                        st.markdown(f"{t('solitary')}{results['ttext'].get('推孤單以占成敗')}")
+                        st.markdown(f"{t('yin_yang_adversity')}{results['ttext'].get('推陰陽以占厄會')}")
+                        st.markdown(f"{t('emperor_tour')}{results['ttext'].get('明天子巡狩之期術')}")
+                        st.markdown(f"{t('ruler_base')}{results['ttext'].get('明君基太乙所主術')}")
+                        st.markdown(f"{t('minister_base')}{results['ttext'].get('明臣基太乙所主術')}")
+                        st.markdown(f"{t('people_base')}{results['ttext'].get('明民基太乙所主術')}")
+                        st.markdown(f"{t('five_blessings')}{results['ttext'].get('明五福太乙所主術')}")
+                        st.markdown(f"{t('five_blessings_calc')}{results['ttext'].get('明五福吉算所主術')}")
+                        st.markdown(f"{t('heaven_yi')}{results['ttext'].get('明天乙太乙所主術')}")
+                        st.markdown(f"{t('earth_yi')}{results['ttext'].get('明地乙太乙所主術')}")
+                        st.markdown(f"{t('zhifu')}{results['ttext'].get('明值符太乙所主術')}")
 
 
 
                     
-                    print(f"{config.gendatetime(my, mm, md, mh, mmin)} | 積{config.taiyi_name(results['style'])[0]}數︰{results['ty'].accnum(results['style'], results['tn'])} | \n"
-                          f"農曆︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n"
+                    print(f"{config.gendatetime(my, mm, md, mh, mmin)} | {t('acc_prefix')}{config.taiyi_name(results['style'])[0]}{t('acc_suffix')}︰{results['ty'].accnum(results['style'], results['tn'])} | \n"
+                          f"{t('lunar_label')}︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n"
                           f"{results['gz']} |\n"
                           f"{config.kingyear(my)} |\n"
                           f"{config.ty_method(results['tn'])}{results['ttext'].get('太乙計', '')} - {results['ty'].kook(results['style'], results['tn']).get('文', '')} "
-                          f"({results['ttext'].get('局式', {}).get('年', '')}) \n五子元局:{results['wuyuan']} | \n"
-                          f"紀元︰{results['ttext'].get('紀元', '')} | 主筭︰{results['homecal']} 客筭︰{results['awaycal']} 定筭︰{results['setcal']} |")
+                          f"({results['ttext'].get('局式', {}).get('年', '')}) \n{t('five_yuan')}:{results['wuyuan']} | \n"
+                          f"{t('epoch_label')}︰{results['ttext'].get('紀元', '')} | {t('home_calc')}︰{results['homecal']} {t('away_calc')}︰{results['awaycal']} {t('set_calc')}︰{results['setcal']} |")
 
-                if st.button("🔍 使用AI分析排盤結果", key="analyze_with_qwen"):
-                    with st.spinner("AI正在分析太乙排盤結果..."):
+                if st.button(t("ai_analyze_btn"), key="analyze_with_qwen"):
+                    with st.spinner(t("ai_analyzing")):
                         cerebras_api_key = st.secrets.get("CEREBRAS_API_KEY") or os.getenv("CEREBRAS_API_KEY")
                         if not cerebras_api_key:
-                            st.error("CEREBRAS_API_KEY 未設置，請在 .streamlit/secrets.toml 或環境變量中設置。")
+                            st.error(t("ai_key_missing"))
                         else:
                             try:
                                 client = CerebrasClient(api_key=cerebras_api_key)
@@ -812,12 +1075,12 @@ with tabs[0]:
                                 }
                                 response = client.get_chat_completion(**api_params)
                                 raw_response = response.choices[0].message.content
-                                with st.expander("AI分析結果", expanded=True):
+                                with st.expander(t("ai_result"), expanded=True):
                                     st.markdown(raw_response)
                             except Exception as e:
-                                st.error(f"調用AI時發生錯誤：{str(e)}")
+                                st.error(t("ai_error").format(str(e)))
         except Exception as e:
-            st.error(f"生成盤局時發生錯誤：{str(e)}")
+            st.error(t("gen_error").format(str(e)))
 
 # 使用說明
 with tabs[1]:
@@ -828,7 +1091,7 @@ with tabs[2]:
     with open('example.json', "r") as f:
         data = f.read()
     timeline(data, height=600)
-    with st.expander("列表"):
+    with st.expander(t("list_label")):
         st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "docs/example.md"))
 
 # 災害統計
