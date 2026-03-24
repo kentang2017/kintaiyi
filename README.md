@@ -2,7 +2,7 @@
 
 # 🌟 Python 太乙神數 | Kintaiyi 堅太乙
 
-### 三千年古法，一行代碼重現 — 最正宗的開源太乙神數排盤工具
+### 自古君王官臣珍重、上測天文下測國運必用之法 — 最豐富的開源太乙神數排盤工具
 
 *The most authentic open-source Taiyi Shenshu (太乙神數) divination engine in Python*
 
