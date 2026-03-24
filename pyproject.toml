@@ -39,6 +39,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+cli = [
+    "typer>=0.15.3",
+]
 app = [
     "streamlit>=1.53.1",
     "streamlit-screen-stats>=0.0.82",
@@ -51,10 +54,16 @@ app = [
     "Flask>=3.1.2",
     "cerebras-cloud-sdk",
 ]
+web = [
+    "Flask>=3.1.2",
+]
 dev = [
     "pytest>=8.0",
     "ruff>=0.4.0",
 ]
+
+[project.scripts]
+kintaiyi = "kintaiyi.cli:app"
 
 [project.urls]
 Homepage = "https://github.com/kentang2017/kintaiyi"
@@ -90,6 +99,7 @@ ignore = [
     "N803",   # argument name should be lowercase
     "N806",   # variable in function should be lowercase
     "N816",   # mixed case variable in global scope
+    "B008",   # function call in default argument (standard pattern for typer/FastAPI)
 ]
 
 [tool.ruff.lint.isort]
