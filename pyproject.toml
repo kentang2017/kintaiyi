@@ -63,7 +63,7 @@ dev = [
 ]
 
 [project.scripts]
-kintaiyi = "kintaiyi.cli:app"
+kintaiyi = "kintaiyi.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/kentang2017/kintaiyi"
