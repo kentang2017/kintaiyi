@@ -12,12 +12,12 @@ import itertools
 from itertools import cycle, repeat, starmap
 from datetime import date
 import datetime
-from ruler import ruler_data
+from .ruler import ruler_data
 import cn2an
 from cn2an import an2cn
 from ephem import Date
 from sxtwl import fromSolar
-import jieqi
+from . import jieqi
 from bidict import bidict
 
 base = os.path.abspath(os.path.dirname(__file__))

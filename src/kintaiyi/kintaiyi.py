@@ -13,13 +13,13 @@ from datetime import date
 from ephem import Date
 import numpy as np
 from cn2an import an2cn
-from taiyidict import tengan_shiji, su_dist
-import kinliuren
-import config
-import chart
-import jieqi
-import taiyi_life_dict
-from jieqi import jieqi_name
+from .taiyidict import tengan_shiji, su_dist
+from . import kinliuren
+from . import config
+from . import chart
+from . import jieqi
+from . import taiyi_life_dict
+from .jieqi import jieqi_name
 from kerykeion import AstrologicalSubject
 import astropy.units as u
 from astropy.coordinates import SkyCoord, FK5
