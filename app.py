@@ -821,7 +821,7 @@ with tabs[0]:
 
 # 使用說明
 with tabs[1]:
-    st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "instruction.md"))
+    st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "docs/instruction.md"))
 
 # 太乙局數史例
 with tabs[2]:
@@ -829,23 +829,23 @@ with tabs[2]:
         data = f.read()
     timeline(data, height=600)
     with st.expander("列表"):
-        st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "example.md"))
+        st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "docs/example.md"))
 
 # 災害統計
 with tabs[3]:
-    st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "disaster.md"))
+    st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "docs/disaster.md"))
 
 # 古籍書目
 with tabs[4]:
-    st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "guji.md"))
+    st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "docs/guji.md"))
 
 # 更新日誌
 with tabs[5]:
-    st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "update.md"))
+    st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "docs/update.md"))
 
 # 看盤要領
 with tabs[6]:
-    st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "tutorial.md"), unsafe_allow_html=True)
+    st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "docs/tutorial.md"), unsafe_allow_html=True)
 
 # 連結
 with tabs[7]:
