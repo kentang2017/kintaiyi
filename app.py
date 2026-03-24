@@ -695,12 +695,11 @@ BASE_URL_KINLIUREN = 'https://raw.githubusercontent.com/kentang2017/kinliuren/ma
 
 # 側邊欄輸入
 with st.sidebar:
-    lang_choice = st.radio(
+    lang_choice = st.selectbox(
         "語言 Language",
         ["中文", "English"],
         index=0 if st.session_state.lang == "zh" else 1,
-        horizontal=True,
-        key="lang_radio",
+        key="lang_select",
     )
     new_lang = "zh" if lang_choice == "中文" else "en"
     if new_lang != st.session_state.lang:
