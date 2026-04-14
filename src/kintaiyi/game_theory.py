@@ -721,7 +721,7 @@ class TaiyiGame:
             局數描述 = f"（{遁法}遁{局數}局"
             if 三才理年:
                 局數描述 += f"、{三才理年}"
-            if 落宮:
+            if 落宮 != 0:  # 0 = unknown/not applicable; valid palaces are 1-9
                 局數描述 += f"、太乙落{落宮}宮"
             局數描述 += "）"
 
@@ -776,7 +776,7 @@ class TaiyiGame:
             if 局數摘要.get("三才理年") and 局數摘要["三才理年"] != "未知":
                 局式行 += f"（{局數摘要['三才理年']}）"
             lines.append(局式行)
-        if 落宮:
+        if 落宮 != 0:  # 0 = unknown/not applicable; valid palaces are 1-9
             落宮行 = f"太乙落宮：第{落宮}宮"
             if 旺衰:
                 落宮行 += f"（{旺衰}）"
