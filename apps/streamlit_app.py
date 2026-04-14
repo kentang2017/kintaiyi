@@ -15,6 +15,7 @@ import pytz
 from contextlib import contextmanager, redirect_stdout
 from io import StringIO
 import urllib.request
+import urllib.error
 import json
 from kintaiyi import jieqi
 from kintaiyi import kintaiyi
@@ -338,8 +339,13 @@ if 'render_default' not in st.session_state:
 def get_file_content_as_string(base_url, path):
     """從指定 URL 獲取文件內容並返回字符串"""
     url = base_url + path
-    response = urllib.request.urlopen(url)
-    return response.read().decode("utf-8")
+    try:
+        response = urllib.request.urlopen(url)
+        return response.read().decode("utf-8")
+    except urllib.error.HTTPError as e:
+        return f"⚠️ 無法載入內容 ({url}): HTTP {e.code}"
+    except Exception as e:
+        return f"⚠️ 無法載入內容 ({url}): {e}"
 
 def format_text(d, parent_key=""):
     """格式化字典為可讀的文本"""
@@ -1115,7 +1121,7 @@ with tabs[6]:
 
 # 連結
 with tabs[7]:
-    st.markdown(get_file_content_as_string(BASE_URL_KINLIUREN, "update.md"), unsafe_allow_html=True)
+    st.markdown(get_file_content_as_string(BASE_URL_KINLIUREN, "docs/contact.md"), unsafe_allow_html=True)
 
 # Custom CSS (aligned with chat_main.py styling)
 st.markdown(
