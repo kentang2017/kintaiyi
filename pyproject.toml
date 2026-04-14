@@ -8,7 +8,7 @@ version = "0.2.3"
 description = "Python 太乙神數排盤工具 - Taiyi Shenshu Divination Calculator"
 readme = "README.md"
 requires-python = ">=3.10"
-license = {text = "MIT"}
+license = {file = "LICENSE"}
 authors = [
     {name = "kentang", email = "kinyeah@gmail.com"},
 ]
@@ -74,7 +74,7 @@ Documentation = "https://github.com/kentang2017/kintaiyi/wiki"
 where = ["src"]
 
 [tool.setuptools.package-data]
-kintaiyi = ["*.pkl"]
+kintaiyi = ["*.pkl", "data/**/*"]
 
 [tool.ruff]
 target-version = "py310"

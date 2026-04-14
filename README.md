@@ -9,7 +9,8 @@
 [![PyPI version](https://img.shields.io/pypi/v/kintaiyi?color=blue&label=PyPI)](https://pypi.org/project/kintaiyi/)
 [![Python](https://img.shields.io/pypi/pyversions/kintaiyi?label=Python)](https://pypi.org/project/kintaiyi/)
 [![Downloads](https://img.shields.io/pypi/dm/kintaiyi?color=green&label=Downloads)](https://pypi.org/project/kintaiyi/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/kentang2017/kintaiyi/actions/workflows/ci.yml/badge.svg)](https://github.com/kentang2017/kintaiyi/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/kentang2017/kintaiyi?style=social)](https://github.com/kentang2017/kintaiyi)
 [![Telegram](https://img.shields.io/badge/Telegram-Channel-blue?logo=telegram)](https://t.me/numerology_coding)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg?logo=paypal&style=flat-square)](https://www.paypal.me/kinyeah)
@@ -28,7 +29,21 @@
 
 ---
 
-## ✨ 亮點 Highlights
+## 📑 目錄 Table of Contents
+
+- [✨ 亮點 Highlights](#-亮點-highlights)
+- [📖 簡介 Introduction](#-簡介-introduction)
+- [🚀 快速開始 Quick Start](#-快速開始-quick-start)
+- [📋 支援功能 Features](#-支援功能-features)
+- [🖼️ 截圖與演示 Screenshots & Demo](#️-截圖與演示-screenshots--demo)
+- [📦 安裝 Installation](#-安裝-installation)
+- [🔧 進階使用 Advanced Usage](#-進階使用-advanced-usage)
+- [🤝 貢獻指南 Contributing](#-貢獻指南-contributing)
+- [💬 聯絡與社群 Contact & Community](#-聯絡與社群-contact--community)
+- [📄 License](#-license)
+- [🔗 相關專案 Related Projects](#-相關專案-related-projects)
+
+---
 
 - 🔮 **六種計法齊備** — 年計、月計、日計、時計、分計、命法，覆蓋所有太乙推算場景
   **Six Calculation Modes** — Year, Month, Day, Hour, Minute, and Life Destiny, covering all Taiyi divination scenarios
@@ -103,7 +118,7 @@ kintaiyi calculate --date 1990-05-15 --time 08:00 --mode life --sex male
 
 ```bash
 pip install kintaiyi[app]
-streamlit run app.py
+streamlit run apps/streamlit_app.py
 ```
 
 ---
@@ -347,9 +362,9 @@ ruff format src/
 
 ## 📄 License
 
-本專案採用 [MIT License](https://opensource.org/licenses/MIT) 開源協議。
+本專案採用 [MIT License](LICENSE) 開源協議。
 
-This project is licensed under the MIT License.
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
