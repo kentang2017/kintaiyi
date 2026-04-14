@@ -1592,9 +1592,21 @@ class Taiyi:
                 "小游":config.smyo(self.accnum(0,0))}
         return pan
     
-    def pan(self, ji_style, taiyi_acumyear):
-        """起盤詳細內容"""
-        return {
+    def pan(self, ji_style, taiyi_acumyear, enable_game_theory: bool = False):
+        """起盤詳細內容
+
+        參數
+        ----
+        ji_style : int
+            太乙計式 (0=年計, 1=月計, 2=日計, 3=時計, 4=分計)。
+        taiyi_acumyear : int
+            太乙積年法 (0=統宗, 1=金鏡, 2=淘金歌, 3=太乙局)。
+        enable_game_theory : bool, optional
+            若為 True，則附加「運籌博弈分析」鍵到回傳 dict（預設 False）。
+            分析結果由 TaiyiGame 類別生成，以古法「推主客相闗法」及「七大兵法格局」
+            為本，輔以現代零和博弈論 Nash 均衡與線性規劃運籌博弈原理。
+        """
+        result = {
                 "太乙計":config.taiyi_name(ji_style),
                 "太乙公式類別":config.ty_method(taiyi_acumyear),
                 "公元日期":config.gendatetime(self.year, self.month, self.day, self.hour, self.minute),
@@ -1675,6 +1687,12 @@ class Taiyi:
                 "推白龍得雲":config.dragon(self.ty(ji_style, taiyi_acumyear)),
                 "推回軍無言":config.returnarmy(self.away_general(ji_style, taiyi_acumyear)),
                 }
+        if enable_game_theory:
+            # 此處以古法「推主客相闗法」及「七大兵法格局」為本，
+            # 輔以現代零和博弈論 Nash 均衡與線性規劃運籌博弈原理，附加博弈分析結果。
+            from .game_theory import TaiyiGame  # noqa: PLC0415
+            result["運籌博弈分析"] = TaiyiGame(result).分析報告()
+        return result
 
 if __name__ == '__main__':
     tic = time.perf_counter()

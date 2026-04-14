@@ -27,7 +27,9 @@ from kintaiyi.taiyimishu import taiyi_yingyang
 from kintaiyi.historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
+import pandas as pd
 from kintaiyi.cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL
+from kintaiyi.game_theory import TaiyiGame, 主方策略列 as _gt_主方策略列, 客方策略列 as _gt_客方策略列
 
 # --- i18n: Translation dictionaries ---
 TRANSLATIONS = {
@@ -125,6 +127,16 @@ TRANSLATIONS = {
         "ai_result": "AI分析結果",
         "list_label": "列表",
         "save_error": "錯誤儲存提示：{}",
+        # 博弈論
+        "game_theory_toggle": "🎯 啟用運籌博弈分析（Nash 均衡）",
+        "game_theory_header": "⚔️ 運籌博弈分析（太乙古法 × Nash 均衡）",
+        "game_theory_payoff": "零和支付矩陣（主方視角）",
+        "game_theory_home_strategy": "主方最優混合策略",
+        "game_theory_away_strategy": "客方最優混合策略",
+        "game_theory_value": "博弈均衡值（期望支付）",
+        "game_theory_lp": "線性規劃最優建議",
+        "game_theory_winrate": "主方勝率判斷",
+        "game_theory_computing": "⚙️ 正在計算 Nash 均衡...",
         # Print labels
         "lunar_label": "農曆",
         "taiyi_life_method": "太乙命法",
@@ -230,6 +242,16 @@ TRANSLATIONS = {
         "ai_result": "AI Analysis Result",
         "list_label": "List",
         "save_error": "Error saving prompt: {}",
+        # Game Theory
+        "game_theory_toggle": "🎯 Enable Game Theory Analysis (Nash Equilibrium)",
+        "game_theory_header": "⚔️ Operations Research & Game Theory Analysis",
+        "game_theory_payoff": "Zero-Sum Payoff Matrix (Home Perspective)",
+        "game_theory_home_strategy": "Home Optimal Mixed Strategy",
+        "game_theory_away_strategy": "Away Optimal Mixed Strategy",
+        "game_theory_value": "Game Value (Expected Payoff)",
+        "game_theory_lp": "LP Optimal Recommendation",
+        "game_theory_winrate": "Home Win Assessment",
+        "game_theory_computing": "⚙️ Computing Nash Equilibrium...",
         # Print labels
         "lunar_label": "Lunar",
         "taiyi_life_method": "Taiyi Life",
@@ -1063,6 +1085,49 @@ with tabs[0]:
                           f"({results['ttext'].get('局式', {}).get('年', '')}) \n{t('five_yuan')}:{results['wuyuan']} | \n"
                           f"{t('epoch_label')}︰{results['ttext'].get('紀元', '')} | {t('home_calc')}︰{results['homecal']} {t('away_calc')}︰{results['awaycal']} {t('set_calc')}︰{results['setcal']} |")
 
+                # ── 運籌博弈分析區塊 ──────────────────────────────────────
+                if st.toggle(t("game_theory_toggle"), key="game_theory_toggle_switch"):
+                    with st.spinner(t("game_theory_computing")):
+                        try:
+                            gt = TaiyiGame(results["ttext"])
+                            gt_report = gt.分析報告()
+                        except Exception as gt_err:
+                            st.error(f"博弈分析錯誤：{gt_err}")
+                            gt_report = None
+                    if gt_report:
+                        with st.expander(t("game_theory_header"), expanded=True):
+                            st.markdown(f"**古法推主客相闗：** {gt_report['古法推主客相闗']}")
+                            st.markdown(f"**{t('game_theory_winrate')}：** {gt_report['主方勝率判斷']}")
+                            st.markdown(f"**{t('game_theory_value')}：** `{gt_report['博弈均衡值']}`")
+
+                            st.markdown(f"##### {t('game_theory_payoff')}")
+                            payoff_df = pd.DataFrame(
+                                gt_report["支付矩陣"],
+                                index=_gt_主方策略列,
+                                columns=_gt_客方策略列,
+                            ).round(2)
+                            st.dataframe(payoff_df)
+
+                            col_h, col_a = st.columns(2)
+                            with col_h:
+                                st.markdown(f"**{t('game_theory_home_strategy')}**")
+                                home_df = pd.DataFrame(
+                                    {"策略": _gt_主方策略列, "概率": gt_report["主方均衡策略"]}
+                                )
+                                st.dataframe(home_df, hide_index=True)
+                            with col_a:
+                                st.markdown(f"**{t('game_theory_away_strategy')}**")
+                                away_df = pd.DataFrame(
+                                    {"策略": _gt_客方策略列, "概率": gt_report["客方均衡策略"]}
+                                )
+                                st.dataframe(away_df, hide_index=True)
+
+                            lp = gt_report["LP最大勝率"]
+                            st.markdown(f"##### {t('game_theory_lp')}")
+                            st.info(lp["建議文字"])
+                            st.markdown(f"**主方最優純策略：** {gt_report['主方最優純策略']}")
+                            st.markdown(f"**客方最優純策略：** {gt_report['客方最優純策略']}")
+
                 if st.button(t("ai_analyze_btn"), key="analyze_with_qwen"):
                     with st.spinner(t("ai_analyzing")):
                         cerebras_api_key = st.secrets.get("CEREBRAS_API_KEY") or os.getenv("CEREBRAS_API_KEY")
@@ -1072,6 +1137,13 @@ with tabs[0]:
                             try:
                                 client = CerebrasClient(api_key=cerebras_api_key)
                                 taiyi_prompt = format_taiyi_results_for_prompt(results)
+                                # 若博弈分析已啟用，附加博弈摘要到提示詞
+                                if st.session_state.get("game_theory_toggle_switch"):
+                                    try:
+                                        gt_summary = TaiyiGame(results["ttext"]).格局摘要文字()
+                                        taiyi_prompt = taiyi_prompt + "\n\n" + gt_summary
+                                    except Exception:
+                                        pass
                                 messages = [
                                     {"role": "system", "content": st.session_state.qwen_system_prompt},
                                     {"role": "user", "content": taiyi_prompt}
