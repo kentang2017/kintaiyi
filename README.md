@@ -23,7 +23,6 @@
 
 ![太乙神數盤圖](https://github.com/kentang2017/kintaiyi/blob/master/pic/Untitled-1.png?raw=true)
 
-[![YouTube 影片演示](https://github.com/user-attachments/assets/84e345b2-29c9-407d-a2de-808ed407d5b5)](https://www.youtube.com/watch?v=FKnPu8FOIlc)
 
 </div>
 
