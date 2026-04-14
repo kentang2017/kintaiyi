@@ -217,7 +217,6 @@ class TaiyiGame:
         np.ndarray, shape (4, 4)
             主方視角支付矩陣。
         """
-        n = 4  # noqa: F841
         # 基礎非對稱博弈結構（反映四大兵法策略間的本質制約關係）
         # 此處以古典兵法「攻守奇正」相互制約原理為本，輔以博弈論策略對（Strategy Profile）初始化
         base = np.array(

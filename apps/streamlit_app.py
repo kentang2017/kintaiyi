@@ -1142,8 +1142,8 @@ with tabs[0]:
                                     try:
                                         gt_summary = TaiyiGame(results["ttext"]).格局摘要文字()
                                         taiyi_prompt = taiyi_prompt + "\n\n" + gt_summary
-                                    except Exception:
-                                        pass
+                                    except Exception as gt_err:
+                                        st.warning(f"博弈摘要生成失敗（不影響AI分析）：{gt_err}")
                                 messages = [
                                     {"role": "system", "content": st.session_state.qwen_system_prompt},
                                     {"role": "user", "content": taiyi_prompt}
