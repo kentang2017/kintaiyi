@@ -12,10 +12,9 @@ _src_dir = _os.path.join(_repo_root, "src")
 if _src_dir not in _sys.path:
     _sys.path.insert(0, _src_dir)
 
-# Execute the delegate script in the current global namespace so that
-# Streamlit's script runner can properly track widgets and cached functions.
-# Override __file__ so that _REPO_ROOT resolves correctly inside the delegate.
-__file__ = _app_path  # noqa: A001
+# Execute the delegate script with __file__ pointing at the real location
+# so that _REPO_ROOT resolves correctly inside the delegate.
+_globals = {**globals(), "__file__": _app_path}
 
-with open(_app_path) as _f:
-    exec(compile(_f.read(), _app_path, "exec"))  # noqa: S102
+with open(_app_path, encoding="utf-8") as _f:
+    exec(compile(_f.read(), _app_path, "exec"), _globals)  # noqa: S102
