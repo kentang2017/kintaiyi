@@ -28,7 +28,7 @@ from kintaiyi.historytext import chistory
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
 import pandas as pd
-from kintaiyi.cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL
+from kintaiyi.cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL, TokenQuotaExceededError
 from kintaiyi.game_theory import TaiyiGame, 主方策略列 as _gt_主方策略列, 客方策略列 as _gt_客方策略列
 
 # --- i18n: Translation dictionaries ---
@@ -123,6 +123,7 @@ TRANSLATIONS = {
         "ai_analyzing": "AI正在分析太乙排盤結果...",
         "ai_key_missing": "CEREBRAS_API_KEY 未設置，請在 .streamlit/secrets.toml 或環境變量中設置。",
         "ai_error": "調用AI時發生錯誤：{}",
+        "ai_quota_exceeded": "⚠️ Cerebras API 每日 Token 配額已用盡，請稍後再試或降低「最大生成 Tokens」設定。",
         "gen_error": "生成盤局時發生錯誤：{}",
         "ai_result": "AI分析結果",
         "list_label": "列表",
@@ -238,6 +239,7 @@ TRANSLATIONS = {
         "ai_analyzing": "AI is analyzing the Taiyi chart...",
         "ai_key_missing": "CEREBRAS_API_KEY not set. Please set it in .streamlit/secrets.toml or environment variables.",
         "ai_error": "Error calling AI: {}",
+        "ai_quota_exceeded": "⚠️ Cerebras API daily token quota exceeded. Please try again later or reduce the 'Max Generation Tokens' setting.",
         "gen_error": "Error generating chart: {}",
         "ai_result": "AI Analysis Result",
         "list_label": "List",
@@ -872,8 +874,8 @@ with st.sidebar:
     if st.toggle(t("advanced_settings"), key="qwen_advanced_settings_toggle"):
         st.session_state.qwen_max_tokens = st.slider(
             t("max_tokens"),
-            40000, 200000,
-            st.session_state.get("qwen_max_tokens", 200000),
+            1024, 32768,
+            st.session_state.get("qwen_max_tokens", 8192),
             key="qwen_max_tokens_slider",
             help=t("max_tokens_help")
         )
@@ -1151,13 +1153,15 @@ with tabs[0]:
                                 api_params = {
                                     "messages": messages,
                                     "model": selected_model,
-                                    "max_tokens": st.session_state.get("qwen_max_tokens", 200000),
+                                    "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
                                     "temperature": st.session_state.get("qwen_temperature", 0.7)
                                 }
                                 response = client.get_chat_completion(**api_params)
                                 raw_response = response.choices[0].message.content
                                 with st.expander(t("ai_result"), expanded=True):
                                     st.markdown(raw_response)
+                            except TokenQuotaExceededError:
+                                st.error(t("ai_quota_exceeded"))
                             except Exception as e:
                                 st.error(t("ai_error").format(str(e)))
         except Exception as e:
