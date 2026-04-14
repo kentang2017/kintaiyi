@@ -1,9 +1,13 @@
 import os
 import sys
 
+# Resolve the repository root (one level up from apps/) so that relative paths
+# to assets/ and src/ work regardless of the working directory.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 # Ensure the src directory is on the Python path so that the kintaiyi package
 # can be imported when running from the repository root (e.g. on Streamlit Cloud).
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "src"))
+sys.path.insert(0, os.path.join(_REPO_ROOT, "src"))
 
 import streamlit as st
 import datetime
@@ -289,7 +293,7 @@ CEREBRAS_MODEL_DESCRIPTIONS = {
 
 # System Prompt Management Functions
 def load_system_prompts():
-    SYSTEM_PROMPTS_FILE = "system_prompts.json"
+    SYSTEM_PROMPTS_FILE = os.path.join(_REPO_ROOT, "assets", "system_prompts.json")
     DEFAULT_SYSTEM_PROMPT = (
         "你是一位太乙神數大師，熟悉《太乙秘書》、《太乙命法》歷史案例。請根據提供的太乙排盤數據，進行以下操作：\n"
         "1. 解釋盤局的關鍵要素（主筭、客筭、始擊、太歲等）。\n"
@@ -317,7 +321,7 @@ def load_system_prompts():
         return default_data
 
 def save_system_prompts(prompts_data):
-    SYSTEM_PROMPTS_FILE = "system_prompts.json"
+    SYSTEM_PROMPTS_FILE = os.path.join(_REPO_ROOT, "assets", "system_prompts.json")
     try:
         with open(SYSTEM_PROMPTS_FILE, "w") as f:
             json.dump(prompts_data, f, indent=2)
@@ -687,7 +691,7 @@ if "lang" not in st.session_state:
 st.set_page_config(
     layout="wide",
     page_title=t("page_title"),
-    page_icon="icon.jpg"
+    page_icon=os.path.join(_REPO_ROOT, "assets", "icon.jpg")
 )
 # 定義基礎 URL
 BASE_URL_KINTAIYI = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/master/'
@@ -1087,7 +1091,7 @@ with tabs[1]:
 
 # 太乙局數史例
 with tabs[2]:
-    with open('example.json', "r") as f:
+    with open(os.path.join(_REPO_ROOT, "assets", "example.json"), "r") as f:
         data = f.read()
     timeline(data, height=600)
     with st.expander(t("list_label")):
