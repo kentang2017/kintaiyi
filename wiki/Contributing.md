@@ -65,7 +65,9 @@ kintaiyi/
 │   ├── ruler.py            # Dynasty/ruler information
 │   ├── kinliuren.py        # Liuren integration
 │   └── cerebras_client.py  # AI integration
-├── app.py                  # Streamlit web application
+├── app.py                  # Streamlit entry point (delegates to apps/)
+├── apps/
+│   └── streamlit_app.py    # Streamlit web application
 ├── docs/                   # Documentation markdown files
 ├── examples/               # Example scripts
 ├── tests/                  # Test suite
@@ -78,7 +80,7 @@ kintaiyi/
 ## Coding Conventions
 
 - **Internal imports**: Use relative imports within `src/kintaiyi/` (e.g., `from . import config`)
-- **External imports**: Use absolute package imports in `app.py` (e.g., `from kintaiyi import config`)
+- **External imports**: Use absolute package imports in `apps/streamlit_app.py` (e.g., `from kintaiyi import config`)
 - **Python version**: ≥ 3.10 (uses `X | Y` union syntax)
 - **Linter**: ruff
 - **Tests**: pytest
