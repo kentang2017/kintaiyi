@@ -82,7 +82,7 @@ The Streamlit configuration is stored in `.streamlit/`:
 
 ### AI Configuration
 
-AI system prompts for board interpretation are configured in `system_prompts.json` at the repository root.
+AI system prompts for board interpretation are configured in `assets/system_prompts.json`.
 
 ## Screenshots
 

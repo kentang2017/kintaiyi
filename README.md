@@ -306,6 +306,8 @@ result = Taiyi(1552, 9, 24, 0, 0).pan(ji_style=0, method=1)
 
 我們歡迎所有形式的貢獻！*All contributions are welcome!*
 
+詳見 [CONTRIBUTING.md](CONTRIBUTING.md) / See [CONTRIBUTING.md](CONTRIBUTING.md) for full details.
+
 - 🐛 **Bug 回報** — 提交 [Issue](https://github.com/kentang2017/kintaiyi/issues) / Report bugs via Issues
 - ✨ **新功能** — 歡迎 PR 添加新古法、新計法 / PRs welcome for new methods and features
 - 📚 **課例驗證** — 提供歷史課例以驗證演算法準確性 / Provide historical examples to verify algorithm accuracy

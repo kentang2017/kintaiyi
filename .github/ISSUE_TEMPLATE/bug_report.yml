@@ -1,0 +1,74 @@
+name: 🐛 Bug Report
+description: Report a bug or incorrect calculation result.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug! Please fill in the details below.
+  - type: input
+    id: version
+    attributes:
+      label: Kintaiyi Version
+      description: "Run `kintaiyi version` or check `pip show kintaiyi`."
+      placeholder: "e.g. 0.2.3"
+    validations:
+      required: true
+  - type: input
+    id: python-version
+    attributes:
+      label: Python Version
+      placeholder: "e.g. 3.12.3"
+    validations:
+      required: true
+  - type: dropdown
+    id: interface
+    attributes:
+      label: Interface
+      options:
+        - Python API
+        - CLI
+        - Streamlit Web App
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Provide code or CLI commands to reproduce the issue.
+      placeholder: |
+        ```python
+        from kintaiyi.kintaiyi import Taiyi
+        result = Taiyi(2026, 3, 24, 12, 30).pan(ji_style=0, method=1)
+        ```
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened. Include error messages or incorrect output.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any other context, screenshots, or historical references.
+    validations:
+      required: false
