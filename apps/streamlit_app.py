@@ -308,10 +308,10 @@ def to(option):
 
 # Cerebras Model Options
 CEREBRAS_MODEL_OPTIONS = [
+    "qwen-3-235b-a22b-instruct-2507",
     "gpt-oss-120b",
     "llama3.1-8b",
     "zai-glm-4.7",
-    "qwen-3-235b-a22b-instruct-2507",
 ]
 CEREBRAS_MODEL_DESCRIPTIONS = {
     "gpt-oss-120b": "Cerebras: High-capacity open-source model for complex tasks.",
