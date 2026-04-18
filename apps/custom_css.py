@@ -57,6 +57,12 @@ html, body, .stApp {
 /* ── TYPOGRAPHY ─────────────────────────────────────────────────────── */
 * { font-family: var(--font-sans) !important; }
 
+/* Restore Material Symbols font for Streamlit icon elements so ligature-
+   based icon rendering (e.g. keyboard_double_arrow_right) is not broken. */
+[data-testid="stIconMaterial"] {
+    font-family: 'Material Symbols Rounded' !important;
+}
+
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-serif) !important;
     color: var(--gold) !important;
