@@ -9,6 +9,11 @@ _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # can be imported when running from the repository root (e.g. on Streamlit Cloud).
 sys.path.insert(0, os.path.join(_REPO_ROOT, "src"))
 
+# Add the apps/ directory to sys.path so that the custom_css module is importable.
+_apps_dir = os.path.dirname(os.path.abspath(__file__))
+if _apps_dir not in sys.path:
+    sys.path.insert(0, _apps_dir)
+
 import streamlit as st
 import datetime
 import pytz
@@ -30,6 +35,7 @@ from streamlit.components.v1 import html
 import pandas as pd
 from kintaiyi.cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL, TokenQuotaExceededError
 from kintaiyi.game_theory import TaiyiGame, 主方策略列 as _gt_主方策略列, 客方策略列 as _gt_客方策略列
+from custom_css import get_custom_css, get_hero_header_html
 
 # --- i18n: Translation dictionaries ---
 TRANSLATIONS = {
@@ -721,6 +727,8 @@ st.set_page_config(
     page_title=t("page_title"),
     page_icon=os.path.join(_REPO_ROOT, "assets", "icon.jpg")
 )
+# Inject Chinese classical theme CSS globally
+st.markdown(get_custom_css(), unsafe_allow_html=True)
 # 定義基礎 URL
 BASE_URL_KINTAIYI = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/master/'
 BASE_URL_KINLIUREN = 'https://raw.githubusercontent.com/kentang2017/kinliuren/master/'
@@ -985,6 +993,7 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
     }
 
 # 創建標籤頁
+st.markdown(get_hero_header_html(st.session_state.get("lang", "zh")), unsafe_allow_html=True)
 tabs = st.tabs([t('tab_chart'), t('tab_instructions'), t('tab_history'), t('tab_disaster'), t('tab_books'), t('tab_updates'), t('tab_guide'), t('tab_links')])
 
 # 太乙排盤
@@ -1197,108 +1206,4 @@ with tabs[6]:
 with tabs[7]:
     st.markdown(get_file_content_as_string(BASE_URL_KINLIUREN, "docs/contact.md"), unsafe_allow_html=True)
 
-# Custom CSS (aligned with chat_main.py styling)
-st.markdown(
-    """
-    <style>
-    /* General chat message container styling */
-    [data-testid="stChatMessage"] { 
-        margin-bottom: 10px !important;
-    }
-
-    /* User message styling */
-    html[data-theme="light"] [data-testid="stChatMessage"]:has(div[data-testid="stChatMessageContent"][data-test-id="stChatMessageContent-user"]) [data-testid="stChatMessageContent"],
-    [data-testid="stChatMessage"]:has(div[data-testid="stChatMessageContent"][data-test-id="stChatMessageContent-user"]) [data-testid="stChatMessageContent"] {
-        background-color: #e6f2ff !important;
-        border-radius: 10px !important;
-        padding: 10px !important;
-    }
-    html[data-theme="dark"] [data-testid="stChatMessage"]:has(div[data-testid="stChatMessageContent"][data-test-id="stChatMessageContent-user"]) [data-testid="stChatMessageContent"] {
-        background-color: #2a3950 !important;
-        border-radius: 10px !important;
-        padding: 10px !important;
-        color: #e0e0e0 !important;
-    }
-
-    /* Assistant message styling */
-    html[data-theme="light"] [data-testid="stChatMessage"]:has(div[data-testid="stChatMessageContent"][data-test-id="stChatMessageContent-assistant"]) [data-testid="stChatMessageContent"],
-    [data-testid="stChatMessage"]:has(div[data-testid="stChatMessageContent"][data-test-id="stChatMessageContent-assistant"]) [data-testid="stChatMessageContent"] {
-        background-color: #f5f5f5 !important;
-        border-radius: 10px !important;
-        padding: 10px !important;
-    }
-    html[data-theme="dark"] [data-testid="stChatMessage"]:has(div[data-testid="stChatMessageContent"][data-test-id="stChatMessageContent-assistant"]) [data-testid="stChatMessageContent"] {
-        background-color: #262730 !important;
-        border-radius: 10px !important;
-        padding: 10px !important;
-        color: #d1d1d1 !important;
-    }
-
-    .stMarkdown [data-testid="stMarkdownContainer"] {
-        white-space: pre-wrap !important;
-    }
-
-    .stExpander {
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        margin-top: 5px;
-        margin-bottom: 10px;
-    }
-    html[data-theme="dark"] .stExpander {
-        border: 1px solid #3d3d3d;
-    }
-
-    input[type="text"], textarea {
-        border-radius: 6px;
-        border: 1px solid #ced4da;
-    }
-    html[data-theme="dark"] input[type="text"], 
-    html[data-theme="dark"] textarea {
-        border: 1px solid #4d5154;
-    }
-    
-    .stButton button {
-        border-radius: 6px;
-        font-weight: 500;
-        transition: all 0.15s ease-in-out;
-    }
-    
-    .stButton button {
-        background-color: #4e7496;
-        color: white;
-    }
-    .stButton button:hover:enabled {
-        background-color: #3a5a78;
-        transform: translateY(-1px);
-    }
-    
-    button[kind="error"], button[data-testid="baseButton-secondary"] {
-        background-color: #6c757d;
-    }
-    
-    .stExpander [data-testid="stExpanderDetails"] {
-        padding: 10px;
-    }
-    
-    .thinking-content {
-        background-color: #f8f9fa;
-        border-left: 4px solid #007bff;
-        padding: 15px;
-        border-radius: 8px;
-        margin: 10px 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        line-height: 1.6;
-        max-height: 400px;
-        overflow-y: auto;
-        color: #333;
-    }
-    
-    html[data-theme="dark"] .thinking-content {
-        background-color: #2c2c2c;
-        border-left: 4px solid #4dabf7;
-        color: #e0e0e0;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+# Note: global styling is now handled by custom_css.py (injected near the top of this file).
