@@ -35,7 +35,7 @@ from streamlit.components.v1 import html
 import pandas as pd
 from kintaiyi.cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL, TokenQuotaExceededError
 from kintaiyi.game_theory import TaiyiGame, 主方策略列 as _gt_主方策略列, 客方策略列 as _gt_客方策略列
-from custom_css import get_custom_css, get_hero_header_html
+from custom_css import get_custom_css
 
 # --- i18n: Translation dictionaries ---
 TRANSLATIONS = {
@@ -993,44 +993,7 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
     }
 
 # 創建標籤頁
-st.markdown(get_hero_header_html(st.session_state.get("lang", "zh")), unsafe_allow_html=True)
 tabs = st.tabs([t('tab_chart'), t('tab_instructions'), t('tab_history'), t('tab_disaster'), t('tab_books'), t('tab_updates'), t('tab_guide'), t('tab_links')])
-
-# 當使用者切換到非主頁分頁時隱藏 hero 區塊；回到主頁時恢復顯示
-components.html("""
-<script>
-(function () {
-    var doc = window.parent.document;
-
-    function updateHero() {
-        var hero = doc.querySelector('.taiyi-hero');
-        if (!hero) return;
-        var tabs = doc.querySelectorAll('[data-baseweb="tab"]');
-        if (tabs.length === 0) return;
-        var isMainTab = tabs[0].getAttribute('aria-selected') === 'true';
-        hero.style.display = isMainTab ? '' : 'none';
-        hero.style.marginBottom = isMainTab ? '' : '0';
-    }
-
-    function init() {
-        var obs = new MutationObserver(updateHero);
-        obs.observe(doc.body, {
-            attributes: true,
-            subtree: true,
-            attributeFilter: ['aria-selected'],
-            childList: true
-        });
-        updateHero();
-    }
-
-    if (doc.readyState === 'loading') {
-        doc.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
-})();
-</script>
-""", height=0)
 
 # 太乙排盤
 with tabs[0]:
