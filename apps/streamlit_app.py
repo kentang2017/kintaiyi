@@ -319,6 +319,9 @@ def to(option):
     return OPTION_LABELS.get(lang, {}).get(option, option)
 
 # Cerebras Model Options
+# Maximum number of recent chat messages to include as context for the LLM
+_MAX_CHAT_HISTORY = 20
+
 CEREBRAS_MODEL_OPTIONS = [
     "qwen-3-235b-a22b-instruct-2507",
     "gpt-oss-120b",
@@ -1260,10 +1263,11 @@ if user_input := st.chat_input(t("chat_placeholder")):
             with st.spinner(t("chat_thinking")):
                 try:
                     client = CerebrasClient(api_key=cerebras_api_key)
-                    system_prompt = st.session_state.get("qwen_system_prompt", "你是一位太乙神數大師。")
+                    _default_prompt = t("chat_welcome")
+                    system_prompt = st.session_state.get("qwen_system_prompt", _default_prompt)
                     messages = [{"role": "system", "content": system_prompt}]
-                    # Include recent chat history for context (last 20 messages)
-                    messages.extend(st.session_state.chat_messages[-20:])
+                    # Include recent chat history for context
+                    messages.extend(st.session_state.chat_messages[-_MAX_CHAT_HISTORY:])
                     api_params = {
                         "messages": messages,
                         "model": st.session_state.get("cerebras_model_selector", CEREBRAS_MODEL_OPTIONS[0]),
