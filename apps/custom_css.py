@@ -448,6 +448,24 @@ div[data-baseweb="notification"] {
     margin: 0.35rem 0 0 0 !important;
 }
 
+/* ── FIXED BOTTOM CHAT ──────────────────────────────────────────────── */
+.fixed-chat-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    background: linear-gradient(180deg, rgba(15,15,15,0.0) 0%, var(--ink-black) 8%);
+    border-top: 1px solid var(--dim-gold);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* Ensure main content has bottom padding so it's not hidden behind the chat */
+.main .block-container {
+    padding-bottom: 340px !important;
+}
+
 /* ── RESPONSIVE ─────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
     .taiyi-hero-title {

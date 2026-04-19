@@ -134,6 +134,12 @@ TRANSLATIONS = {
         "ai_result": "AI分析結果",
         "list_label": "列表",
         "save_error": "錯誤儲存提示：{}",
+        # Chat
+        "chat_header": "💬 AI 對話",
+        "chat_placeholder": "輸入問題，與太乙AI大師對話...",
+        "chat_thinking": "AI 正在思考...",
+        "chat_welcome": "你好！我是太乙AI助手，可以為你解答關於太乙神數的問題。請輸入你的問題。",
+        "chat_clear": "🗑️ 清除對話",
         # 博弈論
         "game_theory_toggle": "🎯 啟用運籌博弈分析（Nash 均衡）",
         "game_theory_header": "⚔️ 運籌博弈分析（太乙古法 × Nash 均衡）",
@@ -250,6 +256,12 @@ TRANSLATIONS = {
         "ai_result": "AI Analysis Result",
         "list_label": "List",
         "save_error": "Error saving prompt: {}",
+        # Chat
+        "chat_header": "💬 AI Chat",
+        "chat_placeholder": "Ask a question to the Taiyi AI master...",
+        "chat_thinking": "AI is thinking...",
+        "chat_welcome": "Hello! I'm the Taiyi AI assistant. Feel free to ask me anything about Taiyi divination.",
+        "chat_clear": "🗑️ Clear Chat",
         # Game Theory
         "game_theory_toggle": "🎯 Enable Game Theory Analysis (Nash Equilibrium)",
         "game_theory_header": "⚔️ Operations Research & Game Theory Analysis",
@@ -1206,3 +1218,67 @@ with tabs[7]:
     st.markdown(get_file_content_as_string(BASE_URL_KINLIUREN, "docs/contact.md"), unsafe_allow_html=True)
 
 # Note: global styling is now handled by custom_css.py (injected near the top of this file).
+
+# ── Fixed Bottom LLM Chat Section ───────────────────────────────────────
+# Initialize chat history in session state
+if "chat_messages" not in st.session_state:
+    st.session_state.chat_messages = []
+
+st.markdown("---")
+st.markdown(f"### {t('chat_header')}")
+
+# Clear chat button
+if st.button(t("chat_clear"), key="clear_chat_btn"):
+    st.session_state.chat_messages = []
+    st.rerun()
+
+# Display welcome message if no messages yet
+if not st.session_state.chat_messages:
+    with st.chat_message("assistant"):
+        st.markdown(t("chat_welcome"))
+
+# Display chat history
+for msg in st.session_state.chat_messages:
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
+
+# Chat input (Streamlit auto-fixes this at the bottom)
+if user_input := st.chat_input(t("chat_placeholder")):
+    # Add user message to history
+    st.session_state.chat_messages.append({"role": "user", "content": user_input})
+    with st.chat_message("user"):
+        st.markdown(user_input)
+
+    # Generate AI response
+    with st.chat_message("assistant"):
+        cerebras_api_key = st.secrets.get("CEREBRAS_API_KEY") or os.getenv("CEREBRAS_API_KEY")
+        if not cerebras_api_key:
+            error_msg = t("ai_key_missing")
+            st.error(error_msg)
+            st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+        else:
+            with st.spinner(t("chat_thinking")):
+                try:
+                    client = CerebrasClient(api_key=cerebras_api_key)
+                    system_prompt = st.session_state.get("qwen_system_prompt", "你是一位太乙神數大師。")
+                    messages = [{"role": "system", "content": system_prompt}]
+                    # Include recent chat history for context (last 20 messages)
+                    messages.extend(st.session_state.chat_messages[-20:])
+                    api_params = {
+                        "messages": messages,
+                        "model": st.session_state.get("cerebras_model_selector", CEREBRAS_MODEL_OPTIONS[0]),
+                        "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
+                        "temperature": st.session_state.get("qwen_temperature", 0.7),
+                    }
+                    response = client.get_chat_completion(**api_params)
+                    reply = response.choices[0].message.content
+                    st.markdown(reply)
+                    st.session_state.chat_messages.append({"role": "assistant", "content": reply})
+                except TokenQuotaExceededError:
+                    error_msg = t("ai_quota_exceeded")
+                    st.error(error_msg)
+                    st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+                except Exception as e:
+                    error_msg = t("ai_error").format(str(e))
+                    st.error(error_msg)
+                    st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
