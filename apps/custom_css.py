@@ -30,6 +30,7 @@ def get_custom_css() -> str:
     --ink-gray:     #4A4A4A;
     --jade:         #8BA38B;
     --sidebar-bg:   #0D0D0D;
+    --chat-height:  340px;
     --font-serif:   'Noto Serif SC', 'STSong', 'SimSun', serif;
     --font-sans:    'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
 }
@@ -463,7 +464,7 @@ div[data-baseweb="notification"] {
 
 /* Ensure main content has bottom padding so it's not hidden behind the chat */
 .main .block-container {
-    padding-bottom: 340px !important;
+    padding-bottom: var(--chat-height) !important;
 }
 
 /* ── RESPONSIVE ─────────────────────────────────────────────────────── */
