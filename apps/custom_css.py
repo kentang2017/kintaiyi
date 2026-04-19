@@ -467,6 +467,109 @@ div[data-baseweb="notification"] {
     padding-bottom: var(--chat-height) !important;
 }
 
+/* ── CHANGELOG TIMELINE ─────────────────────────────────────────────── */
+.changelog-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0.5rem 0;
+}
+.changelog-header {
+    text-align: center;
+    margin-bottom: 1.8rem;
+}
+.changelog-header h2 {
+    font-family: var(--font-serif) !important;
+    font-size: 1.5rem !important;
+    color: var(--gold) !important;
+    letter-spacing: 0.25em;
+    margin-bottom: 0.3rem !important;
+}
+.changelog-header .changelog-ornament {
+    color: var(--dim-gold);
+    font-size: 0.8rem;
+    letter-spacing: 0.5em;
+}
+.changelog-timeline {
+    position: relative;
+    padding-left: 28px;
+}
+.changelog-timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--gold), var(--dim-gold) 50%, transparent);
+}
+.changelog-entry {
+    position: relative;
+    margin-bottom: 1.4rem;
+    padding: 0.9rem 1.1rem;
+    background-color: var(--card-bg);
+    border: 1px solid var(--dim-gold);
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.changelog-entry:hover {
+    border-color: var(--gold);
+    box-shadow: 0 3px 16px rgba(212,175,55,0.15);
+}
+.changelog-entry::before {
+    content: '';
+    position: absolute;
+    left: -24px;
+    top: 1.15rem;
+    width: 10px;
+    height: 10px;
+    background: var(--vermilion);
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    box-shadow: 0 0 6px rgba(200,16,46,0.45);
+}
+.changelog-date {
+    font-family: var(--font-serif) !important;
+    font-size: 0.95rem;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.changelog-date::before {
+    content: '📅';
+    font-size: 0.85rem;
+}
+.changelog-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.changelog-items li {
+    position: relative;
+    padding: 0.25rem 0 0.25rem 1.2rem;
+    color: var(--rice-white);
+    font-size: 0.88rem;
+    line-height: 1.65;
+}
+.changelog-items li::before {
+    content: '◆';
+    position: absolute;
+    left: 0;
+    color: var(--bronze);
+    font-size: 0.55rem;
+    top: 0.55rem;
+}
+.changelog-long-text {
+    color: var(--rice-white);
+    font-size: 0.88rem;
+    line-height: 1.65;
+    padding: 0.15rem 0;
+}
+
 /* ── RESPONSIVE ─────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
     .taiyi-hero-title {

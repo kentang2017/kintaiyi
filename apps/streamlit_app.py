@@ -36,6 +36,61 @@ import pandas as pd
 from kintaiyi.cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL, TokenQuotaExceededError
 from kintaiyi.game_theory import TaiyiGame, 主方策略列 as _gt_主方策略列, 客方策略列 as _gt_客方策略列
 from custom_css import get_custom_css
+import re
+
+
+def render_changelog_html(md_text: str) -> str:
+    """Parse update.md markdown and return styled HTML for the changelog timeline."""
+    lines = md_text.splitlines()
+    entries: list[dict] = []
+    current: dict | None = None
+
+    for line in lines:
+        stripped = line.strip()
+        # Match date headers like ### 【2026/04/19】
+        m = re.match(r'^###\s*【(.+?)】\s*$', stripped)
+        if m:
+            if current:
+                entries.append(current)
+            current = {"date": m.group(1), "items": []}
+            continue
+        if current is None:
+            continue
+        if stripped.startswith('-----') or stripped == '---' or stripped == '':
+            continue
+        # Bullet items (with or without leading "- ")
+        if stripped.startswith('- '):
+            current["items"].append(stripped[2:].strip())
+        elif re.match(r'^\d+\.\s', stripped):
+            current["items"].append(re.sub(r'^\d+\.\s*', '', stripped))
+        elif stripped:
+            current["items"].append(stripped)
+
+    if current:
+        entries.append(current)
+
+    # Build HTML
+    html_parts = [
+        '<div class="changelog-container">',
+        '  <div class="changelog-header">',
+        '    <h2>堅太乙排盤更新日誌</h2>',
+        '    <div class="changelog-ornament">✦ ❖ ✦</div>',
+        '  </div>',
+        '  <div class="changelog-timeline">',
+    ]
+    for entry in entries:
+        html_parts.append('    <div class="changelog-entry">')
+        html_parts.append(f'      <div class="changelog-date">{entry["date"]}</div>')
+        if entry["items"]:
+            html_parts.append('      <ul class="changelog-items">')
+            for item in entry["items"]:
+                html_parts.append(f'        <li>{item}</li>')
+            html_parts.append('      </ul>')
+        html_parts.append('    </div>')
+    html_parts.append('  </div>')
+    html_parts.append('</div>')
+    return '\n'.join(html_parts)
+
 
 # --- i18n: Translation dictionaries ---
 TRANSLATIONS = {
@@ -1210,7 +1265,8 @@ with tabs[4]:
 
 # 更新日誌
 with tabs[5]:
-    st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "docs/update.md"))
+    _update_md = get_file_content_as_string(BASE_URL_KINTAIYI, "docs/update.md")
+    st.markdown(render_changelog_html(_update_md), unsafe_allow_html=True)
 
 # 看盤要領
 with tabs[6]:
