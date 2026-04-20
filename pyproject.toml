@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kintaiyi"
-version = "0.2.3"
+version = "0.2.4"
 description = "Python 太乙神數排盤工具 - Taiyi Shenshu Divination Calculator"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -22,6 +22,8 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: Chinese (Traditional)",
     "Topic :: Scientific/Engineering",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
@@ -33,7 +35,7 @@ dependencies = [
     "pytz>=2025.2",
     "bidict>=0.22.1",
     "drawsvg>=2.3.0",
-    "numpy",
+    "numpy>=1.24.0",
     "scipy>=1.9.0",
     "kerykeion>=5.6.0",
     "astropy>=6.0.1",

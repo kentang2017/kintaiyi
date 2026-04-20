@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.4] - 2026-04-20
+
 ### Added
 - `LICENSE` file (MIT) at repository root.
 - `CHANGELOG.md` following Keep a Changelog format.
@@ -15,12 +17,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI workflow (`.github/workflows/ci.yml`) with ruff lint + pytest + coverage.
 - Table of Contents in `README.md`.
 - CI status badge in `README.md`.
+- PyPI publish workflow (`.github/workflows/publish.yml`) using Trusted Publisher (OIDC).
 
 ### Changed
 - Moved `app.py` → `apps/streamlit_app.py` and updated all internal paths.
 - Moved `history.pkl`, `example.json`, `system_prompts.json`, `icon.jpg`, `icon.png` → `assets/`.
 - Moved `kook/` → `assets/kook/`.
 - Updated `pyproject.toml`: license field now points to `LICENSE` file; expanded `package-data`.
+- Updated `pyproject.toml`: added `License :: OSI Approved :: MIT License` and `Natural Language :: Chinese (Traditional)` classifiers; pinned `numpy>=1.24.0`.
 - Updated `README.md` Streamlit launch command to use new `apps/` path.
 
 ### Removed
@@ -71,7 +75,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Seven Military Strategies (七大兵法), Eight Gates distribution, host-guest analysis.
 - Huangji Jingshi (皇極經世) yearly hexagram and Taiyi unified hexagram.
 
-[Unreleased]: https://github.com/kentang2017/kintaiyi/compare/v0.2.3...HEAD
+[Unreleased]: https://github.com/kentang2017/kintaiyi/compare/v0.2.4...HEAD
+[0.2.4]: https://github.com/kentang2017/kintaiyi/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/kentang2017/kintaiyi/compare/v0.2.0...v0.2.3
 [0.2.0]: https://github.com/kentang2017/kintaiyi/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/kentang2017/kintaiyi/releases/tag/v0.1.0
