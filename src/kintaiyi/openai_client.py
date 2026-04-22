@@ -57,10 +57,6 @@ class OpenAIClient:
         raise last_exc  # type: ignore[misc]
 
     def get_chat_completion(self, messages, model=DEFAULT_MODEL, **kwargs):
-        # Map max_tokens -> max_completion_tokens for newer OpenAI API
-        if "max_tokens" in kwargs:
-            kwargs.setdefault("max_completion_tokens", kwargs.pop("max_tokens"))
-
         return self._call_with_retry(
             self.client.chat.completions.create,
             messages=messages,
