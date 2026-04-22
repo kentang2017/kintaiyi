@@ -34,6 +34,7 @@ import streamlit.components.v1 as components
 from streamlit.components.v1 import html
 import pandas as pd
 from kintaiyi.cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL, TokenQuotaExceededError
+from kintaiyi.openai_client import OpenAIClient, DEFAULT_MODEL as DEFAULT_OPENAI_MODEL, TokenQuotaExceededError as OpenAITokenQuotaExceededError
 from kintaiyi.game_theory import TaiyiGame, 主方策略列 as _gt_主方策略列, 客方策略列 as _gt_客方策略列
 from custom_css import get_custom_css
 import re
@@ -110,7 +111,11 @@ TRANSLATIONS = {
         "rotation_label": "轉盤",
         "instant_btn": "即時盤",
         "ai_settings": "AI設置",
+        "ai_provider": "AI 服務商",
         "ai_model": "AI 模型",
+        "openai_api_key_label": "OpenAI API 密鑰",
+        "openai_api_key_placeholder": "輸入你的 OpenAI API 密鑰（sk-...）",
+        "openai_api_key_missing": "請輸入 OpenAI API 密鑰。",
         "select_prompt": "選擇系統提示",
         "select_prompt_help": "選擇用於AI模型的系統提示，指導其分析太乙排盤結果",
         "edit_prompt": "編輯系統提示",
@@ -185,6 +190,7 @@ TRANSLATIONS = {
         "ai_key_missing": "CEREBRAS_API_KEY 未設置，請在 .streamlit/secrets.toml 或環境變量中設置。",
         "ai_error": "調用AI時發生錯誤：{}",
         "ai_quota_exceeded": "⚠️ Cerebras API 每日 Token 配額已用盡，請稍後再試或降低「最大生成 Tokens」設定。",
+        "ai_openai_quota_exceeded": "⚠️ OpenAI API 配額已用盡或速率受限，請稍後再試。",
         "gen_error": "生成盤局時發生錯誤：{}",
         "ai_result": "AI分析結果",
         "list_label": "列表",
@@ -232,7 +238,11 @@ TRANSLATIONS = {
         "rotation_label": "Rotation",
         "instant_btn": "Instant Chart",
         "ai_settings": "AI Settings",
+        "ai_provider": "AI Provider",
         "ai_model": "AI Model",
+        "openai_api_key_label": "OpenAI API Key",
+        "openai_api_key_placeholder": "Enter your OpenAI API key (sk-...)",
+        "openai_api_key_missing": "Please enter your OpenAI API key.",
         "select_prompt": "Select System Prompt",
         "select_prompt_help": "Select a system prompt for the AI model to guide Taiyi chart analysis",
         "edit_prompt": "Edit System Prompt",
@@ -307,6 +317,7 @@ TRANSLATIONS = {
         "ai_key_missing": "CEREBRAS_API_KEY not set. Please set it in .streamlit/secrets.toml or environment variables.",
         "ai_error": "Error calling AI: {}",
         "ai_quota_exceeded": "⚠️ Cerebras API daily token quota exceeded. Please try again later or reduce the 'Max Generation Tokens' setting.",
+        "ai_openai_quota_exceeded": "⚠️ OpenAI API quota exceeded or rate-limited. Please try again later.",
         "gen_error": "Error generating chart: {}",
         "ai_result": "AI Analysis Result",
         "list_label": "List",
@@ -388,6 +399,21 @@ CEREBRAS_MODEL_DESCRIPTIONS = {
     "llama3.1-8b": "Cerebras: Light and fast for quick tasks.",
     "zai-glm-4.7": "Cerebras: GLM-based model for versatile analysis.",
     "qwen-3-235b-a22b-instruct-2507": "Cerebras: Fast inference, great for rapid iteration.",
+}
+
+OPENAI_MODEL_OPTIONS = [
+    "gpt-4o-mini",
+    "gpt-4o",
+    "gpt-4.1",
+    "gpt-4.1-mini",
+    "o4-mini",
+]
+OPENAI_MODEL_DESCRIPTIONS = {
+    "gpt-4o-mini": "OpenAI: Affordable and capable for most tasks.",
+    "gpt-4o": "OpenAI: Most capable multimodal model.",
+    "gpt-4.1": "OpenAI: Latest GPT-4.1 model.",
+    "gpt-4.1-mini": "OpenAI: Fast and cost-effective GPT-4.1 mini.",
+    "o4-mini": "OpenAI: Compact reasoning model.",
 }
 
 # System Prompt Management Functions
@@ -845,14 +871,37 @@ with st.sidebar:
     
     st.markdown("---")
     st.header(t("ai_settings"))
-    
-    selected_model = st.selectbox(
-        t("ai_model"),
-        options=CEREBRAS_MODEL_OPTIONS,
+
+    ai_provider = st.selectbox(
+        t("ai_provider"),
+        options=["Cerebras", "OpenAI"],
         index=0,
-        key="cerebras_model_selector",
-        help="\n".join(f"• {k}: {v}" for k, v in CEREBRAS_MODEL_DESCRIPTIONS.items())
+        key="ai_provider_selector",
     )
+
+    if ai_provider == "OpenAI":
+        openai_api_key_input = st.text_input(
+            t("openai_api_key_label"),
+            type="password",
+            placeholder=t("openai_api_key_placeholder"),
+            key="openai_api_key_input",
+        )
+        selected_model = st.selectbox(
+            t("ai_model"),
+            options=OPENAI_MODEL_OPTIONS,
+            index=0,
+            key="openai_model_selector",
+            help="\n".join(f"• {k}: {v}" for k, v in OPENAI_MODEL_DESCRIPTIONS.items())
+        )
+    else:
+        openai_api_key_input = ""
+        selected_model = st.selectbox(
+            t("ai_model"),
+            options=CEREBRAS_MODEL_OPTIONS,
+            index=0,
+            key="cerebras_model_selector",
+            help="\n".join(f"• {k}: {v}" for k, v in CEREBRAS_MODEL_DESCRIPTIONS.items())
+        )
     
     system_prompts_data = load_system_prompts()
     prompts_list = system_prompts_data.get("prompts", [])
@@ -1208,38 +1257,72 @@ with tabs[0]:
 
                 if st.button(t("ai_analyze_btn"), key="analyze_with_qwen"):
                     with st.spinner(t("ai_analyzing")):
-                        cerebras_api_key = st.secrets.get("CEREBRAS_API_KEY") or os.getenv("CEREBRAS_API_KEY")
-                        if not cerebras_api_key:
-                            st.error(t("ai_key_missing"))
+                        _provider = st.session_state.get("ai_provider_selector", "Cerebras")
+                        if _provider == "OpenAI":
+                            _openai_key = st.session_state.get("openai_api_key_input", "").strip()
+                            if not _openai_key:
+                                st.error(t("openai_api_key_missing"))
+                            else:
+                                try:
+                                    client = OpenAIClient(api_key=_openai_key)
+                                    taiyi_prompt = format_taiyi_results_for_prompt(results)
+                                    if st.session_state.get("game_theory_toggle_switch"):
+                                        try:
+                                            gt_summary = TaiyiGame(results["ttext"]).格局摘要文字()
+                                            taiyi_prompt = taiyi_prompt + "\n\n" + gt_summary
+                                        except Exception as gt_err:
+                                            st.warning(f"博弈摘要生成失敗（不影響AI分析）：{gt_err}")
+                                    messages = [
+                                        {"role": "system", "content": st.session_state.qwen_system_prompt},
+                                        {"role": "user", "content": taiyi_prompt}
+                                    ]
+                                    api_params = {
+                                        "messages": messages,
+                                        "model": selected_model,
+                                        "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
+                                        "temperature": st.session_state.get("qwen_temperature", 0.7)
+                                    }
+                                    response = client.get_chat_completion(**api_params)
+                                    raw_response = response.choices[0].message.content
+                                    with st.expander(t("ai_result"), expanded=True):
+                                        st.markdown(raw_response)
+                                except OpenAITokenQuotaExceededError:
+                                    st.error(t("ai_openai_quota_exceeded"))
+                                except Exception as e:
+                                    st.error(t("ai_error").format(str(e)))
                         else:
-                            try:
-                                client = CerebrasClient(api_key=cerebras_api_key)
-                                taiyi_prompt = format_taiyi_results_for_prompt(results)
-                                # 若博弈分析已啟用，附加博弈摘要到提示詞
-                                if st.session_state.get("game_theory_toggle_switch"):
-                                    try:
-                                        gt_summary = TaiyiGame(results["ttext"]).格局摘要文字()
-                                        taiyi_prompt = taiyi_prompt + "\n\n" + gt_summary
-                                    except Exception as gt_err:
-                                        st.warning(f"博弈摘要生成失敗（不影響AI分析）：{gt_err}")
-                                messages = [
-                                    {"role": "system", "content": st.session_state.qwen_system_prompt},
-                                    {"role": "user", "content": taiyi_prompt}
-                                ]
-                                api_params = {
-                                    "messages": messages,
-                                    "model": selected_model,
-                                    "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
-                                    "temperature": st.session_state.get("qwen_temperature", 0.7)
-                                }
-                                response = client.get_chat_completion(**api_params)
-                                raw_response = response.choices[0].message.content
-                                with st.expander(t("ai_result"), expanded=True):
-                                    st.markdown(raw_response)
-                            except TokenQuotaExceededError:
-                                st.error(t("ai_quota_exceeded"))
-                            except Exception as e:
-                                st.error(t("ai_error").format(str(e)))
+                            cerebras_api_key = st.secrets.get("CEREBRAS_API_KEY") or os.getenv("CEREBRAS_API_KEY")
+                            if not cerebras_api_key:
+                                st.error(t("ai_key_missing"))
+                            else:
+                                try:
+                                    client = CerebrasClient(api_key=cerebras_api_key)
+                                    taiyi_prompt = format_taiyi_results_for_prompt(results)
+                                    # 若博弈分析已啟用，附加博弈摘要到提示詞
+                                    if st.session_state.get("game_theory_toggle_switch"):
+                                        try:
+                                            gt_summary = TaiyiGame(results["ttext"]).格局摘要文字()
+                                            taiyi_prompt = taiyi_prompt + "\n\n" + gt_summary
+                                        except Exception as gt_err:
+                                            st.warning(f"博弈摘要生成失敗（不影響AI分析）：{gt_err}")
+                                    messages = [
+                                        {"role": "system", "content": st.session_state.qwen_system_prompt},
+                                        {"role": "user", "content": taiyi_prompt}
+                                    ]
+                                    api_params = {
+                                        "messages": messages,
+                                        "model": selected_model,
+                                        "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
+                                        "temperature": st.session_state.get("qwen_temperature", 0.7)
+                                    }
+                                    response = client.get_chat_completion(**api_params)
+                                    raw_response = response.choices[0].message.content
+                                    with st.expander(t("ai_result"), expanded=True):
+                                        st.markdown(raw_response)
+                                except TokenQuotaExceededError:
+                                    st.error(t("ai_quota_exceeded"))
+                                except Exception as e:
+                                    st.error(t("ai_error").format(str(e)))
         except Exception as e:
             st.error(t("gen_error").format(str(e)))
 
@@ -1310,35 +1393,69 @@ if user_input := st.chat_input(t("chat_placeholder")):
 
     # Generate AI response
     with st.chat_message("assistant"):
-        cerebras_api_key = st.secrets.get("CEREBRAS_API_KEY") or os.getenv("CEREBRAS_API_KEY")
-        if not cerebras_api_key:
-            error_msg = t("ai_key_missing")
-            st.error(error_msg)
-            st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+        _provider = st.session_state.get("ai_provider_selector", "Cerebras")
+        if _provider == "OpenAI":
+            _openai_key = st.session_state.get("openai_api_key_input", "").strip()
+            if not _openai_key:
+                error_msg = t("openai_api_key_missing")
+                st.error(error_msg)
+                st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+            else:
+                with st.spinner(t("chat_thinking")):
+                    try:
+                        client = OpenAIClient(api_key=_openai_key)
+                        _default_prompt = t("chat_welcome")
+                        system_prompt = st.session_state.get("qwen_system_prompt", _default_prompt)
+                        messages = [{"role": "system", "content": system_prompt}]
+                        messages.extend(st.session_state.chat_messages[-_MAX_CHAT_HISTORY:])
+                        api_params = {
+                            "messages": messages,
+                            "model": st.session_state.get("openai_model_selector", OPENAI_MODEL_OPTIONS[0]),
+                            "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
+                            "temperature": st.session_state.get("qwen_temperature", 0.7),
+                        }
+                        response = client.get_chat_completion(**api_params)
+                        reply = response.choices[0].message.content
+                        st.markdown(reply)
+                        st.session_state.chat_messages.append({"role": "assistant", "content": reply})
+                    except OpenAITokenQuotaExceededError:
+                        error_msg = t("ai_openai_quota_exceeded")
+                        st.error(error_msg)
+                        st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+                    except Exception as e:
+                        error_msg = t("ai_error").format(str(e))
+                        st.error(error_msg)
+                        st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
         else:
-            with st.spinner(t("chat_thinking")):
-                try:
-                    client = CerebrasClient(api_key=cerebras_api_key)
-                    _default_prompt = t("chat_welcome")
-                    system_prompt = st.session_state.get("qwen_system_prompt", _default_prompt)
-                    messages = [{"role": "system", "content": system_prompt}]
-                    # Include recent chat history for context
-                    messages.extend(st.session_state.chat_messages[-_MAX_CHAT_HISTORY:])
-                    api_params = {
-                        "messages": messages,
-                        "model": st.session_state.get("cerebras_model_selector", CEREBRAS_MODEL_OPTIONS[0]),
-                        "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
-                        "temperature": st.session_state.get("qwen_temperature", 0.7),
-                    }
-                    response = client.get_chat_completion(**api_params)
-                    reply = response.choices[0].message.content
-                    st.markdown(reply)
-                    st.session_state.chat_messages.append({"role": "assistant", "content": reply})
-                except TokenQuotaExceededError:
-                    error_msg = t("ai_quota_exceeded")
-                    st.error(error_msg)
-                    st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
-                except Exception as e:
-                    error_msg = t("ai_error").format(str(e))
-                    st.error(error_msg)
-                    st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+            cerebras_api_key = st.secrets.get("CEREBRAS_API_KEY") or os.getenv("CEREBRAS_API_KEY")
+            if not cerebras_api_key:
+                error_msg = t("ai_key_missing")
+                st.error(error_msg)
+                st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+            else:
+                with st.spinner(t("chat_thinking")):
+                    try:
+                        client = CerebrasClient(api_key=cerebras_api_key)
+                        _default_prompt = t("chat_welcome")
+                        system_prompt = st.session_state.get("qwen_system_prompt", _default_prompt)
+                        messages = [{"role": "system", "content": system_prompt}]
+                        # Include recent chat history for context
+                        messages.extend(st.session_state.chat_messages[-_MAX_CHAT_HISTORY:])
+                        api_params = {
+                            "messages": messages,
+                            "model": st.session_state.get("cerebras_model_selector", CEREBRAS_MODEL_OPTIONS[0]),
+                            "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
+                            "temperature": st.session_state.get("qwen_temperature", 0.7),
+                        }
+                        response = client.get_chat_completion(**api_params)
+                        reply = response.choices[0].message.content
+                        st.markdown(reply)
+                        st.session_state.chat_messages.append({"role": "assistant", "content": reply})
+                    except TokenQuotaExceededError:
+                        error_msg = t("ai_quota_exceeded")
+                        st.error(error_msg)
+                        st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+                    except Exception as e:
+                        error_msg = t("ai_error").format(str(e))
+                        st.error(error_msg)
+                        st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
