@@ -1804,12 +1804,12 @@ if st.button(t("chat_clear"), key="clear_chat_btn"):
 
 # Display welcome message if no messages yet
 if not st.session_state.chat_messages:
-    with st.chat_message("assistant"):
+    with st.chat_message("assistant", avatar="👲"):
         st.markdown(t("chat_welcome"))
 
 # Display chat history
 for msg in st.session_state.chat_messages:
-    with st.chat_message(msg["role"]):
+    with st.chat_message(msg["role"], avatar="👲" if msg["role"] == "assistant" else None):
         st.markdown(msg["content"])
 
 # Chat input (Streamlit auto-fixes this at the bottom)
@@ -1820,7 +1820,7 @@ if user_input := st.chat_input(t("chat_placeholder")):
         st.markdown(user_input)
 
     # Generate AI response
-    with st.chat_message("assistant"):
+    with st.chat_message("assistant", avatar="👲"):
         _provider = st.session_state.get("ai_provider_selector", "Cerebras")
         if _provider == "OpenAI":
             _openai_key = st.session_state.get("openai_api_key_input", "").strip()
