@@ -1049,7 +1049,6 @@ with st.sidebar:
             help="\n".join(f"• {k}: {v}" for k, v in QWEN_MODEL_DESCRIPTIONS.items())
         )
     elif ai_provider == "自定義":
-        openai_api_key_input = ""
         # ── Custom provider settings ──────────────────────────────
         if "custom_provider_models" not in st.session_state:
             st.session_state.custom_provider_models = []
