@@ -78,3 +78,8 @@ class OpenAICompatibleClient:
             model=model,
             **kwargs,
         )
+
+    def list_models(self) -> list[str]:
+        """Return a list of model IDs available at the configured endpoint."""
+        response = self._call_with_retry(self.client.models.list)
+        return sorted(m.id for m in response.data)

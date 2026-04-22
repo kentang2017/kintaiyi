@@ -114,6 +114,29 @@ TRANSLATIONS = {
         "ai_settings": "AI設置",
         "ai_provider": "AI 服務商",
         "ai_model": "AI 模型",
+        "custom_provider_section": "自定義服務商設置",
+        "custom_provider_name": "名稱",
+        "custom_provider_api_mode": "API 模式",
+        "custom_provider_api_mode_option": "OpenAI API 兼容",
+        "custom_provider_api_key": "API 密鑰",
+        "custom_provider_show_key": "顯示密鑰",
+        "custom_provider_check_btn": "檢查",
+        "custom_provider_api_host": "API 主機",
+        "custom_provider_api_path": "API 路徑",
+        "custom_provider_network_compat": "改善網絡兼容性",
+        "custom_provider_models_label": "模型",
+        "custom_provider_add_model": "+ 新增",
+        "custom_provider_reset_models": "↺ 重置",
+        "custom_provider_fetch_models": "⟳ 獲取",
+        "custom_provider_no_models": "沒有可用模型",
+        "custom_provider_new_model_placeholder": "輸入模型名稱",
+        "custom_provider_key_ok": "✅ 密鑰有效",
+        "custom_provider_key_fail": "❌ 密鑰無效：{}",
+        "custom_provider_fetch_ok": "✅ 已獲取 {} 個模型",
+        "custom_provider_fetch_fail": "❌ 獲取失敗：{}",
+        "custom_provider_api_key_missing": "請輸入自定義服務商 API 密鑰。",
+        "custom_provider_host_missing": "請輸入 API 主機。",
+        "ai_custom_quota_exceeded": "⚠️ 自定義服務商 API 配額已用盡或速率受限，請稍後再試。",
         "openai_api_key_label": "OpenAI API 密鑰",
         "openai_api_key_placeholder": "輸入你的 OpenAI API 密鑰（sk-...）",
         "openai_api_key_missing": "請輸入 OpenAI API 密鑰。",
@@ -253,6 +276,29 @@ TRANSLATIONS = {
         "ai_settings": "AI Settings",
         "ai_provider": "AI Provider",
         "ai_model": "AI Model",
+        "custom_provider_section": "Custom Provider Settings",
+        "custom_provider_name": "Name",
+        "custom_provider_api_mode": "API Mode",
+        "custom_provider_api_mode_option": "OpenAI API Compatible",
+        "custom_provider_api_key": "API Key",
+        "custom_provider_show_key": "Show Key",
+        "custom_provider_check_btn": "Check",
+        "custom_provider_api_host": "API Host",
+        "custom_provider_api_path": "API Path",
+        "custom_provider_network_compat": "Improve Network Compatibility",
+        "custom_provider_models_label": "Models",
+        "custom_provider_add_model": "+ Add",
+        "custom_provider_reset_models": "↺ Reset",
+        "custom_provider_fetch_models": "⟳ Fetch",
+        "custom_provider_no_models": "No available models",
+        "custom_provider_new_model_placeholder": "Enter model name",
+        "custom_provider_key_ok": "✅ Key is valid",
+        "custom_provider_key_fail": "❌ Key invalid: {}",
+        "custom_provider_fetch_ok": "✅ Fetched {} model(s)",
+        "custom_provider_fetch_fail": "❌ Fetch failed: {}",
+        "custom_provider_api_key_missing": "Please enter the custom provider API key.",
+        "custom_provider_host_missing": "Please enter the API host.",
+        "ai_custom_quota_exceeded": "⚠️ Custom provider API quota exceeded or rate-limited. Please try again later.",
         "openai_api_key_label": "OpenAI API Key",
         "openai_api_key_placeholder": "Enter your OpenAI API key (sk-...)",
         "openai_api_key_missing": "Please enter your OpenAI API key.",
@@ -938,7 +984,7 @@ with st.sidebar:
 
     ai_provider = st.selectbox(
         t("ai_provider"),
-        options=["Cerebras", "OpenAI", "xAI (Grok)", "DeepSeek", "Qwen"],
+        options=["Cerebras", "OpenAI", "xAI (Grok)", "DeepSeek", "Qwen", "自定義"],
         index=0,
         key="ai_provider_selector",
     )
@@ -1002,6 +1048,142 @@ with st.sidebar:
             key="qwen_model_selector",
             help="\n".join(f"• {k}: {v}" for k, v in QWEN_MODEL_DESCRIPTIONS.items())
         )
+    elif ai_provider == "自定義":
+        openai_api_key_input = ""
+        # ── Custom provider settings ──────────────────────────────
+        if "custom_provider_models" not in st.session_state:
+            st.session_state.custom_provider_models = []
+
+        st.text_input(
+            t("custom_provider_name"),
+            key="custom_provider_name",
+            placeholder="自定義服務商",
+        )
+        st.selectbox(
+            t("custom_provider_api_mode"),
+            options=[t("custom_provider_api_mode_option")],
+            key="custom_provider_api_mode",
+        )
+
+        # API key with show/hide and validate button
+        show_key = st.toggle(t("custom_provider_show_key"), key="custom_provider_show_key", value=False)
+        col_key, col_check = st.columns([3, 1])
+        with col_key:
+            st.text_input(
+                t("custom_provider_api_key"),
+                type="text" if show_key else "password",
+                key="custom_provider_api_key",
+            )
+        with col_check:
+            st.markdown("<br>", unsafe_allow_html=True)
+            check_key_btn = st.button(t("custom_provider_check_btn"), key="custom_provider_check_key_btn", use_container_width=True)
+
+        if check_key_btn:
+            _ckey = st.session_state.get("custom_provider_api_key", "").strip()
+            _chost = st.session_state.get("custom_provider_api_host", "").strip()
+            _cpath = st.session_state.get("custom_provider_api_path", "").strip()
+            _ccompat = st.session_state.get("custom_provider_network_compat", False)
+            if not _ckey:
+                st.error(t("custom_provider_api_key_missing"))
+            elif not _chost:
+                st.error(t("custom_provider_host_missing"))
+            else:
+                _proto = "http" if _ccompat else "https"
+                _base_url = f"{_proto}://{_chost}{_cpath}"
+                try:
+                    _check_client = OpenAICompatibleClient(api_key=_ckey, base_url=_base_url)
+                    _check_client.list_models()
+                    st.success(t("custom_provider_key_ok"))
+                except Exception as _check_err:
+                    st.error(t("custom_provider_key_fail").format(str(_check_err)))
+
+        # API host and path side by side
+        col_host, col_path = st.columns(2)
+        with col_host:
+            st.text_input(
+                t("custom_provider_api_host"),
+                key="custom_provider_api_host",
+                placeholder="api.openai.com",
+            )
+        with col_path:
+            st.text_input(
+                t("custom_provider_api_path"),
+                key="custom_provider_api_path",
+                placeholder="/v1",
+            )
+
+        # Network compatibility toggle
+        st.toggle(
+            t("custom_provider_network_compat"),
+            key="custom_provider_network_compat",
+            value=False,
+        )
+
+        # Models section
+        st.markdown(f"**{t('custom_provider_models_label')}**")
+        col_add_btn, col_reset_btn, col_fetch_btn = st.columns(3)
+        with col_add_btn:
+            open_add_model = st.button(t("custom_provider_add_model"), key="custom_provider_open_add_model", use_container_width=True)
+        with col_reset_btn:
+            reset_models_btn = st.button(t("custom_provider_reset_models"), key="custom_provider_reset_models_btn", use_container_width=True)
+        with col_fetch_btn:
+            fetch_models_btn = st.button(t("custom_provider_fetch_models"), key="custom_provider_fetch_models_btn", use_container_width=True)
+
+        if reset_models_btn:
+            st.session_state.custom_provider_models = []
+            st.rerun()
+
+        if fetch_models_btn:
+            _ckey = st.session_state.get("custom_provider_api_key", "").strip()
+            _chost = st.session_state.get("custom_provider_api_host", "").strip()
+            _cpath = st.session_state.get("custom_provider_api_path", "").strip()
+            _ccompat = st.session_state.get("custom_provider_network_compat", False)
+            if not _ckey:
+                st.error(t("custom_provider_api_key_missing"))
+            elif not _chost:
+                st.error(t("custom_provider_host_missing"))
+            else:
+                _proto = "http" if _ccompat else "https"
+                _base_url = f"{_proto}://{_chost}{_cpath}"
+                try:
+                    _fetch_client = OpenAICompatibleClient(api_key=_ckey, base_url=_base_url)
+                    _fetched = _fetch_client.list_models()
+                    st.session_state.custom_provider_models = _fetched
+                    st.success(t("custom_provider_fetch_ok").format(len(_fetched)))
+                    st.rerun()
+                except Exception as _fetch_err:
+                    st.error(t("custom_provider_fetch_fail").format(str(_fetch_err)))
+
+        if open_add_model:
+            st.session_state.custom_provider_add_model_open = True
+
+        if st.session_state.get("custom_provider_add_model_open"):
+            new_model_name = st.text_input(
+                t("custom_provider_models_label"),
+                key="custom_provider_new_model_input",
+                placeholder=t("custom_provider_new_model_placeholder"),
+                label_visibility="collapsed",
+            )
+            if st.button("✅", key="custom_provider_confirm_add_model"):
+                if new_model_name.strip():
+                    models = st.session_state.custom_provider_models
+                    if new_model_name.strip() not in models:
+                        models.append(new_model_name.strip())
+                        st.session_state.custom_provider_models = models
+                    st.session_state.custom_provider_add_model_open = False
+                    st.rerun()
+
+        _custom_models = st.session_state.get("custom_provider_models", [])
+        if _custom_models:
+            selected_model = st.selectbox(
+                t("ai_model"),
+                options=_custom_models,
+                index=0,
+                key="custom_model_selector",
+            )
+        else:
+            selected_model = ""
+            st.info(t("custom_provider_no_models"))
     else:
         openai_api_key_input = ""
         selected_model = st.selectbox(
@@ -1495,6 +1677,48 @@ with tabs[0]:
                                     st.error(t("ai_qwen_quota_exceeded"))
                                 except Exception as e:
                                     st.error(t("ai_error").format(str(e)))
+                        elif _provider == "自定義":
+                            _ckey = st.session_state.get("custom_provider_api_key", "").strip()
+                            _chost = st.session_state.get("custom_provider_api_host", "").strip()
+                            _cpath = st.session_state.get("custom_provider_api_path", "").strip()
+                            _ccompat = st.session_state.get("custom_provider_network_compat", False)
+                            _cmodel = st.session_state.get("custom_model_selector", selected_model)
+                            if not _ckey:
+                                st.error(t("custom_provider_api_key_missing"))
+                            elif not _chost:
+                                st.error(t("custom_provider_host_missing"))
+                            elif not _cmodel:
+                                st.error(t("custom_provider_no_models"))
+                            else:
+                                _proto = "http" if _ccompat else "https"
+                                _base_url = f"{_proto}://{_chost}{_cpath}"
+                                try:
+                                    client = OpenAICompatibleClient(api_key=_ckey, base_url=_base_url)
+                                    taiyi_prompt = format_taiyi_results_for_prompt(results)
+                                    if st.session_state.get("game_theory_toggle_switch"):
+                                        try:
+                                            gt_summary = TaiyiGame(results["ttext"]).格局摘要文字()
+                                            taiyi_prompt = taiyi_prompt + "\n\n" + gt_summary
+                                        except Exception as gt_err:
+                                            st.warning(f"博弈摘要生成失敗（不影響AI分析）：{gt_err}")
+                                    messages = [
+                                        {"role": "system", "content": st.session_state.qwen_system_prompt},
+                                        {"role": "user", "content": taiyi_prompt}
+                                    ]
+                                    api_params = {
+                                        "messages": messages,
+                                        "model": _cmodel,
+                                        "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
+                                        "temperature": st.session_state.get("qwen_temperature", 0.7)
+                                    }
+                                    response = client.get_chat_completion(**api_params)
+                                    raw_response = response.choices[0].message.content
+                                    with st.expander(t("ai_result"), expanded=True):
+                                        st.markdown(raw_response)
+                                except CompatibleTokenQuotaExceededError:
+                                    st.error(t("ai_custom_quota_exceeded"))
+                                except Exception as e:
+                                    st.error(t("ai_error").format(str(e)))
                         else:
                             cerebras_api_key = st.secrets.get("CEREBRAS_API_KEY") or os.getenv("CEREBRAS_API_KEY")
                             if not cerebras_api_key:
@@ -1721,6 +1945,52 @@ if user_input := st.chat_input(t("chat_placeholder")):
                         st.session_state.chat_messages.append({"role": "assistant", "content": reply})
                     except CompatibleTokenQuotaExceededError:
                         error_msg = t("ai_qwen_quota_exceeded")
+                        st.error(error_msg)
+                        st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+                    except Exception as e:
+                        error_msg = t("ai_error").format(str(e))
+                        st.error(error_msg)
+                        st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+        elif _provider == "自定義":
+            _ckey = st.session_state.get("custom_provider_api_key", "").strip()
+            _chost = st.session_state.get("custom_provider_api_host", "").strip()
+            _cpath = st.session_state.get("custom_provider_api_path", "").strip()
+            _ccompat = st.session_state.get("custom_provider_network_compat", False)
+            _cmodel = st.session_state.get("custom_model_selector", "")
+            if not _ckey:
+                error_msg = t("custom_provider_api_key_missing")
+                st.error(error_msg)
+                st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+            elif not _chost:
+                error_msg = t("custom_provider_host_missing")
+                st.error(error_msg)
+                st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+            elif not _cmodel:
+                error_msg = t("custom_provider_no_models")
+                st.error(error_msg)
+                st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+            else:
+                _proto = "http" if _ccompat else "https"
+                _base_url = f"{_proto}://{_chost}{_cpath}"
+                with st.spinner(t("chat_thinking")):
+                    try:
+                        client = OpenAICompatibleClient(api_key=_ckey, base_url=_base_url)
+                        _default_prompt = t("chat_welcome")
+                        system_prompt = st.session_state.get("qwen_system_prompt", _default_prompt)
+                        messages = [{"role": "system", "content": system_prompt}]
+                        messages.extend(st.session_state.chat_messages[-_MAX_CHAT_HISTORY:])
+                        api_params = {
+                            "messages": messages,
+                            "model": _cmodel,
+                            "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
+                            "temperature": st.session_state.get("qwen_temperature", 0.7),
+                        }
+                        response = client.get_chat_completion(**api_params)
+                        reply = response.choices[0].message.content
+                        st.markdown(reply)
+                        st.session_state.chat_messages.append({"role": "assistant", "content": reply})
+                    except CompatibleTokenQuotaExceededError:
+                        error_msg = t("ai_custom_quota_exceeded")
                         st.error(error_msg)
                         st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
                     except Exception as e:
