@@ -1181,8 +1181,11 @@ with st.sidebar:
                 key="custom_model_selector",
             )
         else:
-            selected_model = ""
-            st.info(t("custom_provider_no_models"))
+            selected_model = st.text_input(
+                t("ai_model"),
+                key="custom_model_direct_input",
+                placeholder=t("custom_provider_new_model_placeholder"),
+            )
     else:
         openai_api_key_input = ""
         selected_model = st.selectbox(
@@ -1681,7 +1684,7 @@ with tabs[0]:
                             _chost = st.session_state.get("custom_provider_api_host", "").strip()
                             _cpath = st.session_state.get("custom_provider_api_path", "").strip()
                             _ccompat = st.session_state.get("custom_provider_network_compat", False)
-                            _cmodel = st.session_state.get("custom_model_selector", selected_model)
+                            _cmodel = st.session_state.get("custom_model_selector") or st.session_state.get("custom_model_direct_input", "") or selected_model
                             if not _ckey:
                                 st.error(t("custom_provider_api_key_missing"))
                             elif not _chost:
@@ -1955,7 +1958,7 @@ if user_input := st.chat_input(t("chat_placeholder")):
             _chost = st.session_state.get("custom_provider_api_host", "").strip()
             _cpath = st.session_state.get("custom_provider_api_path", "").strip()
             _ccompat = st.session_state.get("custom_provider_network_compat", False)
-            _cmodel = st.session_state.get("custom_model_selector", "")
+            _cmodel = st.session_state.get("custom_model_selector") or st.session_state.get("custom_model_direct_input", "")
             if not _ckey:
                 error_msg = t("custom_provider_api_key_missing")
                 st.error(error_msg)
