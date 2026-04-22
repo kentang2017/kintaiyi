@@ -35,6 +35,7 @@ from streamlit.components.v1 import html
 import pandas as pd
 from kintaiyi.cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL, TokenQuotaExceededError
 from kintaiyi.openai_client import OpenAIClient, DEFAULT_MODEL as DEFAULT_OPENAI_MODEL, TokenQuotaExceededError as OpenAITokenQuotaExceededError
+from kintaiyi.openai_compatible_client import OpenAICompatibleClient, TokenQuotaExceededError as CompatibleTokenQuotaExceededError
 from kintaiyi.game_theory import TaiyiGame, 主方策略列 as _gt_主方策略列, 客方策略列 as _gt_客方策略列
 from custom_css import get_custom_css
 import re
@@ -116,6 +117,15 @@ TRANSLATIONS = {
         "openai_api_key_label": "OpenAI API 密鑰",
         "openai_api_key_placeholder": "輸入你的 OpenAI API 密鑰（sk-...）",
         "openai_api_key_missing": "請輸入 OpenAI API 密鑰。",
+        "xai_api_key_label": "xAI API 密鑰",
+        "xai_api_key_placeholder": "輸入你的 xAI API 密鑰（xai-...）",
+        "xai_api_key_missing": "請輸入 xAI API 密鑰。",
+        "deepseek_api_key_label": "DeepSeek API 密鑰",
+        "deepseek_api_key_placeholder": "輸入你的 DeepSeek API 密鑰（sk-...）",
+        "deepseek_api_key_missing": "請輸入 DeepSeek API 密鑰。",
+        "qwen_api_key_label": "Qwen API 密鑰",
+        "qwen_api_key_placeholder": "輸入你的通義千問 API 密鑰",
+        "qwen_api_key_missing": "請輸入 Qwen API 密鑰。",
         "select_prompt": "選擇系統提示",
         "select_prompt_help": "選擇用於AI模型的系統提示，指導其分析太乙排盤結果",
         "edit_prompt": "編輯系統提示",
@@ -191,6 +201,9 @@ TRANSLATIONS = {
         "ai_error": "調用AI時發生錯誤：{}",
         "ai_quota_exceeded": "⚠️ Cerebras API 每日 Token 配額已用盡，請稍後再試或降低「最大生成 Tokens」設定。",
         "ai_openai_quota_exceeded": "⚠️ OpenAI API 配額已用盡或速率受限，請稍後再試。",
+        "ai_xai_quota_exceeded": "⚠️ xAI API 配額已用盡或速率受限，請稍後再試。",
+        "ai_deepseek_quota_exceeded": "⚠️ DeepSeek API 配額已用盡或速率受限，請稍後再試。",
+        "ai_qwen_quota_exceeded": "⚠️ Qwen API 配額已用盡或速率受限，請稍後再試。",
         "gen_error": "生成盤局時發生錯誤：{}",
         "ai_result": "AI分析結果",
         "list_label": "列表",
@@ -243,6 +256,15 @@ TRANSLATIONS = {
         "openai_api_key_label": "OpenAI API Key",
         "openai_api_key_placeholder": "Enter your OpenAI API key (sk-...)",
         "openai_api_key_missing": "Please enter your OpenAI API key.",
+        "xai_api_key_label": "xAI API Key",
+        "xai_api_key_placeholder": "Enter your xAI API key (xai-...)",
+        "xai_api_key_missing": "Please enter your xAI API key.",
+        "deepseek_api_key_label": "DeepSeek API Key",
+        "deepseek_api_key_placeholder": "Enter your DeepSeek API key (sk-...)",
+        "deepseek_api_key_missing": "Please enter your DeepSeek API key.",
+        "qwen_api_key_label": "Qwen API Key",
+        "qwen_api_key_placeholder": "Enter your Qwen (DashScope) API key",
+        "qwen_api_key_missing": "Please enter your Qwen API key.",
         "select_prompt": "Select System Prompt",
         "select_prompt_help": "Select a system prompt for the AI model to guide Taiyi chart analysis",
         "edit_prompt": "Edit System Prompt",
@@ -318,6 +340,9 @@ TRANSLATIONS = {
         "ai_error": "Error calling AI: {}",
         "ai_quota_exceeded": "⚠️ Cerebras API daily token quota exceeded. Please try again later or reduce the 'Max Generation Tokens' setting.",
         "ai_openai_quota_exceeded": "⚠️ OpenAI API quota exceeded or rate-limited. Please try again later.",
+        "ai_xai_quota_exceeded": "⚠️ xAI API quota exceeded or rate-limited. Please try again later.",
+        "ai_deepseek_quota_exceeded": "⚠️ DeepSeek API quota exceeded or rate-limited. Please try again later.",
+        "ai_qwen_quota_exceeded": "⚠️ Qwen API quota exceeded or rate-limited. Please try again later.",
         "gen_error": "Error generating chart: {}",
         "ai_result": "AI Analysis Result",
         "list_label": "List",
@@ -414,6 +439,45 @@ OPENAI_MODEL_DESCRIPTIONS = {
     "gpt-4.1": "OpenAI: Latest GPT-4.1 model.",
     "gpt-4.1-mini": "OpenAI: Fast and cost-effective GPT-4.1 mini.",
     "o4-mini": "OpenAI: Compact reasoning model.",
+}
+
+# xAI (Grok) Model Options
+XAI_BASE_URL = "https://api.x.ai/v1"
+XAI_MODEL_OPTIONS = [
+    "grok-3",
+    "grok-3-mini",
+    "grok-2-1212",
+]
+XAI_MODEL_DESCRIPTIONS = {
+    "grok-3": "xAI: Most capable Grok model for complex reasoning.",
+    "grok-3-mini": "xAI: Fast and cost-effective Grok model.",
+    "grok-2-1212": "xAI: Previous-generation Grok model.",
+}
+
+# DeepSeek Model Options
+DEEPSEEK_BASE_URL = "https://api.deepseek.com"
+DEEPSEEK_MODEL_OPTIONS = [
+    "deepseek-chat",
+    "deepseek-reasoner",
+]
+DEEPSEEK_MODEL_DESCRIPTIONS = {
+    "deepseek-chat": "DeepSeek: V3 model, fast and capable for most tasks.",
+    "deepseek-reasoner": "DeepSeek: R1 reasoning model for complex analysis.",
+}
+
+# Qwen (Alibaba DashScope) Model Options
+QWEN_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+QWEN_MODEL_OPTIONS = [
+    "qwen-max",
+    "qwen-plus",
+    "qwen-turbo",
+    "qwen-long",
+]
+QWEN_MODEL_DESCRIPTIONS = {
+    "qwen-max": "Qwen: Most capable Qwen model for complex tasks.",
+    "qwen-plus": "Qwen: Balanced performance and cost.",
+    "qwen-turbo": "Qwen: Fast and lightweight.",
+    "qwen-long": "Qwen: Optimized for long-context tasks.",
 }
 
 # System Prompt Management Functions
@@ -874,7 +938,7 @@ with st.sidebar:
 
     ai_provider = st.selectbox(
         t("ai_provider"),
-        options=["Cerebras", "OpenAI"],
+        options=["Cerebras", "OpenAI", "xAI (Grok)", "DeepSeek", "Qwen"],
         index=0,
         key="ai_provider_selector",
     )
@@ -892,6 +956,51 @@ with st.sidebar:
             index=0,
             key="openai_model_selector",
             help="\n".join(f"• {k}: {v}" for k, v in OPENAI_MODEL_DESCRIPTIONS.items())
+        )
+    elif ai_provider == "xAI (Grok)":
+        openai_api_key_input = ""
+        st.text_input(
+            t("xai_api_key_label"),
+            type="password",
+            placeholder=t("xai_api_key_placeholder"),
+            key="xai_api_key_input",
+        )
+        selected_model = st.selectbox(
+            t("ai_model"),
+            options=XAI_MODEL_OPTIONS,
+            index=0,
+            key="xai_model_selector",
+            help="\n".join(f"• {k}: {v}" for k, v in XAI_MODEL_DESCRIPTIONS.items())
+        )
+    elif ai_provider == "DeepSeek":
+        openai_api_key_input = ""
+        st.text_input(
+            t("deepseek_api_key_label"),
+            type="password",
+            placeholder=t("deepseek_api_key_placeholder"),
+            key="deepseek_api_key_input",
+        )
+        selected_model = st.selectbox(
+            t("ai_model"),
+            options=DEEPSEEK_MODEL_OPTIONS,
+            index=0,
+            key="deepseek_model_selector",
+            help="\n".join(f"• {k}: {v}" for k, v in DEEPSEEK_MODEL_DESCRIPTIONS.items())
+        )
+    elif ai_provider == "Qwen":
+        openai_api_key_input = ""
+        st.text_input(
+            t("qwen_api_key_label"),
+            type="password",
+            placeholder=t("qwen_api_key_placeholder"),
+            key="qwen_api_key_input",
+        )
+        selected_model = st.selectbox(
+            t("ai_model"),
+            options=QWEN_MODEL_OPTIONS,
+            index=0,
+            key="qwen_model_selector",
+            help="\n".join(f"• {k}: {v}" for k, v in QWEN_MODEL_DESCRIPTIONS.items())
         )
     else:
         openai_api_key_input = ""
@@ -1290,6 +1399,102 @@ with tabs[0]:
                                     st.error(t("ai_openai_quota_exceeded"))
                                 except Exception as e:
                                     st.error(t("ai_error").format(str(e)))
+                        elif _provider == "xAI (Grok)":
+                            _xai_key = st.session_state.get("xai_api_key_input", "").strip()
+                            if not _xai_key:
+                                st.error(t("xai_api_key_missing"))
+                            else:
+                                try:
+                                    client = OpenAICompatibleClient(api_key=_xai_key, base_url=XAI_BASE_URL)
+                                    taiyi_prompt = format_taiyi_results_for_prompt(results)
+                                    if st.session_state.get("game_theory_toggle_switch"):
+                                        try:
+                                            gt_summary = TaiyiGame(results["ttext"]).格局摘要文字()
+                                            taiyi_prompt = taiyi_prompt + "\n\n" + gt_summary
+                                        except Exception as gt_err:
+                                            st.warning(f"博弈摘要生成失敗（不影響AI分析）：{gt_err}")
+                                    messages = [
+                                        {"role": "system", "content": st.session_state.qwen_system_prompt},
+                                        {"role": "user", "content": taiyi_prompt}
+                                    ]
+                                    api_params = {
+                                        "messages": messages,
+                                        "model": selected_model,
+                                        "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
+                                        "temperature": st.session_state.get("qwen_temperature", 0.7)
+                                    }
+                                    response = client.get_chat_completion(**api_params)
+                                    raw_response = response.choices[0].message.content
+                                    with st.expander(t("ai_result"), expanded=True):
+                                        st.markdown(raw_response)
+                                except CompatibleTokenQuotaExceededError:
+                                    st.error(t("ai_xai_quota_exceeded"))
+                                except Exception as e:
+                                    st.error(t("ai_error").format(str(e)))
+                        elif _provider == "DeepSeek":
+                            _deepseek_key = st.session_state.get("deepseek_api_key_input", "").strip()
+                            if not _deepseek_key:
+                                st.error(t("deepseek_api_key_missing"))
+                            else:
+                                try:
+                                    client = OpenAICompatibleClient(api_key=_deepseek_key, base_url=DEEPSEEK_BASE_URL)
+                                    taiyi_prompt = format_taiyi_results_for_prompt(results)
+                                    if st.session_state.get("game_theory_toggle_switch"):
+                                        try:
+                                            gt_summary = TaiyiGame(results["ttext"]).格局摘要文字()
+                                            taiyi_prompt = taiyi_prompt + "\n\n" + gt_summary
+                                        except Exception as gt_err:
+                                            st.warning(f"博弈摘要生成失敗（不影響AI分析）：{gt_err}")
+                                    messages = [
+                                        {"role": "system", "content": st.session_state.qwen_system_prompt},
+                                        {"role": "user", "content": taiyi_prompt}
+                                    ]
+                                    api_params = {
+                                        "messages": messages,
+                                        "model": selected_model,
+                                        "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
+                                        "temperature": st.session_state.get("qwen_temperature", 0.7)
+                                    }
+                                    response = client.get_chat_completion(**api_params)
+                                    raw_response = response.choices[0].message.content
+                                    with st.expander(t("ai_result"), expanded=True):
+                                        st.markdown(raw_response)
+                                except CompatibleTokenQuotaExceededError:
+                                    st.error(t("ai_deepseek_quota_exceeded"))
+                                except Exception as e:
+                                    st.error(t("ai_error").format(str(e)))
+                        elif _provider == "Qwen":
+                            _qwen_key = st.session_state.get("qwen_api_key_input", "").strip()
+                            if not _qwen_key:
+                                st.error(t("qwen_api_key_missing"))
+                            else:
+                                try:
+                                    client = OpenAICompatibleClient(api_key=_qwen_key, base_url=QWEN_BASE_URL)
+                                    taiyi_prompt = format_taiyi_results_for_prompt(results)
+                                    if st.session_state.get("game_theory_toggle_switch"):
+                                        try:
+                                            gt_summary = TaiyiGame(results["ttext"]).格局摘要文字()
+                                            taiyi_prompt = taiyi_prompt + "\n\n" + gt_summary
+                                        except Exception as gt_err:
+                                            st.warning(f"博弈摘要生成失敗（不影響AI分析）：{gt_err}")
+                                    messages = [
+                                        {"role": "system", "content": st.session_state.qwen_system_prompt},
+                                        {"role": "user", "content": taiyi_prompt}
+                                    ]
+                                    api_params = {
+                                        "messages": messages,
+                                        "model": selected_model,
+                                        "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
+                                        "temperature": st.session_state.get("qwen_temperature", 0.7)
+                                    }
+                                    response = client.get_chat_completion(**api_params)
+                                    raw_response = response.choices[0].message.content
+                                    with st.expander(t("ai_result"), expanded=True):
+                                        st.markdown(raw_response)
+                                except CompatibleTokenQuotaExceededError:
+                                    st.error(t("ai_qwen_quota_exceeded"))
+                                except Exception as e:
+                                    st.error(t("ai_error").format(str(e)))
                         else:
                             cerebras_api_key = st.secrets.get("CEREBRAS_API_KEY") or os.getenv("CEREBRAS_API_KEY")
                             if not cerebras_api_key:
@@ -1420,6 +1625,102 @@ if user_input := st.chat_input(t("chat_placeholder")):
                         st.session_state.chat_messages.append({"role": "assistant", "content": reply})
                     except OpenAITokenQuotaExceededError:
                         error_msg = t("ai_openai_quota_exceeded")
+                        st.error(error_msg)
+                        st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+                    except Exception as e:
+                        error_msg = t("ai_error").format(str(e))
+                        st.error(error_msg)
+                        st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+        elif _provider == "xAI (Grok)":
+            _xai_key = st.session_state.get("xai_api_key_input", "").strip()
+            if not _xai_key:
+                error_msg = t("xai_api_key_missing")
+                st.error(error_msg)
+                st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+            else:
+                with st.spinner(t("chat_thinking")):
+                    try:
+                        client = OpenAICompatibleClient(api_key=_xai_key, base_url=XAI_BASE_URL)
+                        _default_prompt = t("chat_welcome")
+                        system_prompt = st.session_state.get("qwen_system_prompt", _default_prompt)
+                        messages = [{"role": "system", "content": system_prompt}]
+                        messages.extend(st.session_state.chat_messages[-_MAX_CHAT_HISTORY:])
+                        api_params = {
+                            "messages": messages,
+                            "model": st.session_state.get("xai_model_selector", XAI_MODEL_OPTIONS[0]),
+                            "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
+                            "temperature": st.session_state.get("qwen_temperature", 0.7),
+                        }
+                        response = client.get_chat_completion(**api_params)
+                        reply = response.choices[0].message.content
+                        st.markdown(reply)
+                        st.session_state.chat_messages.append({"role": "assistant", "content": reply})
+                    except CompatibleTokenQuotaExceededError:
+                        error_msg = t("ai_xai_quota_exceeded")
+                        st.error(error_msg)
+                        st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+                    except Exception as e:
+                        error_msg = t("ai_error").format(str(e))
+                        st.error(error_msg)
+                        st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+        elif _provider == "DeepSeek":
+            _deepseek_key = st.session_state.get("deepseek_api_key_input", "").strip()
+            if not _deepseek_key:
+                error_msg = t("deepseek_api_key_missing")
+                st.error(error_msg)
+                st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+            else:
+                with st.spinner(t("chat_thinking")):
+                    try:
+                        client = OpenAICompatibleClient(api_key=_deepseek_key, base_url=DEEPSEEK_BASE_URL)
+                        _default_prompt = t("chat_welcome")
+                        system_prompt = st.session_state.get("qwen_system_prompt", _default_prompt)
+                        messages = [{"role": "system", "content": system_prompt}]
+                        messages.extend(st.session_state.chat_messages[-_MAX_CHAT_HISTORY:])
+                        api_params = {
+                            "messages": messages,
+                            "model": st.session_state.get("deepseek_model_selector", DEEPSEEK_MODEL_OPTIONS[0]),
+                            "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
+                            "temperature": st.session_state.get("qwen_temperature", 0.7),
+                        }
+                        response = client.get_chat_completion(**api_params)
+                        reply = response.choices[0].message.content
+                        st.markdown(reply)
+                        st.session_state.chat_messages.append({"role": "assistant", "content": reply})
+                    except CompatibleTokenQuotaExceededError:
+                        error_msg = t("ai_deepseek_quota_exceeded")
+                        st.error(error_msg)
+                        st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+                    except Exception as e:
+                        error_msg = t("ai_error").format(str(e))
+                        st.error(error_msg)
+                        st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+        elif _provider == "Qwen":
+            _qwen_key = st.session_state.get("qwen_api_key_input", "").strip()
+            if not _qwen_key:
+                error_msg = t("qwen_api_key_missing")
+                st.error(error_msg)
+                st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
+            else:
+                with st.spinner(t("chat_thinking")):
+                    try:
+                        client = OpenAICompatibleClient(api_key=_qwen_key, base_url=QWEN_BASE_URL)
+                        _default_prompt = t("chat_welcome")
+                        system_prompt = st.session_state.get("qwen_system_prompt", _default_prompt)
+                        messages = [{"role": "system", "content": system_prompt}]
+                        messages.extend(st.session_state.chat_messages[-_MAX_CHAT_HISTORY:])
+                        api_params = {
+                            "messages": messages,
+                            "model": st.session_state.get("qwen_model_selector", QWEN_MODEL_OPTIONS[0]),
+                            "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
+                            "temperature": st.session_state.get("qwen_temperature", 0.7),
+                        }
+                        response = client.get_chat_completion(**api_params)
+                        reply = response.choices[0].message.content
+                        st.markdown(reply)
+                        st.session_state.chat_messages.append({"role": "assistant", "content": reply})
+                    except CompatibleTokenQuotaExceededError:
+                        error_msg = t("ai_qwen_quota_exceeded")
                         st.error(error_msg)
                         st.session_state.chat_messages.append({"role": "assistant", "content": error_msg})
                     except Exception as e:
