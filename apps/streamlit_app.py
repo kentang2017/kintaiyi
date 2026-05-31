@@ -460,7 +460,6 @@ def to(option):
 _MAX_CHAT_HISTORY = 20
 
 CEREBRAS_MODEL_OPTIONS = [
-    "qwen-3-235b-a22b-instruct-2507",
     "gpt-oss-120b",
     "llama3.1-8b",
     "zai-glm-4.7",
@@ -469,7 +468,6 @@ CEREBRAS_MODEL_DESCRIPTIONS = {
     "gpt-oss-120b": "Cerebras: High-capacity open-source model for complex tasks.",
     "llama3.1-8b": "Cerebras: Light and fast for quick tasks.",
     "zai-glm-4.7": "Cerebras: GLM-based model for versatile analysis.",
-    "qwen-3-235b-a22b-instruct-2507": "Cerebras: Fast inference, great for rapid iteration.",
 }
 
 OPENAI_MODEL_OPTIONS = [
