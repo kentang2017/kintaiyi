@@ -86,7 +86,7 @@ a:hover { color: var(--gold) !important; }
 /* ── MAIN CONTENT BLOCK ─────────────────────────────────────────────── */
 .main .block-container {
     padding-top: 1rem !important;
-    max-width: 1280px !important;
+    max-width: 1480px !important;
 }
 
 /* ── SIDEBAR ────────────────────────────────────────────────────────── */

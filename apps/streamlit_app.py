@@ -975,9 +975,10 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     #__CONTAINER_ID__ .taiyi-toolbar {
         position: relative;
         z-index: 2;
-        display: flex;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 8px;
+        width: min(100%, 980px);
         justify-content: center;
         align-items: center;
         margin-top: 6px;
@@ -997,6 +998,8 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, color 180ms ease;
         box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
         white-space: nowrap;
+        width: 100%;
+        min-width: 0;
         backdrop-filter: blur(8px);
     }
     #__CONTAINER_ID__ .taiyi-btn:hover {
@@ -1020,7 +1023,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     }
     #__CONTAINER_ID__ .taiyi-stage-frame {
         position: relative;
-        width: min(100%, 860px);
+        width: min(100%, 980px);
         aspect-ratio: 1 / 1;
         overflow: hidden;
         border-radius: 22px;
@@ -1176,6 +1179,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     @container (max-width: 860px) {
         #__CONTAINER_ID__ .taiyi-toolbar {
             width: 100%;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
         }
         #__CONTAINER_ID__ .taiyi-stage-frame {
             padding: clamp(12px, 2.6vw, 18px);
@@ -1189,10 +1193,11 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         }
         #__CONTAINER_ID__ .taiyi-card::before { inset: 8px; }
         #__CONTAINER_ID__ .taiyi-btn {
-            width: calc(50% - 4px);
+            width: 100%;
             text-align: center;
         }
         #__CONTAINER_ID__ .taiyi-toolbar {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             justify-content: stretch;
             align-self: stretch;
         }
@@ -1920,7 +1925,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         .replace("__NUM__", str(num))
         .replace("__EXPORT_CSS__", json.dumps(export_css.replace("__GLOW_ID__", glow_id), ensure_ascii=False))
     )
-    html(html_content, height=max(780, abs(num) + 96), scrolling=False)
+    html(html_content, height=max(920, abs(num) + 180), scrolling=False)
 
 
 def render_svg(svg, num, chart_meta):
