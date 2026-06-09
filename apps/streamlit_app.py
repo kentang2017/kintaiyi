@@ -920,7 +920,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         --line: rgba(212, 175, 55, 0.35);
         --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
         margin: 0;
-        padding: 6px 0 10px;
+        padding: 2px 0 2px;
         container-type: inline-size;
         color: var(--ivory);
         font-family: "Noto Serif SC", "Source Han Serif", "KaiTi", serif;
@@ -970,8 +970,8 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         gap: 8px;
         justify-content: center;
         align-items: center;
-        margin-top: 14px;
-        padding: 0 8px 4px;
+        margin-top: 8px;
+        padding: 0 6px 0;
     }
     #__CONTAINER_ID__ .taiyi-btn {
         appearance: none;
@@ -1167,10 +1167,10 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         }
     }
     @media (max-width: 768px) {
-        #__CONTAINER_ID__ { padding-top: 2px; }
+        #__CONTAINER_ID__ { padding-top: 0; padding-bottom: 0; }
         #__CONTAINER_ID__ .taiyi-card {
             border-radius: 18px;
-            padding: 8px;
+            padding: 6px;
         }
         #__CONTAINER_ID__ .taiyi-card::before { inset: 8px; }
         #__CONTAINER_ID__ .taiyi-btn {
@@ -1252,9 +1252,12 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
 
         function setFrameHeight() {
             heightFramePending = false;
-            const bodyHeight = document.body ? document.body.scrollHeight : 0;
-            const documentHeight = document.documentElement ? document.documentElement.scrollHeight : 0;
-            const height = Math.ceil(Math.max(root.scrollHeight, bodyHeight, documentHeight) + 8);
+            const rectHeight = root.getBoundingClientRect ? root.getBoundingClientRect().height : 0;
+            const offsetHeight = root.offsetHeight || 0;
+            const scrollHeight = root.scrollHeight || 0;
+            const isMobileViewport = window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
+            const heightAdjustment = isMobileViewport ? -10 : 0;
+            const height = Math.ceil(Math.max(rectHeight, offsetHeight, scrollHeight) + heightAdjustment);
             if (Math.abs(height - lastReportedHeight) < 2) {
                 return;
             }
@@ -1848,7 +1851,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         .replace("__NUM__", str(num))
         .replace("__EXPORT_CSS__", json.dumps(export_css.replace("__GLOW_ID__", glow_id), ensure_ascii=False))
     )
-    html(html_content, height=max(920, abs(num) + 180), scrolling=False)
+    html(html_content, height=max(820, abs(num) + 120), scrolling=False)
 
 
 def render_svg(svg, num, chart_meta):
