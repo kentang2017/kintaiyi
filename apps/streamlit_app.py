@@ -1177,10 +1177,6 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     }
     /* Responsive 調整區 */
     @container (max-width: 860px) {
-        #__CONTAINER_ID__ .taiyi-toolbar {
-            width: 100%;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
         #__CONTAINER_ID__ .taiyi-stage-frame {
             padding: clamp(12px, 2.6vw, 18px);
         }
