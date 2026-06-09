@@ -928,6 +928,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         --ivory-soft: #e8dfc8;
         --jade: #4a9c6d;
         --line: rgba(212, 175, 55, 0.35);
+        --chart-max-width: 860px;
         --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
         margin: 0;
         padding: 0;
@@ -978,7 +979,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 8px;
-        width: min(100%, 980px);
+        width: min(100%, var(--chart-max-width));
         justify-content: center;
         align-items: center;
         margin-top: 6px;
@@ -1023,7 +1024,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     }
     #__CONTAINER_ID__ .taiyi-stage-frame {
         position: relative;
-        width: min(100%, 980px);
+        width: min(100%, var(--chart-max-width));
         aspect-ratio: 1 / 1;
         overflow: hidden;
         border-radius: 22px;
