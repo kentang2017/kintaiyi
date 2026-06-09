@@ -1,5 +1,8 @@
 import os
 import sys
+import base64
+import hashlib
+from html import escape as html_escape
 
 # Resolve the repository root (one level up from apps/) so that relative paths
 # to assets/ and src/ work regardless of the working directory.
@@ -537,9 +540,9 @@ def load_system_prompts():
     )
     
     try:
-        with open(SYSTEM_PROMPTS_FILE, "r") as f:
+        with open(SYSTEM_PROMPTS_FILE, "r", encoding="utf-8-sig") as f:
             return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
+    except (FileNotFoundError, json.JSONDecodeError, UnicodeDecodeError):
         default_data = {
             "prompts": [
                 {
@@ -549,15 +552,15 @@ def load_system_prompts():
             ],
             "selected": "太乙大師"
         }
-        with open(SYSTEM_PROMPTS_FILE, "w") as f:
-            json.dump(default_data, f, indent=2)
+        with open(SYSTEM_PROMPTS_FILE, "w", encoding="utf-8") as f:
+            json.dump(default_data, f, indent=2, ensure_ascii=False)
         return default_data
 
 def save_system_prompts(prompts_data):
     SYSTEM_PROMPTS_FILE = os.path.join(_REPO_ROOT, "assets", "system_prompts.json")
     try:
-        with open(SYSTEM_PROMPTS_FILE, "w") as f:
-            json.dump(prompts_data, f, indent=2)
+        with open(SYSTEM_PROMPTS_FILE, "w", encoding="utf-8") as f:
+            json.dump(prompts_data, f, indent=2, ensure_ascii=False)
         return True
     except Exception as e:
         st.error(t("save_error").format(e))
@@ -621,271 +624,1241 @@ def format_taiyi_results_for_prompt(results):
         ])
     return "\n\n".join(prompt_lines)
 
-def render_svg(svg, num):
-    """渲染交互式 SVG 圖表，針對 id='layer4' 和 id='layer6' 的 <g> 標籤進行順時針或逆時針旋轉，支援按住滑鼠旋轉並移除殘影"""
-    if not svg or 'svg' not in svg.lower():
+def _chart_visual_text():
+    """Visual copy for the Taiyi chart shell, aligned with the current language."""
+    if st.session_state.get("lang", "zh") == "en":
+        return {
+            "heading": "Taiyi Divine Chart",
+            "subheading": "Classical cosmology · digital observatory plate",
+            "legend_title": "Legend",
+            "legend_gold": "Imperial gold · auspicious force / honored positions",
+            "legend_cinnabar": "Cinnabar · warnings / fierce emphasis",
+            "legend_jade": "Jade green · manual focus markers",
+            "legend_ivory": "Ivory · labels, symbols, and fine inscriptions",
+            "interaction_title": "Interaction",
+            "rotation_hint": "Drag layers 4 and 6 to rotate. Tap for ±30° stepped viewing.",
+            "paint_hint": "Tap sectors to mark up to four focal areas.",
+            "reset": "Reset View",
+            "download_png": "Download Plate",
+            "toggle_style_dense": "Data-Dense",
+            "toggle_style_traditional": "Traditional",
+            "tooltip_fallback": "Taiyi sector",
+            "chart_kind": "Chart",
+            "export_title": "Taiyi Plate",
+            "follow_label": "Follow the official account",
+            "bureau": "Bureau",
+            "method": "Method",
+            "stem_branch": "Stem-Branch",
+            "kook_number": "Bureau Number",
+            "lunar": "Lunar",
+            "yin_yang": "Yin/Yang",
+            "calc_triplet": "Home / Away / Set",
+            "life_style": "Life Type",
+            "five_yuan": "Five Cycles",
+        }
+    return {
+        "heading": "太乙神數 盤式",
+        "subheading": "古法推演 · 數位天文盤",
+        "legend_title": "圖例",
+        "legend_gold": "帝王金 · 吉象、尊位、核心天機",
+        "legend_cinnabar": "朱砂赤 · 凶象、警示、重點標記",
+        "legend_jade": "柔翠綠 · 手動點選的觀盤記號",
+        "legend_ivory": "象牙白 · 盤面文字與細部刻記",
+        "interaction_title": "互動",
+        "rotation_hint": "拖曳第 4、6 層可旋轉，輕點則以 ±30° 校覽。",
+        "paint_hint": "點選扇區可標記最多四色重點。",
+        "reset": "重置視圖",
+        "download_png": "下載盤式",
+        "toggle_style_dense": "資料密集",
+        "toggle_style_traditional": "傳統風格",
+        "tooltip_fallback": "太乙盤位",
+        "chart_kind": "盤式",
+        "export_title": "太乙式盤",
+        "follow_label": "關注公眾號",
+        "bureau": "局式",
+        "method": "太乙計",
+        "stem_branch": "干支",
+        "kook_number": "局數",
+        "lunar": "農曆",
+        "yin_yang": "陰陽",
+        "calc_triplet": "主 / 客 / 定",
+        "life_style": "命式",
+        "five_yuan": "五子元",
+    }
+
+
+@st.cache_data(show_spinner=False)
+def _load_export_qrcode_data_uri() -> str:
+    """Load the public account QR code as a data URI for export cards."""
+    candidates = [
+        os.path.join(_REPO_ROOT, "pic", "qrcode_for_gh_561840f80b67_258.png"),
+        os.path.join(_REPO_ROOT, "pic", "qrcode_for_gh_561840f80b67_258.jpg"),
+    ]
+    for path in candidates:
+        if not os.path.exists(path):
+            continue
+        ext = os.path.splitext(path)[1].lower()
+        mime = "image/png" if ext == ".png" else "image/jpeg"
+        with open(path, "rb") as file_obj:
+            encoded = base64.b64encode(file_obj.read()).decode("ascii")
+        return f"data:{mime};base64,{encoded}"
+    return ""
+
+
+def _build_chart_meta(results: dict, is_life_chart: bool) -> dict:
+    """Assemble display-only metadata for the Taiyi chart header/legend."""
+    ui = _chart_visual_text()
+    ty_instance = results.get("ty")
+    year = getattr(ty_instance, "year", 0)
+    month = getattr(ty_instance, "month", 0)
+    day = getattr(ty_instance, "day", 0)
+    hour = getattr(ty_instance, "hour", 0)
+    minute = getattr(ty_instance, "minute", 0)
+    bureau_name = results.get("ttext", {}).get("局式", {}).get("年", "") or results.get("kook", {}).get("文", "")
+    method_name = f"{config.ty_method(results.get('tn', 0))}{results.get('ttext', {}).get('太乙計', '')}".strip()
+    chart_title = f"{results.get('zhao', '')} · {t('taiyi_life_method')}" if is_life_chart else (bureau_name or ui["chart_kind"])
+    subtitle_bits = [ui["subheading"], results.get("gz", ""), results.get("lunard", "")]
+    info_chips = [
+        (ui["bureau"], bureau_name or "—"),
+        (ui["method"], method_name or "—"),
+        (ui["stem_branch"], results.get("gz", "—")),
+        (ui["lunar"], results.get("lunard", "—")),
+        (ui["yin_yang"], f"{results.get('kook', {}).get('文', '—')} · {results.get('kook_num', '—')}"),
+        (ui["calc_triplet"], f"{results.get('homecal', '—')} / {results.get('awaycal', '—')} / {results.get('setcal', '—')}"),
+    ]
+    if is_life_chart:
+        info_chips.insert(1, (ui["life_style"], results.get("zhao", "—")))
+    elif results.get("wuyuan"):
+        info_chips.append((ui["five_yuan"], results.get("wuyuan", "—")))
+
+    highlights = [
+        "太乙", "文昌", "主筭", "客筭", "定筭",
+        str(results.get("homecal", "")),
+        str(results.get("awaycal", "")),
+        str(results.get("setcal", "")),
+    ]
+    acc_style = 0 if is_life_chart else results.get("style", 0)
+    acc_tn = 0 if is_life_chart else results.get("tn", 0)
+    ty_obj = results.get("ty")
+    chart_style_label = {
+        0: "年計",
+        1: "月計",
+        2: "日計",
+        3: "時計",
+        4: "分計",
+        5: "命法",
+    }.get(results.get("style", 0), "太乙")
+    kook_num = results.get("kook_num", "")
+    kook_num_text = an2cn(kook_num) if isinstance(kook_num, (int, float)) else str(kook_num)
+    datetime_text = config.gendatetime(year, month, day, hour, minute)
+    acc_text = f"{t('acc_prefix')}{config.taiyi_name(acc_style)[0]}{t('acc_suffix')}︰{ty_obj.accnum(acc_style, acc_tn)}"
+    lunar_line = f"{t('lunar_label')}︰{results.get('lunard', '—')} | {jieqi.jq(year, month, day, hour, minute)} |"
+    if is_life_chart:
+        kook_line = (
+            f"{t('taiyi_life_method')} - {ty_obj.kook(0, 0).get('文', '—')} "
+            f"({results.get('ttext', {}).get('局式', {}).get('年', '—')})"
+        )
+        summary_line = (
+            f"{t('epoch_label')}︰{results.get('ttext', {}).get('紀元', '')} | "
+            f"{t('home_calc')}︰{results.get('homecal', '—')} {t('away_calc')}︰{results.get('awaycal', '—')} |"
+        )
+    else:
+        kook_line = (
+            f"{method_name} - {results.get('kook', {}).get('文', '—')}{kook_num_text}局 "
+            f"({results.get('ttext', {}).get('局式', {}).get('年', '—')})"
+        )
+        summary_line = (
+            f"{t('five_yuan')}:{results.get('wuyuan', '')} | {t('epoch_label')}︰{results.get('ttext', {}).get('紀元', '')} | "
+            f"{t('home_calc')}︰{results.get('homecal', '—')} {t('away_calc')}︰{results.get('awaycal', '—')} "
+            f"{t('set_calc')}︰{results.get('setcal', '—')} |"
+        )
+    export_title = (
+        f"堅太乙{chart_style_label}排盤 Kintaiyi Chart"
+        if chart_style_label == "命法"
+        else f"堅太乙{chart_style_label}排盤 Kintaiyi Chart"
+    )
+    export_lines = [
+        f"{datetime_text} · {results.get('gz', '—')}",
+        f"{kook_line}",
+        f"{t('home_calc')} {results.get('homecal', '—')}  /  {t('away_calc')} {results.get('awaycal', '—')}  /  {t('set_calc')} {results.get('setcal', '—')}",
+    ]
+    if not is_life_chart and results.get("wuyuan"):
+        export_lines.insert(2, f"{t('five_yuan')}：{results.get('wuyuan', '')} · {t('epoch_label')}︰{results.get('ttext', {}).get('紀元', '')}")
+    else:
+        export_lines.insert(2, f"{t('epoch_label')}︰{results.get('ttext', {}).get('紀元', '')}")
+
+    return {
+        "heading": ui["heading"],
+        "title": chart_title,
+        "subtitle": " · ".join([bit for bit in subtitle_bits if bit]),
+        "chips": [(label, value) for label, value in info_chips if value],
+        "legend": [
+            ("gold", ui["legend_gold"]),
+            ("cinnabar", ui["legend_cinnabar"]),
+            ("jade", ui["legend_jade"]),
+            ("ivory", ui["legend_ivory"]),
+        ],
+        "highlights": highlights,
+        "export_title": export_title,
+        "export_lines": export_lines,
+        "export_follow_label": "關注「探究三式」微信公眾號 / 微信 gnatnek",
+        "export_qrcode": _load_export_qrcode_data_uri(),
+        "ui": ui,
+    }
+
+
+def _prepare_svg_markup(svg: str, svg_id: str, num: int, aria_label: str) -> str:
+    """Normalize the incoming SVG root so CSS/JS can enhance the original chart safely."""
+    svg_markup = re.sub(r"^\s*<\?xml[^>]*>\s*", "", svg.strip(), flags=re.IGNORECASE)
+    match = re.search(r"<svg\b([^>]*)>", svg_markup, flags=re.IGNORECASE)
+    if not match:
+        return svg_markup
+
+    attrs = match.group(1)
+    attrs = re.sub(
+        r'\s(?:id|class|width|height|style|preserveAspectRatio|role|aria-label)="[^"]*"',
+        "",
+        attrs,
+        flags=re.IGNORECASE,
+    ).strip()
+    if "viewBox=" not in attrs:
+        attrs = f'{attrs} viewBox="0 0 {num} {num}"'.strip()
+    if "xmlns=" not in attrs:
+        attrs = f'{attrs} xmlns="http://www.w3.org/2000/svg"'.strip()
+
+    opening = (
+        f'<svg {attrs} id="{svg_id}" class="taiyi-svg-root" width="100%" height="100%" '
+        f'preserveAspectRatio="xMidYMid meet" role="img" aria-label="{html_escape(aria_label, quote=True)}">'
+    )
+    return re.sub(r"<svg\b[^>]*>", opening, svg_markup, count=1, flags=re.IGNORECASE)
+
+
+def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool) -> None:
+    """Render the Taiyi SVG inside a themed responsive shell without touching calculation logic."""
+    if not svg or "svg" not in svg.lower():
         st.error("Invalid SVG content provided")
         return
-    
-    js_code = """
-    const rotations = { "layer4": 0, "layer6": 0 };
 
-    function rotateLayer(layer, deltaAngle) {
-      if (!layer || !layer.getAttribute) {
-        console.error("層元素無效");
-        return;
-      }
-      const id = layer.getAttribute('id');
-      if (!id || rotations[id] === undefined) {
-        console.error(`未找到 ${id} 的旋轉數據`);
-        return;
-      }
-      rotations[id] += deltaAngle;
-      const newRotation = rotations[id] % 360;
-      console.log(`計算 newRotation 為 ${id}: ${newRotation}, 累計旋轉: ${rotations[id]}`);
+    ui = chart_meta["ui"]
+    component_key = hashlib.md5(f"{svg}|{interactive}".encode("utf-8")).hexdigest()[:10]
+    container_id = f"taiyi-shell-{component_key}"
+    svg_id = f"taiyi-svg-{component_key}"
+    glow_id = f"taiyi-glow-{component_key}"
+    svg_markup = _prepare_svg_markup(svg, svg_id, num, chart_meta["title"])
 
-      const bbox = layer.getBBox();
-      const centerX = bbox.x + bbox.width / 2;
-      const centerY = bbox.y + bbox.height / 2;
-      const transformValue = "rotate(" + newRotation + " " + centerX + " " + centerY + ")";
-      layer.setAttribute("transform", transformValue);
+    chips_html = "".join(
+        f"""
+        <div class="taiyi-meta-chip">
+            <span class="taiyi-meta-label">{html_escape(str(label))}</span>
+            <strong class="taiyi-meta-value">{html_escape(str(value))}</strong>
+        </div>
+        """
+        for label, value in chart_meta["chips"]
+    )
+    legend_html = "".join(
+        f"""
+        <div class="taiyi-legend-item">
+            <span class="taiyi-swatch taiyi-swatch-{color_name}"></span>
+            <span>{html_escape(detail)}</span>
+        </div>
+        """
+        for color_name, detail in chart_meta["legend"]
+    )
 
-      layer.querySelectorAll("text").forEach(text => {
-        if (!text || !text.getAttribute) return;
-        const x = parseFloat(text.getAttribute("x") || 0);
-        const y = parseFloat(text.getAttribute("y") || 0);
-        if (isNaN(x) || isNaN(y)) return;
-        const textTransform = "rotate(" + (-newRotation) + " " + x + " " + y + ")";
-        text.setAttribute("transform", textTransform);
-      });
-      console.log(`旋轉 ${id} 至 ${newRotation}°，中心 (${centerX}, ${centerY})`);
+    export_css = """
+    .taiyi-svg-root { background: transparent; }
+    .taiyi-svg-root path, .taiyi-svg-root polygon, .taiyi-svg-root rect, .taiyi-svg-root circle, .taiyi-svg-root ellipse {
+        stroke: #d7bd6f !important;
+        stroke-width: 1.2 !important;
+        vector-effect: non-scaling-stroke;
     }
-
-    function setupEventListeners() {
-      ["layer4", "layer6"].forEach(id => {
-        const layer = document.querySelector("#" + id);
-        if (layer) {
-          layer.style.pointerEvents = "all";
-          layer.style.cursor = "pointer";
-
-          let isRotating = false;
-          let startX = 0;
-
-          layer.addEventListener("mousedown", (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            isRotating = true;
-            startX = event.clientX;
-            const bbox = layer.getBBox();
-            console.log(`mousedown on ${id}, startX: ${startX}, clientX: ${event.clientX}, clientY: ${event.clientY}, bbox:`, bbox);
-          });
-
-          layer.addEventListener("mousemove", (event) => {
-            if (isRotating) {
-              event.preventDefault();
-              event.stopPropagation();
-              const deltaX = event.clientX - startX;
-              const deltaAngle = deltaX * 1.0;
-              rotateLayer(layer, deltaAngle);
-              startX = event.clientX;
-              console.log(`mousemove on ${id}, deltaX: ${deltaX}, deltaAngle: ${deltaAngle}`);
-            }
-          });
-
-          layer.addEventListener("mouseup", (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            isRotating = false;
-            console.log(`mouseup on ${id}`);
-          });
-
-          layer.addEventListener("mouseleave", () => {
-            isRotating = false;
-            console.log(`mouseleave on ${id}`);
-          });
-
-          layer.addEventListener("click", (event) => {
-            if (!isRotating) {
-              event.preventDefault();
-              event.stopPropagation();
-              const direction = Math.random() < 0.5 ? 30 : -30;
-              rotateLayer(layer, direction);
-              console.log(`click on ${id}, direction: ${direction}°`);
-            }
-          });
-          console.log(`事件監聽器已為 ${id} 添加, layer found:`, layer);
-        } else {
-          console.error(`未找到 id='${id}' 的 <g> 元素`);
-        }
-      });
+    .taiyi-svg-root text, .taiyi-svg-root tspan {
+        fill: #f5f0e1 !important;
+        font-family: "Noto Serif SC", "Source Han Serif", "KaiTi", serif !important;
+        font-weight: 600 !important;
     }
-
-    requestAnimationFrame(() => {
-      setupEventListeners();
-      console.log("SVG 渲染完成，事件監聽器已設置");
-    });
-
-    window.addEventListener("load", () => {
-      console.log("SVG 已完全載入");
-      ["layer4", "layer6"].forEach(id => {
-        const layer = document.querySelector("#" + id);
-        if (layer) console.log(`找到 ${id}，準備旋轉`);
-        else console.error(`載入後仍未找到 ${id}`);
-      });
-    });
+    .taiyi-svg-root #layer1 path, .taiyi-svg-root #layer1 circle, .taiyi-svg-root #layer1 ellipse { fill: #c9a227 !important; }
+    .taiyi-svg-root #layer2 path, .taiyi-svg-root #layer2 polygon, .taiyi-svg-root #layer2 rect { fill: rgba(20, 46, 68, 0.78) !important; }
+    .taiyi-svg-root #layer3 path, .taiyi-svg-root #layer3 polygon, .taiyi-svg-root #layer3 rect { fill: rgba(10, 28, 43, 0.88) !important; }
+    .taiyi-svg-root #layer4 path, .taiyi-svg-root #layer4 polygon, .taiyi-svg-root #layer4 rect { fill: rgba(15, 43, 62, 0.92) !important; }
+    .taiyi-svg-root #layer5 path, .taiyi-svg-root #layer5 polygon, .taiyi-svg-root #layer5 rect { fill: rgba(31, 49, 78, 0.82) !important; }
+    .taiyi-svg-root #layer6 path, .taiyi-svg-root #layer6 polygon, .taiyi-svg-root #layer6 rect { fill: rgba(17, 39, 56, 0.84) !important; }
+    .taiyi-svg-root #layer7 path, .taiyi-svg-root #layer7 polygon, .taiyi-svg-root #layer7 rect { fill: rgba(8, 22, 40, 0.95) !important; }
+    .taiyi-svg-root .taiyi-key-spot,
+    .taiyi-svg-root .taiyi-user-mark,
+    .taiyi-svg-root .taiyi-key-sector { filter: url(#__GLOW_ID__); }
     """
 
-    html_content = f"""
-    <div style="margin: 0; padding: 0;">
-      <svg id="interactive-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {num} {num}" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
-        {svg}
-      </svg>
-      <script>
-        {js_code}
-      </script>
+    template = """
+    <div id="__CONTAINER_ID__" class="taiyi-shell" data-style-mode="traditional" data-interactive="__INTERACTIVE__">
+        <div class="taiyi-card">
+            <div class="taiyi-stage">
+                <div class="taiyi-stage-frame">
+                    <div class="taiyi-svg-backdrop" aria-hidden="true"></div>
+                    __SVG_MARKUP__
+                    <div class="taiyi-tooltip" hidden></div>
+                </div>
+                <div class="taiyi-toolbar" aria-label="chart tools">
+                    <button type="button" class="taiyi-btn" data-action="toggle-style">__STYLE_BUTTON__</button>
+                    <button type="button" class="taiyi-btn" data-action="reset">__RESET__</button>
+                    <button type="button" class="taiyi-btn" data-action="download-png">__DOWNLOAD_PNG__</button>
+                </div>
+            </div>
+        </div>
     </div>
+
     <style>
-        #interactive-svg {{
-            margin-top: 10px;
-            margin-bottom: 10px;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            outline: none;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: none;
-        }}
-        #interactive-svg * {{
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            outline: none;
-        }}
-        .stCodeBlock {{
-            margin-bottom: 10px !important;
-        }}
+    #__CONTAINER_ID__ {
+        --bg-deep: #0d1b2a;
+        --bg-panel: rgba(10, 22, 40, 0.94);
+        --gold: #d4af37;
+        --gold-strong: #c9a227;
+        --cinnabar: #c41e3a;
+        --ivory: #f5f0e1;
+        --ivory-soft: #e8dfc8;
+        --jade: #4a9c6d;
+        --line: rgba(212, 175, 55, 0.35);
+        --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+        margin: 0;
+        padding: 6px 0 10px;
+        container-type: inline-size;
+        color: var(--ivory);
+        font-family: "Noto Serif SC", "Source Han Serif", "KaiTi", serif;
+    }
+    #__CONTAINER_ID__ * { box-sizing: border-box; }
+    #__CONTAINER_ID__ .taiyi-card {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(212, 175, 55, 0.62);
+        border-radius: 22px;
+        padding: 10px;
+        background:
+            radial-gradient(circle at 12% 16%, rgba(212, 175, 55, 0.13), transparent 30%),
+            radial-gradient(circle at 88% 12%, rgba(196, 30, 58, 0.12), transparent 24%),
+            linear-gradient(180deg, rgba(18, 33, 52, 0.98), rgba(10, 22, 40, 0.98));
+        box-shadow: var(--shadow);
+        isolation: isolate;
+    }
+    #__CONTAINER_ID__ .taiyi-card::before,
+    #__CONTAINER_ID__ .taiyi-card::after {
+        content: "";
+        position: absolute;
+        inset: 10px;
+        border-radius: 18px;
+        pointer-events: none;
+    }
+    /* 美學調整區 */
+    #__CONTAINER_ID__ .taiyi-card::before {
+        border: 1px solid rgba(212, 175, 55, 0.25);
+        background:
+            radial-gradient(circle at 10% 20%, rgba(245, 240, 225, 0.08) 0 1px, transparent 1.5px),
+            radial-gradient(circle at 82% 24%, rgba(245, 240, 225, 0.08) 0 1px, transparent 1.5px),
+            radial-gradient(circle at 26% 86%, rgba(245, 240, 225, 0.06) 0 1px, transparent 1.5px),
+            radial-gradient(circle at 76% 78%, rgba(212, 175, 55, 0.08) 0 1px, transparent 1.5px);
+        background-size: 160px 160px, 200px 200px, 180px 180px, 220px 220px;
+        opacity: 0.9;
+    }
+    #__CONTAINER_ID__ .taiyi-card::after {
+        inset: 3px;
+        border: 1px solid rgba(212, 175, 55, 0.12);
+    }
+    #__CONTAINER_ID__ .taiyi-toolbar {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        align-items: center;
+        margin-top: 14px;
+        padding: 0 8px 4px;
+    }
+    #__CONTAINER_ID__ .taiyi-btn {
+        appearance: none;
+        border: 1px solid rgba(212, 175, 55, 0.38);
+        border-radius: 999px;
+        background: linear-gradient(180deg, rgba(18, 37, 58, 0.82), rgba(9, 24, 38, 0.88));
+        color: var(--ivory);
+        font-family: inherit;
+        font-size: 0.76rem;
+        line-height: 1;
+        padding: 9px 12px;
+        cursor: pointer;
+        transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, color 180ms ease;
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+        white-space: nowrap;
+        backdrop-filter: blur(8px);
+    }
+    #__CONTAINER_ID__ .taiyi-btn:hover {
+        transform: translateY(-1px);
+        color: var(--gold);
+        border-color: rgba(212, 175, 55, 0.7);
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+    }
+    #__CONTAINER_ID__ .taiyi-stage {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+    #__CONTAINER_ID__ .taiyi-stage-frame {
+        position: relative;
+        width: min(100%, 860px);
+        aspect-ratio: 1 / 1;
+        overflow: hidden;
+        border-radius: 22px;
+        border: 1px solid rgba(212, 175, 55, 0.34);
+        background:
+            radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.09), transparent 42%),
+            radial-gradient(circle at 52% 49%, rgba(245, 240, 225, 0.07), transparent 58%),
+            linear-gradient(180deg, rgba(9, 21, 37, 0.98), rgba(5, 13, 23, 1));
+        padding: clamp(14px, 3vw, 26px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-backdrop {
+        position: absolute;
+        inset: 10px;
+        border-radius: 18px;
+        pointer-events: none;
+        background:
+            radial-gradient(circle at center, rgba(212, 175, 55, 0.06) 0, transparent 46%),
+            radial-gradient(circle at 28% 24%, rgba(245, 240, 225, 0.045), transparent 18%),
+            radial-gradient(circle at 72% 74%, rgba(245, 240, 225, 0.04), transparent 16%);
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root {
+        position: relative;
+        z-index: 1;
+        display: block;
+        width: 100% !important;
+        height: auto !important;
+        max-width: 100%;
+        margin: 0 auto;
+        overflow: visible;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: none;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root * {
+        user-select: none;
+        -webkit-user-select: none;
+        vector-effect: non-scaling-stroke;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root path,
+    #__CONTAINER_ID__ .taiyi-svg-root polygon,
+    #__CONTAINER_ID__ .taiyi-svg-root rect,
+    #__CONTAINER_ID__ .taiyi-svg-root circle,
+    #__CONTAINER_ID__ .taiyi-svg-root ellipse {
+        stroke: #d7bd6f !important;
+        stroke-width: 1.2 !important;
+        transition: fill 180ms ease, stroke 180ms ease, filter 180ms ease, opacity 180ms ease;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root text,
+    #__CONTAINER_ID__ .taiyi-svg-root tspan {
+        fill: var(--ivory) !important;
+        font-family: "Noto Serif SC", "Source Han Serif", "KaiTi", serif !important;
+        font-size: 11.5px !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.04em;
+        transition: fill 180ms ease, filter 180ms ease, opacity 180ms ease;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root #layer1 path,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer1 polygon,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer1 rect,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer1 circle,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer1 ellipse {
+        fill: rgba(201, 162, 39, 0.94) !important;
+        stroke: rgba(245, 240, 225, 0.82) !important;
+        stroke-width: 1.8 !important;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root #layer1 text,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer1 tspan {
+        fill: #f5f0e1 !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root #layer2 path,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer2 polygon,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer2 rect { fill: rgba(20, 46, 68, 0.78) !important; }
+    #__CONTAINER_ID__ .taiyi-svg-root #layer3 path,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer3 polygon,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer3 rect { fill: rgba(10, 28, 43, 0.88) !important; }
+    #__CONTAINER_ID__ .taiyi-svg-root #layer4 path,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer4 polygon,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer4 rect { fill: rgba(15, 43, 62, 0.92) !important; }
+    #__CONTAINER_ID__ .taiyi-svg-root #layer5 path,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer5 polygon,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer5 rect { fill: rgba(31, 49, 78, 0.82) !important; }
+    #__CONTAINER_ID__ .taiyi-svg-root #layer6 path,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer6 polygon,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer6 rect { fill: rgba(17, 39, 56, 0.84) !important; }
+    #__CONTAINER_ID__ .taiyi-svg-root #layer7 path,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer7 polygon,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer7 rect { fill: rgba(8, 22, 40, 0.95) !important; }
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root text,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root tspan {
+        font-size: 12.2px !important;
+        letter-spacing: 0.02em;
+    }
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-stage-frame {
+        padding: clamp(10px, 2.2vw, 20px);
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-rotatable {
+        cursor: grab;
+        transform-box: fill-box;
+        transform-origin: center;
+        transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+        touch-action: none;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-rotatable.is-dragging {
+        cursor: grabbing;
+        transition: none;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-hoverable:hover {
+        opacity: 0.96;
+        filter: brightness(1.08);
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-key-spot {
+        fill: #fdf5cf !important;
+        font-weight: 700 !important;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-key-sector {
+        stroke: rgba(212, 175, 55, 0.95) !important;
+        stroke-width: 2.3 !important;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-user-mark {
+        stroke: rgba(245, 240, 225, 0.92) !important;
+        stroke-width: 2.1 !important;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-user-label {
+        fill: #f5f0e1 !important;
+        font-weight: 700 !important;
+    }
+    #__CONTAINER_ID__ .taiyi-tooltip {
+        position: absolute;
+        max-width: min(320px, calc(100% - 32px));
+        padding: 8px 12px;
+        border-radius: 12px;
+        background: rgba(8, 18, 31, 0.94);
+        border: 1px solid rgba(212, 175, 55, 0.4);
+        color: var(--ivory);
+        font-size: 0.86rem;
+        line-height: 1.5;
+        box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(6px);
+        transition: opacity 150ms ease, transform 150ms ease;
+    }
+    #__CONTAINER_ID__ .taiyi-tooltip.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    /* Responsive 調整區 */
+    @container (max-width: 860px) {
+        #__CONTAINER_ID__ .taiyi-toolbar {
+            width: 100%;
+        }
+        #__CONTAINER_ID__ .taiyi-stage-frame {
+            padding: clamp(12px, 2.6vw, 18px);
+        }
+    }
+    @media (max-width: 768px) {
+        #__CONTAINER_ID__ { padding-top: 2px; }
+        #__CONTAINER_ID__ .taiyi-card {
+            border-radius: 18px;
+            padding: 8px;
+        }
+        #__CONTAINER_ID__ .taiyi-card::before { inset: 8px; }
+        #__CONTAINER_ID__ .taiyi-btn {
+            width: calc(50% - 4px);
+            text-align: center;
+        }
+        #__CONTAINER_ID__ .taiyi-toolbar {
+            justify-content: stretch;
+            align-self: stretch;
+        }
+        #__CONTAINER_ID__ .taiyi-stage-frame {
+            width: 100%;
+            padding: 10px;
+        }
+        #__CONTAINER_ID__ .taiyi-svg-root {
+            max-width: 100%;
+        }
+        #__CONTAINER_ID__ .taiyi-svg-root text,
+        #__CONTAINER_ID__ .taiyi-svg-root tspan {
+            font-size: 10.2px !important;
+        }
+    }
     </style>
-    """
-    html(html_content, height=num)
-    
-def render_svg1(svg, num):
-    """渲染靜態 SVG 圖表（可點擊同時著色第二、三、四層的十六分之一部分）"""
-    if not svg or 'svg' not in svg.lower():
-        st.error("Invalid SVG content provided")
-        return
-    
-    js_script = """
+
     <script>
-        const coloredGroups = new Set();
-        let currentColors = [];
+    (() => {
+        const root = document.getElementById("__CONTAINER_ID__");
+        if (!root || root.dataset.bound === "true") return;
+        root.dataset.bound = "true";
 
-        function getRandomColor() {
-            const letters = '0123456789ABCDEF';
-            let color = '#';
-            for (let i = 0; i < 6; i++) {
-                color += letters[Math.floor(Math.random() * 16)];
+        const svg = root.querySelector(".taiyi-svg-root");
+        if (!svg) return;
+
+        const interactive = "__INTERACTIVE__" === "true";
+        const ui = __UI_JSON__;
+        const highlightTerms = __HIGHLIGHTS_JSON__;
+        const exportMeta = __EXPORT_META_JSON__;
+        const highlightPalette = ["#D4AF37", "#4A9C6D", "#7E8FA3", "#C41E3A"];
+        const tooltip = root.querySelector(".taiyi-tooltip");
+        const paletteByElement = {
+            wood: { fill: "#4A9C6D", stroke: "#78C18D", text: "#F5F0E1" },
+            fire: { fill: "#A61E35", stroke: "#D9646E", text: "#F8E8E4" },
+            earth: { fill: "#70543A", stroke: "#B59067", text: "#F5E8D5" },
+            metal: { fill: "#C9A227", stroke: "#F0D57A", text: "#17120A" },
+            water: { fill: "#355C8C", stroke: "#7EA3D8", text: "#EEF5FF" },
+        };
+        const branchToElement = {
+            "子": "water", "亥": "water",
+            "丑": "earth", "未": "earth", "辰": "earth", "戌": "earth",
+            "寅": "wood", "卯": "wood", "巽": "wood",
+            "巳": "fire", "午": "fire",
+            "申": "metal", "酉": "metal", "乾": "metal",
+            "坤": "earth", "艮": "earth",
+        };
+        const gateToBranch = {
+            "休": "子", "生": "丑", "傷": "寅", "杜": "卯",
+            "景": "巳", "死": "未", "驚": "申", "開": "酉",
+        };
+        const lifeBranchOrder = ["巳", "午", "未", "申", "酉", "戌", "亥", "子", "丑", "寅", "卯", "辰"];
+        const constellationToElement = {
+            "角": "wood", "斗": "wood", "奎": "wood", "井": "wood",
+            "尾": "fire", "室": "fire", "觜": "fire", "翼": "fire",
+            "氐": "earth", "女": "earth", "胃": "earth", "柳": "earth",
+            "房": "earth", "虛": "earth", "昴": "earth", "星": "earth",
+            "亢": "metal", "牛": "metal", "婁": "metal", "鬼": "metal",
+            "心": "metal", "危": "metal", "畢": "metal", "張": "metal",
+            "箕": "water", "壁": "water", "參": "water", "軫": "water",
+        };
+        const state = {
+            rotations: { layer4: 0, layer6: 0 },
+            clickDirection: { layer4: -1, layer6: -1 },
+            drag: null,
+            colored: new Map(),
+            colorLayers: [],
+            styleMode: "traditional",
+        };
+        let lastReportedHeight = 0;
+        let heightFramePending = false;
+
+        function setFrameHeight() {
+            heightFramePending = false;
+            const bodyHeight = document.body ? document.body.scrollHeight : 0;
+            const documentHeight = document.documentElement ? document.documentElement.scrollHeight : 0;
+            const height = Math.ceil(Math.max(root.scrollHeight, bodyHeight, documentHeight) + 8);
+            if (Math.abs(height - lastReportedHeight) < 2) {
+                return;
             }
-            return color;
+            lastReportedHeight = height;
+            window.parent.postMessage(
+                { isStreamlitMessage: true, type: "streamlit:setFrameHeight", height: height },
+                "*"
+            );
         }
 
-        function generateFourColors() {
-            let colors = [];
-            for (let i = 0; i < 4; i++) {
-                let newColor = getRandomColor();
-                while (colors.includes(newColor)) {
-                    newColor = getRandomColor();
+        function queueFrameHeight() {
+            if (heightFramePending) return;
+            heightFramePending = true;
+            requestAnimationFrame(setFrameHeight);
+        }
+
+        function cleanText(value) {
+            return (value || "").replace(/\\s+/g, " ").trim();
+        }
+
+        function compactText(value) {
+            return cleanText(value).replace(/\\s+/g, "");
+        }
+
+        function setStyledColor(node, propertyName, value) {
+            if (!node || !value) return;
+            node.style.setProperty(propertyName, value, "important");
+        }
+
+        function getBranchFromLabel(label) {
+            const compact = compactText(label);
+            for (const char of compact) {
+                if (branchToElement[char]) return char;
+            }
+            for (const char of compact) {
+                if (gateToBranch[char]) return gateToBranch[char];
+            }
+            return "";
+        }
+
+        function getSemanticPalette(label, groupId, index, sectorCount) {
+            const compact = compactText(label);
+            const branch = getBranchFromLabel(compact);
+            if (branch && branchToElement[branch]) {
+                return paletteByElement[branchToElement[branch]];
+            }
+            if (!branch && groupId === "layer2" && sectorCount === 12) {
+                return paletteByElement[branchToElement[lifeBranchOrder[index % lifeBranchOrder.length]]];
+            }
+            const firstChar = compact.charAt(0);
+            if (constellationToElement[firstChar]) {
+                return paletteByElement[constellationToElement[firstChar]];
+            }
+            return null;
+        }
+
+        function applySemanticPalette(sector, textNode, palette) {
+            if (!sector || !palette) return;
+            setStyledColor(sector, "fill", palette.fill);
+            setStyledColor(sector, "stroke", palette.stroke);
+            sector.dataset.semanticFill = palette.fill;
+            sector.dataset.semanticStroke = palette.stroke;
+            if (textNode) {
+                setStyledColor(textNode, "fill", palette.text);
+                textNode.dataset.semanticFill = palette.text;
+            }
+        }
+
+        function ensureGlowFilter() {
+            const ns = "http://www.w3.org/2000/svg";
+            let defs = svg.querySelector("defs");
+            if (!defs) {
+                defs = document.createElementNS(ns, "defs");
+                svg.insertBefore(defs, svg.firstChild);
+            }
+            if (svg.querySelector("#__GLOW_ID__")) return;
+
+            const filter = document.createElementNS(ns, "filter");
+            filter.setAttribute("id", "__GLOW_ID__");
+            filter.setAttribute("x", "-50%");
+            filter.setAttribute("y", "-50%");
+            filter.setAttribute("width", "200%");
+            filter.setAttribute("height", "200%");
+
+            const blur = document.createElementNS(ns, "feGaussianBlur");
+            blur.setAttribute("stdDeviation", "2.2");
+            blur.setAttribute("result", "blur");
+
+            const flood = document.createElementNS(ns, "feFlood");
+            flood.setAttribute("flood-color", "#d4af37");
+            flood.setAttribute("flood-opacity", "0.55");
+            flood.setAttribute("result", "glowColor");
+
+            const composite = document.createElementNS(ns, "feComposite");
+            composite.setAttribute("in", "glowColor");
+            composite.setAttribute("in2", "blur");
+            composite.setAttribute("operator", "in");
+            composite.setAttribute("result", "softGlow");
+
+            const merge = document.createElementNS(ns, "feMerge");
+            const node1 = document.createElementNS(ns, "feMergeNode");
+            node1.setAttribute("in", "softGlow");
+            const node2 = document.createElementNS(ns, "feMergeNode");
+            node2.setAttribute("in", "SourceGraphic");
+            merge.appendChild(node1);
+            merge.appendChild(node2);
+
+            filter.appendChild(blur);
+            filter.appendChild(flood);
+            filter.appendChild(composite);
+            filter.appendChild(merge);
+            defs.appendChild(filter);
+        }
+
+        function attachTooltip(target, label) {
+            const finalLabel = cleanText(label) || ui.tooltip_fallback;
+            target.setAttribute("data-tooltip", finalLabel);
+            target.classList.add("taiyi-hoverable");
+            if (!target.querySelector("title")) {
+                const titleNode = document.createElementNS("http://www.w3.org/2000/svg", "title");
+                titleNode.textContent = finalLabel;
+                target.prepend(titleNode);
+            }
+        }
+
+        function bindTooltipEvents(target) {
+            target.addEventListener("pointerenter", (event) => {
+                const label = target.getAttribute("data-tooltip");
+                if (!label || !tooltip) return;
+                tooltip.textContent = label;
+                tooltip.hidden = false;
+                tooltip.classList.add("is-visible");
+                positionTooltip(event);
+            });
+            target.addEventListener("pointermove", positionTooltip);
+            target.addEventListener("pointerleave", hideTooltip);
+            target.addEventListener("pointercancel", hideTooltip);
+        }
+
+        function positionTooltip(event) {
+            if (!tooltip) return;
+            const frame = root.querySelector(".taiyi-stage-frame");
+            if (!frame) return;
+            const rect = frame.getBoundingClientRect();
+            const left = Math.max(12, Math.min(rect.width - tooltip.offsetWidth - 12, event.clientX - rect.left + 16));
+            const top = Math.max(12, Math.min(rect.height - tooltip.offsetHeight - 12, event.clientY - rect.top + 16));
+            tooltip.style.left = left + "px";
+            tooltip.style.top = top + "px";
+            tooltip.style.right = "auto";
+            tooltip.style.bottom = "auto";
+        }
+
+        function hideTooltip() {
+            if (!tooltip) return;
+            tooltip.classList.remove("is-visible");
+            tooltip.hidden = true;
+        }
+
+        function annotateSvg() {
+            const groups = Array.from(svg.querySelectorAll("g"));
+            groups.forEach((group) => {
+                const directChildren = Array.from(group.children);
+                const sectors = directChildren.filter((node) => /^(path|polygon|rect|circle|ellipse)$/i.test(node.tagName));
+                const texts = directChildren.filter((node) => /^text$/i.test(node.tagName));
+                const sectorCount = sectors.length;
+
+                sectors.forEach((sector, index) => {
+                    const pairedText = texts[index];
+                    const label = pairedText ? cleanText(pairedText.textContent) : cleanText(group.id + " " + (index + 1));
+                    const palette = getSemanticPalette(label, group.id, index, sectorCount);
+                    if (palette) {
+                        applySemanticPalette(sector, pairedText, palette);
+                    }
+                    attachTooltip(sector, label);
+                    bindTooltipEvents(sector);
+                });
+
+                texts.forEach((textNode, index) => {
+                    if (!textNode.dataset.baseTransform) {
+                        textNode.dataset.baseTransform = textNode.getAttribute("transform") || "";
+                    }
+                    attachTooltip(textNode, cleanText(textNode.textContent) || cleanText(group.id + " " + (index + 1)));
+                    bindTooltipEvents(textNode);
+                });
+            });
+        }
+
+        function highlightImportantNodes() {
+            const terms = highlightTerms.map((item) => compactText(String(item || ""))).filter(Boolean);
+            svg.querySelectorAll("text").forEach((textNode) => {
+                const content = compactText(textNode.textContent);
+                if (!content) return;
+                if (terms.some((token) => token && content.includes(token))) {
+                    textNode.classList.add("taiyi-key-spot");
+                    const previous = textNode.previousElementSibling;
+                    if (previous && /^(path|polygon|rect|circle|ellipse)$/i.test(previous.tagName)) {
+                        previous.classList.add("taiyi-key-sector");
+                    }
                 }
-                colors.push(newColor);
-            }
-            return colors;
+            });
         }
 
-        const allGroups = document.querySelectorAll('#static-svg g');
-        const targetLayers = [];
-        allGroups.forEach((group, groupIndex) => {
-            const segments = group.querySelectorAll('path, polygon, rect');
-            if (segments.length > 0) {
-                targetLayers.push({ group: group, index: groupIndex, segments: Array.from(segments) });
-            }
-        });
+        function getLayerCenter(layer) {
+            const box = layer.getBBox();
+            return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+        }
 
-        console.log('Found ' + targetLayers.length + ' layers with segments:', targetLayers.map(l => ({ index: l.index, segmentCount: l.segments.length })));
+        function clientToSvgPoint(clientX, clientY) {
+            const point = svg.createSVGPoint();
+            point.x = clientX;
+            point.y = clientY;
+            const matrix = svg.getScreenCTM();
+            return matrix ? point.matrixTransform(matrix.inverse()) : { x: 0, y: 0 };
+        }
 
-        if (targetLayers.length >= 4) {
-            const layersToColor = [targetLayers[1], targetLayers[2], targetLayers[3]];
+        function angleFromPoint(point, center) {
+            return Math.atan2(point.y - center.y, point.x - center.x) * 180 / Math.PI;
+        }
 
-            layersToColor.forEach((layer, layerNum) => {
-                layer.segments.forEach((segment, index) => {
-                    segment.style.cursor = 'pointer';
-                    segment.style.pointerEvents = 'all';
-                    segment.style.zIndex = '10';
-                    segment.setAttribute('data-index', index);
-                    segment.setAttribute('data-layer', layerNum);
-                    segment.addEventListener('click', function(event) {
-                        event.stopPropagation();
-                        const segmentIndex = parseInt(segment.getAttribute('data-index'));
-                        const groupId = `group_${segmentIndex}`;
+        function applyRotation(layerId, immediate) {
+            const layer = svg.querySelector("#" + layerId);
+            if (!layer) return;
+            const angle = state.rotations[layerId] || 0;
+            const center = getLayerCenter(layer);
+            layer.style.transition = immediate ? "none" : "";
+            layer.setAttribute("transform", "rotate(" + angle + " " + center.x + " " + center.y + ")");
 
-                        console.log(`Clicked segment in layer ${parseInt(segment.getAttribute('data-layer')) + 2}, index: ${segmentIndex}`);
+            layer.querySelectorAll("text").forEach((textNode) => {
+                const x = parseFloat(textNode.getAttribute("x") || center.x);
+                const y = parseFloat(textNode.getAttribute("y") || center.y);
+                const base = textNode.dataset.baseTransform || "";
+                const rotation = "rotate(" + (-angle) + " " + x + " " + y + ")";
+                textNode.setAttribute("transform", cleanText(base + " " + rotation));
+            });
+        }
 
-                        const isColored = coloredGroups.has(groupId);
+        function rotateLayer(layerId, deltaAngle, immediate) {
+            state.rotations[layerId] = ((state.rotations[layerId] || 0) + deltaAngle) % 360;
+            applyRotation(layerId, immediate);
+        }
 
-                        if (isColored) {
-                            layersToColor.forEach(l => {
-                                if (l.segments[segmentIndex]) {
-                                    l.segments[segmentIndex].removeAttribute('fill');
-                                }
-                            });
-                            coloredGroups.delete(groupId);
-                        } else if (coloredGroups.size < 4) {
-                            if (coloredGroups.size === 0 || currentColors.length === 0) {
-                                currentColors = generateFourColors();
-                                console.log('Generated new colors:', currentColors);
-                            }
-                            const colorToUse = currentColors[coloredGroups.size];
-                            layersToColor.forEach(l => {
-                                if (l.segments[segmentIndex]) {
-                                    l.segments[segmentIndex].setAttribute('fill', colorToUse);
-                                }
-                            });
-                            coloredGroups.add(groupId);
-                            if (coloredGroups.size === 4) {
-                                currentColors = [];
-                            }
+        function setupRotations() {
+            ["layer4", "layer6"].forEach((layerId) => {
+                const layer = svg.querySelector("#" + layerId);
+                if (!layer) return;
+                layer.classList.add("taiyi-rotatable");
+
+                const finishDrag = (event) => {
+                    if (!state.drag || state.drag.layerId !== layerId) return;
+                    if (event && layer.hasPointerCapture && layer.hasPointerCapture(event.pointerId)) {
+                        layer.releasePointerCapture(event.pointerId);
+                    }
+                    const moved = state.drag.moved;
+                    state.drag = null;
+                    layer.classList.remove("is-dragging");
+                    if (!moved) {
+                        state.clickDirection[layerId] *= -1;
+                        rotateLayer(layerId, 30 * state.clickDirection[layerId], false);
+                    }
+                };
+
+                layer.addEventListener("pointerdown", (event) => {
+                    event.preventDefault();
+                    hideTooltip();
+                    const point = clientToSvgPoint(event.clientX, event.clientY);
+                    const center = getLayerCenter(layer);
+                    const angle = angleFromPoint(point, center);
+                    state.drag = { layerId: layerId, previousAngle: angle, startAngle: angle, moved: false };
+                    layer.classList.add("is-dragging");
+                    if (layer.setPointerCapture) layer.setPointerCapture(event.pointerId);
+                });
+
+                layer.addEventListener("pointermove", (event) => {
+                    if (!state.drag || state.drag.layerId !== layerId) return;
+                    event.preventDefault();
+                    const point = clientToSvgPoint(event.clientX, event.clientY);
+                    const center = getLayerCenter(layer);
+                    const angle = angleFromPoint(point, center);
+                    let delta = angle - state.drag.previousAngle;
+                    if (delta > 180) delta -= 360;
+                    if (delta < -180) delta += 360;
+                    if (Math.abs(delta) > 0.05) {
+                        rotateLayer(layerId, delta, true);
+                        state.drag.previousAngle = angle;
+                        if (Math.abs(angle - state.drag.startAngle) > 1.6) {
+                            state.drag.moved = true;
                         }
+                    }
+                });
+
+                layer.addEventListener("pointerup", finishDrag);
+                layer.addEventListener("pointercancel", finishDrag);
+                layer.addEventListener("lostpointercapture", finishDrag);
+            });
+        }
+
+        function getColorLayers() {
+            if (state.colorLayers.length) return state.colorLayers;
+            const groups = Array.from(svg.querySelectorAll("g")).filter((group) =>
+                Array.from(group.children).some((node) => /^(path|polygon|rect|circle|ellipse)$/i.test(node.tagName))
+            );
+            state.colorLayers = groups.slice(1, 4).map((group) => ({
+                group: group,
+                sectors: Array.from(group.children).filter((node) => /^(path|polygon|rect|circle|ellipse)$/i.test(node.tagName)),
+                texts: Array.from(group.children).filter((node) => /^text$/i.test(node.tagName)),
+            }));
+            return state.colorLayers;
+        }
+
+        function applyMarker(segmentIndex, color) {
+            getColorLayers().forEach((layer) => {
+                const sector = layer.sectors[segmentIndex];
+                if (sector) {
+                    if (!sector.dataset.originalFill) {
+                        sector.dataset.originalFill = window.getComputedStyle(sector).fill || sector.dataset.semanticFill || "";
+                        sector.dataset.originalStroke = window.getComputedStyle(sector).stroke || sector.dataset.semanticStroke || "";
+                    }
+                    setStyledColor(sector, "fill", color);
+                    sector.classList.add("taiyi-user-mark");
+                }
+                const textNode = layer.texts[segmentIndex];
+                if (textNode) {
+                    if (!textNode.dataset.originalFill) {
+                        textNode.dataset.originalFill = window.getComputedStyle(textNode).fill || textNode.dataset.semanticFill || "";
+                    }
+                    textNode.classList.add("taiyi-user-label");
+                }
+            });
+        }
+
+        function clearMarker(segmentIndex) {
+            getColorLayers().forEach((layer) => {
+                const sector = layer.sectors[segmentIndex];
+                if (sector) {
+                    const originalFill = sector.dataset.originalFill || "";
+                    const originalStroke = sector.dataset.originalStroke || "";
+                    if (originalFill) setStyledColor(sector, "fill", originalFill);
+                    if (originalStroke) setStyledColor(sector, "stroke", originalStroke);
+                    sector.classList.remove("taiyi-user-mark");
+                }
+                const textNode = layer.texts[segmentIndex];
+                if (textNode) {
+                    const originalFill = textNode.dataset.originalFill || textNode.dataset.semanticFill || "";
+                    if (originalFill) setStyledColor(textNode, "fill", originalFill);
+                    textNode.classList.remove("taiyi-user-label");
+                }
+            });
+        }
+
+        function setupColoring() {
+            const colorLayers = getColorLayers();
+            if (colorLayers.length < 3) return;
+
+            colorLayers.forEach((layer) => {
+                layer.sectors.forEach((sector, index) => {
+                    sector.style.cursor = "pointer";
+                    sector.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        hideTooltip();
+                        const key = String(index);
+                        if (state.colored.has(key)) {
+                            clearMarker(index);
+                            state.colored.delete(key);
+                            return;
+                        }
+                        if (state.colored.size >= highlightPalette.length) return;
+                        const color = highlightPalette[state.colored.size];
+                        state.colored.set(key, color);
+                        applyMarker(index, color);
                     });
                 });
             });
-        } else {
-            console.error('Not enough layers found. Found only ' + targetLayers.length + ' layers.');
         }
+
+        function resetView() {
+            ["layer4", "layer6"].forEach((layerId) => {
+                state.rotations[layerId] = 0;
+                applyRotation(layerId, false);
+            });
+            Array.from(state.colored.keys()).forEach((key) => clearMarker(parseInt(key, 10)));
+            state.colored.clear();
+            root.setAttribute("data-style-mode", "traditional");
+            state.styleMode = "traditional";
+            updateStyleButton();
+            hideTooltip();
+        }
+
+        function updateStyleButton() {
+            const button = root.querySelector('[data-action="toggle-style"]');
+            if (!button) return;
+            button.textContent = state.styleMode === "traditional" ? ui.toggle_style_dense : ui.toggle_style_traditional;
+        }
+
+        function toggleStyleMode() {
+            state.styleMode = state.styleMode === "traditional" ? "dense" : "traditional";
+            root.setAttribute("data-style-mode", state.styleMode);
+            updateStyleButton();
+            setFrameHeight();
+        }
+
+        function downloadPng() {
+            const scale = 2;
+            const viewBox = (svg.getAttribute("viewBox") || "0 0 __NUM__ __NUM__").split(/[ ,]+/);
+            const width = parseFloat(viewBox[2]) || __NUM__;
+            const height = parseFloat(viewBox[3]) || __NUM__;
+
+            const clone = svg.cloneNode(true);
+            const styleNode = document.createElementNS("http://www.w3.org/2000/svg", "style");
+            styleNode.textContent = __EXPORT_CSS__;
+            clone.insertBefore(styleNode, clone.firstChild);
+
+            const serialized = new XMLSerializer().serializeToString(clone);
+            const blob = new Blob([serialized], { type: "image/svg+xml;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const image = new Image();
+            const loadOptionalImage = (src) => new Promise((resolve) => {
+                if (!src) {
+                    resolve(null);
+                    return;
+                }
+                const optionalImage = new Image();
+                optionalImage.onload = () => resolve(optionalImage);
+                optionalImage.onerror = () => resolve(null);
+                optionalImage.src = src;
+            });
+
+            const wrapText = (ctx, text, maxWidth) => {
+                const chars = Array.from(text || "");
+                const lines = [];
+                let current = "";
+                chars.forEach((char) => {
+                    const probe = current + char;
+                    if (ctx.measureText(probe).width > maxWidth && current) {
+                        lines.push(current);
+                        current = char;
+                    } else {
+                        current = probe;
+                    }
+                });
+                if (current) lines.push(current);
+                return lines;
+            };
+
+            image.onload = async () => {
+                const summaryLines = Array.isArray(exportMeta.lines) ? exportMeta.lines.filter(Boolean) : [];
+                const qrImage = await loadOptionalImage(exportMeta.qrcode || "");
+                const canvasSize = 1080 * scale;
+                const canvas = document.createElement("canvas");
+                canvas.width = canvasSize;
+                canvas.height = canvasSize;
+                const context = canvas.getContext("2d");
+
+                context.fillStyle = "#0d1b2a";
+                context.fillRect(0, 0, canvas.width, canvas.height);
+                const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
+                gradient.addColorStop(0, "rgba(212, 175, 55, 0.18)");
+                gradient.addColorStop(0.35, "rgba(13, 27, 42, 0.02)");
+                gradient.addColorStop(1, "rgba(196, 30, 58, 0.14)");
+                context.fillStyle = gradient;
+                context.fillRect(0, 0, canvas.width, canvas.height);
+
+                const glow = context.createRadialGradient(
+                    canvas.width * 0.5, canvas.height * 0.54, 40,
+                    canvas.width * 0.5, canvas.height * 0.54, canvas.width * 0.46
+                );
+                glow.addColorStop(0, "rgba(212, 175, 55, 0.12)");
+                glow.addColorStop(0.55, "rgba(212, 175, 55, 0.03)");
+                glow.addColorStop(1, "rgba(212, 175, 55, 0)");
+                context.fillStyle = glow;
+                context.fillRect(0, 0, canvas.width, canvas.height);
+
+                context.strokeStyle = "rgba(212, 175, 55, 0.62)";
+                context.lineWidth = 2 * scale;
+                context.strokeRect(24 * scale, 24 * scale, canvas.width - 48 * scale, canvas.height - 48 * scale);
+                context.strokeStyle = "rgba(212, 175, 55, 0.22)";
+                context.strokeRect(40 * scale, 40 * scale, canvas.width - 80 * scale, canvas.height - 80 * scale);
+
+                const sidePadding = 64 * scale;
+                const summaryWidth = canvas.width - sidePadding * 2;
+                let cursorY = 88 * scale;
+
+                context.fillStyle = "#d4af37";
+                context.font = `700 ${32 * scale}px "Microsoft YaHei", "Microsoft JhengHei", "PingFang SC", sans-serif`;
+                context.fillText(exportMeta.title || ui.chart_kind, sidePadding, cursorY);
+                cursorY += 18 * scale;
+
+                context.fillStyle = "#f5f0e1";
+                context.font = `600 ${13.2 * scale}px "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif`;
+                summaryLines.slice(0, 3).forEach((line) => {
+                    wrapText(context, line, summaryWidth).slice(0, 2).forEach((wrappedLine) => {
+                        context.fillText(wrappedLine, sidePadding, cursorY);
+                        cursorY += 16 * scale;
+                    });
+                });
+
+                const chartTop = cursorY + 2 * scale;
+                const footerHeight = qrImage ? 82 * scale : 36 * scale;
+                const chartSize = Math.min(canvas.width * 0.92, canvas.height * 0.92, canvas.height - chartTop - footerHeight);
+                const chartX = (canvas.width - chartSize) / 2;
+                const chartY = chartTop;
+
+                context.fillStyle = "rgba(255, 255, 255, 0.02)";
+                context.beginPath();
+                context.arc(canvas.width / 2, chartY + chartSize / 2, chartSize * 0.52, 0, Math.PI * 2);
+                context.fill();
+                context.drawImage(image, chartX, chartY, chartSize, chartSize);
+
+                const footerY = chartY + chartSize + 8 * scale;
+                context.strokeStyle = "rgba(212, 175, 55, 0.36)";
+                context.lineWidth = 1.5 * scale;
+                context.beginPath();
+                context.moveTo(sidePadding, footerY);
+                context.lineTo(canvas.width - sidePadding, footerY);
+                context.stroke();
+
+                if (qrImage) {
+                    const qrSize = 102 * scale;
+                    const qrX = canvas.width - sidePadding - qrSize;
+                    const qrY = footerY - 13 * scale;
+                    context.fillStyle = "#f5f0e1";
+                    context.fillRect(qrX - 8 * scale, qrY - 8 * scale, qrSize + 16 * scale, qrSize + 16 * scale);
+                    context.drawImage(qrImage, qrX, qrY, qrSize, qrSize);
+
+                    context.fillStyle = "#d4af37";
+                    context.font = `700 ${13.5 * scale}px "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif`;
+                    context.fillText(exportMeta.followLabel || "", sidePadding, footerY + 58 * scale);
+                }
+
+                URL.revokeObjectURL(url);
+                canvas.toBlob((pngBlob) => {
+                    if (!pngBlob) return;
+                    const link = document.createElement("a");
+                    link.href = URL.createObjectURL(pngBlob);
+                    link.download = ui.chart_kind.toLowerCase().replace(/\\s+/g, "-") + "-card.png";
+                    link.click();
+                    setTimeout(() => URL.revokeObjectURL(link.href), 1200);
+                }, "image/png");
+            };
+
+            image.onerror = () => URL.revokeObjectURL(url);
+            image.src = url;
+        }
+
+        root.querySelector('[data-action="reset"]').addEventListener("click", resetView);
+        root.querySelector('[data-action="toggle-style"]').addEventListener("click", toggleStyleMode);
+        root.querySelector('[data-action="download-png"]').addEventListener("click", downloadPng);
+
+        ensureGlowFilter();
+        annotateSvg();
+        highlightImportantNodes();
+        if (interactive) setupRotations();
+        if (!interactive) setupColoring();
+        updateStyleButton();
+
+        if (window.ResizeObserver) {
+            const observer = new ResizeObserver(() => queueFrameHeight());
+            observer.observe(root);
+            observer.observe(svg);
+        }
+        window.addEventListener("load", queueFrameHeight, { once: true });
+        setTimeout(queueFrameHeight, 80);
+        setTimeout(queueFrameHeight, 260);
+    })();
     </script>
     """
 
-    html_content = f"""
-    <div style="margin: 0; padding: 0;">
-      <svg id="static-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {num} {num}" width="100%" height="auto" style="max-height: 400px; display: block; margin: 0 auto;">
-        {svg}
-      </svg>
-      {js_script}
-    </div>
-    <style>
-        #static-svg {{ 
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }}
-        #static-svg path, #static-svg polygon, #static-svg rect {{
-            pointer-events: all !important;
-            z-index: 10 !important;
-        }}
-        .stCodeBlock {{
-            margin-bottom: 10px !important;
-        }}
-    </style>
-    """
-    html(html_content, height=num)
+    html_content = (
+        template
+        .replace("__CONTAINER_ID__", container_id)
+        .replace("__INTERACTIVE__", "true" if interactive else "false")
+        .replace("__STYLE_BUTTON__", html_escape(ui["toggle_style_dense"]))
+        .replace("__RESET__", html_escape(ui["reset"]))
+        .replace("__DOWNLOAD_PNG__", html_escape(ui["download_png"]))
+        .replace("__SVG_MARKUP__", svg_markup)
+        .replace("__UI_JSON__", json.dumps(ui, ensure_ascii=False))
+        .replace("__HIGHLIGHTS_JSON__", json.dumps(chart_meta["highlights"], ensure_ascii=False))
+        .replace(
+            "__EXPORT_META_JSON__",
+            json.dumps(
+                {
+                    "title": chart_meta.get("export_title", ui["chart_kind"]),
+                    "lines": chart_meta.get("export_lines", []),
+                    "followLabel": chart_meta.get("export_follow_label", ""),
+                    "qrcode": chart_meta.get("export_qrcode", ""),
+                },
+                ensure_ascii=False,
+            ),
+        )
+        .replace("__GLOW_ID__", glow_id)
+        .replace("__NUM__", str(num))
+        .replace("__EXPORT_CSS__", json.dumps(export_css.replace("__GLOW_ID__", glow_id), ensure_ascii=False))
+    )
+    html(html_content, height=max(920, abs(num) + 180), scrolling=False)
+
+
+def render_svg(svg, num, chart_meta):
+    """Render the enhanced Taiyi chart with drag rotation on layers 4 and 6."""
+    _render_taiyi_chart(svg, num, chart_meta, interactive=True)
+
+
+def render_svg1(svg, num, chart_meta):
+    """Render the enhanced Taiyi chart with focus-marking interactions."""
+    _render_taiyi_chart(svg, num, chart_meta, interactive=False)
 
 def timeline(data, height=800):
     """渲染時間線組件"""
@@ -1422,10 +2395,11 @@ with tabs[0]:
                 if results["style"] == 5:
                     try:
                         start_pt = results["genchart1"][results["genchart1"].index('''viewBox="''')+22:].split(" ")[1]
+                        chart_meta = _build_chart_meta(results, is_life_chart=True)
                         if rotation == "轉動":
-                            render_svg(results["genchart1"], int(start_pt))
+                            render_svg(results["genchart1"], int(start_pt), chart_meta)
                         else:
-                            render_svg1(results["genchart1"], int(start_pt))
+                            render_svg1(results["genchart1"], int(start_pt), chart_meta)
                     except (ValueError, IndexError) as e:
                         st.error(f"Failed to parse SVG viewBox: {str(e)}")
                     with st.expander(t("explanation")):
@@ -1460,10 +2434,11 @@ with tabs[0]:
                 else:
                     try:
                         start_pt2 = results["genchart2"][results["genchart2"].index('''viewBox="''')+22:].split(" ")[1]
+                        chart_meta = _build_chart_meta(results, is_life_chart=False)
                         if rotation == "轉動":
-                            render_svg(results["genchart2"], int(start_pt2))
+                            render_svg(results["genchart2"], int(start_pt2), chart_meta)
                         else:
-                            render_svg1(results["genchart2"], int(start_pt2))
+                            render_svg1(results["genchart2"], int(start_pt2), chart_meta)
                     except (ValueError, IndexError) as e:
                         st.error(f"Failed to parse SVG viewBox: {str(e)}")
                     with st.expander(t("explanation")):
@@ -1761,7 +2736,7 @@ with tabs[1]:
 
 # 太乙局數史例
 with tabs[2]:
-    with open(os.path.join(_REPO_ROOT, "assets", "example.json"), "r") as f:
+    with open(os.path.join(_REPO_ROOT, "assets", "example.json"), "r", encoding="utf-8-sig") as f:
         data = f.read()
     timeline(data, height=600)
     with st.expander(t("list_label")):
