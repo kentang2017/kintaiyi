@@ -1763,7 +1763,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                 context.fill();
                 context.drawImage(image, chartX, chartY, chartSize, chartSize);
 
-                const footerY = chartY + chartSize + 8 * scale;
+                const footerY = chartY + chartSize - 18 * scale;
                 context.strokeStyle = "rgba(212, 175, 55, 0.36)";
                 context.lineWidth = 1.5 * scale;
                 context.beginPath();
@@ -1774,14 +1774,14 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                 if (qrImage) {
                     const qrSize = 102 * scale;
                     const qrX = canvas.width - sidePadding - qrSize;
-                    const qrY = footerY - 13 * scale;
+                    const qrY = footerY - 20 * scale;
                     context.fillStyle = "#f5f0e1";
                     context.fillRect(qrX - 8 * scale, qrY - 8 * scale, qrSize + 16 * scale, qrSize + 16 * scale);
                     context.drawImage(qrImage, qrX, qrY, qrSize, qrSize);
 
                     context.fillStyle = "#d4af37";
                     context.font = `700 ${13.5 * scale}px "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif`;
-                    context.fillText(exportMeta.followLabel || "", sidePadding, footerY + 58 * scale);
+                    context.fillText(exportMeta.followLabel || "", sidePadding, footerY + 44 * scale);
                 }
 
                 URL.revokeObjectURL(url);
