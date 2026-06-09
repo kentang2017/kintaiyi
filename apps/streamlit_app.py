@@ -770,7 +770,7 @@ def _build_chart_meta(results: dict, is_life_chart: bool) -> dict:
         )
     else:
         kook_line = (
-            f"{method_name} - {results.get('kook', {}).get('文', '—')}{kook_num_text}局 "
+            f"{method_name} - {results.get('kook', {}).get('文', '—')}"
             f"({results.get('ttext', {}).get('局式', {}).get('年', '—')})"
         )
         summary_line = (
