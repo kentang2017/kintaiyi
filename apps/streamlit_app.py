@@ -640,12 +640,15 @@ def _chart_visual_text():
             "paint_hint": "Tap sectors to mark up to four focal areas.",
             "reset": "Reset View",
             "download_png": "Download Plate",
+            "add_note": "Add Note",
             "toggle_style_dense": "Data-Dense",
             "toggle_style_traditional": "Traditional",
             "tooltip_fallback": "Taiyi sector",
             "chart_kind": "Chart",
             "export_title": "Taiyi Plate",
             "follow_label": "Follow the official account",
+            "divination_note_label": "Query",
+            "divination_note_prompt": "Save a divination note for the export card:",
             "bureau": "Bureau",
             "method": "Method",
             "stem_branch": "Stem-Branch",
@@ -669,12 +672,15 @@ def _chart_visual_text():
         "paint_hint": "點選扇區可標記最多四色重點。",
         "reset": "重置視圖",
         "download_png": "下載盤式",
+        "add_note": "加入文字",
         "toggle_style_dense": "資料密集",
         "toggle_style_traditional": "傳統風格",
         "tooltip_fallback": "太乙盤位",
         "chart_kind": "盤式",
         "export_title": "太乙式盤",
         "follow_label": "關注公眾號",
+        "divination_note_label": "占問",
+        "divination_note_prompt": "請輸入要儲存到盤式圖片的占問文字：",
         "bureau": "局式",
         "method": "太乙計",
         "stem_branch": "干支",
@@ -803,6 +809,9 @@ def _build_chart_meta(results: dict, is_life_chart: bool) -> dict:
         "export_lines": export_lines,
         "export_follow_label": "關注「探究三式」微信公眾號 / 微信 gnatnek",
         "export_qrcode": _load_export_qrcode_data_uri(),
+        "export_storage_key": hashlib.md5(
+            f"{export_title}|{results.get('gz', '')}|{results.get('lunard', '')}|{results.get('style', '')}|{results.get('tn', '')}|{is_life_chart}".encode("utf-8")
+        ).hexdigest(),
         "ui": ui,
     }
 
@@ -901,6 +910,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                 <div class="taiyi-toolbar" aria-label="chart tools">
                     <button type="button" class="taiyi-btn" data-action="toggle-style">__STYLE_BUTTON__</button>
                     <button type="button" class="taiyi-btn" data-action="reset">__RESET__</button>
+                    <button type="button" class="taiyi-btn" data-action="add-note">__ADD_NOTE__</button>
                     <button type="button" class="taiyi-btn" data-action="download-png">__DOWNLOAD_PNG__</button>
                 </div>
             </div>
@@ -920,7 +930,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         --line: rgba(212, 175, 55, 0.35);
         --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
         margin: 0;
-        padding: 2px 0 2px;
+        padding: 0;
         container-type: inline-size;
         color: var(--ivory);
         font-family: "Noto Serif SC", "Source Han Serif", "KaiTi", serif;
@@ -970,8 +980,8 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         gap: 8px;
         justify-content: center;
         align-items: center;
-        margin-top: 8px;
-        padding: 0 6px 0;
+        margin-top: 6px;
+        padding: 0 4px 0;
     }
     #__CONTAINER_ID__ .taiyi-btn {
         appearance: none;
@@ -994,6 +1004,11 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         color: var(--gold);
         border-color: rgba(212, 175, 55, 0.7);
         box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+    }
+    #__CONTAINER_ID__ .taiyi-btn.is-active {
+        color: var(--gold);
+        border-color: rgba(212, 175, 55, 0.78);
+        box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.18), 0 10px 22px rgba(0, 0, 0, 0.28);
     }
     #__CONTAINER_ID__ .taiyi-stage {
         position: relative;
@@ -1170,7 +1185,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         #__CONTAINER_ID__ { padding-top: 0; padding-bottom: 0; }
         #__CONTAINER_ID__ .taiyi-card {
             border-radius: 18px;
-            padding: 6px;
+            padding: 5px;
         }
         #__CONTAINER_ID__ .taiyi-card::before { inset: 8px; }
         #__CONTAINER_ID__ .taiyi-btn {
@@ -1246,9 +1261,11 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             colored: new Map(),
             colorLayers: [],
             styleMode: "traditional",
+            noteText: "",
         };
         let lastReportedHeight = 0;
         let heightFramePending = false;
+        const noteStorageKey = "taiyi-chart-note:" + (exportMeta.storageKey || "__CONTAINER_ID__");
 
         function setFrameHeight() {
             heightFramePending = false;
@@ -1256,7 +1273,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             const offsetHeight = root.offsetHeight || 0;
             const scrollHeight = root.scrollHeight || 0;
             const isMobileViewport = window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
-            const heightAdjustment = isMobileViewport ? -10 : 0;
+            const heightAdjustment = isMobileViewport ? -22 : 0;
             const height = Math.ceil(Math.max(rectHeight, offsetHeight, scrollHeight) + heightAdjustment);
             if (Math.abs(height - lastReportedHeight) < 2) {
                 return;
@@ -1280,6 +1297,38 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
 
         function compactText(value) {
             return cleanText(value).replace(/\\s+/g, "");
+        }
+
+        function loadSavedNote() {
+            try {
+                state.noteText = cleanText(window.localStorage.getItem(noteStorageKey) || "");
+            } catch (error) {
+                state.noteText = "";
+            }
+        }
+
+        function saveNote(value) {
+            state.noteText = cleanText(value);
+            try {
+                if (state.noteText) {
+                    window.localStorage.setItem(noteStorageKey, state.noteText);
+                } else {
+                    window.localStorage.removeItem(noteStorageKey);
+                }
+            } catch (error) {
+                // Ignore storage write failures and keep the note in current state.
+            }
+            updateNoteButton();
+        }
+
+        function updateNoteButton() {
+            const button = root.querySelector('[data-action="add-note"]');
+            if (!button) return;
+            button.textContent = ui.add_note;
+            button.classList.toggle("is-active", Boolean(state.noteText));
+            button.title = state.noteText
+                ? `${ui.divination_note_label}: ${state.noteText}`
+                : ui.divination_note_prompt;
         }
 
         function setStyledColor(node, propertyName, value) {
@@ -1659,6 +1708,12 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             setFrameHeight();
         }
 
+        function addNote() {
+            const nextValue = window.prompt(ui.divination_note_prompt, state.noteText || "");
+            if (nextValue === null) return;
+            saveNote(nextValue);
+        }
+
         function downloadPng() {
             const scale = 2;
             const viewBox = (svg.getAttribute("viewBox") || "0 0 __NUM__ __NUM__").split(/[ ,]+/);
@@ -1704,6 +1759,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
 
             image.onload = async () => {
                 const summaryLines = Array.isArray(exportMeta.lines) ? exportMeta.lines.filter(Boolean) : [];
+                const noteLine = state.noteText ? `${ui.divination_note_label}: ${state.noteText}` : "";
                 const qrImage = await loadOptionalImage(exportMeta.qrcode || "");
                 const canvasSize = 1080 * scale;
                 const canvas = document.createElement("canvas");
@@ -1753,6 +1809,14 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                         cursorY += 16 * scale;
                     });
                 });
+                if (noteLine) {
+                    context.fillStyle = "#e8dfc8";
+                    context.font = `600 ${13.2 * scale}px "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif`;
+                    wrapText(context, noteLine, summaryWidth).slice(0, 2).forEach((wrappedLine) => {
+                        context.fillText(wrappedLine, sidePadding, cursorY);
+                        cursorY += 16 * scale;
+                    });
+                }
 
                 const chartTop = cursorY + 2 * scale;
                 const footerHeight = qrImage ? 82 * scale : 36 * scale;
@@ -1804,14 +1868,17 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
 
         root.querySelector('[data-action="reset"]').addEventListener("click", resetView);
         root.querySelector('[data-action="toggle-style"]').addEventListener("click", toggleStyleMode);
+        root.querySelector('[data-action="add-note"]').addEventListener("click", addNote);
         root.querySelector('[data-action="download-png"]').addEventListener("click", downloadPng);
 
+        loadSavedNote();
         ensureGlowFilter();
         annotateSvg();
         highlightImportantNodes();
         if (interactive) setupRotations();
         if (!interactive) setupColoring();
         updateStyleButton();
+        updateNoteButton();
 
         if (window.ResizeObserver) {
             const observer = new ResizeObserver(() => queueFrameHeight());
@@ -1831,6 +1898,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         .replace("__INTERACTIVE__", "true" if interactive else "false")
         .replace("__STYLE_BUTTON__", html_escape(ui["toggle_style_dense"]))
         .replace("__RESET__", html_escape(ui["reset"]))
+        .replace("__ADD_NOTE__", html_escape(ui["add_note"]))
         .replace("__DOWNLOAD_PNG__", html_escape(ui["download_png"]))
         .replace("__SVG_MARKUP__", svg_markup)
         .replace("__UI_JSON__", json.dumps(ui, ensure_ascii=False))
@@ -1843,6 +1911,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                     "lines": chart_meta.get("export_lines", []),
                     "followLabel": chart_meta.get("export_follow_label", ""),
                     "qrcode": chart_meta.get("export_qrcode", ""),
+                    "storageKey": chart_meta.get("export_storage_key", ""),
                 },
                 ensure_ascii=False,
             ),
@@ -1851,7 +1920,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         .replace("__NUM__", str(num))
         .replace("__EXPORT_CSS__", json.dumps(export_css.replace("__GLOW_ID__", glow_id), ensure_ascii=False))
     )
-    html(html_content, height=max(820, abs(num) + 120), scrolling=False)
+    html(html_content, height=max(780, abs(num) + 96), scrolling=False)
 
 
 def render_svg(svg, num, chart_meta):
@@ -1862,6 +1931,35 @@ def render_svg(svg, num, chart_meta):
 def render_svg1(svg, num, chart_meta):
     """Render the enhanced Taiyi chart with focus-marking interactions."""
     _render_taiyi_chart(svg, num, chart_meta, interactive=False)
+
+
+def render_chart_explanation_seam():
+    """Tighten the gap between the chart component and the following explanation expander."""
+    st.markdown(
+        """
+        <style>
+        @media (max-width: 768px) {
+            div[data-testid="stElementContainer"]:has(.taiyi-chart-seam-anchor)
+            + div[data-testid="stElementContainer"]:has(iframe) {
+                margin-bottom: -2.8rem !important;
+            }
+            div[data-testid="stElementContainer"]:has(.taiyi-chart-seam-anchor)
+            + div[data-testid="stElementContainer"]:has(iframe)
+            + div[data-testid="stElementContainer"] {
+                margin-top: 0 !important;
+            }
+            div[data-testid="stElementContainer"]:has(.taiyi-chart-seam-anchor)
+            + div[data-testid="stElementContainer"]:has(iframe)
+            + div[data-testid="stElementContainer"] div[data-testid="stExpander"] {
+                margin-top: 0 !important;
+            }
+        }
+        </style>
+        <div class="taiyi-chart-seam-anchor" aria-hidden="true"></div>
+        """,
+        unsafe_allow_html=True,
+    )
+
 
 def timeline(data, height=800):
     """渲染時間線組件"""
@@ -2399,6 +2497,7 @@ with tabs[0]:
                     try:
                         start_pt = results["genchart1"][results["genchart1"].index('''viewBox="''')+22:].split(" ")[1]
                         chart_meta = _build_chart_meta(results, is_life_chart=True)
+                        render_chart_explanation_seam()
                         if rotation == "轉動":
                             render_svg(results["genchart1"], int(start_pt), chart_meta)
                         else:
@@ -2438,6 +2537,7 @@ with tabs[0]:
                     try:
                         start_pt2 = results["genchart2"][results["genchart2"].index('''viewBox="''')+22:].split(" ")[1]
                         chart_meta = _build_chart_meta(results, is_life_chart=False)
+                        render_chart_explanation_seam()
                         if rotation == "轉動":
                             render_svg(results["genchart2"], int(start_pt2), chart_meta)
                         else:
