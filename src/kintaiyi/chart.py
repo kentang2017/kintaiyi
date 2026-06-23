@@ -121,13 +121,22 @@ _SANQI_COLORS = {
     "害氣赤旗": "#c43a2b",
 }
 # 十六宮地支序（供三旗定位角度）
-_SIXTEEN = "子丑艰寅卯辰巴巳午未坤申酉戌乾亥"
+# 注意：此序須與 gen_chart 等函式之十六宮扇區資料順序一致（起巳，順行），
+# 否則三旗會落在錯誤宮位（舊序起子，導致青旗/黑旗誤落乾、赤旗誤落坤）。
+# 另修正舊序中之訛字：艰->艮、巴->巽。
+_SIXTEEN = "巳午未坤申酉戌乾亥子丑艮寅卯辰巽"
+# 命法十二宮扇區序（起巳，順行十二地支）
+_TWELVE = "巳午未申酉戌亥子丑寅卯辰"
 
 
-def _flag_angle(chen):
-    """地支／八卦宮在十六宮環上之角度（度）。"""
-    idx = _SIXTEEN.index(chen)
-    return _ROTATION_ANGLE + (360.0 / 16) * (idx + 0.5)
+def _flag_angle(chen, palace_order=None):
+    """地支／八卦宮在宮環上之角度（度）。
+
+    palace_order 預設為十六宮序；命法十二宮圖傳入 _TWELVE。
+    """
+    order = palace_order if palace_order is not None else _SIXTEEN
+    idx = order.index(chen)
+    return _ROTATION_ANGLE + (360.0 / len(order)) * (idx + 0.5)
 
 
 def _draw_flag(d, ang_deg, r_inner, r_outer, color, tang=0.0):
@@ -151,7 +160,7 @@ def _draw_flag(d, ang_deg, r_inner, r_outer, color, tang=0.0):
                         close=True, fill=color, stroke="#e9cc88", stroke_width=1.1))
 
 
-def _add_ornament(d, outer_r, jewels=16, sanqi=None, trigram_rotate=0.0):
+def _add_ornament(d, outer_r, jewels=16, sanqi=None, trigram_rotate=0.0, palace_order=None):
     """古典美學裝飾層（純附加，不改動宮位座標與 viewBox）。
 
     1. 玄色古典底盤（深靛墨）襯托全局，最外環不再露白，白／米色文字清晰可見；
@@ -163,6 +172,8 @@ def _add_ornament(d, outer_r, jewels=16, sanqi=None, trigram_rotate=0.0):
     """
     import math as _m
     from collections import defaultdict
+    if palace_order is None:
+        palace_order = _SIXTEEN if jewels != 12 else _TWELVE
     half = (d.view_box[2] / 2.0) if getattr(d, "view_box", None) else 250.0
     band = half - outer_r
     # —— 1. 玄色古典底盤 ——
@@ -185,7 +196,7 @@ def _add_ornament(d, outer_r, jewels=16, sanqi=None, trigram_rotate=0.0):
                  ("害氣赤旗", sanqi.get("害氣赤旗"))]
         angles = []
         for name, chen in items:
-            ang = _flag_angle(chen) if (chen and chen in _SIXTEEN) else None
+            ang = _flag_angle(chen, palace_order) if (chen and chen in palace_order) else None
             angles.append((name, ang))
         groups = defaultdict(list)
         for k, (name, ang) in enumerate(angles):
@@ -245,7 +256,7 @@ def gen_chart(first_layer, second_layer, sixth_layer, sevenstars, sanqi=None, tr
                          is_second_layer=(layer_idx == 1))
         d.append(layer)
 
-    _add_ornament(d, 13 + 5 * 45, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate)
+    _add_ornament(d, 13 + 5 * 45, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_SIXTEEN)
     return d.as_svg().replace(
         '''<path d="M-4.86988571440686,-12.053390109368236 L-21.72718241812291,-53.776663564873665 A58,58,0,0,1,-21.727182418122876,-53.77666356487368 L-4.869885714406852,-12.053390109368237 A13,13,0,0,0,-4.86988571440686,-12.053390109368236 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
 
@@ -281,7 +292,7 @@ def gen_chart_life(second_layer, twelve, sixth_layer, sevenstars, sanqi=None, tr
                          is_third_layer=(layer_idx == 2)) # 第 3 層
         d.append(layer)
 
-    _add_ornament(d, 12 + 5 * 35, jewels=12, sanqi=sanqi, trigram_rotate=trigram_rotate)
+    _add_ornament(d, 12 + 5 * 35, jewels=12, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_TWELVE)
     return d.as_svg().replace(
         '''<path d="M-4.495279120990947,-11.126206254801447 L-17.606509890547876,-43.577641164639005 A47,47,0,0,1,-17.606509890547848,-43.57764116463901 L-4.49527912099094,-11.12620625480145 A12,12,0,0,0,-4.495279120990947,-11.126206254801447 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
 
@@ -321,7 +332,7 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer, seven_stars, s
                          is_third_layer=(layer_idx == 2))   # 第 3 層
         d.append(layer)
 
-    _add_ornament(d, 3 + 6 * 31.5, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate)
+    _add_ornament(d, 3 + 6 * 31.5, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_SIXTEEN)
     return d.as_svg().replace(
         '''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
 
@@ -378,7 +389,7 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
                          is_28_layer=(layer_idx == 5))
         d.append(layer)
 
-    _add_ornament(d, 3 + 7 * 31.5, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate)
+    _add_ornament(d, 3 + 7 * 31.5, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_SIXTEEN)
     return d.as_svg().replace(
         '''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
 
