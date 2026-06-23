@@ -156,6 +156,9 @@ streamlit run apps/streamlit_app.py
 - **二十八宿** — 值日宿、太歲宿、始擊宿及斷事 / 28 Lunar Mansions — duty mansion, Tai Sui mansion, initial-strike mansion, and interpretations
 - **兵陣預測** — 推主客相關法、飛鳥助戰法、風雲諸法 / Battle Predictions — host-guest analysis, flying-bird battle assistance, wind-cloud techniques
 - **七大兵法** — 雷公入水、臨津問道、獅子反擲、白雲捲空、猛虎相拒、白龍得雲、回軍無言 / Seven Military Strategies — Thunder Lord Enters Water, Asking the Way at the Ford, Lion's Reverse Throw, White Cloud Rolls the Sky, Fierce Tiger Standoff, White Dragon Seizes Cloud, Silent Army Retreat
+- **釋格局（卷四）** — 掩、迫、關、囚、擊、格、對、提挾、執提、四郭固等十一格局動態推算 / Pattern Analysis (Vol.4 of *Taiyi Tongzong Baojian*) — dynamically detects the eleven classical relationships between Taiyi, Wenchang, Shiji, the four generals, and the Eight Gates
+- **三旗行宮（卷十）** — 太歲青龍旗、太陰黑旗、害氣赤旗之所在與會合 / Three Banners (Vol.10) — Azure Dragon Banner, Taiyin Black Banner, Haiqi Red Banner positions and their conjunctions
+- **九宮貴神（卷十）** — 太乙、攝提、軒轅、招搖、天符、青龍、咸池、太陰、天乙鈎宮飛行分布 / Nine-Palace Noble Gods (Vol.10) — the nine gods' palace distribution via the hooking-palace flight method
 
 ---
 

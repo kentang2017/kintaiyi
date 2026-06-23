@@ -1316,13 +1316,20 @@ class Taiyi:
         
         # 應用到整個結構
         ss1 = [[split_planets(cell) for cell in row] for row in ss]
+        # —— 三旗行宮旗旆（卷十）+ 八卦天盤活盤旋轉（隨太乙落宮）——
+        _sanqi = config.sanqi(self.accnum(ji_style, taiyi_acumyear))
+        _ty_v = self.ty(ji_style, taiyi_acumyear)
+        _eight_order = [1, 2, 3, 4, 6, 7, 8, 9]
+        _ty_idx = _eight_order.index(_ty_v) if _ty_v in _eight_order else 0
+        _yun = self.kook(ji_style, taiyi_acumyear).get("文", ["陽"])[0]
+        _trigram_rotate = _ty_idx * 45.0 + (180.0 if _yun == "陰" else 0.0)
         if ji_style in [0,1]:
-            return chart.gen_chart( list(sixteengongs.values())[-1], self.geteightdoors_text2(ji_style, taiyi_acumyear), list(sixteengongs.values())[:-1], ss1[0])
+            return chart.gen_chart( list(sixteengongs.values())[-1], self.geteightdoors_text2(ji_style, taiyi_acumyear), list(sixteengongs.values())[:-1], ss1[0], sanqi=_sanqi, trigram_rotate=_trigram_rotate)
         if ji_style in [2]:
             dict1 = config.gpan1(self.year, self.month, self.day, self.hour, self.minute)
             middle = dict1[0][1]
             ng = dict1[1]
-            return chart.gen_chart_day( list(sixteengongs.values())[-1] + [middle], self.geteightdoors_text2(ji_style, taiyi_acumyear), ng, list(sixteengongs.values())[:-1], ss1[0])
+            return chart.gen_chart_day( list(sixteengongs.values())[-1] + [middle], self.geteightdoors_text2(ji_style, taiyi_acumyear), ng, list(sixteengongs.values())[:-1], ss1[0], sanqi=_sanqi, trigram_rotate=_trigram_rotate)
         if ji_style in [3,4]:
             #j_q = jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)
             #d = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]
@@ -1347,7 +1354,7 @@ class Taiyi:
             sg = [[list(res.values())[i], list(res1.values())[i] ] for i in range(0,len(list(res.values())))]
             star_degrees = dict(zip(config.su,get_xiu_degrees(self.year)))
             new_degrees = [star_degrees.get(i) for i in self.twenty_eightstar(ji_style, taiyi_acumyear)]
-            return chart.gen_chart_hour( list(sixteengongs.values())[-1]+[" "," "], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg,list(sixteengongs.values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear), ss1[0], new_degrees)
+            return chart.gen_chart_hour( list(sixteengongs.values())[-1]+[" "," "], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg,list(sixteengongs.values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear), ss1[0], new_degrees, sanqi=_sanqi, trigram_rotate=_trigram_rotate)
 #太乙命法
     def gen_life_gong(self, sex):
         stars = find_stars(self.year, self.month, self.day, self.hour, self.minute)
@@ -1387,7 +1394,12 @@ class Taiyi:
         dict1 = self.taiyi_life(sex).get("十二命宮排列")
         res.update(dict1)
         sg = list(res.values())
-        return chart.gen_chart_life( list(self.sixteen_gong11(4,0).values())[-1], sg, [self.sixteen_gong11(4,0).get(i) for i in list(res.keys())], ss1[0])
+        _sanqi = config.sanqi(self.accnum(0, 0))
+        _ty_v = self.ty(4, 0)
+        _eight_order = [1, 2, 3, 4, 6, 7, 8, 9]
+        _ty_idx = _eight_order.index(_ty_v) if _ty_v in _eight_order else 0
+        _trigram_rotate = _ty_idx * 45.0
+        return chart.gen_chart_life( list(self.sixteen_gong11(4,0).values())[-1], sg, [self.sixteen_gong11(4,0).get(i) for i in list(res.keys())], ss1[0], sanqi=_sanqi, trigram_rotate=_trigram_rotate)
 
     def gen_life_gong_list(self, sex):
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
@@ -1592,6 +1604,149 @@ class Taiyi:
                 "小游":config.smyo(self.accnum(0,0))}
         return pan
     
+    def shi_geju(self, ji_style, taiyi_acumyear):
+        """釋格局：依《太乙統宗寶鑑》卷四「釋掩迫關囚擊格對提挾執提四郭固四郭社」
+
+        動態推算太乙與文昌、始擊、定目、主客四將、八門之間的十一種格局，
+        補足原 pan() 僅以查表(skyeyes_des)呈現文昌格局之不足。
+        各格局定義皆依卷四原文：
+          掩＝始擊臨太乙宮；囚＝文昌或諸將與太乙同宮；關＝主客四將同宮；
+          格＝客目始擊或客二將在太乙對宮；對＝文昌與太乙相對；
+          迫＝二目四將定計在太乙前一辰/前一宮(外)或後(內)；
+          擊＝始擊在太乙前一辰/前一宮(外)或後(內)；
+          提挾＝二目與四將挾太乙；執提＝太乙與開生門合(執)或衝(提格)；
+          四郭固＝文昌囚太乙宮且主二將相關，或客目臨太乙宮且客主二將相關。
+        """
+        sixteen = list(config.sixteen)
+        chen2gong = config.gong2
+        gong2chen = {}
+        for _ch, _p in chen2gong.items():
+            gong2chen.setdefault(_p, []).append(_ch)
+        eight_order = [1, 2, 3, 4, 6, 7, 8, 9]   # 太乙順行八宮序
+        opp = {1: 9, 9: 1, 2: 8, 8: 2, 3: 7, 7: 3, 4: 6, 6: 4}
+
+        def gong_of_chen(ch):
+            return chen2gong.get(ch)
+
+        ty = self.ty(ji_style, taiyi_acumyear)
+        wc = self.skyeyes(ji_style, taiyi_acumyear)
+        sj = self.sf(ji_style, taiyi_acumyear)
+        se = self.se(ji_style, taiyi_acumyear)
+        hd = self.home_general(ji_style, taiyi_acumyear)
+        hv = self.home_vgen(ji_style, taiyi_acumyear)
+        ad = self.away_general(ji_style, taiyi_acumyear)
+        av = self.away_vgen(ji_style, taiyi_acumyear)
+        generals = [("主大", hd), ("主參", hv), ("客大", ad), ("客參", av)]
+        results = {}
+
+        # 釋掩：始擊臨太乙宮為掩
+        if gong_of_chen(sj) == ty:
+            results["掩"] = "始擊臨太乙宮，陰盛陽衰、君弱臣強之象"
+
+        # 釋囚：文昌與太乙同宮為關囚；諸將與太乙同宮為囚
+        if gong_of_chen(wc) == ty:
+            results["關囚(文昌)"] = "文昌與太乙同宮，拘繫執正，不利為主"
+        for nm, g in generals:
+            if g == ty and g != 5:
+                results[f"囚({nm})"] = f"{nm}與太乙同宮為囚，下犯上之象"
+
+        # 釋關：主客四將同宮為關
+        for i in range(len(generals)):
+            for j in range(i + 1, len(generals)):
+                if generals[i][1] == generals[j][1] and generals[i][1] != 5:
+                    results[f"關({generals[i][0]}、{generals[j][0]})"] = "主客四將同宮，相持爭鋒，不利有為"
+
+        # 釋格：客目始擊與客二將在太乙對宮為格
+        opp_ty = opp.get(ty)
+        if opp_ty:
+            if gong_of_chen(sj) == opp_ty:
+                results["格(始擊)"] = "始擊在太乙對宮，政事上下相格、盜侮其君"
+            if ad == opp_ty:
+                results["格(客大)"] = "客大在太乙對宮為格"
+            if av == opp_ty:
+                results["格(客參)"] = "客參在太乙對宮為格"
+
+        # 釋對：文昌所臨與太乙相當(對宮)為對
+        if opp_ty and gong_of_chen(wc) == opp_ty:
+            results["對"] = "文昌與太乙相對，大臣懷二、將吏挾奸"
+
+        # 釋迫／釋擊之辰、宮鄰接計算
+        prev_g = eight_order[(eight_order.index(ty) - 1) % 8]   # 後一宮(內)
+        next_g = eight_order[(eight_order.index(ty) + 1) % 8]   # 前一宮(外)
+        chens = gong2chen.get(ty, [])
+        out_chen = in_chen = None
+        if len(chens) == 2:
+            p0 = sixteen.index(chens[0])
+            p1 = sixteen.index(chens[1])
+            out_chen = sixteen[(p1 + 1) % 16]   # 太乙前一辰(外)
+            in_chen = sixteen[(p0 - 1) % 16]    # 太乙後一辰(內)
+
+        # 釋迫：二目及定計目在太乙前後辰／宮
+        for nm, ch in [("文昌", wc), ("始擊", sj), ("定目", se)]:
+            if gong_of_chen(ch) == ty:
+                continue  # 同宮屬囚，不論迫
+            if ch == out_chen:
+                results[f"辰迫(外、{nm})"] = f"{nm}在太乙前一辰，外辰迫，災急而重"
+            elif ch == in_chen:
+                results[f"辰迫(內、{nm})"] = f"{nm}在太乙後一辰，內辰迫，災尤速"
+            og = gong_of_chen(ch)
+            if og == next_g:
+                results[f"宮迫(外、{nm})"] = f"{nm}在太乙前一宮，外宮迫，災緩而輕"
+            elif og == prev_g:
+                results[f"宮迫(內、{nm})"] = f"{nm}在太乙後一宮，內宮迫".format(nm)
+        # 將之宮迫
+        for nm, g in generals:
+            if g == 5 or g == ty:
+                continue
+            if g == next_g:
+                results[f"宮迫(外、{nm})"] = f"{nm}在太乙前一宮，外宮迫".format(nm)
+            elif g == prev_g:
+                results[f"宮迫(內、{nm})"] = f"{nm}在太乙後一宮，內宮迫"
+
+        # 釋擊：始擊在太乙前後辰／宮
+        if gong_of_chen(sj) != ty:
+            if sj == out_chen:
+                results["擊(外辰)"] = "始擊在太乙前一辰，外辰擊，諸侯侵凌"
+            elif sj == in_chen:
+                results["擊(內辰)"] = "始擊在太乙後一辰，內辰擊，親王后妃憑凌"
+            if gong_of_chen(sj) == next_g:
+                results["擊(外宮)"] = "始擊在太乙前一宮，外宮擊"
+            elif gong_of_chen(sj) == prev_g:
+                results["擊(內宮)"] = "始擊在太乙後一宮，內宮擊"
+
+        # 釋提挾：二目分居太乙宮兩側而挾之
+        if gong_of_chen(wc) != ty and gong_of_chen(sj) != ty and len(chens) == 2:
+            ty_mid = (sixteen.index(chens[0]) + sixteen.index(chens[1])) / 2.0
+            def _side(idx):
+                d = (idx - ty_mid) % 16
+                return "外" if 0 < d < 8 else ("內" if d > 8 else "中")
+            swc = _side(sixteen.index(wc))
+            ssj = _side(sixteen.index(sj))
+            if swc != "中" and ssj != "中" and swc != ssj:
+                results["提挾"] = "二目(文昌、始擊)挾太乙，政由大臣、下專權之象"
+
+        # 釋執提：太乙與開生二門合(同宮)為執，衝(對宮)為提格
+        doors = self.geteightdoors(ji_style, taiyi_acumyear)
+        kai_gong = next((g for g, d in doors.items() if d == "開"), None)
+        sheng_gong = next((g for g, d in doors.items() if d == "生"), None)
+        for g in [kai_gong, sheng_gong]:
+            if g is None:
+                continue
+            if g == ty:
+                results["執(開生門合)"] = "太乙與開生門合，執提之象，不可舉事"
+            elif opp.get(ty) and g == opp.get(ty):
+                results["提格(開生門衝)"] = "太乙與開生門衝，提格之象"
+
+        # 釋四郭固：文昌囚太乙宮且主二將相關；或客目臨太乙宮且客主二將相關
+        if gong_of_chen(wc) == ty and hd == hv and hd != 5:
+            results["四郭固"] = "文昌囚太乙宮、主二將相關，堅壁固守，不可有為"
+        elif gong_of_chen(sj) == ty and ad != 5 and (ad in (av, hd) or av == hv):
+            results["四郭固"] = "客目臨太乙宮、客主二將相關，四郭固，宜固守"
+
+        if not results:
+            results["無格局"] = "太乙無掩迫關囚擊格對提挾諸格局，主客清明"
+        return results
+
     def pan(self, ji_style, taiyi_acumyear, enable_game_theory: bool = False):
         """起盤詳細內容
 
@@ -1686,6 +1841,11 @@ class Taiyi:
                 "推猛虎相拒":config.tiger(self.ty(ji_style, taiyi_acumyear)),
                 "推白龍得雲":config.dragon(self.ty(ji_style, taiyi_acumyear)),
                 "推回軍無言":config.returnarmy(self.away_general(ji_style, taiyi_acumyear)),
+                # 《太乙統宗寶鑑》卷四：釋掩迫關囚擊格對提挾執提四郭固
+                "釋格局":self.shi_geju(ji_style, taiyi_acumyear),
+                # 《太乙統宗寶鑑》卷十：三旗行宮 + 九宮貴神
+                "三旗行宮":config.sanqi(self.accnum(ji_style, taiyi_acumyear)),
+                "九宮貴神":config.nine_palace_gods(self.accnum(ji_style, taiyi_acumyear)),
                 }
         if enable_game_theory:
             # 此處以古法「推主客相闗法」及「七大兵法格局」為本，

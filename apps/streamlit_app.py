@@ -220,6 +220,9 @@ TRANSLATIONS = {
         "heaven_yi": "明天乙太乙所主術︰",
         "earth_yi": "明地乙太乙所主術︰",
         "zhifu": "明值符太乙所主術︰",
+        "shi_geju": "釋格局（卷四·掩迫關囚擊格對提挾執提四郭固）︰",
+        "sanqi": "三旗行宮（卷十·青龍旗·黑旗·赤旗）︰",
+        "nine_gods": "九宮貴神（卷十·鈎宮飛行）︰",
         # AI
         "ai_analyze_btn": "🔍 使用AI分析排盤結果",
         "ai_analyzing": "AI正在分析太乙排盤結果...",
@@ -382,6 +385,9 @@ TRANSLATIONS = {
         "heaven_yi": "Heaven Yi Method: ",
         "earth_yi": "Earth Yi Method: ",
         "zhifu": "Zhifu Method: ",
+        "shi_geju": "Pattern Analysis (Vol.4): ",
+        "sanqi": "Three Banners (Vol.10): ",
+        "nine_gods": "Nine-Palace Noble Gods (Vol.10): ",
         # AI
         "ai_analyze_btn": "🔍 Analyze with AI",
         "ai_analyzing": "AI is analyzing the Taiyi chart...",
@@ -875,7 +881,10 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     )
 
     export_css = """
-    .taiyi-svg-root { background: transparent; }
+    .taiyi-svg-root {
+        background: radial-gradient(circle at 50% 44%, #1c2540 0%, #11172b 58%, #090c18 100%);
+        border-radius: 50%;
+    }
     .taiyi-svg-root path, .taiyi-svg-root polygon, .taiyi-svg-root rect, .taiyi-svg-root circle, .taiyi-svg-root ellipse {
         stroke: #d7bd6f !important;
         stroke-width: 1.2 !important;
@@ -887,12 +896,12 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         font-weight: 600 !important;
     }
     .taiyi-svg-root #layer1 path, .taiyi-svg-root #layer1 circle, .taiyi-svg-root #layer1 ellipse { fill: #c9a227 !important; }
-    .taiyi-svg-root #layer2 path, .taiyi-svg-root #layer2 polygon, .taiyi-svg-root #layer2 rect { fill: rgba(20, 46, 68, 0.78) !important; }
-    .taiyi-svg-root #layer3 path, .taiyi-svg-root #layer3 polygon, .taiyi-svg-root #layer3 rect { fill: rgba(10, 28, 43, 0.88) !important; }
-    .taiyi-svg-root #layer4 path, .taiyi-svg-root #layer4 polygon, .taiyi-svg-root #layer4 rect { fill: rgba(15, 43, 62, 0.92) !important; }
-    .taiyi-svg-root #layer5 path, .taiyi-svg-root #layer5 polygon, .taiyi-svg-root #layer5 rect { fill: rgba(31, 49, 78, 0.82) !important; }
-    .taiyi-svg-root #layer6 path, .taiyi-svg-root #layer6 polygon, .taiyi-svg-root #layer6 rect { fill: rgba(17, 39, 56, 0.84) !important; }
-    .taiyi-svg-root #layer7 path, .taiyi-svg-root #layer7 polygon, .taiyi-svg-root #layer7 rect { fill: rgba(8, 22, 40, 0.95) !important; }
+    .taiyi-svg-root #layer2 path, .taiyi-svg-root #layer2 polygon, .taiyi-svg-root #layer2 rect { fill: rgba(24, 56, 84, 0.95) !important; }
+    .taiyi-svg-root #layer3 path, .taiyi-svg-root #layer3 polygon, .taiyi-svg-root #layer3 rect { fill: rgba(14, 36, 56, 0.96) !important; }
+    .taiyi-svg-root #layer4 path, .taiyi-svg-root #layer4 polygon, .taiyi-svg-root #layer4 rect { fill: rgba(18, 52, 74, 0.97) !important; }
+    .taiyi-svg-root #layer5 path, .taiyi-svg-root #layer5 polygon, .taiyi-svg-root #layer5 rect { fill: rgba(34, 60, 94, 0.95) !important; }
+    .taiyi-svg-root #layer6 path, .taiyi-svg-root #layer6 polygon, .taiyi-svg-root #layer6 rect { fill: rgba(22, 48, 70, 0.96) !important; }
+    .taiyi-svg-root #layer7 path, .taiyi-svg-root #layer7 polygon, .taiyi-svg-root #layer7 rect { fill: rgba(10, 28, 50, 0.98) !important; }
     .taiyi-svg-root .taiyi-key-spot,
     .taiyi-svg-root .taiyi-user-mark,
     .taiyi-svg-root .taiyi-key-sector { filter: url(#__GLOW_ID__); }
@@ -2571,6 +2580,21 @@ with tabs[0]:
                         st.markdown(f"{t('heaven_yi')}{results['ttext'].get('明天乙太乙所主術')}")
                         st.markdown(f"{t('earth_yi')}{results['ttext'].get('明地乙太乙所主術')}")
                         st.markdown(f"{t('zhifu')}{results['ttext'].get('明值符太乙所主術')}")
+                        # —— 卷四：釋格局 ——
+                        _sg = results["ttext"].get("釋格局", {})
+                        if _sg:
+                            _sg_text = "；".join([f"{k}——{v}" for k, v in _sg.items()])
+                            st.markdown(f"{t('shi_geju')}{_sg_text}")
+                        # —— 卷十：三旗行宮 ——
+                        _sq = results["ttext"].get("三旗行宮", {})
+                        if _sq:
+                            st.markdown(f"{t('sanqi')}太歲青龍旗{_sq.get('太歲青龍旗')}、太陰黑旗{_sq.get('太陰黑旗')}、害氣赤旗{_sq.get('害氣赤旗')}（{_sq.get('會合')}）")
+                        # —— 卷十：九宮貴神 ——
+                        _ng = results["ttext"].get("九宮貴神", {})
+                        if _ng:
+                            _dist = _ng.get("九宮貴神分布", {})
+                            _dist_text = "、".join([f"{g}宮{nm}" for g, nm in _dist.items()])
+                            st.markdown(f"{t('nine_gods')}直事貴神爲{_ng.get('直事貴神')}（小周餘{_ng.get('小周餘')}）；鈎宮分布：{_dist_text}")
 
 
 

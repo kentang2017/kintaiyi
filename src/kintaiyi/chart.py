@@ -102,8 +102,118 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
     group.append(t)
 
 
+# ======================  古典美學裝飾  ======================
+# 依「美學主義者」視角，為排盤增添古典章法之美：外緣雙線金環、八方珠飾、
+# 中央太乙印記，皆為純粹附加之裝飾層，不改動原有宮位座標與 viewBox，
+# 故不影響前端轉盤(rotation)與解析邏輯。
+_TRIGRAMS = ["☰", "☱", "☲", "☳", "☴", "☵", "☶", "☷"]   # 乾兒離震巴坎艰坤（河圖序）
+
+# 後天八卦方位序：對應十六宮之子(坎)、艰、卯(震)、巴、午(離)、坤、酉(兒)、乾
+# 用於最外環「八卦天盤」活盤標記；其方位隨排局旋轉（trigram_rotate）。
+_EIGHT_PALACE_TRIGRAMS = ["☵", "☶", "☳", "☴", "☲", "☷", "☱", "☰"]  # 坎艰震巴離坤兒乾
+_EIGHT_PALACE_NAMES = ["坎", "艰", "震", "巴", "離", "坤", "兒", "乾"]
+_ROTATION_ANGLE = 248  # 與 gen_chart 系列之 rotation_angle 一致
+
+# 三旗顏色（卷十）：青龍旗綠、太陰黑旗黑、害氣赤旗紅
+_SANQI_COLORS = {
+    "太歲青龍旗": "#2faa5e",
+    "太陰黑旗": "#15171f",
+    "害氣赤旗": "#c43a2b",
+}
+# 十六宮地支序（供三旗定位角度）
+_SIXTEEN = "子丑艰寅卯辰巴巳午未坤申酉戌乾亥"
+
+
+def _flag_angle(chen):
+    """地支／八卦宮在十六宮環上之角度（度）。"""
+    idx = _SIXTEEN.index(chen)
+    return _ROTATION_ANGLE + (360.0 / 16) * (idx + 0.5)
+
+
+def _draw_flag(d, ang_deg, r_inner, r_outer, color, tang=0.0):
+    """繪一面旗：徑向旗桿 + 三角旗旆（tang 為切向偏移以避重疊）。"""
+    import math as _m
+    a = _m.radians(ang_deg)
+    ca, sa = _m.cos(a), _m.sin(a)
+    ta, tca = -sa, ca
+    bx, by = r_inner * ca + tang * ta, r_inner * sa + tang * tca
+    ex, ey = r_outer * ca + tang * ta, r_outer * sa + tang * tca
+    d.append(draw.Line(bx, by, ex, ey, stroke="#e9cc88", stroke_width=1.4))
+    ph = max(4.0, (r_outer - r_inner) * 0.7)
+    W = max(3.5, (r_outer - r_inner) * 0.55)
+    r_top, r_bot = r_outer, r_outer - ph
+    p1x, p1y = r_top * ca + tang * ta, r_top * sa + tang * tca
+    p2x, p2y = r_bot * ca + tang * ta, r_bot * sa + tang * tca
+    mr = (r_top + r_bot) / 2.0
+    mx, my = mr * ca + tang * ta, mr * sa + tang * tca
+    tipx, tipy = mx + W * ta, my + W * tca
+    d.append(draw.Lines(p1x, p1y, p2x, p2y, tipx, tipy,
+                        close=True, fill=color, stroke="#e9cc88", stroke_width=1.1))
+
+
+def _add_ornament(d, outer_r, jewels=16, sanqi=None, trigram_rotate=0.0):
+    """古典美學裝飾層（純附加，不改動宮位座標與 viewBox）。
+
+    1. 玄色古典底盤（深靛墨）襯托全局，最外環不再露白，白／米色文字清晰可見；
+    2. 外緣雙線金環、八方珠飾；
+    3. 三旗行宮旗旆（卷十）：青龍旗(綠)、太陰黑旗(黑)、害氣赤旗(紅)，
+       按各旗所落地支宮位之角度顯示於外緣，同宮者切向散開避免重疊；
+    4. 八卦天盤活盤：外緣空間足夠(≥26px)時，依後天八卦方位序置八卦，
+       並隨排局以 trigram_rotate 旋轉，故不同排局八卦方位不同。
+    """
+    import math as _m
+    from collections import defaultdict
+    half = (d.view_box[2] / 2.0) if getattr(d, "view_box", None) else 250.0
+    band = half - outer_r
+    # —— 1. 玄色古典底盤 ——
+    d.insert(0, draw.Circle(0, 0, half, fill="#141826", stroke="#c79a4e", stroke_width=1.6))
+    d.append(draw.Circle(0, 0, 13, stroke="#c79a4e", stroke_width=0.9, fill="none"))
+    # —— 2. 外緣雙線金環 + 八方珠飾 ——
+    r1 = outer_r + max(2.0, band * 0.30)
+    r2 = outer_r + max(5.0, band * 0.62)
+    d.append(draw.Circle(0, 0, r1, stroke="#c79a4e", stroke_width=1.3, fill="none"))
+    d.append(draw.Circle(0, 0, r2, stroke="#c79a4e", stroke_width=0.9, fill="none"))
+    rr = (r1 + r2) / 2.0
+    for i in range(jewels):
+        ang = _m.radians((360 / jewels) * i + _ROTATION_ANGLE + (360 / jewels) / 2)
+        d.append(draw.Circle(rr * _m.cos(ang), rr * _m.sin(ang), 1.7,
+                             fill="#e9cc88", stroke="none"))
+    # —— 3. 三旗行宮旗旆 ——
+    if sanqi:
+        items = [("太歲青龍旗", sanqi.get("太歲青龍旗")),
+                 ("太陰黑旗", sanqi.get("太陰黑旗")),
+                 ("害氣赤旗", sanqi.get("害氣赤旗"))]
+        angles = []
+        for name, chen in items:
+            ang = _flag_angle(chen) if (chen and chen in _SIXTEEN) else None
+            angles.append((name, ang))
+        groups = defaultdict(list)
+        for k, (name, ang) in enumerate(angles):
+            if ang is not None:
+                groups[round(ang, 1)].append(k)
+        tang_map = {}
+        for ks in groups.values():
+            n = len(ks)
+            for pos, k in enumerate(ks):
+                tang_map[k] = (pos - (n - 1) / 2.0) * 6.0
+        r_in = max(outer_r - 3.0, 13.0)
+        pole_len = min(max(10.0, (half - 1.5) - r_in), 20.0)
+        r_out = r_in + pole_len
+        for k, (name, ang) in enumerate(angles):
+            if ang is None:
+                continue
+            _draw_flag(d, ang, r_in, r_out, _SANQI_COLORS[name], tang=tang_map.get(k, 0.0))
+    # —— 4. 八卦天盤活盤 ——
+    if band >= 26:
+        tr = r2 + (half - r2) * 0.55
+        for i in range(8):
+            ang = _m.radians(_ROTATION_ANGLE + (360.0 / 16) * (2 * i + 0.5) + trigram_rotate)
+            d.append(draw.Text(_EIGHT_PALACE_TRIGRAMS[i], 12, tr * _m.cos(ang), tr * _m.sin(ang),
+                                center=1, fill="#e9cc88", font_family="serif",
+                                font_weight="bold"))
+
 # ====================  gen_chart  ====================
-def gen_chart(first_layer, second_layer, sixth_layer, sevenstars):
+def gen_chart(first_layer, second_layer, sixth_layer, sevenstars, sanqi=None, trigram_rotate=0.0):
     d = draw.Drawing(500, 500, origin="center")
     inner_radius = 13
     layer_gap = 45
@@ -135,12 +245,13 @@ def gen_chart(first_layer, second_layer, sixth_layer, sevenstars):
                          is_second_layer=(layer_idx == 1))
         d.append(layer)
 
+    _add_ornament(d, 13 + 5 * 45, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate)
     return d.as_svg().replace(
         '''<path d="M-4.86988571440686,-12.053390109368236 L-21.72718241812291,-53.776663564873665 A58,58,0,0,1,-21.727182418122876,-53.77666356487368 L-4.869885714406852,-12.053390109368237 A13,13,0,0,0,-4.86988571440686,-12.053390109368236 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
 
 
 # ====================  gen_chart_life  ====================
-def gen_chart_life(second_layer, twelve, sixth_layer, sevenstars):
+def gen_chart_life(second_layer, twelve, sixth_layer, sevenstars, sanqi=None, trigram_rotate=0.0):
     d = draw.Drawing(450, 450, origin="center")
     inner_radius = 12
     layer_gap = 35
@@ -170,12 +281,13 @@ def gen_chart_life(second_layer, twelve, sixth_layer, sevenstars):
                          is_third_layer=(layer_idx == 2)) # 第 3 層
         d.append(layer)
 
+    _add_ornament(d, 12 + 5 * 35, jewels=12, sanqi=sanqi, trigram_rotate=trigram_rotate)
     return d.as_svg().replace(
         '''<path d="M-4.495279120990947,-11.126206254801447 L-17.606509890547876,-43.577641164639005 A47,47,0,0,1,-17.606509890547848,-43.57764116463901 L-4.49527912099094,-11.12620625480145 A12,12,0,0,0,-4.495279120990947,-11.126206254801447 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
 
 
 # ====================  gen_chart_day  ====================
-def gen_chart_day(first_layer, second_layer, golden, sixth_layer, seven_stars):
+def gen_chart_day(first_layer, second_layer, golden, sixth_layer, seven_stars, sanqi=None, trigram_rotate=0.0):
     d = draw.Drawing(500, 500, origin="center")
     inner_radius = 3
     layer_gap = 31.5
@@ -209,13 +321,14 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer, seven_stars):
                          is_third_layer=(layer_idx == 2))   # 第 3 層
         d.append(layer)
 
+    _add_ornament(d, 3 + 6 * 31.5, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate)
     return d.as_svg().replace(
         '''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
 
 
 # ====================  gen_chart_hour（支援 rotate_28） ====================
 def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
-                   twentyeight, seven_stars, degrees, rotate_28=0):
+                   twentyeight, seven_stars, degrees, rotate_28=0, sanqi=None, trigram_rotate=0.0):
     """
     rotate_28: 28宿旋轉角度（度）
                正數 → 逆時針（擰後）
@@ -265,6 +378,7 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
                          is_28_layer=(layer_idx == 5))
         d.append(layer)
 
+    _add_ornament(d, 3 + 7 * 31.5, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate)
     return d.as_svg().replace(
         '''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
 
