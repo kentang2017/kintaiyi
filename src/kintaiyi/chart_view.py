@@ -617,13 +617,25 @@ def build_chart_view_model(
         _center_lines(ttext),
     )
 
+    doors = ttext.get("八門分佈") or {}
+    ng = ttext.get("九宮貴神") or (ttext.get("卷十") or {}).get("九宮貴神") or {}
+    god_dist = ng.get("九宮貴神分布") or {}
     door_items = (ttext.get("神將所主") or {}).get("八門所主", {}).get("八門分布") or []
-    for i, door in enumerate(_EIGHT_DOOR_ORDER):
-        title = f"{door}門"
-        lines = _door_lines(door, ttext)
+    for i, gong in enumerate(_layer2_gong_order(ttext)):
+        door = str(doors.get(gong, "")).replace("門", "")
+        luoshu = config._LUOSHU_GONG.get(gong, "")
+        god_full = god_dist.get(luoshu, "")
+        gname = config.num2gong(gong)
+        title = f"{gname}·{door}" if door else gname
+        lines = _door_lines(door, ttext) if door else []
+        if god_full:
+            lines.insert(0, f"貴神·{god_full}")
+            if ng.get("直事貴神") == god_full:
+                lines.insert(1, "直事貴神臨此")
         if i < len(door_items) and not lines:
             item = door_items[i]
-            title = str(item.get("門", title))
+            item_door = str(item.get("門", door)).replace("門", "")
+            title = f"{gname}·{item_door}" if item_door else title
             if item.get("所主"):
                 lines.append(_clip(item["所主"], 64))
         sectors[f"layer2:{i}"] = _sector_entry(title, lines)

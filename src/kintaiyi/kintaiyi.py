@@ -1189,6 +1189,9 @@ class Taiyi:
         star_dist = config.taiyi_nine_stars(
             self.accnum(ji_style, taiyi_acumyear), year_gan,
         ).get("九星分布", {})
+        god_dist = config.nine_palace_gods(
+            self.accnum(ji_style, taiyi_acumyear),
+        ).get("九宮貴神分布", {})
         rows = []
         for gong_cn in config.new_list(list(eightdoors.keys()), "二"):
             gong_num = cn2an(gong_cn)
@@ -1197,7 +1200,10 @@ class Taiyi:
             star_short = star_full[1:] if star_full.startswith("天") else star_full
             wx = eightddors_status.get(gong_cn, "")
             wx_star = f"{wx}{star_short}" if wx and star_short else (wx or star_short)
-            rows.append([gong_cn, eightdoors.get(gong_cn) + "門", wx_star])
+            door = eightdoors.get(gong_cn)
+            god_full = god_dist.get(luoshu, "")
+            god_short = config.NINE_GOD_CHART_LABEL.get(god_full, "")
+            rows.append([gong_cn, door, wx_star, god_short, god_full])
         return rows
 
     #陽九行限

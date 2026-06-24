@@ -2,6 +2,8 @@
 import drawsvg as draw
 import math
 
+from .config import NINE_GOD_CHART_LABEL
+
 # ======================  共用顏色設定  ======================
 BRANCH_COLORS = {
     '子': 'blue',  '亥': 'blue',
@@ -90,13 +92,49 @@ def _compact_label(parts, layer_role, branch=""):
     return branch[:1] if branch else ""
 
 
+def _door_row_parts(raw_label):
+    """八門環列：[宮名, 門名(無門字), 旺衰九星, 貴神簡字, 貴神全名]。"""
+    if not isinstance(raw_label, list) or len(raw_label) < 2:
+        return None
+    gong = str(raw_label[0])
+    door = str(raw_label[1]).replace("門", "")
+    wx_star = str(raw_label[2]) if len(raw_label) > 2 else ""
+    god_short = str(raw_label[3]) if len(raw_label) > 3 else ""
+    god_full = str(raw_label[4]) if len(raw_label) > 4 else ""
+    if not god_full and god_short:
+        for name, short in NINE_GOD_CHART_LABEL.items():
+            if short == god_short:
+                god_full = name
+                break
+    return gong, door, wx_star, god_short, god_full
+
+
 def _sector_meta(raw_label, layer_role=""):
     parts = _label_parts(raw_label)
     label_str = _format_label(raw_label)
     branch = ""
     god = ""
     region = ""
-    if isinstance(raw_label, list) and raw_label:
+    display = label_str
+    if layer_role == "door":
+        row = _door_row_parts(raw_label)
+        if row:
+            gong, door, wx_star, god_short, god_full = row
+            branch = gong
+            god = god_full or door
+            region = wx_star
+            door_line = f"{door}{god_short}" if god_short else door
+            display = "\n".join(x for x in (gong, door_line, wx_star) if x)
+            full_lines = [f"{gong}宮", door_line, wx_star]
+            if god_full:
+                full_lines.append(f"貴神·{god_full}")
+            label_str = "\n".join(x for x in full_lines if x)
+        elif isinstance(raw_label, str):
+            door = raw_label.replace("門", "")
+            display = door
+            label_str = door
+            god = door
+    elif isinstance(raw_label, list) and raw_label:
         branch = raw_label[0] if raw_label[0] in BRANCH_COLORS else _get_branch_key(raw_label)
         if len(raw_label) > 1:
             god = str(raw_label[1])
@@ -106,13 +144,20 @@ def _sector_meta(raw_label, layer_role=""):
         branch = _get_branch_key(raw_label)
         if layer_role == "door":
             god = parts[0] if parts else ""
-    compact = _compact_label(parts, layer_role, branch)
+    if layer_role == "door":
+        row = _door_row_parts(raw_label)
+        compact = _compact_label(
+            [row[1]] if row else parts, "door", branch,
+        )
+    else:
+        compact = _compact_label(parts, layer_role, branch)
     return {
         "branch": branch,
         "god": god,
         "region": region,
         "compact": compact,
         "full": label_str,
+        "display": display,
         "role": layer_role,
     }
 
@@ -134,7 +179,8 @@ def _pos_branch(sector_idx, sector_count, layer_role="", raw_label=None):
         order = _PLANET_RING if layer_role == "star12" else _TWELVE
         return order[sector_idx]
     if sector_count == 8 and layer_role == "door":
-        text = _format_label(raw_label)
+        row = _door_row_parts(raw_label)
+        text = row[1] if row else _format_label(raw_label).replace("門", "")
         key = next((c for c in text if c in GATE_TO_BRANCH), None)
         return GATE_TO_BRANCH.get(key, "")
     return ""
@@ -159,7 +205,8 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
     # ---- 顏色邏輯（優先順序：第 2 層 > 第 3 層 > 16宮 > 28宿）----
     fill = 'black'   # 預設
     if is_second_layer:                     # 八門 → 五行
-        text = _format_label(raw_label)
+        row = _door_row_parts(raw_label)
+        text = row[1] if row else _format_label(raw_label).replace("門", "")
         key = next((c for c in text if c in GATE_TO_BRANCH), None)
         if key:
             fill = BRANCH_COLORS.get(GATE_TO_BRANCH[key], 'gray')
@@ -177,7 +224,7 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
 
     text_fill = TEXT_COLORS.get(fill, 'white')
     meta = _sector_meta(raw_label, layer_role)
-    label_str = meta["full"]
+    label_str = meta["display"] if layer_role == "door" else meta["full"]
 
     sector_g = draw.Group(id=f"{layer_id}-s{sector_idx}" if layer_id else None)
     sector_g.args["class"] = "taiyi-sector"
@@ -186,7 +233,7 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
         sector_g.args["data-sector"] = str(sector_idx)
         sector_g.args["data-role"] = layer_role or ""
         sector_g.args["data-compact"] = meta["compact"]
-        sector_g.args["data-full"] = label_str
+        sector_g.args["data-full"] = meta["full"]
         if meta["branch"]:
             sector_g.args["data-branch"] = meta["branch"]
         pos_branch = _pos_branch(sector_idx, sector_count, layer_role, raw_label)
