@@ -159,6 +159,16 @@ streamlit run apps/streamlit_app.py
 - **釋格局（卷四）** — 掩、迫、關、囚、擊、格、對、提挾、執提、四郭固等十一格局動態推算 / Pattern Analysis (Vol.4 of *Taiyi Tongzong Baojian*) — dynamically detects the eleven classical relationships between Taiyi, Wenchang, Shiji, the four generals, and the Eight Gates
 - **三旗行宮（卷十）** — 太歲青龍旗、太陰黑旗、害氣赤旗之所在與會合 / Three Banners (Vol.10) — Azure Dragon Banner, Taiyin Black Banner, Haiqi Red Banner positions and their conjunctions
 - **九宮貴神（卷十）** — 太乙、攝提、軒轅、招搖、天符、青龍、咸池、太陰、天乙鈎宮飛行分布 / Nine-Palace Noble Gods (Vol.10) — the nine gods' palace distribution via the hooking-palace flight method
+- **太乙九星（卷六）** — 天蓬至天英直符、六甲伏宮分布與所主斷語 / Taiyi Nine Stars (Vol.6) — direct talisman star, six-jia hidden-palace distribution, and classical interpretations
+- **文昌九星（卷六）** — 文曲至雄明直事、九宮分野與臨宮吉凶 / Wenchang Nine Stars (Vol.6) — direct-service star, nine-palace territorial divisions, and palace-specific omens
+- **五運六氣（卷三／卷十）** — 年干五運、年支司天在泉、歲會天符及主客氣 / Five Movements & Six Qi (Vol.3/10) — annual movement, celestial/terrestrial qi, conjunctions, host-guest qi
+- **五音之數（卷三）** — 主客定算五音休咎、太乙宮／日時五音及河圖元象 / Five-Tone Numbers (Vol.3) — tone analysis from calculations, palace/day-hour tones, and Hetu origins
+- **軍事戰略（卷五）** — 內外占攻擊、太乙助主客、算長短緩急、數孤單成敗、數有所主、主客動靜、輔相／將帥賢否、諸將旺衰 / Military Strategy (Vol.5) — attack timing, host/guest advantage, calc length, odd/even fate, five-tone rulership, minister/general quality
+- **卷十一** — 十六宮間變化、州國災變月數、城名厄會、飛符四殺、城名歲內災發、九宮／十干城名 / Vol.11 — sixteen-god transformations, state disaster months, city omen, four kills, intra-year disaster timing, palace city names
+- **卷十二** — 統運入卦紀年、十二運立成、入爻禍福、流年太歲直卦、歷史入爻例 / Vol.12 — cycle hexagram entry, twelve-cycle table, line omens, annual hexagram, historical examples
+- **軍事應用（卷十五）** — 奇兵伏兵、五陣置旗、出兵稱神、陳兵出鄉、選將教兵、隨地制變、分合用兵、五音風／觀風察將、安營置陣、風從八卦、雲氣逆順、軍勢勝負 / Military Application (Vol.15) — full vol.15 campaign tactics
+- **軍事占斷（卷十七）** — 出兵用時、敵國動靜、間諜／敵使虛實、敵兵來方、見聞虛實、討捕叛亡、執囚對吏、求索所得、時計諸事 / Military Divination (Vol.17) — campaign timing, enemy movement, espionage, rumour truth, pursuit, imprisonment, requests, and hourly omens
+- **神將所主（卷二／卷七）** — 十六宮間神、九宮所主／通變、陰陽絕易、八門所主／通變／門具、天乙／地乙／直符／四神、大遊凶筭／天目、小遊合宮 / Gods & Doors Meanings (Vol.2/7) — palaces, gates, yin-yang extremes, dayou/xiaoyou rulership
 
 ---
 

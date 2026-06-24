@@ -28,6 +28,8 @@ import json
 from kintaiyi import jieqi
 from kintaiyi import kintaiyi
 from kintaiyi import config
+from kintaiyi.chart_view import chart_svg_layout
+
 import cn2an
 from cn2an import an2cn
 from kintaiyi.taiyidict import tengan_shiji, su_dist
@@ -220,9 +222,39 @@ TRANSLATIONS = {
         "heaven_yi": "明天乙太乙所主術︰",
         "earth_yi": "明地乙太乙所主術︰",
         "zhifu": "明值符太乙所主術︰",
-        "shi_geju": "釋格局（卷四·掩迫關囚擊格對提挾執提四郭固）︰",
-        "sanqi": "三旗行宮（卷十·青龍旗·黑旗·赤旗）︰",
-        "nine_gods": "九宮貴神（卷十·鈎宮飛行）︰",
+        "shi_geju": "釋格局︰",
+        "sanqi": "三旗行宮︰",
+        "nine_gods": "九宮貴神︰",
+        "taiyi_stars": "太乙九星︰",
+        "wenchang_stars": "文昌九星︰",
+        "wuyun_liuqi": "五運六氣︰",
+        "wuyin_shu": "五音之數︰",
+        "junshi_vol5": "軍事戰略︰",
+        "vol11": "州國災變︰",
+        "tongyun_rugua": "統運入卦︰",
+        "liunian_zhigua": "流年直卦︰",
+        "ruyao_huofu": "入爻禍福︰",
+        "shier_yun": "十二運立成︰",
+        "lishi_ruyao": "歷史入爻例︰",
+        "tongyun_detail": "統運詳情",
+        "gua_xiang": "卦象觀象︰",
+        "gua_xiang_detail": "卦象詳情",
+        "bian_gua_najia": "變卦納甲︰",
+        "shouwei": "災厄首尾︰",
+        "hangzhi_biannian": "行支編年︰",
+        "tongyun_extended": "統運延伸",
+        "fenye": "分野疆界︰",
+        "guiyun": "大小遊軌運︰",
+        "vol10_hehui": "天目合會︰",
+        "yunqi": "十精雲氣︰",
+        "yangjiu_xian": "陽九限數︰",
+        "bailiu_xian": "百六限數︰",
+        "sixteen_palace": "十六宮分佈︰",
+        "shiti_jinfu": "太乙十提金賦︰",
+        "feifu_sisha": "飛符四殺︰",
+        "junshi_vol15": "軍事應用︰",
+        "junshi_vol17": "軍事占斷︰",
+        "shenjiang_suozhu": "神將所主︰",
         # AI
         "ai_analyze_btn": "🔍 使用AI分析排盤結果",
         "ai_analyzing": "AI正在分析太乙排盤結果...",
@@ -385,9 +417,39 @@ TRANSLATIONS = {
         "heaven_yi": "Heaven Yi Method: ",
         "earth_yi": "Earth Yi Method: ",
         "zhifu": "Zhifu Method: ",
-        "shi_geju": "Pattern Analysis (Vol.4): ",
-        "sanqi": "Three Banners (Vol.10): ",
-        "nine_gods": "Nine-Palace Noble Gods (Vol.10): ",
+        "shi_geju": "Pattern Analysis: ",
+        "sanqi": "Three Banners: ",
+        "nine_gods": "Nine-Palace Noble Gods: ",
+        "taiyi_stars": "Taiyi Nine Stars: ",
+        "wenchang_stars": "Wenchang Nine Stars: ",
+        "wuyun_liuqi": "Five Movements & Six Qi: ",
+        "wuyin_shu": "Five-Tone Numbers: ",
+        "junshi_vol5": "Military Strategy: ",
+        "vol11": "State Disasters: ",
+        "tongyun_rugua": "Cycle Hexagram: ",
+        "liunian_zhigua": "Annual Hexagram: ",
+        "ruyao_huofu": "Line Omen: ",
+        "shier_yun": "Twelve-Cycle Table: ",
+        "lishi_ruyao": "Historical Line Entries: ",
+        "tongyun_detail": "Cycle Details",
+        "gua_xiang": "Hexagram Image: ",
+        "gua_xiang_detail": "Hexagram Details",
+        "bian_gua_najia": "Changed Hexagram: ",
+        "shouwei": "Cycle Boundaries: ",
+        "hangzhi_biannian": "Historical Cycle: ",
+        "tongyun_extended": "Cycle Extended",
+        "fenye": "Territorial Divisions: ",
+        "guiyun": "Major/Minor Wander Hexagrams: ",
+        "vol10_hehui": "Sky-Eye Conjunction: ",
+        "yunqi": "Ten Spirits & Clouds: ",
+        "yangjiu_xian": "Yang-Nine Limits: ",
+        "bailiu_xian": "Hundred-Six Limits: ",
+        "sixteen_palace": "Sixteen Palaces: ",
+        "shiti_jinfu": "Ten Golden Odes: ",
+        "feifu_sisha": "Flying Talisman Four Kills: ",
+        "junshi_vol15": "Military Application: ",
+        "junshi_vol17": "Military Divination: ",
+        "shenjiang_suozhu": "Gods & Doors Meanings: ",
         # AI
         "ai_analyze_btn": "🔍 Analyze with AI",
         "ai_analyzing": "AI is analyzing the Taiyi chart...",
@@ -644,10 +706,12 @@ def _chart_visual_text():
             "interaction_title": "Interaction",
             "rotation_hint": "Drag layers 4 and 6 to rotate. Tap for ±30° stepped viewing.",
             "paint_hint": "Tap sectors to mark up to four focal areas.",
+
             "reset": "Reset View",
             "download_png": "Download Plate",
             "add_note": "Add Note",
             "toggle_style_dense": "Data-Dense",
+            "toggle_style_compact": "Compact",
             "toggle_style_traditional": "Traditional",
             "tooltip_fallback": "Taiyi sector",
             "chart_kind": "Chart",
@@ -676,10 +740,12 @@ def _chart_visual_text():
         "interaction_title": "互動",
         "rotation_hint": "拖曳第 4、6 層可旋轉，輕點則以 ±30° 校覽。",
         "paint_hint": "點選扇區可標記最多四色重點。",
+
         "reset": "重置視圖",
         "download_png": "下載盤式",
         "add_note": "加入文字",
         "toggle_style_dense": "資料密集",
+        "toggle_style_compact": "簡盤",
         "toggle_style_traditional": "傳統風格",
         "tooltip_fallback": "太乙盤位",
         "chart_kind": "盤式",
@@ -799,6 +865,18 @@ def _build_chart_meta(results: dict, is_life_chart: bool) -> dict:
     else:
         export_lines.insert(2, f"{t('epoch_label')}︰{results.get('ttext', {}).get('紀元', '')}")
 
+    chart_style = 5 if is_life_chart else results.get("style", 0)
+    chart_layout = chart_svg_layout(chart_style, is_life=is_life_chart)
+    sync_nums = "、".join(lid.replace("layer", "") for lid in chart_layout["sync_layers"])
+    ui_out = dict(ui)
+    ui_out["paint_hint"] = f"點選第{sync_nums}外環任一扇區，同角度聯動著色（最多四色）。"
+    rotate_layers = chart_layout.get("rotate_layers") or []
+    if rotate_layers:
+        rot_nums = "、".join(lid.replace("layer", "") for lid in rotate_layers)
+        ui_out["rotation_hint"] = f"拖曳第{rot_nums}層可旋轉，輕點則以 ±30° 校覽。"
+    else:
+        ui_out["rotation_hint"] = "此盤式不支援轉盤旋轉。"
+
     return {
         "heading": ui["heading"],
         "title": chart_title,
@@ -811,6 +889,7 @@ def _build_chart_meta(results: dict, is_life_chart: bool) -> dict:
             ("ivory", ui["legend_ivory"]),
         ],
         "highlights": highlights,
+        "chart_layout": chart_layout,
         "export_title": export_title,
         "export_lines": export_lines,
         "export_follow_label": "關注「探究三式」微信公眾號 / 微信 gnatnek",
@@ -818,7 +897,7 @@ def _build_chart_meta(results: dict, is_life_chart: bool) -> dict:
         "export_storage_key": hashlib.md5(
             f"{export_title}|{results.get('gz', '')}|{results.get('lunard', '')}|{results.get('style', '')}|{results.get('tn', '')}|{is_life_chart}".encode("utf-8")
         ).hexdigest(),
-        "ui": ui,
+        "ui": ui_out,
     }
 
 
@@ -914,7 +993,6 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                 <div class="taiyi-stage-frame">
                     <div class="taiyi-svg-backdrop" aria-hidden="true"></div>
                     __SVG_MARKUP__
-                    <div class="taiyi-tooltip" hidden></div>
                 </div>
                 <div class="taiyi-toolbar" aria-label="chart tools">
                     <button type="button" class="taiyi-btn" data-action="toggle-style">__STYLE_BUTTON__</button>
@@ -1145,9 +1223,8 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         cursor: grabbing;
         transition: none;
     }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-hoverable:hover {
-        opacity: 0.96;
-        filter: brightness(1.08);
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable {
+        cursor: pointer;
     }
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-key-spot {
         fill: #fdf5cf !important;
@@ -1165,26 +1242,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         fill: #f5f0e1 !important;
         font-weight: 700 !important;
     }
-    #__CONTAINER_ID__ .taiyi-tooltip {
-        position: absolute;
-        max-width: min(320px, calc(100% - 32px));
-        padding: 8px 12px;
-        border-radius: 12px;
-        background: rgba(8, 18, 31, 0.94);
-        border: 1px solid rgba(212, 175, 55, 0.4);
-        color: var(--ivory);
-        font-size: 0.86rem;
-        line-height: 1.5;
-        box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
-        pointer-events: none;
-        opacity: 0;
-        transform: translateY(6px);
-        transition: opacity 150ms ease, transform 150ms ease;
-    }
-    #__CONTAINER_ID__ .taiyi-tooltip.is-visible {
-        opacity: 1;
-        transform: translateY(0);
-    }
+
     /* Responsive 調整區 */
     @container (max-width: 860px) {
         #__CONTAINER_ID__ .taiyi-stage-frame {
@@ -1234,8 +1292,10 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         const ui = __UI_JSON__;
         const highlightTerms = __HIGHLIGHTS_JSON__;
         const exportMeta = __EXPORT_META_JSON__;
+        const chartLayout = __CHART_LAYOUT_JSON__;
+        const colorSyncLayers = chartLayout.sync_layers || ["layer3", "layer4", "layer5"];
+        const rotateLayerIds = chartLayout.rotate_layers || [];
         const highlightPalette = ["#D4AF37", "#4A9C6D", "#7E8FA3", "#C41E3A"];
-        const tooltip = root.querySelector(".taiyi-tooltip");
         const paletteByElement = {
             wood: { fill: "#4A9C6D", stroke: "#78C18D", text: "#F5F0E1" },
             fire: { fill: "#A61E35", stroke: "#D9646E", text: "#F8E8E4" },
@@ -1266,11 +1326,10 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             "箕": "water", "壁": "water", "參": "water", "軫": "water",
         };
         const state = {
-            rotations: { layer4: 0, layer6: 0 },
-            clickDirection: { layer4: -1, layer6: -1 },
+            rotations: Object.fromEntries(rotateLayerIds.map((layerId) => [layerId, 0])),
+            clickDirection: Object.fromEntries(rotateLayerIds.map((layerId) => [layerId, -1])),
             drag: null,
             colored: new Map(),
-            colorLayers: [],
             styleMode: "traditional",
             noteText: "",
         };
@@ -1432,75 +1491,50 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             defs.appendChild(filter);
         }
 
-        function attachTooltip(target, label) {
-            const finalLabel = cleanText(label) || ui.tooltip_fallback;
-            target.setAttribute("data-tooltip", finalLabel);
-            target.classList.add("taiyi-hoverable");
-            if (!target.querySelector("title")) {
-                const titleNode = document.createElementNS("http://www.w3.org/2000/svg", "title");
-                titleNode.textContent = finalLabel;
-                target.prepend(titleNode);
+        function annotateSectorGroup(sectorGroup, groupId, index, sectorCount) {
+            const pathNode = sectorGroup.querySelector("path, polygon, rect, circle, ellipse");
+            const textNode = sectorGroup.querySelector("text");
+            const paletteLabel = textNode
+                ? cleanText(textNode.textContent)
+                : cleanText(sectorGroup.getAttribute("data-full") || groupId + " " + (index + 1));
+            const palette = getSemanticPalette(paletteLabel, groupId, index, sectorCount);
+            if (palette && pathNode) {
+                applySemanticPalette(pathNode, textNode, palette);
+            }
+            if (textNode && !textNode.dataset.baseTransform) {
+                textNode.dataset.fullText = textNode.textContent || "";
+                textNode.dataset.baseTransform = textNode.getAttribute("transform") || "";
             }
         }
 
-        function bindTooltipEvents(target) {
-            target.addEventListener("pointerenter", (event) => {
-                const label = target.getAttribute("data-tooltip");
-                if (!label || !tooltip) return;
-                tooltip.textContent = label;
-                tooltip.hidden = false;
-                tooltip.classList.add("is-visible");
-                positionTooltip(event);
-            });
-            target.addEventListener("pointermove", positionTooltip);
-            target.addEventListener("pointerleave", hideTooltip);
-            target.addEventListener("pointercancel", hideTooltip);
-        }
-
-        function positionTooltip(event) {
-            if (!tooltip) return;
-            const frame = root.querySelector(".taiyi-stage-frame");
-            if (!frame) return;
-            const rect = frame.getBoundingClientRect();
-            const left = Math.max(12, Math.min(rect.width - tooltip.offsetWidth - 12, event.clientX - rect.left + 16));
-            const top = Math.max(12, Math.min(rect.height - tooltip.offsetHeight - 12, event.clientY - rect.top + 16));
-            tooltip.style.left = left + "px";
-            tooltip.style.top = top + "px";
-            tooltip.style.right = "auto";
-            tooltip.style.bottom = "auto";
-        }
-
-        function hideTooltip() {
-            if (!tooltip) return;
-            tooltip.classList.remove("is-visible");
-            tooltip.hidden = true;
-        }
-
         function annotateSvg() {
+            const sectorGroups = Array.from(svg.querySelectorAll(".taiyi-sector"));
+            if (sectorGroups.length) {
+                sectorGroups.forEach((sectorGroup) => {
+                    const parent = sectorGroup.parentElement;
+                    const groupId = parent ? parent.id : "";
+                    const siblings = parent ? Array.from(parent.querySelectorAll(":scope > .taiyi-sector")) : [sectorGroup];
+                    const index = siblings.indexOf(sectorGroup);
+                    annotateSectorGroup(sectorGroup, groupId, index, siblings.length);
+                });
+                return;
+            }
             const groups = Array.from(svg.querySelectorAll("g"));
             groups.forEach((group) => {
                 const directChildren = Array.from(group.children);
                 const sectors = directChildren.filter((node) => /^(path|polygon|rect|circle|ellipse)$/i.test(node.tagName));
                 const texts = directChildren.filter((node) => /^text$/i.test(node.tagName));
                 const sectorCount = sectors.length;
-
                 sectors.forEach((sector, index) => {
                     const pairedText = texts[index];
                     const label = pairedText ? cleanText(pairedText.textContent) : cleanText(group.id + " " + (index + 1));
                     const palette = getSemanticPalette(label, group.id, index, sectorCount);
-                    if (palette) {
-                        applySemanticPalette(sector, pairedText, palette);
-                    }
-                    attachTooltip(sector, label);
-                    bindTooltipEvents(sector);
+                    if (palette) applySemanticPalette(sector, pairedText, palette);
                 });
-
-                texts.forEach((textNode, index) => {
+                texts.forEach((textNode) => {
                     if (!textNode.dataset.baseTransform) {
                         textNode.dataset.baseTransform = textNode.getAttribute("transform") || "";
                     }
-                    attachTooltip(textNode, cleanText(textNode.textContent) || cleanText(group.id + " " + (index + 1)));
-                    bindTooltipEvents(textNode);
                 });
             });
         }
@@ -1512,9 +1546,12 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                 if (!content) return;
                 if (terms.some((token) => token && content.includes(token))) {
                     textNode.classList.add("taiyi-key-spot");
-                    const previous = textNode.previousElementSibling;
-                    if (previous && /^(path|polygon|rect|circle|ellipse)$/i.test(previous.tagName)) {
-                        previous.classList.add("taiyi-key-sector");
+                    const sectorGroup = textNode.closest(".taiyi-sector");
+                    const pathNode = sectorGroup
+                        ? sectorGroup.querySelector("path, polygon, rect, circle, ellipse")
+                        : textNode.previousElementSibling;
+                    if (pathNode && /^(path|polygon|rect|circle|ellipse)$/i.test(pathNode.tagName)) {
+                        pathNode.classList.add("taiyi-key-sector");
                     }
                 }
             });
@@ -1560,7 +1597,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         }
 
         function setupRotations() {
-            ["layer4", "layer6"].forEach((layerId) => {
+            rotateLayerIds.forEach((layerId) => {
                 const layer = svg.querySelector("#" + layerId);
                 if (!layer) return;
                 layer.classList.add("taiyi-rotatable");
@@ -1581,7 +1618,6 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
 
                 layer.addEventListener("pointerdown", (event) => {
                     event.preventDefault();
-                    hideTooltip();
                     const point = clientToSvgPoint(event.clientX, event.clientY);
                     const center = getLayerCenter(layer);
                     const angle = angleFromPoint(point, center);
@@ -1614,96 +1650,158 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             });
         }
 
-        function getColorLayers() {
-            if (state.colorLayers.length) return state.colorLayers;
-            const groups = Array.from(svg.querySelectorAll("g")).filter((group) =>
-                Array.from(group.children).some((node) => /^(path|polygon|rect|circle|ellipse)$/i.test(node.tagName))
-            );
-            state.colorLayers = groups.slice(1, 4).map((group) => ({
-                group: group,
-                sectors: Array.from(group.children).filter((node) => /^(path|polygon|rect|circle|ellipse)$/i.test(node.tagName)),
-                texts: Array.from(group.children).filter((node) => /^text$/i.test(node.tagName)),
-            }));
-            return state.colorLayers;
+        function sectorNodes(sectorGroup) {
+            return {
+                sector: sectorGroup.querySelector("path, polygon, rect, circle, ellipse"),
+                textNode: sectorGroup.querySelector("text"),
+            };
         }
 
-        function applyMarker(segmentIndex, color) {
-            getColorLayers().forEach((layer) => {
-                const sector = layer.sectors[segmentIndex];
-                if (sector) {
-                    if (!sector.dataset.originalFill) {
-                        sector.dataset.originalFill = window.getComputedStyle(sector).fill || sector.dataset.semanticFill || "";
-                        sector.dataset.originalStroke = window.getComputedStyle(sector).stroke || sector.dataset.semanticStroke || "";
-                    }
-                    setStyledColor(sector, "fill", color);
-                    sector.classList.add("taiyi-user-mark");
+        function sectorColorKey(sectorGroup) {
+            const layerId = sectorGroup.getAttribute("data-layer") || "";
+            const sectorIdx = sectorGroup.getAttribute("data-sector") || "";
+            return layerId + ":" + sectorIdx;
+        }
+
+        function getLayerSectorGroups(layerId) {
+            const layer = svg.querySelector("#" + layerId);
+            if (!layer) return [];
+            return Array.from(layer.querySelectorAll(":scope > .taiyi-sector"));
+        }
+
+        function getSectorFraction(sectorGroup) {
+            const index = parseInt(sectorGroup.getAttribute("data-sector"), 10);
+            const layerId = sectorGroup.getAttribute("data-layer") || "";
+            const sectorGroups = getLayerSectorGroups(layerId);
+            if (!sectorGroups.length || Number.isNaN(index)) return null;
+            return (index + 0.5) / sectorGroups.length;
+        }
+
+        function findSectorAtFraction(layerId, fraction) {
+            const sectorGroups = getLayerSectorGroups(layerId);
+            if (!sectorGroups.length || fraction === null) return null;
+            let bestGroup = sectorGroups[0];
+            let bestDistance = Infinity;
+            sectorGroups.forEach((sectorGroup, index) => {
+                const midFraction = (index + 0.5) / sectorGroups.length;
+                const distance = Math.abs(midFraction - fraction);
+                if (distance < bestDistance) {
+                    bestDistance = distance;
+                    bestGroup = sectorGroup;
                 }
-                const textNode = layer.texts[segmentIndex];
-                if (textNode) {
-                    if (!textNode.dataset.originalFill) {
-                        textNode.dataset.originalFill = window.getComputedStyle(textNode).fill || textNode.dataset.semanticFill || "";
-                    }
-                    textNode.classList.add("taiyi-user-label");
-                }
+            });
+            return bestGroup;
+        }
+
+        function syncColorKey(fraction) {
+            return "sync:" + fraction.toFixed(6);
+        }
+
+        function applySyncMarker(fraction, color) {
+            colorSyncLayers.forEach((layerId) => {
+                const sectorGroup = findSectorAtFraction(layerId, fraction);
+                if (sectorGroup) paintSectorGroup(sectorGroup, color);
             });
         }
 
-        function clearMarker(segmentIndex) {
-            getColorLayers().forEach((layer) => {
-                const sector = layer.sectors[segmentIndex];
-                if (sector) {
-                    const originalFill = sector.dataset.originalFill || "";
-                    const originalStroke = sector.dataset.originalStroke || "";
-                    if (originalFill) setStyledColor(sector, "fill", originalFill);
-                    if (originalStroke) setStyledColor(sector, "stroke", originalStroke);
-                    sector.classList.remove("taiyi-user-mark");
-                }
-                const textNode = layer.texts[segmentIndex];
-                if (textNode) {
-                    const originalFill = textNode.dataset.originalFill || textNode.dataset.semanticFill || "";
-                    if (originalFill) setStyledColor(textNode, "fill", originalFill);
-                    textNode.classList.remove("taiyi-user-label");
-                }
+        function clearSyncMarker(fraction) {
+            colorSyncLayers.forEach((layerId) => {
+                const sectorGroup = findSectorAtFraction(layerId, fraction);
+                if (sectorGroup) restoreSectorGroup(sectorGroup);
             });
+        }
+
+        function paintSectorGroup(sectorGroup, color) {
+            const match = sectorNodes(sectorGroup);
+            if (!match.sector) return;
+            if (!match.sector.dataset.originalFill) {
+                match.sector.dataset.originalFill = window.getComputedStyle(match.sector).fill || match.sector.dataset.semanticFill || "";
+                match.sector.dataset.originalStroke = window.getComputedStyle(match.sector).stroke || match.sector.dataset.semanticStroke || "";
+            }
+            setStyledColor(match.sector, "fill", color);
+            match.sector.classList.add("taiyi-user-mark");
+            if (match.textNode) {
+                if (!match.textNode.dataset.originalFill) {
+                    match.textNode.dataset.originalFill = window.getComputedStyle(match.textNode).fill || match.textNode.dataset.semanticFill || "";
+                }
+                match.textNode.classList.add("taiyi-user-label");
+            }
+        }
+
+        function restoreSectorGroup(sectorGroup) {
+            const match = sectorNodes(sectorGroup);
+            if (!match.sector) return;
+            const originalFill = match.sector.dataset.originalFill || "";
+            const originalStroke = match.sector.dataset.originalStroke || "";
+            if (originalFill) setStyledColor(match.sector, "fill", originalFill);
+            if (originalStroke) setStyledColor(match.sector, "stroke", originalStroke);
+            match.sector.classList.remove("taiyi-user-mark");
+            if (match.textNode) {
+                const textFill = match.textNode.dataset.originalFill || match.textNode.dataset.semanticFill || "";
+                if (textFill) setStyledColor(match.textNode, "fill", textFill);
+                match.textNode.classList.remove("taiyi-user-label");
+            }
+        }
+
+        function findSectorGroupByKey(key) {
+            const parts = key.split(":");
+            if (parts.length !== 2) return null;
+            const layer = svg.querySelector("#" + parts[0]);
+            if (!layer) return null;
+            return layer.querySelector(':scope > .taiyi-sector[data-sector="' + parts[1] + '"]');
+        }
+
+        function clearMarker(key) {
+            if (key.indexOf("sync:") === 0) {
+                clearSyncMarker(parseFloat(key.slice(5)));
+                return;
+            }
+            const sectorGroup = findSectorGroupByKey(key);
+            if (sectorGroup) restoreSectorGroup(sectorGroup);
+        }
+
+        function handleSectorColorClick(sectorGroup, event) {
+            event.preventDefault();
+            event.stopPropagation();
+            const layerId = sectorGroup.getAttribute("data-layer") || "";
+            const fraction = getSectorFraction(sectorGroup);
+            const isSyncLayer = colorSyncLayers.indexOf(layerId) !== -1 && fraction !== null;
+            const key = isSyncLayer ? syncColorKey(fraction) : sectorColorKey(sectorGroup);
+            if (!key || key === ":") return;
+            if (state.colored.has(key)) {
+                clearMarker(key);
+                state.colored.delete(key);
+                return;
+            }
+            if (state.colored.size >= highlightPalette.length) return;
+            const color = highlightPalette[state.colored.size];
+            state.colored.set(key, color);
+            if (isSyncLayer) {
+                applySyncMarker(fraction, color);
+            } else {
+                paintSectorGroup(sectorGroup, color);
+            }
         }
 
         function setupColoring() {
-            const colorLayers = getColorLayers();
-            if (colorLayers.length < 3) return;
-
-            colorLayers.forEach((layer) => {
-                layer.sectors.forEach((sector, index) => {
-                    sector.style.cursor = "pointer";
-                    sector.addEventListener("click", (event) => {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        hideTooltip();
-                        const key = String(index);
-                        if (state.colored.has(key)) {
-                            clearMarker(index);
-                            state.colored.delete(key);
-                            return;
-                        }
-                        if (state.colored.size >= highlightPalette.length) return;
-                        const color = highlightPalette[state.colored.size];
-                        state.colored.set(key, color);
-                        applyMarker(index, color);
-                    });
+            Array.from(svg.querySelectorAll(".taiyi-sector"))
+                .filter((sectorGroup) => sectorGroup.getAttribute("data-layer") !== "layer1")
+                .forEach((sectorGroup) => {
+                    sectorGroup.classList.add("taiyi-colorable");
+                    sectorGroup.addEventListener("click", (event) => handleSectorColorClick(sectorGroup, event));
                 });
-            });
         }
 
         function resetView() {
-            ["layer4", "layer6"].forEach((layerId) => {
+            rotateLayerIds.forEach((layerId) => {
                 state.rotations[layerId] = 0;
                 applyRotation(layerId, false);
             });
-            Array.from(state.colored.keys()).forEach((key) => clearMarker(parseInt(key, 10)));
+            Array.from(state.colored.keys()).forEach((key) => clearMarker(key));
             state.colored.clear();
             root.setAttribute("data-style-mode", "traditional");
             state.styleMode = "traditional";
             updateStyleButton();
-            hideTooltip();
         }
 
         function updateStyleButton() {
@@ -1914,6 +2012,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         .replace("__SVG_MARKUP__", svg_markup)
         .replace("__UI_JSON__", json.dumps(ui, ensure_ascii=False))
         .replace("__HIGHLIGHTS_JSON__", json.dumps(chart_meta["highlights"], ensure_ascii=False))
+        .replace("__CHART_LAYOUT_JSON__", json.dumps(chart_meta.get("chart_layout", {}), ensure_ascii=False))
         .replace(
             "__EXPORT_META_JSON__",
             json.dumps(
@@ -2429,6 +2528,7 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
     lifedisc = ty.convert_gongs_text(life1, life2)
     lifedisc2 = ty.stars_descriptions_text(3, 0)
     lifedisc3 = ty.sixteen_gong_grades(3,0)
+    lifedisc4 = ty.shiti_jinfu_text(sex_o)
     yc = ty.year_chin()
     year_predict = f"太歲{yc}值宿，{su_dist.get(yc)}"
     home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
@@ -2467,6 +2567,7 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
         "lifedisc": lifedisc,
         "lifedisc2": lifedisc2,
         "lifedisc3": lifedisc3,
+        "lifedisc4": lifedisc4,
         "year_predict": year_predict,
         "home_vs_away3": home_vs_away3,
         "ts": ts,
@@ -2526,6 +2627,10 @@ with tabs[0]:
                         st.markdown(t("sixteen_grades"))
                         st.markdown(results["lifedisc3"])
                         st.markdown("   ")
+                        if results.get("lifedisc4"):
+                            st.markdown(t("shiti_jinfu"))
+                            st.markdown(results["lifedisc4"])
+                            st.markdown("   ")
                         st.markdown(t("hexagram"))
                         st.markdown(f"{t('year_hex')}{results['ygua']}")
                         st.markdown(f"{t('month_hex')}{results['mgua']}")
@@ -2580,6 +2685,15 @@ with tabs[0]:
                         st.markdown(f"{t('heaven_yi')}{results['ttext'].get('明天乙太乙所主術')}")
                         st.markdown(f"{t('earth_yi')}{results['ttext'].get('明地乙太乙所主術')}")
                         st.markdown(f"{t('zhifu')}{results['ttext'].get('明值符太乙所主術')}")
+                        # —— 十六宮分佈 ——
+                        _16 = results["ttext"].get("十六宮分佈", {})
+                        if _16:
+                            _16_parts = []
+                            for zhi, stars in _16.items():
+                                if stars:
+                                    _16_parts.append(f"{zhi}[{'、'.join(stars)}]")
+                            if _16_parts:
+                                st.markdown(f"{t('sixteen_palace')}{'；'.join(_16_parts)}")
                         # —— 卷四：釋格局 ——
                         _sg = results["ttext"].get("釋格局", {})
                         if _sg:
@@ -2595,7 +2709,410 @@ with tabs[0]:
                             _dist = _ng.get("九宮貴神分布", {})
                             _dist_text = "、".join([f"{g}宮{nm}" for g, nm in _dist.items()])
                             st.markdown(f"{t('nine_gods')}直事貴神爲{_ng.get('直事貴神')}（小周餘{_ng.get('小周餘')}）；鈎宮分布：{_dist_text}")
+                        # —— 卷六：太乙九星 ——
+                        _ts = results["ttext"].get("太乙九星", {})
+                        if _ts:
+                            _ts_dist = _ts.get("九星分布", {})
+                            _ts_text = "、".join([f"{g}宮{nm}" for g, nm in _ts_dist.items()])
+                            st.markdown(
+                                f"{t('taiyi_stars')}直符{_ts.get('直符九星')}（入宮{_ts.get('入星宮年數')}年）"
+                                f"；{_ts.get('直符所主')}；分布：{_ts_text}")
+                        # —— 卷六：文昌九星 ——
+                        _ws = results["ttext"].get("文昌九星", {})
+                        if _ws:
+                            _ws_dist = _ws.get("文昌九星分布", {})
+                            _ws_text = "、".join([f"{g}宮{nm}" for g, nm in _ws_dist.items()])
+                            st.markdown(
+                                f"{t('wenchang_stars')}直事{_ws.get('直事文昌星')}（入宮{_ws.get('入宮年數')}年）"
+                                f"；臨{_ws.get('臨宮分野')}；分布：{_ws_text}")
+                        # —— 卷三：五運六氣 ——
+                        _wl = results["ttext"].get("五運六氣", {})
+                        if _wl:
+                            _hui = "、".join(_wl.get("歲會天符", []))
+                            st.markdown(
+                                f"{t('wuyun_liuqi')}{_wl.get('五運')}（{_wl.get('太過不及')}）"
+                                f"司天{_wl.get('司天')}{_wl.get('司天化')}、在泉{_wl.get('在泉')}{_wl.get('在泉化')}；"
+                                f"{_wl.get('主氣', '')}{_wl.get('客氣', '')}；歲會：{_hui}")
+                        # —— 卷三：五音之數 ——
+                        _wy = results["ttext"].get("五音之數", {})
+                        if _wy:
+                            _hm = _wy.get("主算五音", {})
+                            _am = _wy.get("客算五音", {})
+                            _ty = _wy.get("太乙五音", {})
+                            st.markdown(
+                                f"{t('wuyin_shu')}主算{_hm.get('音')}（{_hm.get('所主')}）"
+                                f"、客算{_am.get('音')}（{_am.get('所主')}）"
+                                f"、太乙宮{_ty.get('音', '—')}；"
+                                f"主斷：{_hm.get('斷語', '')}")
+                        # —— 卷五：軍事戰略 ——
+                        _j5 = results["ttext"].get("軍事戰略", {})
+                        if _j5:
+                            _nw = _j5.get("內外占攻擊", {})
+                            _zk = _j5.get("太乙助主客", {})
+                            _cd = _j5.get("算長短緩急", {}).get("主算", {})
+                            _zd = _j5.get("主客動靜", {})
+                            _fx = _j5.get("輔相賢否", {}).get("我國輔相", {})
+                            _js = _j5.get("將帥賢否", {}).get("我國將帥", {})
+                            st.markdown(
+                                f"{t('junshi_vol5')}"
+                                f"{_nw.get('斷語', '—')}；"
+                                f"{_zk.get('斷語', '')}；"
+                                f"主算{_cd.get('長短', '—')}{_cd.get('和否', '')}（{_cd.get('斷語', '')}）；"
+                                f"{_zd.get('勝負', '')}")
+                            _line5 = []
+                            if _fx.get("斷語"):
+                                _line5.append(f"輔相{_fx.get('賢否', '')}（{_fx['斷語']}）")
+                            if _js.get("斷語"):
+                                _line5.append(f"將帥{_js.get('賢否', '')}（{_js['斷語']}）")
+                            _sz = _j5.get("數有所主", {}).get("主算", {})
+                            if _sz.get("斷語"):
+                                _line5.append(f"主算{_sz.get('音')}音（{_sz['斷語']}）")
+                            if _line5:
+                                st.markdown("；".join(_line5))
+                        # —— 州國災變（飛符四殺、城名厄會等）——
+                        _v11 = results["ttext"].get("卷十一", {})
+                        if _v11:
+                            _ff = _v11.get("飛符四殺", {})
+                            _zy = _v11.get("州國災變月數", {})
+                            _eh = _v11.get("城名厄會", {})
+                            _sn = _v11.get("城名歲內災發", {})
+                            _bh = _v11.get("十六宮間變化", {})
+                            st.markdown(
+                                f"{t('vol11')}"
+                                f"飛符{_ff.get('飛符', '—')}，"
+                                f"災{_ff.get('災殺', '—')}鬼{_ff.get('鬼殺', '—')}；"
+                                f"州國災月{_zy.get('斷語', '—')}")
+                            _line11 = []
+                            if _eh.get("斷語"):
+                                _line11.append(f"城名{_eh.get('城名', '')}{_eh['斷語']}")
+                            if _sn.get("斷語"):
+                                _line11.append(_sn["斷語"])
+                            if _ff.get("城名斷語"):
+                                _line11.append(_ff["城名斷語"])
+                            if _bh.get("加神"):
+                                _line11.append(
+                                    f"十六神以{_bh['加神']}為樞（{_bh['要訣']}）")
+                            if _line11:
+                                st.markdown("；".join(_line11))
+                        # —— 卷十二：統運入卦 ——
+                        _v12 = results["ttext"].get("卷十二", {})
+                        if _v12:
+                            _rg = _v12.get("統運入卦", {})
+                            _hf = _v12.get("入爻禍福", {})
+                            _lz = _v12.get("流年直卦", {})
+                            _bg = _v12.get("變卦納甲", {})
+                            _sw = _v12.get("災厄首尾", {})
+                            _yj = _v12.get("要訣", "")
+                            _gua_fu = _rg.get("卦符", "")
+                            _gua_label = (
+                                f"{_rg.get('卦', '—')}{_gua_fu}"
+                                if _gua_fu
+                                else _rg.get("卦", "—")
+                            )
+                            st.markdown(
+                                f"{t('tongyun_rugua')}"
+                                f"{_rg.get('運', '—')}·{_gua_label}{_rg.get('爻名', '')}"
+                                f"（入卦第{_rg.get('入卦年數', '—')}年、"
+                                f"入爻第{_rg.get('入爻年數', '—')}年）；"
+                                f"週期第{_rg.get('週期序', '—')}輪；"
+                                f"{t('ruyao_huofu')}"
+                                f"{_hf.get('所主', _rg.get('斷語', ''))}")
+                            _line12 = []
+                            if _lz:
+                                _lz_fu = _lz.get("卦符", "")
+                                _lz_gua = (
+                                    f"{_lz.get('直卦', '—')}{_lz_fu}"
+                                    if _lz_fu
+                                    else _lz.get("直卦", "—")
+                                )
+                                _line12.append(
+                                    f"{t('liunian_zhigua')}{_lz.get('干支', '')}"
+                                    f"{_lz_gua}{_lz.get('爻名', '')}"
+                                    f"（{_lz.get('命爻法', '')}）")
+                            if _bg:
+                                _nj = _bg.get("納甲", {})
+                                _line12.append(
+                                    f"{t('bian_gua_najia')}"
+                                    f"{_bg.get('本卦', '')}→{_bg.get('變卦', '')}"
+                                    f"{_bg.get('爻名', '')}；"
+                                    f"{_nj.get('納甲', '')}·{_nj.get('方位', '')}")
+                            if _sw and _sw.get("是否首尾"):
+                                _line12.append(
+                                    f"{t('shouwei')}"
+                                    f"{'、'.join(_sw.get('首尾標記', []))}；"
+                                    f"{_sw.get('斷語', '')}")
+                            if _yj:
+                                _line12.append(_yj)
+                            if _line12:
+                                st.markdown("；".join(_line12))
+                            _sy = _v12.get("十二運立成", {})
+                            _hist = _v12.get("歷史入爻", [])
+                            _gqx = _v12.get("觀象期", {})
+                            _jz = _v12.get("歲本建子", {})
+                            if _sy or _hist or _gqx or _jz:
+                                with st.expander(t("tongyun_detail"), expanded=False):
+                                    if _sy:
+                                        st.markdown(
+                                            f"{t('shier_yun')}"
+                                            f"大週{_sy.get('大週', '—')}年，"
+                                            f"{_sy.get('起運', '')}→{_sy.get('終運', '')}")
+                                        if _hf.get("要訣"):
+                                            st.caption(_hf["要訣"])
+                                        for row in _sy.get("十二運", []):
+                                            _guas = "→".join(row.get("卦序", []))
+                                            st.markdown(
+                                                f"· {row.get('運')}（{row.get('總年')}年）：{_guas}")
+                                    if _hist:
+                                        st.markdown(t("lishi_ruyao"))
+                                        for h in _hist:
+                                            st.markdown(
+                                                f"· {h.get('紀年', '')}："
+                                                f"{h.get('運', '')}·"
+                                                f"{h.get('卦', '')}{h.get('爻', '')}")
+                                    if _gqx.get("十二月直事"):
+                                        st.markdown(f"**{t('tongyun_extended')}**")
+                                        st.caption(_gqx.get("要訣", ""))
+                                        for m in _gqx["十二月直事"]:
+                                            st.markdown(
+                                                f"· {m.get('月序')}月（{m.get('月建')}）"
+                                                f"{m.get('階段')}·{m.get('卦')}"
+                                                f"{m.get('爻名', '')}")
+                                    if _jz:
+                                        st.caption(
+                                            f"{_jz.get('太乙歲本', '')}·"
+                                            f"太乙歲{_jz.get('太乙歲', '—')}／"
+                                            f"時王歲{_jz.get('時王歲', '—')}")
+                        # —— 卷十四：行支編年 ——
+                        _v14 = results["ttext"].get("卷十四", {})
+                        if _v14:
+                            _hz = _v14.get("行支編年", {})
+                            _tip14 = _v14.get("要訣", "")
+                            _exact = _hz.get("當年例", [])
+                            _line14 = [t("hangzhi_biannian")]
+                            if _exact:
+                                e = _exact[0]
+                                _line14.append(
+                                    f"{e.get('紀年', '')}·"
+                                    f"{e.get('卦', '')}{e.get('爻', '')}："
+                                    f"{e.get('摘要', '')}")
+                            elif _tip14:
+                                _line14.append(_tip14)
+                            st.markdown("".join(_line14) if len(_line14) == 1 else "；".join(_line14))
+                        # —— 卷十三：統十二運卦象 ——
+                        _v13 = results["ttext"].get("卷十三", {})
+                        if _v13:
+                            _gx = _v13.get("統運卦象", {})
+                            _yj13 = _v13.get("要訣", "")
+                            _xiang = _gx.get("象曰", "")
+                            _yao_gx = _gx.get("當前爻觀象", "")
+                            _line13 = [
+                                f"{t('gua_xiang')}"
+                                f"{_gx.get('運', '—')}·{_gx.get('卦', '—')}"
+                                f"{_gx.get('爻名', '')}"
+                                f"（經{_gx.get('經年', '—')}年）",
+                            ]
+                            if _xiang:
+                                _line13.append(
+                                    f"象曰{_xiang[:48]}{'…' if len(_xiang) > 48 else ''}")
+                            if _yao_gx:
+                                _line13.append(f"入爻觀象：{_yao_gx[:60]}{'…' if len(_yao_gx) > 60 else ''}")
+                            if _yj13:
+                                _line13.append(_yj13)
+                            st.markdown("；".join(_line13))
+                            _full = _v13.get("卦象全文") or {}
+                            _zongshu = _gx.get("總述") or _full.get("總述", "")
+                            if _zongshu:
+                                with st.expander(t("gua_xiang_detail"), expanded=False):
+                                    if _full.get("爻觀象"):
+                                        st.markdown("**六爻觀象**")
+                                        for yi, text in sorted(_full["爻觀象"].items()):
+                                            mark = "←" if yi == _gx.get("爻") else ""
+                                            st.markdown(f"· 第{yi}爻{text}{mark}")
+                                    st.markdown("**卦象總述**")
+                                    st.markdown(_zongshu)
+                        # —— 卷八：分野疆界 ——
+                        _v8 = results["ttext"].get("卷八", {})
+                        if _v8:
+                            _fy = _v8.get("太乙分野", {})
+                            _te = _v8.get("絳宮明堂玉堂", {})
+                            _line8 = [
+                                f"{t('fenye')}"
+                                f"{_fy.get('宮名', '—')}宮·{_fy.get('州', '—')}",
+                            ]
+                            if _fy.get("城名"):
+                                _line8.append(f"城名{_fy['城名']}（{_fy.get('城名干支', '')}）")
+                            if _v8.get("歲建分野", {}).get("國"):
+                                _sz = _v8["歲建分野"]
+                                _line8.append(f"歲建{_sz.get('地支', '')}·{_sz.get('國', '')}分")
+                            st.markdown("；".join(_line8))
+                        # —— 卷九：大小遊軌運 ——
+                        _v9 = results["ttext"].get("卷九", {})
+                        if _v9:
+                            _dy = _v9.get("大遊軌運", {})
+                            _xy = _v9.get("小遊軌運", {})
+                            _yj9 = _v9.get("陽九限數", {})
+                            _bl9 = _v9.get("百六限數", {})
+                            st.markdown(
+                                f"{t('guiyun')}"
+                                f"大遊{_dy.get('重卦', '—')}{_dy.get('內爻名', '')}"
+                                f"（{_dy.get('內卦', '')}/{_dy.get('外卦', '')}）；"
+                                f"小遊{_xy.get('重卦', '—')}{_xy.get('內爻名', '')}；"
+                                f"落宮{_v9.get('大遊落宮', '—')}/{_v9.get('小遊落宮', '—')}")
+                            _line9 = []
+                            if _yj9:
+                                _line9.append(
+                                    f"{t('yangjiu_xian')}"
+                                    f"入限{_yj9.get('入限年數', '—')}年")
+                            if _bl9:
+                                _line9.append(
+                                    f"{t('bailiu_xian')}"
+                                    f"入限{_bl9.get('入限年數', '—')}年")
+                            if _v9.get("要訣"):
+                                _line9.append(_v9["要訣"][:80])
+                            if _line9:
+                                st.markdown("；".join(_line9))
+                        # —— 卷十：天目合會 ——
+                        _v10 = results["ttext"].get("卷十", {})
+                        if _v10:
+                            _wq10 = _v10.get("五運六氣", {})
+                            _hh = _v10.get("天目合會", [])
+                            st.markdown(
+                                f"{t('vol10_hehui')}"
+                                f"{_wq10.get('五運', '—')}·{_wq10.get('司天', '—')}；"
+                                f"{'、'.join(_hh) if _hh else '主客氣調'}")
+                        # —— 卷十八：十精雲氣 ——
+                        _v18 = results["ttext"].get("卷十八", {})
+                        if _v18:
+                            _sj = _v18.get("十精數", {})
+                            _same = _v18.get("與太乙同宮", [])
+                            st.markdown(
+                                f"{t('yunqi')}"
+                                f"十精數{_sj.get('十精數', '—')}·{_sj.get('斷語', '')}；"
+                                f"同宮{'、'.join(_same) if _same else '無'}")
+                            if _v18.get("要訣"):
+                                st.caption(_v18["要訣"])
+                        # —— 卷十五：軍事應用 ——
+                        _jy = results["ttext"].get("軍事應用", {})
+                        if _jy:
+                            _qb = _jy.get("奇兵伏兵", {})
+                            _wz = _jy.get("五陣置旗", {})
+                            _hz = _wz.get("主陣旗", {})
+                            _az = _jy.get("安營置陣", {})
+                            _cs = _jy.get("出兵稱神", {}).get("主稱神", {})
+                            _cx = _jy.get("陳兵出鄉", {}).get("主", {})
+                            _fh = _jy.get("分合用兵", {})
+                            _gf = _jy.get("五音觀風察將", {})
+                            _js = _jy.get("軍勢勝負", {})
+                            st.markdown(
+                                f"{t('junshi_vol15')}"
+                                f"主奇兵{_qb.get('主奇兵位', '—')}、客奇兵{_qb.get('客奇兵位', '—')}；"
+                                f"{_qb.get('伏兵', '')}；"
+                                f"主陣{_hz.get('陣型', '—')}{_hz.get('旗色', '')}、"
+                                f"出鄉{_cx.get('出鄉', '—')}；"
+                                f"{_az.get('斷語', '')}")
+                            _line2_parts = []
+                            if _cs.get("咒"):
+                                _line2_parts.append(
+                                    f"稱神{_cs.get('祀方', '')}（{_cs.get('咒', '')}）")
+                            if _fh.get("斷語"):
+                                _line2_parts.append(f"分合{_fh['斷語']}")
+                            if _gf.get("斷語"):
+                                _line2_parts.append(f"察將{_gf['斷語']}")
+                            if _js.get("斷語"):
+                                _line2_parts.append(f"軍勢{_js['斷語']}")
+                            if _line2_parts:
+                                st.markdown("；".join(_line2_parts))
+                        # —— 卷十七：軍事占斷 ——
+                        _jz = results["ttext"].get("軍事占斷", {})
+                        if _jz:
+                            _dd = _jz.get("敵國動靜", {})
+                            _jm = _jz.get("間諜虛實", {})
+                            _ds = _jz.get("敵使虛實", {})
+                            _dl = _jz.get("敵兵來方", {})
+                            _cy = _jz.get("出兵用時", {})
+                            _jw = _jz.get("見聞虛實", {})
+                            _tb = _jz.get("討捕叛亡", {})
+                            _zq = _jz.get("執囚對吏", {})
+                            _qs = _jz.get("求索所得", {})
+                            _sj = _jz.get("時計諸事", {})
+                            st.markdown(
+                                f"{t('junshi_vol17')}"
+                                f"{_dd.get('動靜', '—')}（{_dd.get('斷語', '')}）；"
+                                f"間諜{_jm.get('間諜', '—')}；"
+                                f"敵使{_ds.get('虛實', '—')}；"
+                                f"{_dl.get('方向', '')}{_dl.get('兵勢', '')}；"
+                                f"出兵{_cy.get('主方', {}).get('斷語', '')}")
+                            if _jw or _tb or _zq or _qs or _sj:
+                                _sj_items = "、".join(_sj.get("諸事", [])) if _sj else ""
+                                st.markdown(
+                                    f"見聞{_jw.get('天目內外', '—')}（{_jw.get('斷語', '')}）；"
+                                    f"討捕{_tb.get('結果', '—')}（{'；'.join(_tb.get('得機', []))}）；"
+                                    f"執囚{'可解' if _zq.get('可解') else '難解'}（{_zq.get('斷語', '')}）；"
+                                    f"求索{'有得' if _qs.get('有得') else '無得'}（{_qs.get('斷語', '')}）；"
+                                    f"時計{_sj_items}")
+                        # —— 卷二／卷七：神將所主 ——
+                        _sj = results["ttext"].get("神將所主", {})
+                        if _sj:
+                            _16 = _sj.get("十六宮間神", {})
+                            _tm = _16.get("天目所臨", {})
+                            _9g = _sj.get("九宮所主", {})
+                            _jy = _sj.get("陰陽絕易", {})
+                            _bm = _sj.get("八門所主", {})
+                            _ty = _sj.get("天乙所主", {})
+                            _dy = _sj.get("地乙所主", {})
+                            _zf = _sj.get("直符所主", {})
+                            _fs = _sj.get("四神所主", {})
+                            _dyo = _sj.get("大遊所主", {})
+                            _xyo = _sj.get("小遊所主", {})
+                            _jy_hits = _jy.get("臨宮", [])
+                            _jy_txt = (
+                                "、".join(h["類型"] for h in _jy_hits if isinstance(h, dict))
+                                if _jy_hits and isinstance(_jy_hits[0], dict)
+                                else str(_jy_hits[0]) if _jy_hits else "—"
+                            )
+                            def _god_part(label, block):
+                                if not block:
+                                    return ""
+                                duan = block.get("斷語") or block.get("本象", "")
+                                if not duan or str(duan) == "None":
+                                    return ""
+                                return f"{label}（{duan}）；"
 
+                            _line1 = (
+                                f"{t('shenjiang_suozhu')}"
+                                f"天目臨{_tm.get('神', '—')}（{_tm.get('所主', '')}）；"
+                                f"九宮{_9g.get('太乙落宮', '—')}（{_9g.get('所主', '')}）；"
+                                f"絕易{_jy_txt}；"
+                                f"值事{_bm.get('值事八門', '—')}門{_bm.get('值事所主', '')}；"
+                                f"太乙臨{_bm.get('太乙所臨門', '—')}門（{_bm.get('太乙門吉凶', '')}）；"
+                                f"{_god_part('天乙', _ty)}"
+                                f"{_god_part('地乙', _dy)}"
+                                f"{_god_part('直符', _zf)}"
+                                f"{_god_part('四神', _fs)}"
+                            ).rstrip("；")
+                            st.markdown(_line1)
+                            if _dyo or _xyo:
+                                _dytm = _dyo.get("大遊天目", {})
+                                _xyo_c = _xyo.get("合宮", []) if _xyo else []
+                                _xyo_real = [
+                                    c for c in _xyo_c
+                                    if c and not str(c).startswith("無特殊")
+                                ]
+                                _xyo_txt = (
+                                    "；".join(_xyo_real)
+                                    if _xyo_real
+                                    else (_xyo.get("本象", "") if _xyo else "")
+                                )
+                                _dyo_parts = []
+                                if _dyo.get("凶筭所主"):
+                                    _dyo_parts.append(
+                                        f"大遊（{_dyo['凶筭所主']}）")
+                                if _dytm.get("本象"):
+                                    _dyo_parts.append(f"大遊天目（{_dytm['本象']}）")
+                                if _xyo_txt:
+                                    _dyo_parts.append(f"小遊（{_xyo_txt}）")
+                                if _dyo_parts:
+                                    st.markdown("；".join(_dyo_parts))
 
 
                     

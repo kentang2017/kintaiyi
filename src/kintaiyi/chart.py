@@ -47,9 +47,104 @@ def _get_branch_key(raw_label):
             return c
     return ''
 
+
+_PRIORITY_TOKENS = ("太乙", "文昌", "始擊", "主大", "客大", "合神", "計神", "天乙", "地乙", "直符")
+_SIXTEEN = "巳午未坤申酉戌乾亥子丑艮寅卯辰巽"
+_TWELVE = "巳午未申酉戌亥子丑寅卯辰"
+_PLANET_RING = "午未申酉戌亥子丑寅卯辰巳"
+
+
+def _label_parts(raw_label):
+    if isinstance(raw_label, list):
+        return [str(x).strip() for x in raw_label if str(x).strip()]
+    if raw_label is None:
+        return []
+    s = str(raw_label).strip()
+    return [s] if s else []
+
+
+def _compact_label(parts, layer_role, branch=""):
+    if layer_role == "center":
+        for p in parts:
+            if p and p != " ":
+                return p[:2] if len(p) > 1 else p
+        return "中"
+    if layer_role == "door":
+        for p in parts:
+            for ch in p:
+                if ch in GATE_TO_BRANCH:
+                    return ch
+        return (parts[0][:1] if parts else "")
+    if layer_role in ("palace_template", "branch"):
+        return branch or (parts[0][:1] if parts else "")
+    if layer_role == "life_palace":
+        p = parts[0] if parts else ""
+        return p[0] if p else ""
+    joined = "".join(parts)
+    for tok in _PRIORITY_TOKENS:
+        if tok in joined:
+            return tok[0]
+    for p in parts:
+        if p and p not in (" ", "　"):
+            return p[0]
+    return branch[:1] if branch else ""
+
+
+def _sector_meta(raw_label, layer_role=""):
+    parts = _label_parts(raw_label)
+    label_str = _format_label(raw_label)
+    branch = ""
+    god = ""
+    region = ""
+    if isinstance(raw_label, list) and raw_label:
+        branch = raw_label[0] if raw_label[0] in BRANCH_COLORS else _get_branch_key(raw_label)
+        if len(raw_label) > 1:
+            god = str(raw_label[1])
+        if len(raw_label) > 2:
+            region = str(raw_label[2])
+    else:
+        branch = _get_branch_key(raw_label)
+        if layer_role == "door":
+            god = parts[0] if parts else ""
+    compact = _compact_label(parts, layer_role, branch)
+    return {
+        "branch": branch,
+        "god": god,
+        "region": region,
+        "compact": compact,
+        "full": label_str,
+        "role": layer_role,
+    }
+
+
+def _role_for(chart_kind, layer_idx):
+    roles = {
+        "year": ["center", "door", "palace_template", "palace_content", "star12"],
+        "day": ["center", "door", "golden", "palace_template", "palace_content", "star12"],
+        "hour": ["center", "door", "skygeneral", "palace_template", "palace_content", "star28", "star12"],
+        "life": ["center", "life_palace", "branch", "palace_content", "star12"],
+    }.get(chart_kind, [])
+    return roles[layer_idx] if layer_idx < len(roles) else ""
+
+
+def _pos_branch(sector_idx, sector_count, layer_role="", raw_label=None):
+    if sector_count == 16 and sector_idx < 16:
+        return _SIXTEEN[sector_idx]
+    if sector_count == 12 and sector_idx < 12:
+        order = _PLANET_RING if layer_role == "star12" else _TWELVE
+        return order[sector_idx]
+    if sector_count == 8 and layer_role == "door":
+        text = _format_label(raw_label)
+        key = next((c for c in text if c in GATE_TO_BRANCH), None)
+        return GATE_TO_BRANCH.get(key, "")
+    return ""
+
+
 def _draw_sector(group, start, end, inner, outer, raw_label,
                  is_16_palace=False, is_28_layer=False,
-                 is_second_layer=False, is_third_layer=False):
+                 is_second_layer=False, is_third_layer=False,
+                 layer_id="", sector_idx=0, layer_role="",
+                 sector_count=0):
     """共用繪製扇形 + 標籤（支援第 3 層）"""
     # ---- 座標 ----
     sox = outer * math.cos(math.radians(start))
@@ -81,8 +176,28 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
         fill = CONSTELLATION_COLORS.get(key, 'gray')
 
     text_fill = TEXT_COLORS.get(fill, 'white')
+    meta = _sector_meta(raw_label, layer_role)
+    label_str = meta["full"]
 
-    # ---- 路徑 ----
+    sector_g = draw.Group(id=f"{layer_id}-s{sector_idx}" if layer_id else None)
+    sector_g.args["class"] = "taiyi-sector"
+    if layer_id:
+        sector_g.args["data-layer"] = layer_id
+        sector_g.args["data-sector"] = str(sector_idx)
+        sector_g.args["data-role"] = layer_role or ""
+        sector_g.args["data-compact"] = meta["compact"]
+        sector_g.args["data-full"] = label_str
+        if meta["branch"]:
+            sector_g.args["data-branch"] = meta["branch"]
+        pos_branch = _pos_branch(sector_idx, sector_count, layer_role, raw_label)
+        if pos_branch:
+            sector_g.args["data-pos-branch"] = pos_branch
+        if meta["god"]:
+            sector_g.args["data-god"] = meta["god"]
+        if meta["region"]:
+            sector_g.args["data-region"] = meta["region"]
+        sector_g.args["data-tooltip-key"] = f"{layer_id}:{sector_idx}"
+
     p = draw.Path(stroke='white', stroke_width=1.8, fill=fill)
     p.M(six, siy)
     p.L(sox, soy)
@@ -90,16 +205,15 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
     p.L(eix, eiy)
     p.A(inner, inner, 0, 0, 0, six, siy)
     p.Z()
-    group.append(p)
+    sector_g.append(p)
 
-    # ---- 標籤 ----
-    label_str = _format_label(raw_label)
     mid = (start + end) / 2
     tx = (inner + outer) / 2 * math.cos(math.radians(mid))
     ty = (inner + outer) / 2 * math.sin(math.radians(mid))
     t = draw.Text(label_str, 9, tx, ty, center=1, fill=text_fill,
                   font_family='sans-serif', font_weight='bold')
-    group.append(t)
+    sector_g.append(t)
+    group.append(sector_g)
 
 
 # ======================  古典美學裝飾  ======================
@@ -120,13 +234,9 @@ _SANQI_COLORS = {
     "太陰黑旗": "#15171f",
     "害氣赤旗": "#c43a2b",
 }
-# 十六宮地支序（供三旗定位角度）
+# 十六宮／十二宮地支序（供三旗定位角度；扇區序定義見檔案前段 _SIXTEEN / _TWELVE）
 # 注意：此序須與 gen_chart 等函式之十六宮扇區資料順序一致（起巳，順行），
 # 否則三旗會落在錯誤宮位（舊序起子，導致青旗/黑旗誤落乾、赤旗誤落坤）。
-# 另修正舊序中之訛字：艰->艮、巴->巽。
-_SIXTEEN = "巳午未坤申酉戌乾亥子丑艮寅卯辰巽"
-# 命法十二宮扇區序（起巳，順行十二地支）
-_TWELVE = "巳午未申酉戌亥子丑寅卯辰"
 
 
 def _flag_angle(chen, palace_order=None):
@@ -251,9 +361,13 @@ def gen_chart(first_layer, second_layer, sixth_layer, sevenstars, sanqi=None, tr
             inner = inner_radius + layer_idx * layer_gap
             outer = inner_radius + (layer_idx + 1) * layer_gap
 
+            lid = f"layer{layer_idx + 1}"
             _draw_sector(layer, start, end, inner, outer, raw,
                          is_16_palace=(layer_idx == 2),
-                         is_second_layer=(layer_idx == 1))
+                         is_second_layer=(layer_idx == 1),
+                         layer_id=lid, sector_idx=div,
+                         layer_role=_role_for("year", layer_idx),
+                         sector_count=divs)
         d.append(layer)
 
     _add_ornament(d, 13 + 5 * 45, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_SIXTEEN)
@@ -286,10 +400,14 @@ def gen_chart_life(second_layer, twelve, sixth_layer, sevenstars, sanqi=None, tr
             inner = inner_radius + layer_idx * layer_gap
             outer = inner_radius + (layer_idx + 1) * layer_gap
 
+            lid = f"layer{layer_idx + 1}"
             _draw_sector(layer, start, end, inner, outer, raw,
-                         is_16_palace=(layer_idx == 2),   # 第 4 層（index 3）是 16 宮
+                         is_16_palace=(layer_idx == 2),
                          is_second_layer=(layer_idx == 1),
-                         is_third_layer=(layer_idx == 2)) # 第 3 層
+                         is_third_layer=(layer_idx == 2),
+                         layer_id=lid, sector_idx=div,
+                         layer_role=_role_for("life", layer_idx),
+                         sector_count=divs)
         d.append(layer)
 
     _add_ornament(d, 12 + 5 * 35, jewels=12, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_TWELVE)
@@ -326,10 +444,14 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer, seven_stars, s
             inner = inner_radius + layer_idx * layer_gap
             outer = inner_radius + (layer_idx + 1) * layer_gap
 
+            lid = f"layer{layer_idx + 1}"
             _draw_sector(layer, start, end, inner, outer, raw,
                          is_16_palace=(layer_idx == 3),
                          is_second_layer=(layer_idx == 1),
-                         is_third_layer=(layer_idx == 2))   # 第 3 層
+                         is_third_layer=(layer_idx == 2),
+                         layer_id=lid, sector_idx=div,
+                         layer_role=_role_for("day", layer_idx),
+                         sector_count=divs)
         d.append(layer)
 
     _add_ornament(d, 3 + 6 * 31.5, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_SIXTEEN)
@@ -382,11 +504,15 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
             inner = inner_radius + layer_idx * layer_gap
             outer = inner_radius + (layer_idx + 1) * layer_gap
 
+            lid = f"layer{layer_idx + 1}"
             _draw_sector(layer, start, end, inner, outer, raw,
                          is_16_palace=(layer_idx == 3),
                          is_second_layer=(layer_idx == 1),
-                         is_third_layer=(layer_idx == 2),   # 第 3 層
-                         is_28_layer=(layer_idx == 5))
+                         is_third_layer=(layer_idx == 2),
+                         is_28_layer=(layer_idx == 5),
+                         layer_id=lid, sector_idx=div,
+                         layer_role=_role_for("hour", layer_idx),
+                         sector_count=divs)
         d.append(layer)
 
     _add_ornament(d, 3 + 7 * 31.5, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_SIXTEEN)

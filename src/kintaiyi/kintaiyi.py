@@ -1401,9 +1401,23 @@ class Taiyi:
         _trigram_rotate = _ty_idx * 45.0
         return chart.gen_chart_life( list(self.sixteen_gong11(4,0).values())[-1], sg, [self.sixteen_gong11(4,0).get(i) for i in list(res.keys())], ss1[0], sanqi=_sanqi, trigram_rotate=_trigram_rotate)
 
+    def _twelve_palace_map(self, sex):
+        """十二命宮地支→宮名（供命法排盤，避免 gen_life_gong_list 遞迴 taiyi_life）。"""
+        twelve_gongs = "命宮,兄弟,妻妾,子孫,財帛,田宅,官祿,奴僕,疾厄,福德,相貌,父母".split(",")
+        gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
+        yz, mz = gz[0][1], gz[1][1]
+        yy = config.multi_key_dict_get({tuple(self.di_zhi[0::2]): "陽", tuple(self.di_zhi[1::2]): "陰"}, yz)
+        direction = config.multi_key_dict_get({("男陽", "女陰"): "順", ("男陰", "女陽"): "逆"}, sex + yy)
+        zhinum = dict(zip(self.di_zhi, range(1, 13)))
+        yz_arrange = dict(zip(range(1, 13), config.new_list(self.di_zhi, yz)))[zhinum[yz]]
+        mz_arrange = dict(zip(range(1, 13), config.new_list(self.di_zhi, yz_arrange)))[zhinum[mz]]
+        mz_arrange_r = dict(zip(range(1, 13), config.new_list(list(reversed(self.di_zhi)), yz_arrange)))[zhinum[mz]]
+        arrangelist = {"順": config.new_list(self.di_zhi, mz_arrange_r), "逆": config.new_list(self.di_zhi, mz_arrange)}.get(direction)
+        return dict(zip(arrangelist, twelve_gongs))
+
     def gen_life_gong_list(self, sex):
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
-        dict1 = self.taiyi_life(sex).get("十二命宮排列")
+        dict1 = self._twelve_palace_map(sex)
         res.update(dict1)
         sg = list(res.values())
         return  list(self.sixteen_gong11(4,0).values())[-1], sg, [self.sixteen_gong11(4,0).get(i) for i in list(res.keys())]
@@ -1521,7 +1535,6 @@ class Taiyi:
         return text
     
     def taiyi_life(self, sex):
-        twelve_gongs = "命宮,兄弟,妻妾,子孫,財帛,田宅,官祿,奴僕,疾厄,福德,相貌,父母".split(",")
         gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
         yz = gz[0][1]
         mz = gz[1][1]
@@ -1529,20 +1542,16 @@ class Taiyi:
         hz = gz[3][1]
         self.di_zhi = self.di_zhi
         skypan = dict(zip(config.new_list(self.di_zhi, mz), config.new_list(list(reversed(self.di_zhi)), hz)))
-        num= self.di_zhi.index(yz)
         yy = config.multi_key_dict_get({tuple(self.di_zhi[0::2]):"陽", tuple(self.di_zhi[1::2]):"陰"}, yz)
         direction =  config.multi_key_dict_get({("男陽","女陰"):"順", ("男陰", "女陽"):"逆"}, sex+yy)
         zhinum = dict(zip(self.di_zhi,range(1,13)))
-        #命宮排法
-        yz_arrange = dict(zip(range(1,13),config.new_list(self.di_zhi,yz)))[zhinum[yz]]
-        mz_arrange = dict(zip(range(1,13),config.new_list(self.di_zhi,yz_arrange)))[zhinum[mz]]
-        mz_arrange_r = dict(zip(range(1,13),config.new_list(list(reversed(self.di_zhi)),yz_arrange)))[zhinum[mz]]
+        palace_map = self._twelve_palace_map(sex)
+        arrangelist = list(palace_map.keys())
         #身宮排法
         mz1_arrange = dict(zip(range(1,13),config.new_list(self.di_zhi,mz)))[zhinum[mz]]
         dz_arrange =  dict(zip(range(1,13),config.new_list(self.di_zhi,mz1_arrange)))[zhinum[dz]]
         dz_arrange_r = dict(zip(range(1,13),config.new_list(list(reversed(self.di_zhi)),dz_arrange)))[zhinum[dz]]
         d_arrangelist = {"順":config.new_list(self.di_zhi, dz_arrange_r), "逆":config.new_list(self.di_zhi, dz_arrange)}.get(direction)
-        arrangelist = {"順":config.new_list(self.di_zhi, mz_arrange_r), "逆":config.new_list(self.di_zhi, mz_arrange)}.get(direction)
         #長生
         fly_lu = config.multi_key_dict_get({tuple(list("甲乙")):"亥", tuple(list("丙丁")):"寅", tuple(list("戊己")):"午", tuple(list("庚辛")):"巳",tuple(list("壬癸")):"申" }, gz[0][0])
         fly_horse = config.multi_key_dict_get({tuple(list("甲乙")):"亥", tuple(list("丙丁")):"寅", tuple(list("戊己")):"午", tuple(list("庚辛")):"巳",tuple(list("壬癸")):"申" }, gz[3][0])
@@ -1561,7 +1570,7 @@ class Taiyi:
                 "飛馬":fly_horse,
                 "黑符":blackfu,
                 "天盤":skypan,
-                "十二命宮排列":dict(zip(arrangelist, twelve_gongs)),
+                "十二命宮排列": palace_map,
                 "陽九":config.yangjiu(self.year, self.month, self.day),
                 "百六":config.baliu(self.year, self.month, self.day),
                 "陽九行限": self.yangjiu_xingxian(sex),
@@ -1601,8 +1610,23 @@ class Taiyi:
                 "五風":config.fivewind(self.accnum(0,0)),
                 "八風":config.eightwind(self.accnum(0,0)),
                 "大游":config.bigyo(self.accnum(0,0)),
-                "小游":config.smyo(self.accnum(0,0))}
+                "小游":config.smyo(self.accnum(0,0)),
+                }
+        from .shiti_jinfu import match_life  # noqa: PLC0415
+        pan["十提金賦"] = match_life(self, sex, life=pan)
+        pan["十二宮星斷"] = self.gongs_discription(sex)
+        pan["雙星同宮論"] = self.twostar_disc(sex)
+        pan["諸星上中下三等"] = self.sixteen_gong_grades(3, 0)
         return pan
+
+    def shiti_jinfu(self, sex):
+        """太乙十提金賦（卷二十）：依命身宮及十二宮星曜匹配賦文。"""
+        from .shiti_jinfu import match_life  # noqa: PLC0415
+        return match_life(self, sex)
+
+    def shiti_jinfu_text(self, sex):
+        from .shiti_jinfu import format_text, match_life  # noqa: PLC0415
+        return format_text(match_life(self, sex))
     
     def shi_geju(self, ji_style, taiyi_acumyear):
         """釋格局：依《太乙統宗寶鑑》卷四「釋掩迫關囚擊格對提挾執提四郭固四郭社」
@@ -1761,6 +1785,16 @@ class Taiyi:
             分析結果由 TaiyiGame 類別生成，以古法「推主客相闗法」及「七大兵法格局」
             為本，輔以現代零和博弈論 Nash 均衡與線性規劃運籌博弈原理。
         """
+        _geju = self.shi_geju(ji_style, taiyi_acumyear)
+        _three_doors = self.threedoors(ji_style, taiyi_acumyear)
+        _five_gens = self.fivegenerals(ji_style, taiyi_acumyear)
+        _ty = self.ty(ji_style, taiyi_acumyear)
+        _doors = self.geteightdoors(ji_style, taiyi_acumyear)
+        _ty_door = _doors.get(_ty)
+        _gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
+        _sf_hit = any(k.startswith("擊") for k in _geju)
+        _sf_ge = "格(始擊)" in _geju
+        _wq = jieqi.gong_wangzhuai(jieqi.jq(self.year, self.month, self.day, self.hour, self.minute))
         result = {
                 "太乙計":config.taiyi_name(ji_style),
                 "太乙公式類別":config.ty_method(taiyi_acumyear),
@@ -1813,6 +1847,8 @@ class Taiyi:
                 "十天干歲始擊落宮預測": config.multi_key_dict_get (tengan_shiji, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[0][0]).get(config.Ganzhiwuxing(self.sf(ji_style, taiyi_acumyear))),
                 "八門值事":config.eight_door(self.accnum(ji_style, taiyi_acumyear)),
                 "八門分佈":self.geteightdoors(ji_style, taiyi_acumyear),
+                # 《太乙統宗寶鑑》卷二：十六宮各星將與十精分佈
+                "十六宮分佈": self.sixteen_gong(ji_style, taiyi_acumyear),
                 "八宮旺衰":jieqi.gong_wangzhuai(jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)),
                 "推太乙當時法": self.shensha(ji_style, taiyi_acumyear),
                 "推三門具不具":self.threedoors(ji_style, taiyi_acumyear),
@@ -1842,10 +1878,149 @@ class Taiyi:
                 "推白龍得雲":config.dragon(self.ty(ji_style, taiyi_acumyear)),
                 "推回軍無言":config.returnarmy(self.away_general(ji_style, taiyi_acumyear)),
                 # 《太乙統宗寶鑑》卷四：釋掩迫關囚擊格對提挾執提四郭固
-                "釋格局":self.shi_geju(ji_style, taiyi_acumyear),
+                "釋格局":_geju,
                 # 《太乙統宗寶鑑》卷十：三旗行宮 + 九宮貴神
                 "三旗行宮":config.sanqi(self.accnum(ji_style, taiyi_acumyear)),
                 "九宮貴神":config.nine_palace_gods(self.accnum(ji_style, taiyi_acumyear)),
+                # 《太乙統宗寶鑑》卷六：太乙九星 + 文昌九星
+                "太乙九星":config.taiyi_nine_stars(
+                    self.accnum(ji_style, taiyi_acumyear),
+                    config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[0][0]),
+                "文昌九星":config.wenchang_nine_stars(
+                    self.accnum(ji_style, taiyi_acumyear),
+                    config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[0][0]),
+                # 《太乙統宗寶鑑》卷三／卷十：五運六氣 + 五音之數
+                "五運六氣":config.wuyun_liuqi(
+                    config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[0][0],
+                    config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[0][1],
+                    config.num2gong(self.ty(ji_style, taiyi_acumyear)),
+                    self.skyeyes(ji_style, taiyi_acumyear),
+                    self.sf(ji_style, taiyi_acumyear)),
+                "五音之數":config.wuyin_shu(
+                    self.home_cal(ji_style, taiyi_acumyear),
+                    self.away_cal(ji_style, taiyi_acumyear),
+                    self.set_cal(ji_style, taiyi_acumyear),
+                    config.num2gong(self.ty(ji_style, taiyi_acumyear)),
+                    _gz[2][1],
+                    _gz[3][1]),
+                # 《太乙統宗寶鑑》卷五：軍事戰略
+                "軍事戰略": config.junshi_zhanlue(
+                    _ty,
+                    self.home_cal(ji_style, taiyi_acumyear),
+                    self.away_cal(ji_style, taiyi_acumyear),
+                    self.skyeyes(ji_style, taiyi_acumyear),
+                    self.sf(ji_style, taiyi_acumyear),
+                    _three_doors,
+                    _five_gens,
+                    self.home_general(ji_style, taiyi_acumyear),
+                    self.away_general(ji_style, taiyi_acumyear),
+                    self.home_vgen(ji_style, taiyi_acumyear),
+                    self.away_vgen(ji_style, taiyi_acumyear),
+                    self.gudan(ji_style, taiyi_acumyear),
+                    _gz[0][1],
+                    _wq,
+                    _ty_door),
+                # 《太乙統宗寶鑑》卷十二：統運入卦、十二運立成、入爻禍福、流年直卦
+                "卷十二": config.vol12_zonghe(
+                    self.year,
+                    _gz[0][0],
+                    _gz[0][1],
+                    self.month,
+                    self.day),
+                # 《太乙統宗寶鑑》卷十三：統十二運卦象、六爻觀象
+                "卷十三": config.gua_xiang_zonghe(self.year),
+                # 《太乙統宗寶鑑》卷十四：統運八卦行支編年
+                "卷十四": config.biannian_zonghe(self.year),
+                # 《太乙統宗寶鑑》卷八：九宮十二分野、絳宮明堂玉堂
+                "卷八": config.fenye_zonghe(_ty, _gz[0][1]),
+                # 《太乙統宗寶鑑》卷九：大小遊軌運、重卦策數、陽九百六限數
+                "卷九": config.guiyun_zonghe(
+                    self.accnum(ji_style, taiyi_acumyear),
+                    self.year, self.month, self.day),
+                # 《太乙統宗寶鑑》卷十：五運六氣、天目合會、九宮貴神歲會
+                "卷十": config.vol10_zonghe(
+                    _gz[0][0], _gz[0][1], _ty,
+                    self.skyeyes(ji_style, taiyi_acumyear),
+                    self.sf(ji_style, taiyi_acumyear),
+                    self.accnum(ji_style, taiyi_acumyear)),
+                # 《太乙統宗寶鑑》卷十八：十精所主、雲氣合會
+                "卷十八": config.yunqi_zonghe(
+                    self.accnum(ji_style, taiyi_acumyear), _ty),
+                # 《太乙統宗寶鑑》卷十一：十六宮間變化、州國災變、城名厄會、飛符四殺、歲內災發
+                "卷十一": config.vol11_zonghe(
+                    _ty,
+                    self.skyeyes(ji_style, taiyi_acumyear),
+                    self.hegod(ji_style),
+                    self.flyfu(ji_style, taiyi_acumyear),
+                    _gz[0][0],
+                    _gz[0][1],
+                    _gz[1][1],
+                    _gz[2][1],
+                    _gz[3][1],
+                    config._NINE_GONG_CHENG.get(_ty, (None, None))[1]),
+                # 《太乙統宗寶鑑》卷十五：軍事應用
+                "軍事應用":config.junshi_yingyong(
+                    self.home_cal(ji_style, taiyi_acumyear),
+                    self.away_cal(ji_style, taiyi_acumyear),
+                    _ty,
+                    self.skyeyes(ji_style, taiyi_acumyear),
+                    self.sf(ji_style, taiyi_acumyear),
+                    _gz[2][1],
+                    _gz[3][1],
+                    _geju,
+                    _three_doors,
+                    _five_gens,
+                    home_gen=self.home_general(ji_style, taiyi_acumyear),
+                    away_gen=self.away_general(ji_style, taiyi_acumyear),
+                    home_vgen=self.home_vgen(ji_style, taiyi_acumyear),
+                    away_vgen=self.away_vgen(ji_style, taiyi_acumyear),
+                    flybird_gong=config.flybird(self.accnum(ji_style, taiyi_acumyear))),
+                # 《太乙統宗寶鑑》卷十七：軍事占斷
+                "軍事占斷":config.junshi_zhanduan(
+                    _ty,
+                    self.home_cal(ji_style, taiyi_acumyear),
+                    self.away_cal(ji_style, taiyi_acumyear),
+                    self.skyeyes(ji_style, taiyi_acumyear),
+                    self.sf(ji_style, taiyi_acumyear),
+                    self.skyeyes_des(ji_style, taiyi_acumyear),
+                    self.home_general(ji_style, taiyi_acumyear),
+                    self.home_vgen(ji_style, taiyi_acumyear),
+                    self.away_general(ji_style, taiyi_acumyear),
+                    self.away_vgen(ji_style, taiyi_acumyear),
+                    _three_doors,
+                    _five_gens,
+                    _geju,
+                    "掩" in _geju,
+                    _ty_door,
+                    _sf_hit,
+                    _sf_ge,
+                    _wq),
+                # 《太乙統宗寶鑑》卷二／卷七：十六宮間神、八門、天乙地乙直符四神所主
+                "神將所主": config.shenjiang_suozhu(
+                    _ty,
+                    self.skyeyes(ji_style, taiyi_acumyear),
+                    self.sf(ji_style, taiyi_acumyear),
+                    self.se(ji_style, taiyi_acumyear),
+                    self.skyyi(ji_style, taiyi_acumyear),
+                    self.earthyi(ji_style, taiyi_acumyear),
+                    self.fgd(ji_style, taiyi_acumyear),
+                    self.zhifu(ji_style, taiyi_acumyear),
+                    _doors,
+                    config.eight_door(self.accnum(ji_style, taiyi_acumyear)),
+                    _wq,
+                    config.bigyo(self.accnum(ji_style, taiyi_acumyear)),
+                    config.smyo(self.accnum(ji_style, taiyi_acumyear)),
+                    accnum=self.accnum(ji_style, taiyi_acumyear),
+                    skyeyes_des=self.skyeyes_des(ji_style, taiyi_acumyear),
+                    home_gen=self.home_general(ji_style, taiyi_acumyear),
+                    away_gen=self.away_general(ji_style, taiyi_acumyear),
+                    home_vgen=self.home_vgen(ji_style, taiyi_acumyear),
+                    away_vgen=self.away_vgen(ji_style, taiyi_acumyear),
+                    geju=_geju,
+                    wufu=config.wufu(self.accnum(ji_style, taiyi_acumyear)),
+                    kingbase=self.kingbase(ji_style, taiyi_acumyear),
+                    officerbase=self.officerbase(ji_style, taiyi_acumyear),
+                    pplbase=self.pplbase(ji_style, taiyi_acumyear)),
                 }
         if enable_game_theory:
             # 此處以古法「推主客相闗法」及「七大兵法格局」為本，
