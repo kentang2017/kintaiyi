@@ -1645,24 +1645,24 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         }
         #__CONTAINER_ID__ .taiyi-svg-root text,
         #__CONTAINER_ID__ .taiyi-svg-root tspan {
-            font-size: 14px !important;
+            font-size: 12px !important;
         }
         #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector > text {
-            font-size: 12.5px !important;
+            font-size: 11px !important;
         }
         #__CONTAINER_ID__ .taiyi-svg-root #layer1 text,
         #__CONTAINER_ID__ .taiyi-svg-root #layer1 tspan {
-            font-size: 16px !important;
+            font-size: 13.5px !important;
         }
         #__CONTAINER_ID__ .taiyi-svg-root .taiyi-geju-label {
-            font-size: 12.5px !important;
+            font-size: 11px !important;
         }
         #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root text,
         #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root tspan {
-            font-size: 13px !important;
+            font-size: 11.5px !important;
         }
         #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root .taiyi-sector > text {
-            font-size: 11.5px !important;
+            font-size: 10.5px !important;
         }
     }
     </style>
