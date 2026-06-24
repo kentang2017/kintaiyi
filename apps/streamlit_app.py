@@ -52,6 +52,12 @@ from kintaiyi.guiyun_display import (
     inner_outer_rows,
     limit_rows,
 )
+from kintaiyi.junshi_display import (
+    wuzhen_bazhen_svg,
+    wuzhen_reference_rows,
+    wuzhen_table_rows,
+)
+from kintaiyi.tongyun_display import apply_tongyun_query, historical_compare
 from kintaiyi.taiyidict import tengan_shiji, su_dist
 from kintaiyi.taiyimishu import taiyi_yingyang
 from kintaiyi.historytext import chistory
@@ -162,19 +168,19 @@ def _render_vol9_explanation(v9: dict | None) -> None:
         st.markdown(f"**{t('guiyun_chong')}**")
         st.dataframe(
             pd.DataFrame([chong_gua_row(dy, scope="大遊"), chong_gua_row(xy, scope="小遊")]),
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
         )
         st.markdown(f"**{t('guiyun_inner_outer')}·大遊**")
         st.dataframe(
             pd.DataFrame(inner_outer_rows(v9.get("大遊內卦"), v9.get("大遊外卦"), scope="大遊")),
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
         )
         st.markdown(f"**{t('guiyun_inner_outer')}·小遊**")
         st.dataframe(
             pd.DataFrame(inner_outer_rows(v9.get("小遊內卦"), v9.get("小遊外卦"), scope="小遊")),
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
         )
         _limits = limit_rows(v9)
@@ -182,15 +188,15 @@ def _render_vol9_explanation(v9: dict | None) -> None:
             st.markdown(f"**{t('guiyun_limits')}**")
             st.dataframe(
                 pd.DataFrame(_limits),
-                use_container_width=True,
+                width="stretch",
                 hide_index=True,
             )
         _ce = v9.get("四象之策") or []
         if _ce:
             st.markdown(f"**{t('guiyun_ce_ref')}**")
             st.dataframe(
-                pd.DataFrame(_ce),
-                use_container_width=True,
+                pd.DataFrame(_ce).astype(str),
+                width="stretch",
                 hide_index=True,
             )
         if dy.get("要訣"):
@@ -199,6 +205,102 @@ def _render_vol9_explanation(v9: dict | None) -> None:
             st.caption(xy["要訣"])
         if v9.get("要訣"):
             st.caption(v9["要訣"])
+
+
+def _render_wuzhen_bazhen_viz(wuzhen: dict | None) -> None:
+    """卷十五：五陣置旗與八陣圖視覺化。"""
+    if not wuzhen:
+        return
+    with st.expander(t("wuzhen_bazhen_viz"), expanded=False):
+        st.markdown(f"**{t('five_formations')}**")
+        st.dataframe(
+            pd.DataFrame(wuzhen_table_rows(wuzhen)),
+            width="stretch",
+            hide_index=True,
+        )
+        st.markdown(f"**{t('wuzhen_reference')}**")
+        st.dataframe(
+            pd.DataFrame(wuzhen_reference_rows()),
+            width="stretch",
+            hide_index=True,
+        )
+        if wuzhen.get("八陣要訣"):
+            st.caption(wuzhen["八陣要訣"])
+        st.markdown(
+            wuzhen_bazhen_svg(
+                wuzhen,
+                title_five=t("five_formations_short"),
+                title_eight=t("eight_formations_short"),
+                title_chubing=t("chubing_xiang_title"),
+                center_label=t("bazhen_center"),
+                home_label=t("side_home"),
+                away_label=t("side_away"),
+            ),
+            unsafe_allow_html=True,
+        )
+
+
+def _resolve_tongyun_year(chart_year: int) -> int:
+    if st.session_state.get("tongyun_sync_chart", True):
+        return int(chart_year)
+    return int(st.session_state.get("tongyun_query_year", chart_year))
+
+
+def _display_ttext(results: dict) -> dict:
+    """依統運查詢年覆寫卷十二～十四。"""
+    ty = results.get("ty")
+    if ty is None:
+        return results.get("ttext") or {}
+    query_year = _resolve_tongyun_year(ty.year)
+    return apply_tongyun_query(
+        results.get("ttext") or {},
+        query_year,
+        ty.year,
+        month=ty.month,
+        day=ty.day,
+    )
+
+
+def _render_tongyun_history_compare(query_year: int) -> None:
+    compare = historical_compare(query_year)
+    rugua = compare.get("統運入卦") or {}
+    with st.expander(t("tongyun_history_compare"), expanded=bool(compare.get("當年例"))):
+        st.caption(
+            f"{rugua.get('運', '—')}·{rugua.get('卦', '—')}"
+            f"{rugua.get('爻名', '')}（{query_year}）"
+        )
+        exact = compare.get("當年例") or []
+        if exact:
+            st.markdown(f"**{t('tongyun_exact_year')}**")
+            for item in exact:
+                st.markdown(
+                    f"· {item.get('紀年', '')}（{item.get('年', '')}）"
+                    f"{item.get('運', '')}·{item.get('卦', '')}{item.get('爻', '')}："
+                    f"{item.get('摘要', '')}"
+                )
+        same = compare.get("同卦爻例") or []
+        if same:
+            st.markdown(f"**{t('tongyun_same_gua_yao')}**")
+            for item in same:
+                if item.get("年") == query_year:
+                    continue
+                st.markdown(
+                    f"· {item.get('紀年', '')}（{item.get('年', '')}）"
+                    f"{item.get('運', '')}·{item.get('卦', '')}{item.get('爻', '')}："
+                    f"{item.get('摘要', '')}"
+                )
+        near = compare.get("近例") or []
+        if near:
+            st.markdown(f"**{t('tongyun_near_examples')}**")
+            for item in near:
+                delta = item.get("相差", 0)
+                sign = f"+{delta}" if delta > 0 else str(delta)
+                st.markdown(
+                    f"· {item.get('紀年', '')}（{item.get('年', '')}，"
+                    f"{t('tongyun_year_delta').format(delta=sign)}）"
+                    f"{item.get('運', '')}·{item.get('卦', '')}{item.get('爻', '')}："
+                    f"{item.get('摘要', '')}"
+                )
 
 
 def _render_zhao_you_songs(zhao_you: dict, *, preview: int = 6) -> None:
@@ -445,6 +547,18 @@ TRANSLATIONS = {
         "shouwei": "災厄首尾︰",
         "hangzhi_biannian": "行支編年︰",
         "tongyun_extended": "統運延伸",
+        "tongyun_query_header": "統運查詢",
+        "tongyun_sync_chart": "與排盤年同步",
+        "tongyun_sync_hint": "統運入卦隨排盤年 {year} 計算",
+        "tongyun_query_year": "統運查詢年",
+        "tongyun_query_note": "統運以 {query} 年入卦（排盤年 {chart}）",
+        "tongyun_history_compare": "統運歷史對照",
+        "tongyun_exact_year": "當年驗例",
+        "tongyun_same_gua_yao": "同卦爻例",
+        "tongyun_near_examples": "近例",
+        "tongyun_year_delta": "相差 {delta} 年",
+        "life_query_age": "命法查詢虛歲",
+        "life_query_year": "照限游年年份",
         "fenye": "分野疆界︰",
         "guiyun": "大小遊軌運︰",
         "guiyun_detail": "軌運策數詳情",
@@ -480,6 +594,15 @@ TRANSLATIONS = {
         "wangxian_detail": "星論詳情",
         "feifu_sisha": "飛符四殺︰",
         "junshi_vol15": "軍事應用︰",
+        "wuzhen_bazhen_viz": "五陣八陣",
+        "five_formations": "五陣置旗（主客）",
+        "five_formations_short": "五陣",
+        "eight_formations_short": "八陣",
+        "wuzhen_reference": "置旗規則（算數個位）",
+        "chubing_xiang_title": "陳兵出鄉",
+        "bazhen_center": "握機",
+        "side_home": "主",
+        "side_away": "客",
         "junshi_vol17": "軍事占斷︰",
         "shenjiang_suozhu": "神將所主︰",
         # AI
@@ -669,6 +792,18 @@ TRANSLATIONS = {
         "shouwei": "Cycle Boundaries: ",
         "hangzhi_biannian": "Historical Cycle: ",
         "tongyun_extended": "Cycle Extended",
+        "tongyun_query_header": "Cycle Query",
+        "tongyun_sync_chart": "Sync with chart year",
+        "tongyun_sync_hint": "Cycle hexagram follows chart year {year}",
+        "tongyun_query_year": "Cycle query year",
+        "tongyun_query_note": "Cycle uses {query} (chart year {chart})",
+        "tongyun_history_compare": "Historical cycle compare",
+        "tongyun_exact_year": "Exact year",
+        "tongyun_same_gua_yao": "Same hexagram/yao",
+        "tongyun_near_examples": "Nearby examples",
+        "tongyun_year_delta": "Δ {delta} yr",
+        "life_query_age": "Life chart age",
+        "life_query_year": "Limit/year query",
         "fenye": "Territorial Divisions: ",
         "guiyun": "Major/Minor Wander Hexagrams: ",
         "guiyun_detail": "Orbit hexagram & tally details",
@@ -704,6 +839,15 @@ TRANSLATIONS = {
         "wangxian_detail": "Star Discourse",
         "feifu_sisha": "Flying Talisman Four Kills: ",
         "junshi_vol15": "Military Application: ",
+        "wuzhen_bazhen_viz": "Five & Eight Formations",
+        "five_formations": "Five-formation flags (home/away)",
+        "five_formations_short": "Five",
+        "eight_formations_short": "Eight",
+        "wuzhen_reference": "Flag rules (calc digit)",
+        "chubing_xiang_title": "Deploy direction",
+        "bazhen_center": "Pivot",
+        "side_home": "H",
+        "side_away": "A",
         "junshi_vol17": "Military Divination: ",
         "shenjiang_suozhu": "Gods & Doors Meanings: ",
         # AI
@@ -1155,7 +1299,7 @@ def _build_chart_meta(
         export_lines.insert(2, f"{t('epoch_label')}︰{results.get('ttext', {}).get('紀元', '')}")
 
     chart_style = results.get("style", 6) if is_life_chart else results.get("style", 0)
-    ttext = results.get("ttext", {})
+    ttext = _display_ttext(results) if not is_life_chart else (results.get("ttext") or {})
     chart_view = build_chart_view_model(
         ttext,
         chart_style=chart_style,
@@ -3478,10 +3622,13 @@ if "lang" not in st.session_state:
     st.session_state.lang = "zh"
 
 # Streamlit 頁面配置
+_page_icon = os.path.join(_REPO_ROOT, "assets", "icon.png")
+if not os.path.isfile(_page_icon):
+    _page_icon = "☯"
 st.set_page_config(
     layout="wide",
     page_title=t("page_title"),
-    page_icon=os.path.join(_REPO_ROOT, "assets", "icon.jpg")
+    page_icon=_page_icon,
 )
 # Inject Chinese classical theme CSS globally
 st.markdown(get_custom_css(), unsafe_allow_html=True)
@@ -3513,7 +3660,21 @@ with st.sidebar:
     with col2:
         mh = st.number_input(t("hour"), min_value=0, max_value=23, value=now.hour, key="hour")
         mmin = st.number_input(t("minute"), min_value=0, max_value=59, value=now.minute, key="minute")
-    
+
+    st.markdown("---")
+    st.subheader(t("tongyun_query_header"))
+    tongyun_sync = st.checkbox(t("tongyun_sync_chart"), value=True, key="tongyun_sync_chart")
+    if tongyun_sync:
+        st.caption(t("tongyun_sync_hint").format(year=my))
+    else:
+        st.slider(
+            t("tongyun_query_year"),
+            min_value=-476,
+            max_value=2100,
+            value=int(st.session_state.get("tongyun_query_year", my)),
+            key="tongyun_query_year",
+        )
+
     option = st.selectbox(
         t("chart_method"),
         ('時計太乙', '年計太乙', '月計太乙', '日計太乙', '分計太乙', '太乙命法', '太乙命法 (魔改)'),
@@ -3540,7 +3701,7 @@ with st.sidebar:
     tc_dict = {'有': 1, '無': 0}
     tc = tc_dict[ten_ching]
     
-    instant = st.button(t("instant_btn"), use_container_width=True)
+    instant = st.button(t("instant_btn"), width="stretch")
     
     st.markdown("---")
     st.header(t("ai_settings"))
@@ -3638,7 +3799,7 @@ with st.sidebar:
             )
         with col_check:
             st.markdown("<br>", unsafe_allow_html=True)
-            check_key_btn = st.button(t("custom_provider_check_btn"), key="custom_provider_check_key_btn", use_container_width=True)
+            check_key_btn = st.button(t("custom_provider_check_btn"), key="custom_provider_check_key_btn", width="stretch")
 
         if check_key_btn:
             _ckey = st.session_state.get("custom_provider_api_key", "").strip()
@@ -3685,11 +3846,11 @@ with st.sidebar:
         st.markdown(f"**{t('custom_provider_models_label')}**")
         col_add_btn, col_reset_btn, col_fetch_btn = st.columns(3)
         with col_add_btn:
-            open_add_model = st.button(t("custom_provider_add_model"), key="custom_provider_open_add_model", use_container_width=True)
+            open_add_model = st.button(t("custom_provider_add_model"), key="custom_provider_open_add_model", width="stretch")
         with col_reset_btn:
-            reset_models_btn = st.button(t("custom_provider_reset_models"), key="custom_provider_reset_models_btn", use_container_width=True)
+            reset_models_btn = st.button(t("custom_provider_reset_models"), key="custom_provider_reset_models_btn", width="stretch")
         with col_fetch_btn:
-            fetch_models_btn = st.button(t("custom_provider_fetch_models"), key="custom_provider_fetch_models_btn", use_container_width=True)
+            fetch_models_btn = st.button(t("custom_provider_fetch_models"), key="custom_provider_fetch_models_btn", width="stretch")
 
         if reset_models_btn:
             st.session_state.custom_provider_models = []
@@ -4032,7 +4193,33 @@ with tabs[0]:
                             st.markdown(t("shiti_jinfu"))
                             st.markdown(results["lifedisc4"])
                             st.markdown("   ")
-                        _v20 = results.get("life_vol20") or {}
+                        from kintaiyi import mingfa as _mingfa_mod
+
+                        _ty_life = results["ty"]
+                        _default_age = config.calculateAge(
+                            datetime.date(_ty_life.year, _ty_life.month, _ty_life.day)
+                        )
+                        _life_age = st.slider(
+                            t("life_query_age"),
+                            0,
+                            90,
+                            value=int(st.session_state.get("life_query_age", _default_age)),
+                            key="life_query_age",
+                        )
+                        _query_year = st.slider(
+                            t("life_query_year"),
+                            1900,
+                            2100,
+                            value=int(st.session_state.get("life_query_year", datetime.date.today().year)),
+                            key="life_query_year",
+                        )
+                        _v20 = _mingfa_mod.zonghe(
+                            _ty_life,
+                            results["sex_o"],
+                            age=_life_age,
+                            query_year=_query_year,
+                            plate_ji=LIFE_PLATE_JI[results["style"]],
+                        )
                         if _v20:
                             _fly = _v20.get("飛祿飛馬", {})
                             _cur = _fly.get("當前") or {}
@@ -4293,8 +4480,17 @@ with tabs[0]:
                                     f"十六神以{_bh['加神']}為樞（{_bh['要訣']}）")
                             if _line11:
                                 st.markdown("；".join(_line11))
+                        _ttext = _display_ttext(results)
+                        _chart_ty = results["ty"]
+                        _tongyun_qy = _resolve_tongyun_year(_chart_ty.year)
+                        if _tongyun_qy != _chart_ty.year:
+                            st.info(
+                                t("tongyun_query_note").format(
+                                    query=_tongyun_qy, chart=_chart_ty.year,
+                                )
+                            )
                         # —— 卷十二：統運入卦 ——
-                        _v12 = results["ttext"].get("卷十二", {})
+                        _v12 = _ttext.get("卷十二", {})
                         if _v12:
                             _rg = _v12.get("統運入卦", {})
                             _hf = _v12.get("入爻禍福", {})
@@ -4382,7 +4578,7 @@ with tabs[0]:
                                             f"太乙歲{_jz.get('太乙歲', '—')}／"
                                             f"時王歲{_jz.get('時王歲', '—')}")
                         # —— 卷十四：行支編年 ——
-                        _v14 = results["ttext"].get("卷十四", {})
+                        _v14 = _ttext.get("卷十四", {})
                         if _v14:
                             _hz = _v14.get("行支編年", {})
                             _tip14 = _v14.get("要訣", "")
@@ -4398,7 +4594,7 @@ with tabs[0]:
                                 _line14.append(_tip14)
                             st.markdown("".join(_line14) if len(_line14) == 1 else "；".join(_line14))
                         # —— 卷十三：統十二運卦象 ——
-                        _v13 = results["ttext"].get("卷十三", {})
+                        _v13 = _ttext.get("卷十三", {})
                         if _v13:
                             _gx = _v13.get("統運卦象", {})
                             _yj13 = _v13.get("要訣", "")
@@ -4429,6 +4625,7 @@ with tabs[0]:
                                             st.markdown(f"· 第{yi}爻{text}{mark}")
                                     st.markdown("**卦象總述**")
                                     st.markdown(_zongshu)
+                        _render_tongyun_history_compare(_tongyun_qy)
                         # —— 卷八：分野疆界 ——
                         _v8 = results["ttext"].get("卷八", {})
                         if _v8:
@@ -4497,6 +4694,7 @@ with tabs[0]:
                                 _line2_parts.append(f"軍勢{_js['斷語']}")
                             if _line2_parts:
                                 st.markdown("；".join(_line2_parts))
+                            _render_wuzhen_bazhen_viz(_wz)
                         # —— 卷十七：軍事占斷 ——
                         _jz = results["ttext"].get("軍事占斷", {})
                         if _jz:

@@ -478,7 +478,9 @@ def _center_lines(ttext: dict) -> list[str]:
     if sc:
         lines.append(f"定算 {sc[0] if isinstance(sc, list) else sc}")
     from .guiyun_display import guiyun_summary_lines  # noqa: PLC0415
+    from .tongyun_display import tongyun_summary_lines  # noqa: PLC0415
 
+    lines.extend(tongyun_summary_lines(ttext, limit=2))
     lines.extend(guiyun_summary_lines(ttext.get("卷九"), limit=2))
     lines.extend(_geju_lines(ttext.get("釋格局") or {}, limit=3))
     lines.extend(_sanqi_lines(ttext))
@@ -490,10 +492,6 @@ def _center_lines(ttext: dict) -> list[str]:
         lines.append(_clip(str(item), 56))
     if v10.get("要訣"):
         lines.append(_clip(str(v10["要訣"]), 56))
-    v12 = ttext.get("卷十二") or {}
-    rg = v12.get("統運入卦") or {}
-    if rg.get("卦"):
-        lines.append(f"統運·{rg.get('運', '')}{rg.get('卦', '')}{rg.get('爻名', '')}")
     return lines[:14]
 
 
@@ -515,13 +513,51 @@ def _life_center_lines(ttext: dict, life_pan: dict | None) -> list[str]:
     jinfu = life_pan.get("十提金賦") or {}
     for entry in (jinfu.get("匹配賦") or [])[:2]:
         lines.append(f"金賦·{entry.get('賦名', '')}")
+    vol20 = life_pan.get("卷二十") or {}
+    fly = vol20.get("飛祿飛馬") or {}
+    cur = fly.get("當前") or {}
+    if cur.get("飛祿宮") or cur.get("飛馬宮"):
+        period = f"（{cur['期間']}）" if cur.get("期間") else ""
+        lines.append(
+            f"祿{cur.get('飛祿宮', '—')}馬{cur.get('飛馬宮', '—')}{period}"
+        )
     return lines
 
 
-def _life_palace_lines(palace: str, branch: str, life1: dict | None, ttext: dict) -> list[str]:
+def _vol20_palace_lines(palace: str, branch: str, life_pan: dict | None) -> list[str]:
+    life_pan = life_pan or {}
+    vol20 = life_pan.get("卷二十") or life_pan
+    lines: list[str] = []
+    fly = vol20.get("飛祿飛馬") or {}
+    cur = fly.get("當前") or {}
+    if cur.get("飛祿宮") == branch:
+        lines.append(f"飛祿·{branch}")
+    if cur.get("飛馬宮") == branch:
+        lines.append(f"飛馬·{branch}")
+    san = vol20.get("命宮三合") or {}
+    if branch and branch in (san.get("三合") or ""):
+        lines.append(f"三合·{san.get('三合', '')}")
+    she = vol20.get("十干合") or {}
+    if palace == "命宮" and she.get("合干"):
+        lines.append(f"十干合·{she.get('年干', '')}{she.get('合干', '')}合")
+    wang = vol20.get("十二宮旺衰絕空刑") or {}
+    pinfo = wang.get(palace) or {}
+    if pinfo.get("狀態"):
+        lines.append(f"宮位·{pinfo['狀態']}")
+    return lines
+
+
+def _life_palace_lines(
+    palace: str,
+    branch: str,
+    life1: dict | None,
+    ttext: dict,
+    life_pan: dict | None = None,
+) -> list[str]:
     lines = [f"地支·{branch}"]
     if palace and str(palace).strip():
         lines.append(f"十二宮·{palace}")
+    lines.extend(_vol20_palace_lines(palace, branch, life_pan))
     for text in (life1 or {}).get(palace, [])[:3]:
         lines.append(_clip(str(text), 64))
     stars = _branch_stars(ttext, branch)
@@ -583,16 +619,25 @@ def build_chart_view_model(
             palace_order = []
 
         ty_gong = life_pan.get("太乙") or ttext.get("太乙")
+        center_lines = _life_center_lines(ttext, life_pan)
+        if ty_obj is not None and sex:
+            from .mingfa import life_chart_annotations  # noqa: PLC0415
+
+            plate_ji = {5: 4, 6: 3}.get(chart_style, 3)
+            ann = life_chart_annotations(ty_obj, sex, plate_ji=plate_ji)
+            for line in ann.get("center_lines") or []:
+                if line not in center_lines:
+                    center_lines.insert(0, line)
         sectors["layer1:0"] = _sector_entry(
             f"命盤·{config.num2gong(ty_gong) if ty_gong is not None else '中宮'}",
-            _life_center_lines(ttext, life_pan),
+            center_lines,
         )
 
         for i, branch in enumerate(_TWELVE_BRANCHES):
             palace = palace_order[i] if i < len(palace_order) else branch
             sectors[f"layer2:{i}"] = _sector_entry(
                 str(palace),
-                _life_palace_lines(str(palace), branch, life1, ttext),
+                _life_palace_lines(str(palace), branch, life1, ttext, life_pan),
             )
             sectors[f"layer3:{i}"] = _sector_entry(branch, _palace_branch_lines(branch, ttext) or [branch])
             sectors[f"layer4:{i}"] = _sector_entry(
@@ -1665,6 +1710,48 @@ def chart_svg_layout(chart_style: int = 0, *, is_life: bool = False) -> dict:
         "rotate_layers": list(sync_layers),
         "geju_rotate_layer": None,
     }
+
+
+def build_palace_state_overlay_svg(life_pan: dict | None, *, is_life: bool = True) -> str:
+    """命盤十二宮旺衰絕空刑角標（疊加於地支環）。"""
+    if not is_life or not life_pan:
+        return ""
+    vol20 = life_pan.get("卷二十") or {}
+    wang = vol20.get("十二宮旺衰絕空刑") or {}
+    palace_map = life_pan.get("十二命宮排列") or {}
+    branch_state: dict[str, str] = {}
+    for br, palace in palace_map.items():
+        state = (wang.get(palace) or {}).get("狀態")
+        if state:
+            branch_state[br] = state
+    if not branch_state:
+        return ""
+
+    import math
+
+    inner_radius = 12
+    layer_gap = 35
+    layer_idx = 2
+    inner = inner_radius + layer_idx * layer_gap
+    outer = inner_radius + (layer_idx + 1) * layer_gap
+    mid_r = (inner + outer) / 2
+    rotation = 248
+    parts = [
+        '<g class="taiyi-palace-state-overlay" pointer-events="none">',
+    ]
+    for i, branch in enumerate(_TWELVE_BRANCHES):
+        state = branch_state.get(branch)
+        if not state:
+            continue
+        ang = math.radians((360 / 12) * (i + 0.5) + rotation)
+        x = mid_r * math.cos(ang) + 14 * math.cos(ang)
+        y = mid_r * math.sin(ang) + 14 * math.sin(ang)
+        parts.append(
+            f'<text x="{x:.1f}" y="{y:.1f}" text-anchor="middle" '
+            f'font-size="9" font-weight="700" fill="#e9cc88">{state}</text>'
+        )
+    parts.append("</g>")
+    return "".join(parts)
 
 
 def format_tooltip(entry: dict | None, fallback: str = "") -> str:

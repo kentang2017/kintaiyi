@@ -3,6 +3,13 @@
 from __future__ import annotations
 
 
+def _cell_str(value) -> str:
+    """統一為字串，避免 st.dataframe Arrow 混用 int/str。"""
+    if value is None or value == "":
+        return "—"
+    return str(value)
+
+
 def _clip(text: str, n: int = 56) -> str:
     s = (text or "").strip()
     return s if len(s) <= n else s[: n - 1] + "…"
@@ -19,15 +26,16 @@ def inner_outer_rows(
     nei = nei or {}
     wai = wai or {}
     if nei:
+        yao = nei.get("爻名") or nei.get("動爻")
         rows.append({
             "層次": f"{scope}內",
-            "卦": nei.get("內卦", "—"),
-            "卦序": nei.get("卦序", "—"),
-            "入卦年": nei.get("入卦年數", "—"),
-            "動爻": nei.get("爻名", nei.get("動爻", "—")),
-            "四象": nei.get("四象", "—"),
-            "策數": nei.get("策數", "—"),
-            "備註": nei.get("要訣", ""),
+            "卦": _cell_str(nei.get("內卦")),
+            "卦序": _cell_str(nei.get("卦序")),
+            "入卦年": _cell_str(nei.get("入卦年數")),
+            "動爻": _cell_str(yao),
+            "四象": _cell_str(nei.get("四象")),
+            "策數": _cell_str(nei.get("策數")),
+            "備註": _cell_str(nei.get("要訣")),
         })
     if wai:
         note = wai.get("要訣", "")
@@ -35,13 +43,13 @@ def inner_outer_rows(
             note = f"{wai['三才']}；{note}" if note else wai["三才"]
         rows.append({
             "層次": f"{scope}外",
-            "卦": wai.get("外卦", "—"),
-            "卦序": wai.get("卦序", "—"),
-            "入卦年": wai.get("入卦年數", "—"),
-            "動爻": wai.get("動爻", "—"),
-            "四象": wai.get("四象", "—"),
-            "策數": wai.get("策數", "—"),
-            "備註": note,
+            "卦": _cell_str(wai.get("外卦")),
+            "卦序": _cell_str(wai.get("卦序")),
+            "入卦年": _cell_str(wai.get("入卦年數")),
+            "動爻": _cell_str(wai.get("動爻")),
+            "四象": _cell_str(wai.get("四象")),
+            "策數": _cell_str(wai.get("策數")),
+            "備註": _cell_str(note),
         })
     return rows
 
@@ -50,16 +58,16 @@ def chong_gua_row(block: dict | None, *, scope: str) -> dict:
     """重卦合計一行。"""
     block = block or {}
     return {
-        "遊": scope,
-        "重卦": block.get("重卦", "—"),
-        "內卦": block.get("內卦", "—"),
-        "外卦": block.get("外卦", "—"),
-        "內爻": block.get("內爻名", "—"),
-        "內策": block.get("內策", "—"),
-        "外策": block.get("外策", "—"),
-        "總策": block.get("總策", "—"),
-        "入內年": block.get("入內年數", "—"),
-        "入外年": block.get("入外年數", "—"),
+        "遊": _cell_str(scope),
+        "重卦": _cell_str(block.get("重卦")),
+        "內卦": _cell_str(block.get("內卦")),
+        "外卦": _cell_str(block.get("外卦")),
+        "內爻": _cell_str(block.get("內爻名")),
+        "內策": _cell_str(block.get("內策")),
+        "外策": _cell_str(block.get("外策")),
+        "總策": _cell_str(block.get("總策")),
+        "入內年": _cell_str(block.get("入內年數")),
+        "入外年": _cell_str(block.get("入外年數")),
     }
 
 
@@ -72,13 +80,13 @@ def limit_rows(v9: dict | None) -> list[dict]:
         if not info:
             continue
         rows.append({
-            "限名": label,
-            "大限": info.get("大限元數", "—"),
-            "小限": info.get("小限元數", "—"),
-            "入小限序": info.get("入小限序", "—"),
-            "入限年數": info.get("入限年數", "—"),
+            "限名": _cell_str(label),
+            "大限": _cell_str(info.get("大限元數")),
+            "小限": _cell_str(info.get("小限元數")),
+            "入小限序": _cell_str(info.get("入小限序")),
+            "入限年數": _cell_str(info.get("入限年數")),
             "臨數終": "是" if info.get("臨數終") else "否",
-            "斷語": info.get("斷語", ""),
+            "斷語": _cell_str(info.get("斷語")),
         })
     return rows
 

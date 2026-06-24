@@ -663,6 +663,7 @@ def zonghe(
     plate_ji: int = 4,
 ) -> dict:
     """卷二十命法綜合。"""
+    age = _default_life_age(taiyi, age)
     gz = config.gangzhi(taiyi.year, taiyi.month, taiyi.day, taiyi.hour, taiyi.minute)
     day_gan, year_gan = gz[2][0], gz[0][0]
     palace_map = taiyi._twelve_palace_map(sex)
@@ -690,4 +691,91 @@ def zonghe(
             f"{qi_ou['和數類型']}；"
             f"月卦{month_gua['卦']}"
         ),
+    }
+
+
+_CHART_LIFE_BRANCHES = tuple(_DI_ZHI[5:] + _DI_ZHI[:5])  # 巳午未申酉戌亥子丑寅卯辰
+
+
+def _default_life_age(taiyi, age: int | None = None) -> int:
+    if age is not None:
+        return int(age)
+    today = date.today()
+    years = today.year - taiyi.year
+    if (today.month, today.day) < (taiyi.month, taiyi.day):
+        years -= 1
+    return max(years, 0)
+
+
+def _sanhe_branch_set(*blocks: dict | None) -> set[str]:
+    found: set[str] = set()
+    for block in blocks:
+        if not block:
+            continue
+        tri = block.get("三合", "")
+        if not tri or tri == "—":
+            continue
+        for ch in tri:
+            if ch in _DI_ZHI:
+                found.add(ch)
+    return found
+
+
+def life_chart_annotations(
+    taiyi,
+    sex: str,
+    *,
+    age: int | None = None,
+    plate_ji: int = 4,
+) -> dict:
+    """命盤扇區／SVG 用卷二十標記（祿馬合、旺衰絕空刑）。"""
+    vol20 = zonghe(
+        taiyi,
+        sex,
+        age=_default_life_age(taiyi, age),
+        plate_ji=plate_ji,
+    )
+    fly = vol20.get("飛祿飛馬") or {}
+    cur = fly.get("當前") or {}
+    lu = cur.get("飛祿宮")
+    ma = cur.get("飛馬宮")
+    ming_san = vol20.get("命宮三合") or {}
+    nian_san = vol20.get("年支三合") or {}
+    she = vol20.get("十干合") or {}
+    san_set = _sanhe_branch_set(ming_san, nian_san)
+    palace_map = taiyi._twelve_palace_map(sex)
+    wang = vol20.get("十二宮旺衰絕空刑") or {}
+
+    branch_tags: dict[str, str] = {}
+    branch_states: dict[str, str] = {}
+    for br in _CHART_LIFE_BRANCHES:
+        tags: list[str] = []
+        if lu and br == lu:
+            tags.append("祿")
+        if ma and br == ma:
+            tags.append("馬")
+        if br in san_set:
+            tags.append("合")
+        palace = palace_map.get(br, "")
+        state = (wang.get(palace) or {}).get("狀態", "")
+        if state:
+            branch_states[br] = state
+            tags.append(state)
+        if tags:
+            branch_tags[br] = "".join(tags)
+
+    center_lines: list[str] = []
+    if lu or ma:
+        period = f"（{cur['期間']}）" if cur.get("期間") else ""
+        center_lines.append(f"祿{lu or '—'}馬{ma or '—'}{period}")
+
+    return {
+        "卷二十": vol20,
+        "branch_tags": branch_tags,
+        "branch_states": branch_states,
+        "center_lines": center_lines,
+        "飛祿宮": lu,
+        "飛馬宮": ma,
+        "三合地支": sorted(san_set),
+        "十干合": she,
     }

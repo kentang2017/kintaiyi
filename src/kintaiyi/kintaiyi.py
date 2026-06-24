@@ -1448,10 +1448,17 @@ class Taiyi:
         _ty_idx = _eight_order.index(_ty_v) if _ty_v in _eight_order else 0
         _trigram_rotate = _ty_idx * 45.0
         _sixteen = self.sixteen_gong11(ji_style, 0)
+        from .mingfa import life_chart_annotations  # noqa: PLC0415
+
+        ann = life_chart_annotations(self, sex, plate_ji=ji_style)
         return chart.gen_chart_life(
             list(_sixteen.values())[-1], sg,
             [_sixteen.get(i) for i in list(res.keys())],
-            ss1[0], sanqi=_sanqi, trigram_rotate=_trigram_rotate,
+            ss1[0],
+            sanqi=_sanqi,
+            trigram_rotate=_trigram_rotate,
+            center_lines=ann.get("center_lines"),
+            branch_tags=ann.get("branch_tags"),
         )
 
     def _twelve_palace_map(self, sex):

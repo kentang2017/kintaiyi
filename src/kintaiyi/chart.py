@@ -423,31 +423,72 @@ def gen_chart(first_layer, second_layer, sixth_layer, sevenstars, sanqi=None, tr
 
 
 # ====================  gen_chart_life  ====================
-def gen_chart_life(second_layer, twelve, sixth_layer, sevenstars, sanqi=None, trigram_rotate=0.0):
+def gen_chart_life(
+    second_layer,
+    twelve,
+    sixth_layer,
+    sevenstars,
+    sanqi=None,
+    trigram_rotate=0.0,
+    *,
+    center_lines=None,
+    branch_tags=None,
+):
     d = draw.Drawing(450, 450, origin="center")
     inner_radius = 12
     layer_gap = 35
     num_divisions = [1, 12, 12, 12, 12]          # 第 3 層 = index 2
     rotation_angle = 248
+    branch_tags = branch_tags or {}
+    branches = ['巳', '午', '未', '申', '酉', '戌', '亥', '子', '丑', '寅', '卯', '辰']
 
     data = [
         [second_layer],
-        twelve,                              # 第 2 層
-        ['巳','午','未','申','酉','戌','亥','子','丑','寅','卯','辰'],  # 第 3 層（地支）
+        twelve,
+        branches,
         sixth_layer,
-        sevenstars
+        sevenstars,
     ]
 
     for layer_idx, divs in enumerate(num_divisions):
-        layer = draw.Group(id=f'layer{layer_idx+1}')
+        layer = draw.Group(id=f'layer{layer_idx + 1}')
         for div in range(divs):
             start = (360 / divs) * div + rotation_angle
             end   = (360 / divs) * (div + 1) + rotation_angle
             raw = data[layer_idx][div]
             inner = inner_radius + layer_idx * layer_gap
             outer = inner_radius + (layer_idx + 1) * layer_gap
-
             lid = f"layer{layer_idx + 1}"
+
+            if layer_idx == 0 and center_lines:
+                center_g = draw.Group(id=f"{lid}-s{div}")
+                center_g.args["class"] = "taiyi-sector"
+                center_g.args["data-layer"] = lid
+                center_g.args["data-sector"] = str(div)
+                center_g.args["data-role"] = "center"
+                center_g.args["data-tooltip-key"] = f"{lid}:{div}"
+                center_g.append(draw.Circle(0, 0, inner_radius, fill="#141826", stroke="#c79a4e", stroke_width=1))
+                center_g.append(
+                    draw.Text(
+                        "\n".join(center_lines),
+                        8,
+                        0,
+                        0,
+                        center=1,
+                        fill="#e9cc88",
+                        font_family="serif",
+                        font_weight="bold",
+                    )
+                )
+                layer.append(center_g)
+                continue
+
+            if layer_idx == 2 and branch_tags:
+                br = branches[div]
+                tag = branch_tags.get(br, "")
+                if tag:
+                    raw = f"{br}\n{tag}"
+
             _draw_sector(layer, start, end, inner, outer, raw,
                          is_16_palace=(layer_idx == 2),
                          is_second_layer=(layer_idx == 1),
