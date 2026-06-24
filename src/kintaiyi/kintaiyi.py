@@ -8,6 +8,7 @@ Optimized for performance
 import re
 import os
 import time
+import math
 import itertools
 from datetime import date
 from ephem import Date
@@ -20,12 +21,15 @@ from . import chart
 from . import jieqi
 from . import taiyi_life_dict
 from .jieqi import jieqi_name
-from kerykeion import AstrologicalSubject
 import astropy.units as u
 from astropy.coordinates import SkyCoord, FK5
 from astropy.time import Time
+import ephem
+from ephem import Ecliptic
 
-os.environ["KERYKION_GEONAMES_USERNAME"] = "kinyeah"  # 例如 "myastro123"
+_HK_LON = "114.1694"
+_HK_LAT = "22.3193"
+_SIGN_TO_BRANCH = dict(zip(range(12), "戌酉申未午巳辰卯寅丑子亥"))
 
 def get_xiu_degrees(year):
     ra_deg = [
@@ -64,27 +68,32 @@ def get_xiu_degrees(year):
 
 
 def find_stars(year, month, day, hour, minute):
-    person = AstrologicalSubject(
-        name="X",
-        year=year,
-        month=month,
-        day=day,
-        hour=hour,
-        minute=minute,
-        lng=114.1694,           # 香港經度
-        lat=22.3193,            # 香港緯度
-        tz_str="Asia/Hong_Kong" # 香港時區
-    )
-    gong = dict(zip(range(12), list("戌酉申未午巳辰卯寅丑子亥")))
-    stars = {
-        "日　": gong[person.sun["sign_num"]],
-        "月　": gong[person.moon["sign_num"]],
-        "辰星": gong[person.mercury["sign_num"]],
-        "太白": gong[person.venus["sign_num"]],
-        "熒惑": gong[person.mars["sign_num"]],
-        "歲星": gong[person.jupiter["sign_num"]],
-        "填星": gong[person.saturn["sign_num"]],
-    }
+    """七曜落宮：以 ephem 黃道經度推黃道十二宮，再對應地支（香港時區）。"""
+    import pytz
+    from datetime import datetime
+
+    observer = ephem.Observer()
+    observer.lon = _HK_LON
+    observer.lat = _HK_LAT
+    observer.elevation = 0
+    tz = pytz.timezone("Asia/Hong_Kong")
+    local_dt = tz.localize(datetime(int(year), int(month), int(day), int(hour), int(minute)))
+    observer.date = Date(local_dt.astimezone(pytz.UTC))
+
+    stars = {}
+    for name, body in (
+        ("日　", ephem.Sun()),
+        ("月　", ephem.Moon()),
+        ("辰星", ephem.Mercury()),
+        ("太白", ephem.Venus()),
+        ("熒惑", ephem.Mars()),
+        ("歲星", ephem.Jupiter()),
+        ("填星", ephem.Saturn()),
+    ):
+        body.compute(observer)
+        lon_deg = math.degrees(float(Ecliptic(body).lon)) % 360.0
+        sign_num = int(lon_deg // 30) % 12
+        stars[name] = _SIGN_TO_BRANCH[sign_num]
     return stars
 
 

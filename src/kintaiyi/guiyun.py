@@ -256,9 +256,21 @@ def xiaoyou_xingyao_zai(taiyi_acumyear: int) -> dict:
     }
 
 
+def ce_reference_table() -> list[dict]:
+    """四象之策立成（卷九）。"""
+    return [
+        {"八卦": gua, "四象": ce, "策數": num}
+        for gua, (ce, num) in _CE_CE.items()
+    ]
+
+
 def zonghe(taiyi_acumyear: int, year: int | None = None,
                 month: int = 1, day: int = 15) -> dict:
     """卷九綜合：大小遊軌運、重卦策數、陽九百六限數。"""
+    nei_dy = dayou_nei_gua(taiyi_acumyear)
+    wai_dy = dayou_wai_gua(taiyi_acumyear)
+    nei_xy = xiaoyou_nei_gua(taiyi_acumyear)
+    wai_xy = xiaoyou_wai_gua(taiyi_acumyear)
     dayou = dayou_chong_gua(taiyi_acumyear)
     xiaoyou = xiaoyou_chong_gua(taiyi_acumyear)
     yj = yangjiu_xian(taiyi_acumyear)
@@ -273,16 +285,23 @@ def zonghe(taiyi_acumyear: int, year: int | None = None,
     return {
         "大遊軌運": dayou,
         "小遊軌運": xiaoyou,
+        "大遊內卦": nei_dy,
+        "大遊外卦": wai_dy,
+        "小遊內卦": nei_xy,
+        "小遊外卦": wai_xy,
+        "四象之策": ce_reference_table(),
         "大遊落宮": config.num2gong(palace_big) if palace_big else "",
         "小遊落宮": config.num2gong(palace_small) if palace_small else "",
+        "大遊入宮年數": config.bigyo_years_in(taiyi_acumyear),
         "行宮卦異": dayou["內卦"] != xiaoyou["內卦"],
         "陽九限數": yj,
         "百六限數": bl,
         "小遊行爻災祥": xy_zai,
         **extra,
         "要訣": (
-            f"大遊{dayou['重卦']}{dayou['內爻名']}，"
-            f"小遊{xiaoyou['重卦']}{xiaoyou['內爻名']}；"
+            f"大遊{dayou['重卦']}{dayou['內爻名']}（內策{dayou['內策']}+外策{dayou['外策']}="
+            f"{dayou['總策']}），"
+            f"小遊{xiaoyou['重卦']}{xiaoyou['內爻名']}（總策{xiaoyou['總策']}）；"
             f"陽九入限{yj['入限年數']}年，百六入限{bl['入限年數']}年"
         ),
     }

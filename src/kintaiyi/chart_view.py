@@ -477,6 +477,9 @@ def _center_lines(ttext: dict) -> list[str]:
         lines.append(f"客算 {ac[0] if isinstance(ac, list) else ac}")
     if sc:
         lines.append(f"定算 {sc[0] if isinstance(sc, list) else sc}")
+    from .guiyun_display import guiyun_summary_lines  # noqa: PLC0415
+
+    lines.extend(guiyun_summary_lines(ttext.get("卷九"), limit=2))
     lines.extend(_geju_lines(ttext.get("釋格局") or {}, limit=3))
     lines.extend(_sanqi_lines(ttext))
     lines.extend(_noble_god_lines(ttext))

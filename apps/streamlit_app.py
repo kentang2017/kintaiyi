@@ -47,6 +47,11 @@ from kintaiyi.chart_view import (
 
 import cn2an
 from cn2an import an2cn
+from kintaiyi.guiyun_display import (
+    chong_gua_row,
+    inner_outer_rows,
+    limit_rows,
+)
 from kintaiyi.taiyidict import tengan_shiji, su_dist
 from kintaiyi.taiyimishu import taiyi_yingyang
 from kintaiyi.historytext import chistory
@@ -111,6 +116,89 @@ def _format_guxu_duizhao(gx: dict | None) -> str:
         f"求索{seek_result}；"
         f"{gx.get('對照', '')}：{gx.get('對照斷語', '')}"
     )
+
+
+def _render_vol9_explanation(v9: dict | None) -> None:
+    """卷九：大小遊軌運入卦、重卦策數、陽九百六限數。"""
+    v9 = v9 or {}
+    dy = v9.get("大遊軌運") or {}
+    xy = v9.get("小遊軌運") or {}
+    if not dy and not xy:
+        return
+    _yj9 = v9.get("陽九限數") or {}
+    _bl9 = v9.get("百六限數") or {}
+    st.markdown(
+        f"{t('guiyun')}"
+        f"大遊{dy.get('重卦', '—')}{dy.get('內爻名', '')}"
+        f"（{dy.get('內卦', '')}/{dy.get('外卦', '')}·策{dy.get('總策', '—')}）；"
+        f"小遊{xy.get('重卦', '—')}{xy.get('內爻名', '')}"
+        f"（策{xy.get('總策', '—')}）；"
+        f"落宮{v9.get('大遊落宮', '—')}/{v9.get('小遊落宮', '—')}"
+    )
+    _line9 = []
+    if v9.get("大遊入宮年數") is not None:
+        _line9.append(f"{t('guiyun_palace_years')}{v9['大遊入宮年數']}年")
+    if v9.get("行宮卦異"):
+        _line9.append(t("guiyun_gong_diff"))
+    if _yj9:
+        _line9.append(f"{t('yangjiu_xian')}入限{_yj9.get('入限年數', '—')}年")
+    if _bl9:
+        _line9.append(f"{t('bailiu_xian')}入限{_bl9.get('入限年數', '—')}年")
+    if v9.get("歲計陽九支") or v9.get("歲計百六支"):
+        _line9.append(
+            f"歲計陽九{v9.get('歲計陽九支', '—')}／百六{v9.get('歲計百六支', '—')}"
+        )
+    if _line9:
+        st.markdown("；".join(_line9))
+    _xz = v9.get("小遊行爻災祥") or {}
+    if _xz.get("斷語"):
+        st.markdown(
+            f"{t('guiyun_xingyao')}"
+            f"{_xz.get('重卦', '')}{_xz.get('爻名', '')}·{_xz.get('納甲', '')}·"
+            f"{_xz.get('天干分野', '')}{_xz.get('地支分野', '')}；"
+            f"{_xz['斷語']}"
+        )
+    with st.expander(t("guiyun_detail"), expanded=False):
+        st.markdown(f"**{t('guiyun_chong')}**")
+        st.dataframe(
+            pd.DataFrame([chong_gua_row(dy, scope="大遊"), chong_gua_row(xy, scope="小遊")]),
+            use_container_width=True,
+            hide_index=True,
+        )
+        st.markdown(f"**{t('guiyun_inner_outer')}·大遊**")
+        st.dataframe(
+            pd.DataFrame(inner_outer_rows(v9.get("大遊內卦"), v9.get("大遊外卦"), scope="大遊")),
+            use_container_width=True,
+            hide_index=True,
+        )
+        st.markdown(f"**{t('guiyun_inner_outer')}·小遊**")
+        st.dataframe(
+            pd.DataFrame(inner_outer_rows(v9.get("小遊內卦"), v9.get("小遊外卦"), scope="小遊")),
+            use_container_width=True,
+            hide_index=True,
+        )
+        _limits = limit_rows(v9)
+        if _limits:
+            st.markdown(f"**{t('guiyun_limits')}**")
+            st.dataframe(
+                pd.DataFrame(_limits),
+                use_container_width=True,
+                hide_index=True,
+            )
+        _ce = v9.get("四象之策") or []
+        if _ce:
+            st.markdown(f"**{t('guiyun_ce_ref')}**")
+            st.dataframe(
+                pd.DataFrame(_ce),
+                use_container_width=True,
+                hide_index=True,
+            )
+        if dy.get("要訣"):
+            st.caption(dy["要訣"])
+        if xy.get("要訣"):
+            st.caption(xy["要訣"])
+        if v9.get("要訣"):
+            st.caption(v9["要訣"])
 
 
 def _render_zhao_you_songs(zhao_you: dict, *, preview: int = 6) -> None:
@@ -359,6 +447,14 @@ TRANSLATIONS = {
         "tongyun_extended": "統運延伸",
         "fenye": "分野疆界︰",
         "guiyun": "大小遊軌運︰",
+        "guiyun_detail": "軌運策數詳情",
+        "guiyun_chong": "重卦策數",
+        "guiyun_inner_outer": "內外入卦",
+        "guiyun_ce_ref": "四象之策",
+        "guiyun_limits": "陽九百六限數",
+        "guiyun_xingyao": "小遊行爻災祥",
+        "guiyun_palace_years": "大遊入宮年數",
+        "guiyun_gong_diff": "行宮卦異",
         "vol10_hehui": "天目合會︰",
         "yunqi": "十精雲氣︰",
         "yangjiu_xian": "陽九限數︰",
@@ -575,6 +671,14 @@ TRANSLATIONS = {
         "tongyun_extended": "Cycle Extended",
         "fenye": "Territorial Divisions: ",
         "guiyun": "Major/Minor Wander Hexagrams: ",
+        "guiyun_detail": "Orbit hexagram & tally details",
+        "guiyun_chong": "Compound hexagram tallies",
+        "guiyun_inner_outer": "Inner / outer entry",
+        "guiyun_ce_ref": "Four images tally",
+        "guiyun_limits": "Yang-9 / Bai-6 limits",
+        "guiyun_xingyao": "Minor wander line omens",
+        "guiyun_palace_years": "Major wander years in palace",
+        "guiyun_gong_diff": "Palace hexagrams differ",
         "vol10_hehui": "Sky-Eye Conjunction: ",
         "yunqi": "Ten Spirits & Clouds: ",
         "yangjiu_xian": "Yang-Nine Limits: ",
@@ -4341,31 +4445,7 @@ with tabs[0]:
                                 _line8.append(f"歲建{_sz.get('地支', '')}·{_sz.get('國', '')}分")
                             st.markdown("；".join(_line8))
                         # —— 卷九：大小遊軌運 ——
-                        _v9 = results["ttext"].get("卷九", {})
-                        if _v9:
-                            _dy = _v9.get("大遊軌運", {})
-                            _xy = _v9.get("小遊軌運", {})
-                            _yj9 = _v9.get("陽九限數", {})
-                            _bl9 = _v9.get("百六限數", {})
-                            st.markdown(
-                                f"{t('guiyun')}"
-                                f"大遊{_dy.get('重卦', '—')}{_dy.get('內爻名', '')}"
-                                f"（{_dy.get('內卦', '')}/{_dy.get('外卦', '')}）；"
-                                f"小遊{_xy.get('重卦', '—')}{_xy.get('內爻名', '')}；"
-                                f"落宮{_v9.get('大遊落宮', '—')}/{_v9.get('小遊落宮', '—')}")
-                            _line9 = []
-                            if _yj9:
-                                _line9.append(
-                                    f"{t('yangjiu_xian')}"
-                                    f"入限{_yj9.get('入限年數', '—')}年")
-                            if _bl9:
-                                _line9.append(
-                                    f"{t('bailiu_xian')}"
-                                    f"入限{_bl9.get('入限年數', '—')}年")
-                            if _v9.get("要訣"):
-                                _line9.append(_v9["要訣"][:80])
-                            if _line9:
-                                st.markdown("；".join(_line9))
+                        _render_vol9_explanation(results["ttext"].get("卷九", {}))
                         # —— 卷十：天目合會 ——
                         _v10 = results["ttext"].get("卷十", {})
                         if _v10:
