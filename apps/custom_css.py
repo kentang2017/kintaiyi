@@ -30,6 +30,7 @@ def get_custom_css() -> str:
     --ink-gray:     #4A4A4A;
     --jade:         #8BA38B;
     --sidebar-bg:   #0D0D0D;
+    --sidebar-width: 256px;
     --chat-height:  340px;
     --font-serif:   'Noto Serif SC', 'STSong', 'SimSun', serif;
     --font-sans:    'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
@@ -97,6 +98,30 @@ a:hover { color: var(--gold) !important; }
 }
 [data-testid="stSidebar"] > div:first-child {
     background: transparent !important;
+}
+
+/* Fixed sidebar width – disable Streamlit drag-resize (desktop) */
+@media (min-width: 769px) {
+    [data-testid="stSidebar"] {
+        width: var(--sidebar-width) !important;
+        min-width: var(--sidebar-width) !important;
+        max-width: var(--sidebar-width) !important;
+        flex: 0 0 var(--sidebar-width) !important;
+        cursor: default !important;
+    }
+    [data-testid="stSidebar"] > section {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+    }
+    [data-testid="stSidebar"] .react-resizable-handle,
+    [data-testid="stSidebar"] .react-resizable-handle-e,
+    [data-testid="stSidebarResizeHandle"] {
+        display: none !important;
+        width: 0 !important;
+        pointer-events: none !important;
+        cursor: default !important;
+    }
 }
 
 /* Sidebar headings */
