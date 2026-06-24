@@ -1604,13 +1604,14 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         overflow: visible;
         user-select: none;
         -webkit-user-select: none;
-        touch-action: none;
+        touch-action: pan-x pan-y;
     }
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable,
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > path,
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > polygon,
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > rect {
         touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
     }
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector > text,
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector > tspan {
@@ -1734,7 +1735,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         transform-box: fill-box;
         transform-origin: center;
         transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
-        touch-action: none;
+        touch-action: pan-x pan-y;
     }
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-rotatable.is-dragging {
         cursor: grabbing;
@@ -1985,6 +1986,17 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         }
         #__CONTAINER_ID__ .taiyi-svg-root {
             max-width: 100%;
+            touch-action: pan-x pan-y;
+        }
+        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-rotatable {
+            touch-action: pan-x pan-y;
+        }
+        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable,
+        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > path,
+        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > polygon,
+        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > rect,
+        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable-shape {
+            touch-action: manipulation !important;
         }
         #__CONTAINER_ID__ .taiyi-svg-root text,
         #__CONTAINER_ID__ .taiyi-svg-root tspan {
@@ -2084,6 +2096,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             gejuFollowDisk: true,
             noteText: "",
             activeSectorKey: "",
+            handledTapPointerId: null,
         };
         let lastReportedHeight = 0;
         const sectorPanel = root.querySelector(".taiyi-sector-panel");
@@ -2438,16 +2451,24 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                     }
                     const moved = state.drag.moved;
                     const deferredTap = state.drag.deferCapture && !moved;
+                    const tapSectorGroup = state.drag.tapSectorGroup || null;
+                    const pointerId = event ? event.pointerId : state.drag.pointerId;
                     state.drag = null;
                     layer.classList.remove("is-dragging");
-                    if (deferredTap) return;
+                    if (deferredTap) {
+                        if (tapSectorGroup) {
+                            state.handledTapPointerId = pointerId;
+                            activateSector(tapSectorGroup, event);
+                        }
+                        return;
+                    }
                     if (!moved && !syncRotateSet.has(layerId)) {
                         state.clickDirection[layerId] *= -1;
                         rotateLayer(layerId, 30 * state.clickDirection[layerId], false);
                     }
                 };
 
-                function beginLayerDrag(event, deferCapture) {
+                function beginLayerDrag(event, deferCapture, tapSectorGroup) {
                     const point = clientToSvgPoint(event.clientX, event.clientY);
                     const center = getLayerCenter(layer);
                     const angle = angleFromPoint(point, center);
@@ -2460,6 +2481,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                         pointerId: event.pointerId,
                         originX: event.clientX,
                         originY: event.clientY,
+                        tapSectorGroup: tapSectorGroup || null,
                     };
                     if (!deferCapture) {
                         layer.classList.add("is-dragging");
@@ -2470,15 +2492,16 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                 function ensureLayerDragCapture(event) {
                     if (!state.drag || state.drag.layerId !== layerId || !state.drag.deferCapture) return;
                     state.drag.deferCapture = false;
-                    sectorTapState = null;
+                    state.drag.tapSectorGroup = null;
                     layer.classList.add("is-dragging");
                     if (layer.setPointerCapture) layer.setPointerCapture(event.pointerId);
                 }
 
                 layer.addEventListener("pointerdown", (event) => {
-                    const onColorable = Boolean(event.target.closest(".taiyi-colorable"));
+                    const colorableNode = event.target.closest(".taiyi-colorable");
+                    const onColorable = Boolean(colorableNode);
                     if (!onColorable) event.preventDefault();
-                    beginLayerDrag(event, onColorable);
+                    beginLayerDrag(event, onColorable, colorableNode);
                 });
 
                 layer.addEventListener("pointermove", (event) => {
@@ -2863,6 +2886,10 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             shapeNode.addEventListener("click", onActivate);
             shapeNode.addEventListener("pointerup", (event) => {
                 if (event.pointerType === "mouse") return;
+                if (state.handledTapPointerId === event.pointerId) {
+                    state.handledTapPointerId = null;
+                    return;
+                }
                 onActivate(event);
             });
         }
