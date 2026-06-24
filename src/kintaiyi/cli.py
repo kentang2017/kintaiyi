@@ -5,6 +5,8 @@ Usage examples:
     kintaiyi calculate --year 2026 --month 3 --day 24 --hour 12 --minute 30 --mode year
     kintaiyi calculate --date 2026-03-24 --time 12:30 --mode day
     kintaiyi calculate --date 2026-03-24 --time 12:30 --mode life --sex male
+    kintaiyi calculate --date 1990-05-15 --time 08:30 --mode life --sex 男 --plate-ji 3
+    kintaiyi calculate --date 1990-05-15 --time 08:30 --mode life --sex male --modified
 """
 
 import json
@@ -112,6 +114,24 @@ _FORMATTERS = {
     "markdown": _format_markdown,
 }
 
+# 與 Streamlit 命法雙模式一致：3=時計落宮(正統)  4=分計落宮(魔改)
+_LIFE_PLATE_JI = frozenset({3, 4})
+
+
+def _resolve_life_plate_ji(plate_ji: int, modified: bool) -> int:
+    """Resolve life-mode plate ji_style from --plate-ji / --modified."""
+    if plate_ji not in _LIFE_PLATE_JI:
+        raise typer.BadParameter(
+            f"--plate-ji must be 3 (時計落宮) or 4 (分計落宮); got {plate_ji}."
+        )
+    if modified:
+        if plate_ji != 3:
+            raise typer.BadParameter(
+                "Cannot combine --modified with --plate-ji 4; use --modified or --plate-ji 4 only."
+            )
+        return 4
+    return plate_ji
+
 
 @app.command()
 def calculate(
@@ -126,6 +146,16 @@ def calculate(
     output: OutputFormat = typer.Option(OutputFormat.text, "--output", "-o", help="Output format (text/json/markdown)"),
     method: int = typer.Option(0, "--method", help="Taiyi method: 0=統宗, 1=金鏡, 2=淘金歌, 3=太乙局"),
     sex: str | None = typer.Option(None, "--sex", "-s", help="Sex for life mode: male(男) or female(女)"),
+    plate_ji: int = typer.Option(
+        3,
+        "--plate-ji",
+        help="Life plate ji_style: 3=時計落宮(正統), 4=分計落宮(魔改). Only for --mode life.",
+    ),
+    modified: bool = typer.Option(
+        False,
+        "--modified",
+        help="Modified life method (分計落宮), same as --plate-ji 4. Only for --mode life.",
+    ),
 ) -> None:
     """Calculate a Taiyi Shenshu (太乙神數) divination board."""
     from .kintaiyi import Taiyi
@@ -139,8 +169,11 @@ def calculate(
         sex_val = sex_map.get(sex, sex) if sex else None
         if sex_val not in ("男", "女"):
             raise typer.BadParameter("Life mode requires --sex (male/男 or female/女).")
-        result = taiyi.taiyi_life(sex_val)
+        life_plate_ji = _resolve_life_plate_ji(plate_ji, modified)
+        result = taiyi.taiyi_life(sex_val, plate_ji=life_plate_ji)
     else:
+        if plate_ji != 3 or modified:
+            raise typer.BadParameter("--plate-ji and --modified only apply to --mode life.")
         ji_style = _MODE_TO_JI_STYLE[mode.value]
         result = taiyi.pan(ji_style, method)
 

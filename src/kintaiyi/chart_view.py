@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import re
 
 from . import config
@@ -36,6 +37,27 @@ _TE_GONG_BRANCH = {"絳宮": "巳", "明堂": "丑", "玉堂": "卯"}
 _SANQI_KEYS = ("太歲青龍旗", "太陰黑旗", "害氣赤旗")
 _FEIFU_LABELS = ("飛符", "災殺", "鬼殺", "月殺", "天賊殺", "天史殺")
 _MAX_PALACE_LINES = 10
+_ROTATION_ANGLE = 248.0
+_GEJU_LABEL_FONT_SIZE = 9
+_GEJU_LABEL_STROKE_WIDTH = 1.8
+_GEJU_SHORT_COLORS: dict[str, tuple[str, str, str]] = {
+    "掩": ("#7A1530", "#E8A4B4", "#FFF5F7"),
+    "迫": ("#B91C3C", "#F8C0CC", "#FFFFFF"),
+    "關": ("#A16207", "#F5D565", "#1C1400"),
+    "囚": ("#92400E", "#F0C27A", "#FFFAF0"),
+    "擊": ("#881337", "#FDA4AF", "#FFF1F3"),
+    "格": ("#581C87", "#D8B4FE", "#FAF5FF"),
+    "對": ("#1E4D7B", "#93C5FD", "#EFF6FF"),
+    "提": ("#166534", "#86EFAC", "#F0FDF4"),
+    "執": ("#3F3F8A", "#C7C9F5", "#F5F6FF"),
+    "四": ("#3F4E5C", "#A8BCC8", "#F8FAFC"),
+}
+_GEJU_TONE_COLORS: dict[str, tuple[str, str, str]] = {
+    "danger": ("#B91C3C", "#F8C0CC", "#FFFFFF"),
+    "warn": ("#A16207", "#F5D565", "#1C1400"),
+    "caution": ("#1E4D7B", "#93C5FD", "#EFF6FF"),
+    "info": ("#3F4E5C", "#A8BCC8", "#F8FAFC"),
+}
 
 
 def _clip(text: str, n: int = 72) -> str:
@@ -543,7 +565,7 @@ def build_chart_view_model(
     ttext = ttext or {}
     sectors: dict[str, dict] = {}
 
-    if is_life or chart_style == 5:
+    if is_life or chart_style in (5, 6):
         ty_obj = ty
         life_pan = life_pan or {}
         palace_map = life_pan.get("十二命宮排列") or {}
@@ -583,7 +605,7 @@ def build_chart_view_model(
     ty_obj = ty
     style = chart_style
     acc_style = style if style in (3, 4) else style
-    if style == 5:
+    if style in (5, 6):
         acc_style = 3
 
     ty_val = ttext.get("太乙")
@@ -749,6 +771,125 @@ def _branches_for_geju_entry(key: str, val: str, pos: dict[str, list[str]], ttex
     return [br for br in _SIXTEEN_BRANCHES if br in branches]
 
 
+def _geju_palette(short: str, tone: str) -> tuple[str, str, str]:
+    if short in _GEJU_SHORT_COLORS:
+        return _GEJU_SHORT_COLORS[short]
+    return _GEJU_TONE_COLORS.get(tone, _GEJU_TONE_COLORS["info"])
+
+
+def _outer_ring_layout(chart_style: int, *, is_life: bool) -> dict:
+    if is_life or chart_style in (5, 6):
+        return {
+            "layer_idx": 4,
+            "inner_radius": 12.0,
+            "layer_gap": 35.0,
+            "sector_count": 12,
+            "branch_order": _TWELVE_BRANCHES,
+        }
+    if chart_style in (0, 1):
+        return {
+            "layer_idx": 4,
+            "inner_radius": 13.0,
+            "layer_gap": 45.0,
+            "sector_count": 12,
+            "branch_order": _PLANET_RING_BRANCHES,
+        }
+    if chart_style == 2:
+        return {
+            "layer_idx": 5,
+            "inner_radius": 3.0,
+            "layer_gap": 31.5,
+            "sector_count": 12,
+            "branch_order": _PLANET_RING_BRANCHES,
+        }
+    return {
+        "layer_idx": 6,
+        "inner_radius": 3.0,
+        "layer_gap": 31.5,
+        "sector_count": 12,
+        "branch_order": _PLANET_RING_BRANCHES,
+    }
+
+
+def _sector_angles_for_branch(branch: str, layout: dict) -> tuple[float, float]:
+    order = layout["branch_order"]
+    count = layout["sector_count"]
+    if branch in order:
+        idx = order.index(branch)
+        start = (360.0 / count) * idx + _ROTATION_ANGLE
+        end = (360.0 / count) * (idx + 1) + _ROTATION_ANGLE
+        return start, end
+    if branch in _SIXTEEN_BRANCHES:
+        idx = _SIXTEEN_BRANCHES.index(branch)
+        start = (360.0 / 16) * idx + _ROTATION_ANGLE
+        end = (360.0 / 16) * (idx + 1) + _ROTATION_ANGLE
+        return start, end
+    return _ROTATION_ANGLE, _ROTATION_ANGLE
+
+
+def _outer_label_radius(layout: dict, *, view_half: float = 250.0) -> float:
+    """與 chart._add_ornament 外緣金環帶一致，標記置於最外可視環帶中央。"""
+    outer_data = layout["inner_radius"] + (layout["layer_idx"] + 1) * layout["layer_gap"]
+    band = max(view_half - outer_data, 1.0)
+    r1 = outer_data + max(2.0, band * 0.30)
+    r2 = outer_data + max(5.0, band * 0.62)
+    return (r1 + r2) / 2.0
+
+
+def build_geju_overlay_svg(
+    ttext: dict | None,
+    *,
+    chart_style: int = 0,
+    is_life: bool = False,
+    view_half: float = 250.0,
+) -> str:
+    """於排盤最外環（金環裝飾帶）顯示釋格局文字標記。"""
+    markers = build_geju_sector_markers(ttext)
+    if not markers:
+        return ""
+
+    layout = _outer_ring_layout(chart_style, is_life=is_life)
+    label_r = _outer_label_radius(layout, view_half=view_half)
+    parts = ['<g class="taiyi-geju-overlay" data-source="server">']
+
+    for branch, items in markers.items():
+        if not items:
+            continue
+        start, end = _sector_angles_for_branch(branch, layout)
+        mid_rad = math.radians((start + end) / 2.0)
+        shorts: list[str] = []
+        tone = "info"
+        for item in items:
+            short = str(item.get("short", "")).strip()
+            if not short or short in shorts:
+                continue
+            shorts.append(short)
+            if item.get("tone") == "danger":
+                tone = "danger"
+            elif item.get("tone") == "warn" and tone != "danger":
+                tone = "warn"
+        if not shorts:
+            continue
+
+        label = "·".join(shorts[:3])
+        _fill, _stroke, text_color = _geju_palette(shorts[0], tone)
+        cx = label_r * math.cos(mid_rad)
+        cy = label_r * math.sin(mid_rad)
+        parts.append(
+            f'<text class="taiyi-geju-label" data-branch="{branch}" '
+            f'x="{cx:.2f}" y="{cy:.2f}" text-anchor="middle" dominant-baseline="middle" '
+            f'fill="{text_color}" font-size="{_GEJU_LABEL_FONT_SIZE}" font-weight="700" '
+            f'font-family="Noto Serif SC, KaiTi, serif" '
+            f'style="fill:{text_color} !important;font-size:{_GEJU_LABEL_FONT_SIZE}px !important;'
+            f'font-weight:700;paint-order:stroke;stroke:#141826;'
+            f'stroke-width:{_GEJU_LABEL_STROKE_WIDTH}px;stroke-linejoin:round">'
+            f"{label}</text>"
+        )
+
+    parts.append("</g>")
+    return "".join(parts)
+
+
 def build_geju_sector_markers(ttext: dict | None) -> dict[str, list[dict]]:
     """依釋格局將扇區地支對應的標記（供 SVG 外環標示）。"""
     ttext = ttext or {}
@@ -774,9 +915,46 @@ def build_geju_sector_markers(ttext: dict | None) -> dict[str, list[dict]]:
     return markers
 
 
+def sector_panel_layer_labels(*, is_life: bool = False, chart_style: int = 0) -> dict[str, str]:
+    """扇區點擊面板用之圖層中文標籤。"""
+    if is_life or chart_style in (5, 6):
+        return {
+            "layer1": "命盤中宮",
+            "layer2": "十二命宮",
+            "layer3": "地支環",
+            "layer4": "十六神環",
+            "layer5": "行星環",
+        }
+    if chart_style == 2:
+        return {
+            "layer1": "中宮",
+            "layer2": "八門",
+            "layer3": "金函玉鏡",
+            "layer4": "十六宮",
+            "layer5": "六壬神將",
+            "layer6": "行星環",
+        }
+    if chart_style in (3, 4):
+        return {
+            "layer1": "中宮",
+            "layer2": "八門",
+            "layer3": "地轉天將",
+            "layer4": "十六宮",
+            "layer6": "二十八宿",
+            "layer7": "行星環",
+        }
+    return {
+        "layer1": "中宮",
+        "layer2": "八門",
+        "layer3": "十六神將",
+        "layer4": "十六宮",
+        "layer5": "行星環",
+    }
+
+
 def chart_svg_layout(chart_style: int = 0, *, is_life: bool = False) -> dict:
     """各盤式 SVG 互動層配置（聯動著色、轉盤）。"""
-    if is_life or chart_style == 5:
+    if is_life or chart_style in (5, 6):
         return {
             "chart_style": 5,
             "sync_layers": ["layer2", "layer3", "layer4"],

@@ -28,7 +28,13 @@ import json
 from kintaiyi import jieqi
 from kintaiyi import kintaiyi
 from kintaiyi import config
-from kintaiyi.chart_view import chart_svg_layout
+from kintaiyi.chart_view import (
+    build_chart_view_model,
+    build_geju_overlay_svg,
+    build_geju_sector_markers,
+    chart_svg_layout,
+    sector_panel_layer_labels,
+)
 
 import cn2an
 from cn2an import an2cn
@@ -43,6 +49,22 @@ from kintaiyi.openai_client import OpenAIClient, DEFAULT_MODEL as DEFAULT_OPENAI
 from kintaiyi.openai_compatible_client import OpenAICompatibleClient, TokenQuotaExceededError as CompatibleTokenQuotaExceededError
 from kintaiyi.game_theory import TaiyiGame, 主方策略列 as _gt_主方策略列, 客方策略列 as _gt_客方策略列
 from custom_css import get_custom_css
+
+# 5=太乙命法(魔改·分計落宮)  6=太乙命法(時計落宮)
+LIFE_CHART_STYLES = frozenset({5, 6})
+LIFE_PLATE_JI = {5: 4, 6: 3}
+
+
+def _is_life_chart_style(style: int) -> bool:
+    return style in LIFE_CHART_STYLES
+
+
+def _life_method_label(style: int) -> str:
+    if style == 5:
+        return to("太乙命法 (魔改)")
+    if style == 6:
+        return to("太乙命法")
+    return t("taiyi_life_method")
 import re
 
 
@@ -115,6 +137,7 @@ TRANSLATIONS = {
         "ten_essences": "太乙十精",
         "life_gender": "太乙命法性別",
         "rotation_label": "轉盤",
+        "geju_markers_toggle": "顯示釋格局標記",
         "instant_btn": "即時盤",
         "ai_settings": "AI設置",
         "ai_provider": "AI 服務商",
@@ -251,6 +274,20 @@ TRANSLATIONS = {
         "bailiu_xian": "百六限數︰",
         "sixteen_palace": "十六宮分佈︰",
         "shiti_jinfu": "太乙十提金賦︰",
+        "mingfa_vol20": "【卷二十命法】",
+        "fly_lu_ma": "飛祿飛馬行限︰",
+        "sanhe_he": "三合十干合︰",
+        "palace_states": "十二宮旺衰絕空刑︰",
+        "qiou_sancai": "奇耦三才︰",
+        "life_geju": "命盤格局︰",
+        "bailiu_gua": "百六行月日卦︰",
+        "zhao_you": "照限游年︰",
+        "palace_state_detail": "宮位詳情",
+        "rugua_xian": "百六入卦限︰",
+        "yangjiu_sanxian": "陽九入三限︰",
+        "wangxian_lun": "旺陷獨處同宮論︰",
+        "zhao_you_detail": "照限游年歌",
+        "wangxian_detail": "星論詳情",
         "feifu_sisha": "飛符四殺︰",
         "junshi_vol15": "軍事應用︰",
         "junshi_vol17": "軍事占斷︰",
@@ -310,6 +347,7 @@ TRANSLATIONS = {
         "ten_essences": "Taiyi Ten Essences",
         "life_gender": "Life Method Gender",
         "rotation_label": "Rotation",
+        "geju_markers_toggle": "Show pattern markers (釋格局)",
         "instant_btn": "Instant Chart",
         "ai_settings": "AI Settings",
         "ai_provider": "AI Provider",
@@ -446,6 +484,20 @@ TRANSLATIONS = {
         "bailiu_xian": "Hundred-Six Limits: ",
         "sixteen_palace": "Sixteen Palaces: ",
         "shiti_jinfu": "Ten Golden Odes: ",
+        "mingfa_vol20": "[Vol.20 Life Method]",
+        "fly_lu_ma": "Flying Prosperity/Horse Limits: ",
+        "sanhe_he": "Triple Harmony & Stem Union: ",
+        "palace_states": "Twelve Palace States: ",
+        "qiou_sancai": "Odd-Even & Three Talents: ",
+        "life_geju": "Life Chart Patterns: ",
+        "bailiu_gua": "Bailiu Month/Day Hexagrams: ",
+        "zhao_you": "Limit-Year Stars: ",
+        "palace_state_detail": "Palace Details",
+        "rugua_xian": "Bailiu Hexagram Limits: ",
+        "yangjiu_sanxian": "Yangjiu Three Limits: ",
+        "wangxian_lun": "Star Prosperity Songs: ",
+        "zhao_you_detail": "Limit-Year Songs",
+        "wangxian_detail": "Star Discourse",
         "feifu_sisha": "Flying Talisman Four Kills: ",
         "junshi_vol15": "Military Application: ",
         "junshi_vol17": "Military Divination: ",
@@ -501,6 +553,7 @@ OPTION_LABELS = {
         "日計太乙": "Daily Taiyi",
         "分計太乙": "Minute Taiyi",
         "太乙命法": "Taiyi Life Method",
+        "太乙命法 (魔改)": "Taiyi Life (Modified)",
         "太乙統宗": "Taiyi Tongzong",
         "太乙金鏡": "Taiyi Jinjing",
         "太乙淘金歌": "Taiyi Taojin Song",
@@ -684,7 +737,7 @@ def format_taiyi_results_for_prompt(results):
         f"《太乙秘書》: {results['ts']}",
         f"史事記載: {results['ch']}",
     ]
-    if results["style"] == 5:  # 太乙命法
+    if _is_life_chart_style(results["style"]):
         prompt_lines.extend([
             f"命法性別: {results['zhao']} ({results['sex_o']})",
             f"十二宮分析: {results['lifedisc']}",
@@ -705,7 +758,12 @@ def _chart_visual_text():
             "legend_ivory": "Ivory · labels, symbols, and fine inscriptions",
             "interaction_title": "Interaction",
             "rotation_hint": "Drag layers 4 and 6 to rotate. Tap for ±30° stepped viewing.",
-            "paint_hint": "Tap sectors to mark up to four focal areas.",
+            "paint_hint": "Tap a sector for details and sync-highlight matching rings (up to four colors).",
+            "sector_panel_title": "Sector Reading",
+            "sector_panel_empty": "No reading for this sector.",
+            "sector_panel_geju": "Patterns (釋格局)",
+            "sector_panel_close": "Close",
+            "sector_click_hint": "Tap any sector to view classical readings below the chart.",
 
             "reset": "Reset View",
             "download_png": "Download Plate",
@@ -739,7 +797,12 @@ def _chart_visual_text():
         "legend_ivory": "象牙白 · 盤面文字與細部刻記",
         "interaction_title": "互動",
         "rotation_hint": "拖曳第 4、6 層可旋轉，輕點則以 ±30° 校覽。",
-        "paint_hint": "點選扇區可標記最多四色重點。",
+        "paint_hint": "點選扇區查看斷事，並聯動著色同角度外環（最多四色）。",
+        "sector_panel_title": "扇區斷事",
+        "sector_panel_empty": "此扇區尚無斷事資料。",
+        "sector_panel_geju": "釋格局",
+        "sector_panel_close": "關閉",
+        "sector_click_hint": "點選盤上任一扇區，於下方顯示古典斷事。",
 
         "reset": "重置視圖",
         "download_png": "下載盤式",
@@ -783,7 +846,7 @@ def _load_export_qrcode_data_uri() -> str:
     return ""
 
 
-def _build_chart_meta(results: dict, is_life_chart: bool) -> dict:
+def _build_chart_meta(results: dict, is_life_chart: bool, *, show_geju_markers: bool = True) -> dict:
     """Assemble display-only metadata for the Taiyi chart header/legend."""
     ui = _chart_visual_text()
     ty_instance = results.get("ty")
@@ -794,7 +857,11 @@ def _build_chart_meta(results: dict, is_life_chart: bool) -> dict:
     minute = getattr(ty_instance, "minute", 0)
     bureau_name = results.get("ttext", {}).get("局式", {}).get("年", "") or results.get("kook", {}).get("文", "")
     method_name = f"{config.ty_method(results.get('tn', 0))}{results.get('ttext', {}).get('太乙計', '')}".strip()
-    chart_title = f"{results.get('zhao', '')} · {t('taiyi_life_method')}" if is_life_chart else (bureau_name or ui["chart_kind"])
+    chart_title = (
+        f"{results.get('zhao', '')} · {_life_method_label(results.get('style', 6))}"
+        if is_life_chart
+        else (bureau_name or ui["chart_kind"])
+    )
     subtitle_bits = [ui["subheading"], results.get("gz", ""), results.get("lunard", "")]
     info_chips = [
         (ui["bureau"], bureau_name or "—"),
@@ -815,7 +882,9 @@ def _build_chart_meta(results: dict, is_life_chart: bool) -> dict:
         str(results.get("awaycal", "")),
         str(results.get("setcal", "")),
     ]
-    acc_style = 0 if is_life_chart else results.get("style", 0)
+    acc_style = (
+        results.get("plate_ji", 3) if is_life_chart else results.get("style", 0)
+    )
     acc_tn = 0 if is_life_chart else results.get("tn", 0)
     ty_obj = results.get("ty")
     chart_style_label = {
@@ -824,7 +893,8 @@ def _build_chart_meta(results: dict, is_life_chart: bool) -> dict:
         2: "日計",
         3: "時計",
         4: "分計",
-        5: "命法",
+        5: "命法(魔改)",
+        6: "命法",
     }.get(results.get("style", 0), "太乙")
     kook_num = results.get("kook_num", "")
     kook_num_text = an2cn(kook_num) if isinstance(kook_num, (int, float)) else str(kook_num)
@@ -833,7 +903,7 @@ def _build_chart_meta(results: dict, is_life_chart: bool) -> dict:
     lunar_line = f"{t('lunar_label')}︰{results.get('lunard', '—')} | {jieqi.jq(year, month, day, hour, minute)} |"
     if is_life_chart:
         kook_line = (
-            f"{t('taiyi_life_method')} - {ty_obj.kook(0, 0).get('文', '—')} "
+            f"{_life_method_label(results.get('style', 6))} - {ty_obj.kook(0, 0).get('文', '—')} "
             f"({results.get('ttext', {}).get('局式', {}).get('年', '—')})"
         )
         summary_line = (
@@ -865,17 +935,65 @@ def _build_chart_meta(results: dict, is_life_chart: bool) -> dict:
     else:
         export_lines.insert(2, f"{t('epoch_label')}︰{results.get('ttext', {}).get('紀元', '')}")
 
-    chart_style = 5 if is_life_chart else results.get("style", 0)
+    chart_style = results.get("style", 6) if is_life_chart else results.get("style", 0)
+    ttext = results.get("ttext", {})
+    chart_view = build_chart_view_model(
+        ttext,
+        chart_style=chart_style,
+        is_life=is_life_chart,
+        life1=results.get("life1"),
+        life_pan=results.get("life_pan"),
+        sex=results.get("sex_o"),
+        ty=ty_obj,
+        tn=results.get("tn", 0),
+    )
+    geju_markers = build_geju_sector_markers(ttext) if show_geju_markers else {}
+    _raw_svg = results.get("genchart1" if is_life_chart else "genchart2") or ""
+    geju_overlay_svg = (
+        build_geju_overlay_svg(
+            ttext,
+            chart_style=chart_style,
+            is_life=is_life_chart,
+            view_half=_svg_view_half(_raw_svg, 500),
+        )
+        if show_geju_markers
+        else ""
+    )
     chart_layout = chart_svg_layout(chart_style, is_life=is_life_chart)
     sync_nums = "、".join(lid.replace("layer", "") for lid in chart_layout["sync_layers"])
     ui_out = dict(ui)
-    ui_out["paint_hint"] = f"點選第{sync_nums}外環任一扇區，同角度聯動著色（最多四色）。"
+    is_en = st.session_state.get("lang", "zh") == "en"
+    if is_en:
+        ui_out["sector_click_hint"] = ui["sector_click_hint"]
+        ui_out["paint_hint"] = (
+            f"Tap a sector for details; layers {sync_nums} sync-highlight at the same angle (up to 4 colors)."
+        )
+    else:
+        ui_out["sector_click_hint"] = ui["sector_click_hint"]
+        ui_out["paint_hint"] = (
+            f"點選扇區查看斷事，第{sync_nums}層同角度聯動著色（最多四色）。"
+        )
     rotate_layers = chart_layout.get("rotate_layers") or []
     if rotate_layers:
         rot_nums = "、".join(lid.replace("layer", "") for lid in rotate_layers)
-        ui_out["rotation_hint"] = f"拖曳第{rot_nums}層可旋轉，輕點則以 ±30° 校覽。"
+        ui_out["rotation_hint"] = (
+            f"Drag layers {rot_nums} to rotate; tap for ±30° steps."
+            if is_en
+            else f"拖曳第{rot_nums}層可旋轉，輕點則以 ±30° 校覽。"
+        )
     else:
-        ui_out["rotation_hint"] = "此盤式不支援轉盤旋轉。"
+        ui_out["rotation_hint"] = (
+            "This chart style does not support rotation."
+            if is_en
+            else "此盤式不支援轉盤旋轉。"
+        )
+    sector_panel = {
+        "sectors": chart_view.get("sectors") or {},
+        "geju": geju_markers,
+        "layer_labels": sector_panel_layer_labels(
+            is_life=is_life_chart, chart_style=chart_style,
+        ),
+    }
 
     return {
         "heading": ui["heading"],
@@ -889,7 +1007,12 @@ def _build_chart_meta(results: dict, is_life_chart: bool) -> dict:
             ("ivory", ui["legend_ivory"]),
         ],
         "highlights": highlights,
+        "chart_view": chart_view,
+        "geju_markers": geju_markers,
+        "geju_overlay_svg": geju_overlay_svg,
+        "show_geju_markers": show_geju_markers,
         "chart_layout": chart_layout,
+        "sector_panel": sector_panel,
         "export_title": export_title,
         "export_lines": export_lines,
         "export_follow_label": "關注「探究三式」微信公眾號 / 微信 gnatnek",
@@ -927,6 +1050,44 @@ def _prepare_svg_markup(svg: str, svg_id: str, num: int, aria_label: str) -> str
     return re.sub(r"<svg\b[^>]*>", opening, svg_markup, count=1, flags=re.IGNORECASE)
 
 
+def _chart_svg_with_geju(raw_svg: str, chart_meta: dict) -> str:
+    """Pre-inject geju labels into chart SVG before Streamlit renders it."""
+    if not chart_meta.get("show_geju_markers"):
+        return raw_svg
+    overlay = chart_meta.get("geju_overlay_svg", "")
+    if not overlay:
+        return raw_svg
+    return _inject_geju_overlay(raw_svg, overlay)
+
+
+def _inject_geju_overlay(svg_markup: str, overlay_svg: str) -> str:
+    """Append server-rendered geju markers before the closing </svg> tag."""
+    if not overlay_svg or "taiyi-geju-overlay" not in overlay_svg:
+        return svg_markup
+    if "taiyi-geju-overlay" in svg_markup:
+        return svg_markup
+    lower = svg_markup.lower()
+    closing = lower.rfind("</svg>")
+    if closing < 0:
+        return svg_markup
+    return svg_markup[:closing] + overlay_svg + svg_markup[closing:]
+
+
+def _svg_view_half(svg: str, fallback: int) -> float:
+    """Parse viewBox half-width for geju label radius (origin=center charts)."""
+    match = re.search(r'viewBox="([^"]+)"', svg, flags=re.IGNORECASE)
+    if not match:
+        return float(fallback) / 2.0
+    parts = match.group(1).replace(",", " ").split()
+    if len(parts) >= 4:
+        try:
+            width = abs(float(parts[2]))
+            return width / 2.0
+        except ValueError:
+            pass
+    return float(fallback) / 2.0
+
+
 def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool) -> None:
     """Render the Taiyi SVG inside a themed responsive shell without touching calculation logic."""
     if not svg or "svg" not in svg.lower():
@@ -934,11 +1095,22 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         return
 
     ui = chart_meta["ui"]
-    component_key = hashlib.md5(f"{svg}|{interactive}".encode("utf-8")).hexdigest()[:10]
+    sector_panel_json = json.dumps(
+        chart_meta.get("sector_panel") or {},
+        ensure_ascii=False,
+        sort_keys=True,
+    )
+    component_key = hashlib.md5(
+        f"{svg}|{interactive}|{chart_meta.get('show_geju_markers')}|"
+        f"{chart_meta.get('geju_overlay_svg', '')}|{sector_panel_json}".encode("utf-8")
+    ).hexdigest()[:10]
     container_id = f"taiyi-shell-{component_key}"
     svg_id = f"taiyi-svg-{component_key}"
     glow_id = f"taiyi-glow-{component_key}"
-    svg_markup = _prepare_svg_markup(svg, svg_id, num, chart_meta["title"])
+    svg_markup = _inject_geju_overlay(
+        _prepare_svg_markup(svg, svg_id, num, chart_meta["title"]),
+        chart_meta.get("geju_overlay_svg", ""),
+    )
 
     chips_html = "".join(
         f"""
@@ -974,6 +1146,9 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         font-family: "Noto Serif SC", "Source Han Serif", "KaiTi", serif !important;
         font-weight: 600 !important;
     }
+    .taiyi-svg-root .taiyi-sector > text {
+        font-size: 9px !important;
+    }
     .taiyi-svg-root #layer1 path, .taiyi-svg-root #layer1 circle, .taiyi-svg-root #layer1 ellipse { fill: #c9a227 !important; }
     .taiyi-svg-root #layer2 path, .taiyi-svg-root #layer2 polygon, .taiyi-svg-root #layer2 rect { fill: rgba(24, 56, 84, 0.95) !important; }
     .taiyi-svg-root #layer3 path, .taiyi-svg-root #layer3 polygon, .taiyi-svg-root #layer3 rect { fill: rgba(14, 36, 56, 0.96) !important; }
@@ -999,6 +1174,18 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                     <button type="button" class="taiyi-btn" data-action="reset">__RESET__</button>
                     <button type="button" class="taiyi-btn" data-action="add-note">__ADD_NOTE__</button>
                     <button type="button" class="taiyi-btn" data-action="download-png">__DOWNLOAD_PNG__</button>
+                </div>
+                <p class="taiyi-sector-hint" aria-live="polite">__SECTOR_HINT__</p>
+                <div class="taiyi-sector-panel" hidden aria-live="polite">
+                    <div class="taiyi-sector-panel-header">
+                        <div class="taiyi-sector-panel-heading">
+                            <span class="taiyi-sector-panel-layer"></span>
+                            <strong class="taiyi-sector-panel-title"></strong>
+                        </div>
+                        <button type="button" class="taiyi-sector-panel-close" data-action="close-panel" aria-label="__PANEL_CLOSE__">×</button>
+                    </div>
+                    <ul class="taiyi-sector-panel-lines"></ul>
+                    <div class="taiyi-sector-panel-geju"></div>
                 </div>
             </div>
         </div>
@@ -1166,10 +1353,13 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     #__CONTAINER_ID__ .taiyi-svg-root tspan {
         fill: var(--ivory) !important;
         font-family: "Noto Serif SC", "Source Han Serif", "KaiTi", serif !important;
-        font-size: 11.5px !important;
+        font-size: 9.5px !important;
         font-weight: 600 !important;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.03em;
         transition: fill 180ms ease, filter 180ms ease, opacity 180ms ease;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector > text {
+        font-size: 8.5px !important;
     }
     #__CONTAINER_ID__ .taiyi-svg-root #layer1 path,
     #__CONTAINER_ID__ .taiyi-svg-root #layer1 polygon,
@@ -1183,7 +1373,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     #__CONTAINER_ID__ .taiyi-svg-root #layer1 text,
     #__CONTAINER_ID__ .taiyi-svg-root #layer1 tspan {
         fill: #f5f0e1 !important;
-        font-size: 13px !important;
+        font-size: 11px !important;
         font-weight: 700 !important;
     }
     #__CONTAINER_ID__ .taiyi-svg-root #layer2 path,
@@ -1206,8 +1396,11 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     #__CONTAINER_ID__ .taiyi-svg-root #layer7 rect { fill: rgba(8, 22, 40, 0.95) !important; }
     #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root text,
     #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root tspan {
-        font-size: 12.2px !important;
+        font-size: 10px !important;
         letter-spacing: 0.02em;
+    }
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root .taiyi-sector > text {
+        font-size: 9px !important;
     }
     #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-stage-frame {
         padding: clamp(10px, 2.2vw, 20px);
@@ -1223,8 +1416,16 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         cursor: grabbing;
         transition: none;
     }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable {
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable,
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector-panel-target {
         cursor: pointer;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector-active path,
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector-active polygon,
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector-active rect {
+        stroke: rgba(212, 175, 55, 0.98) !important;
+        stroke-width: 2.6 !important;
+        filter: url(#__GLOW_ID__);
     }
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-key-spot {
         fill: #fdf5cf !important;
@@ -1241,6 +1442,128 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-user-label {
         fill: #f5f0e1 !important;
         font-weight: 700 !important;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-geju-overlay {
+        pointer-events: none;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-geju-label {
+        pointer-events: all;
+        cursor: pointer;
+        user-select: none;
+        font-size: 9px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.04em;
+    }
+    #__CONTAINER_ID__ .taiyi-sector-hint {
+        margin: 8px 4px 0;
+        font-size: 0.82rem;
+        color: var(--ivory-soft);
+        text-align: center;
+        line-height: 1.45;
+    }
+    #__CONTAINER_ID__ .taiyi-sector-panel {
+        margin-top: 10px;
+        padding: 12px 14px 10px;
+        border: 1px solid rgba(212, 175, 55, 0.42);
+        border-radius: 14px;
+        background: linear-gradient(180deg, rgba(16, 30, 48, 0.96), rgba(8, 18, 34, 0.98));
+        box-shadow: inset 0 1px 0 rgba(212, 175, 55, 0.12);
+    }
+    #__CONTAINER_ID__ .taiyi-sector-panel[hidden] {
+        display: none !important;
+    }
+    #__CONTAINER_ID__ .taiyi-sector-panel-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.22);
+    }
+    #__CONTAINER_ID__ .taiyi-sector-panel-heading {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+    }
+    #__CONTAINER_ID__ .taiyi-sector-panel-layer {
+        font-size: 0.74rem;
+        color: var(--gold);
+        letter-spacing: 0.06em;
+    }
+    #__CONTAINER_ID__ .taiyi-sector-panel-title {
+        font-size: 1.05rem;
+        color: var(--ivory);
+        font-weight: 700;
+        line-height: 1.35;
+        word-break: break-word;
+    }
+    #__CONTAINER_ID__ .taiyi-sector-panel-close {
+        flex: 0 0 auto;
+        width: 28px;
+        height: 28px;
+        border: 1px solid rgba(212, 175, 55, 0.45);
+        border-radius: 999px;
+        background: rgba(8, 18, 34, 0.85);
+        color: var(--ivory-soft);
+        font-size: 1.1rem;
+        line-height: 1;
+        cursor: pointer;
+    }
+    #__CONTAINER_ID__ .taiyi-sector-panel-lines {
+        margin: 0;
+        padding: 0 0 0 1.1rem;
+        color: var(--ivory-soft);
+        font-size: 0.88rem;
+        line-height: 1.55;
+    }
+    #__CONTAINER_ID__ .taiyi-sector-panel-lines li + li {
+        margin-top: 4px;
+    }
+    #__CONTAINER_ID__ .taiyi-sector-panel-lines li.taiyi-sector-panel-empty {
+        list-style: none;
+        margin-left: -1.1rem;
+    }
+    #__CONTAINER_ID__ .taiyi-sector-panel-empty {
+        margin: 0;
+        color: rgba(232, 223, 200, 0.72);
+        font-size: 0.86rem;
+    }
+    #__CONTAINER_ID__ .taiyi-sector-panel-geju {
+        margin-top: 10px;
+        padding-top: 8px;
+        border-top: 1px dashed rgba(212, 175, 55, 0.24);
+    }
+    #__CONTAINER_ID__ .taiyi-sector-panel-geju-title {
+        font-size: 0.78rem;
+        color: var(--gold);
+        margin-bottom: 6px;
+        letter-spacing: 0.05em;
+    }
+    #__CONTAINER_ID__ .taiyi-geju-panel-item {
+        margin: 0 0 6px;
+        padding: 6px 8px;
+        border-radius: 8px;
+        font-size: 0.84rem;
+        line-height: 1.5;
+        background: rgba(255, 255, 255, 0.03);
+    }
+    #__CONTAINER_ID__ .taiyi-geju-panel-item[data-tone="danger"] {
+        border-left: 3px solid var(--cinnabar);
+    }
+    #__CONTAINER_ID__ .taiyi-geju-panel-item[data-tone="warn"] {
+        border-left: 3px solid #c9a227;
+    }
+    #__CONTAINER_ID__ .taiyi-geju-panel-item[data-tone="caution"] {
+        border-left: 3px solid #5b8fd0;
+    }
+    #__CONTAINER_ID__ .taiyi-geju-panel-item[data-tone="info"] {
+        border-left: 3px solid #7e8fa3;
+    }
+    #__CONTAINER_ID__ .taiyi-geju-panel-item strong {
+        color: var(--ivory);
+        margin-right: 6px;
     }
 
     /* Responsive 調整區 */
@@ -1274,7 +1597,10 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         }
         #__CONTAINER_ID__ .taiyi-svg-root text,
         #__CONTAINER_ID__ .taiyi-svg-root tspan {
-            font-size: 10.2px !important;
+            font-size: 8.5px !important;
+        }
+        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector > text {
+            font-size: 7.8px !important;
         }
     }
     </style>
@@ -1293,6 +1619,10 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         const highlightTerms = __HIGHLIGHTS_JSON__;
         const exportMeta = __EXPORT_META_JSON__;
         const chartLayout = __CHART_LAYOUT_JSON__;
+        const sectorPanelData = __SECTOR_PANEL_JSON__;
+        const sectorLookup = sectorPanelData.sectors || {};
+        const gejuByBranch = sectorPanelData.geju || {};
+        const layerLabels = sectorPanelData.layer_labels || {};
         const colorSyncLayers = chartLayout.sync_layers || ["layer3", "layer4", "layer5"];
         const rotateLayerIds = chartLayout.rotate_layers || [];
         const highlightPalette = ["#D4AF37", "#4A9C6D", "#7E8FA3", "#C41E3A"];
@@ -1332,8 +1662,14 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             colored: new Map(),
             styleMode: "traditional",
             noteText: "",
+            activeSectorKey: "",
         };
         let lastReportedHeight = 0;
+        const sectorPanel = root.querySelector(".taiyi-sector-panel");
+        const sectorPanelLayer = root.querySelector(".taiyi-sector-panel-layer");
+        const sectorPanelTitle = root.querySelector(".taiyi-sector-panel-title");
+        const sectorPanelLines = root.querySelector(".taiyi-sector-panel-lines");
+        const sectorPanelGeju = root.querySelector(".taiyi-sector-panel-geju");
         let heightFramePending = false;
         const noteStorageKey = "taiyi-chart-note:" + (exportMeta.storageKey || "__CONTAINER_ID__");
 
@@ -1760,6 +2096,146 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             if (sectorGroup) restoreSectorGroup(sectorGroup);
         }
 
+        function clearSectorSelection() {
+            if (state.activeSectorKey) {
+                const previous = findSectorGroupByKey(state.activeSectorKey);
+                if (previous) previous.classList.remove("taiyi-sector-active");
+            }
+            state.activeSectorKey = "";
+        }
+
+        function renderGejuBlock(branch) {
+            if (!sectorPanelGeju || !branch) {
+                if (sectorPanelGeju) sectorPanelGeju.innerHTML = "";
+                return;
+            }
+            const items = gejuByBranch[branch] || [];
+            if (!items.length) {
+                sectorPanelGeju.innerHTML = "";
+                return;
+            }
+            const title = document.createElement("div");
+            title.className = "taiyi-sector-panel-geju-title";
+            title.textContent = ui.sector_panel_geju || "釋格局";
+            sectorPanelGeju.innerHTML = "";
+            sectorPanelGeju.appendChild(title);
+            items.forEach((item) => {
+                const row = document.createElement("p");
+                row.className = "taiyi-geju-panel-item";
+                row.dataset.tone = item.tone || "info";
+                const label = document.createElement("strong");
+                label.textContent = item.key || item.short || "";
+                row.appendChild(label);
+                row.appendChild(document.createTextNode(item.text || ""));
+                sectorPanelGeju.appendChild(row);
+            });
+        }
+
+        function openSectorPanelByKey(key, branch) {
+            if (!sectorPanel) return;
+            const entry = sectorLookup[key] || null;
+            const layerId = key.split(":")[0] || "";
+            const layerLabel = layerLabels[layerId] || layerId;
+            clearSectorSelection();
+            state.activeSectorKey = key;
+            const sectorGroup = findSectorGroupByKey(key);
+            if (sectorGroup) sectorGroup.classList.add("taiyi-sector-active");
+
+            if (sectorPanelLayer) sectorPanelLayer.textContent = layerLabel;
+            if (sectorPanelTitle) {
+                sectorPanelTitle.textContent = entry && entry.title
+                    ? entry.title
+                    : (sectorGroup ? cleanText(sectorGroup.getAttribute("data-full") || "") : key);
+            }
+            const listEl = sectorPanel.querySelector(".taiyi-sector-panel-lines");
+            if (listEl) {
+                listEl.innerHTML = "";
+                const lines = entry && Array.isArray(entry.lines) ? entry.lines.filter(Boolean) : [];
+                if (!lines.length) {
+                    const item = document.createElement("li");
+                    item.className = "taiyi-sector-panel-empty";
+                    item.textContent = ui.sector_panel_empty || ui.tooltip_fallback || "";
+                    listEl.appendChild(item);
+                } else {
+                    lines.forEach((line) => {
+                        const item = document.createElement("li");
+                        item.textContent = line;
+                        listEl.appendChild(item);
+                    });
+                }
+            }
+            const posBranch = branch
+                || (sectorGroup ? sectorGroup.getAttribute("data-pos-branch") : "")
+                || (sectorGroup ? sectorGroup.getAttribute("data-branch") : "");
+            renderGejuBlock(posBranch);
+            sectorPanel.hidden = false;
+            queueFrameHeight();
+        }
+
+        function openGejuPanel(branch) {
+            if (!branch || !sectorPanel) return;
+            clearSectorSelection();
+            if (sectorPanelLayer) sectorPanelLayer.textContent = ui.sector_panel_geju || "釋格局";
+            if (sectorPanelTitle) sectorPanelTitle.textContent = branch;
+            const list = sectorPanel.querySelector(".taiyi-sector-panel-lines");
+            if (list) {
+                list.innerHTML = "";
+                const hint = document.createElement("li");
+                hint.textContent = ui.sector_click_hint || "";
+                list.appendChild(hint);
+            }
+            renderGejuBlock(branch);
+            sectorPanel.hidden = false;
+            queueFrameHeight();
+        }
+
+        function closeSectorPanel() {
+            if (!sectorPanel) return;
+            sectorPanel.hidden = true;
+            clearSectorSelection();
+            queueFrameHeight();
+        }
+
+        function openSectorPanelFromGroup(sectorGroup) {
+            const key = sectorGroup.getAttribute("data-tooltip-key")
+                || sectorColorKey(sectorGroup);
+            if (!key || key === ":") return;
+            const branch = sectorGroup.getAttribute("data-pos-branch")
+                || sectorGroup.getAttribute("data-branch")
+                || "";
+            openSectorPanelByKey(key, branch);
+        }
+
+        function handleSectorPanelClick(sectorGroup, event) {
+            event.preventDefault();
+            event.stopPropagation();
+            const layerId = sectorGroup.getAttribute("data-layer") || "";
+            if (layerId && layerId !== "layer1") {
+                handleSectorColorClick(sectorGroup, event);
+            }
+            openSectorPanelFromGroup(sectorGroup);
+        }
+
+        function setupSectorPanel() {
+            if (!sectorPanel) return;
+            Array.from(svg.querySelectorAll(".taiyi-sector")).forEach((sectorGroup) => {
+                sectorGroup.classList.add("taiyi-sector-panel-target");
+                sectorGroup.addEventListener("pointerdown", (event) => {
+                    event.stopPropagation();
+                });
+                sectorGroup.addEventListener("click", (event) => handleSectorPanelClick(sectorGroup, event));
+            });
+            Array.from(svg.querySelectorAll(".taiyi-geju-label")).forEach((labelNode) => {
+                labelNode.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    openGejuPanel(labelNode.getAttribute("data-branch") || "");
+                });
+            });
+            const closeButton = root.querySelector('[data-action="close-panel"]');
+            if (closeButton) closeButton.addEventListener("click", closeSectorPanel);
+        }
+
         function handleSectorColorClick(sectorGroup, event) {
             event.preventDefault();
             event.stopPropagation();
@@ -1786,10 +2262,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         function setupColoring() {
             Array.from(svg.querySelectorAll(".taiyi-sector"))
                 .filter((sectorGroup) => sectorGroup.getAttribute("data-layer") !== "layer1")
-                .forEach((sectorGroup) => {
-                    sectorGroup.classList.add("taiyi-colorable");
-                    sectorGroup.addEventListener("click", (event) => handleSectorColorClick(sectorGroup, event));
-                });
+                .forEach((sectorGroup) => sectorGroup.classList.add("taiyi-colorable"));
         }
 
         function resetView() {
@@ -1799,6 +2272,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             });
             Array.from(state.colored.keys()).forEach((key) => clearMarker(key));
             state.colored.clear();
+            closeSectorPanel();
             root.setAttribute("data-style-mode", "traditional");
             state.styleMode = "traditional";
             updateStyleButton();
@@ -1984,8 +2458,9 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         ensureGlowFilter();
         annotateSvg();
         highlightImportantNodes();
+        setupSectorPanel();
         if (interactive) setupRotations();
-        if (!interactive) setupColoring();
+        setupColoring();
         updateStyleButton();
         updateNoteButton();
 
@@ -2010,9 +2485,16 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         .replace("__ADD_NOTE__", html_escape(ui["add_note"]))
         .replace("__DOWNLOAD_PNG__", html_escape(ui["download_png"]))
         .replace("__SVG_MARKUP__", svg_markup)
-        .replace("__UI_JSON__", json.dumps(ui, ensure_ascii=False))
+        .replace("__UI_JSON__", json.dumps(chart_meta.get("ui", ui), ensure_ascii=False))
         .replace("__HIGHLIGHTS_JSON__", json.dumps(chart_meta["highlights"], ensure_ascii=False))
         .replace("__CHART_LAYOUT_JSON__", json.dumps(chart_meta.get("chart_layout", {}), ensure_ascii=False))
+        .replace(
+            "__SECTOR_PANEL_JSON__",
+            json.dumps(chart_meta.get("sector_panel") or {}, ensure_ascii=False),
+        )
+        .replace("__SECTOR_HINT__", html_escape(chart_meta.get("ui", ui).get("sector_click_hint", "")))
+        .replace("__PANEL_CLOSE__", html_escape(chart_meta.get("ui", ui).get("sector_panel_close", "")))
+
         .replace(
             "__EXPORT_META_JSON__",
             json.dumps(
@@ -2146,13 +2628,21 @@ with st.sidebar:
         mh = st.number_input(t("hour"), min_value=0, max_value=23, value=now.hour, key="hour")
         mmin = st.number_input(t("minute"), min_value=0, max_value=59, value=now.minute, key="minute")
     
-    option = st.selectbox(t("chart_method"), ('時計太乙', '年計太乙', '月計太乙', '日計太乙', '分計太乙', '太乙命法'), format_func=to)
+    option = st.selectbox(
+        t("chart_method"),
+        ('時計太乙', '年計太乙', '月計太乙', '日計太乙', '分計太乙', '太乙命法', '太乙命法 (魔改)'),
+        format_func=to,
+    )
     acum = st.selectbox(t("acc_years"), ('太乙統宗', '太乙金鏡', '太乙淘金歌', '太乙局'), format_func=to)
     ten_ching = st.selectbox(t("ten_essences"), ('無', '有'), format_func=to)
     sex_o = st.selectbox(t("life_gender"), ('男', '女'), format_func=to)
     rotation = st.selectbox(t("rotation_label"), ('固定', '轉動'), format_func=to)
-    
-    num_dict = {'時計太乙': 3, '年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '分計太乙': 4, '太乙命法': 5}
+    show_geju_markers = st.toggle(t("geju_markers_toggle"), value=True, key="show_geju_markers")
+
+    num_dict = {
+        '時計太乙': 3, '年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '分計太乙': 4,
+        '太乙命法': 6, '太乙命法 (魔改)': 5,
+    }
     style = num_dict[option]
     tn_dict = {'太乙統宗': 0, '太乙金鏡': 1, '太乙淘金歌': 2, '太乙局': 3}
     tn = tn_dict[acum]
@@ -2498,7 +2988,7 @@ with st.sidebar:
 def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
     """生成太乙計算結果，返回數據字典"""
     ty = kintaiyi.Taiyi(my, mm, md, mh, mmin)
-    if style != 5:
+    if not _is_life_chart_style(style):
         ttext = ty.pan(style, tn)
         kook = ty.kook(style, tn)
         sj_su_predict = f"始擊落{ty.sf_num(style, tn)}宿，{su_dist.get(ty.sf_num(style, tn))}"
@@ -2507,28 +2997,39 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
         five_generals = ty.fivegenerals(style, tn)
         home_vs_away1 = ty.wc_n_sj(style, tn)
         genchart2 = ty.gen_gong(style, tn, tc)
-    if style == 5:
+        genchart1 = None
+    else:
+        plate_ji = LIFE_PLATE_JI[style]
         tn = 0
-        ttext = ty.pan(3, 0)
-        kook = ty.kook(3, 0)
-        sj_su_predict = f"始擊落{ty.sf_num(3, 0)}宿，{su_dist.get(ty.sf_num(3, 0))}"
-        tg_sj_su_predict = config.multi_key_dict_get(tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0]).get(config.Ganzhiwuxing(ty.sf(3, 0)))
-        three_door = ty.threedoors(3, 0)
-        five_generals = ty.fivegenerals(3, 0)
-        home_vs_away1 = ty.wc_n_sj(3, 0)
-        genchart2 = ty.gen_gong(3, tn, tc)
-    genchart1 = ty.gen_life_gong(sex_o)
+        ttext = ty.pan(plate_ji, 0)
+        kook = ty.kook(plate_ji, 0)
+        sj_su_predict = f"始擊落{ty.sf_num(plate_ji, 0)}宿，{su_dist.get(ty.sf_num(plate_ji, 0))}"
+        tg_sj_su_predict = config.multi_key_dict_get(
+            tengan_shiji, config.gangzhi(my, mm, md, mh, mmin)[0][0],
+        ).get(config.Ganzhiwuxing(ty.sf(plate_ji, 0)))
+        three_door = ty.threedoors(plate_ji, 0)
+        five_generals = ty.fivegenerals(plate_ji, 0)
+        home_vs_away1 = ty.wc_n_sj(plate_ji, 0)
+        genchart2 = ty.gen_gong(plate_ji, tn, tc)
+        genchart1 = ty.gen_life_gong(sex_o, plate_ji)
     kook_num = kook.get("數")
     yingyang = kook.get("文")[0]
-    wuyuan = ty.get_five_yuan_kook(style, tn) if style != 5 else ""
+    wuyuan = ty.get_five_yuan_kook(style, tn) if not _is_life_chart_style(style) else ""
     homecal, awaycal, setcal = config.find_cal(yingyang, kook_num)
     zhao = {"男": "乾造", "女": "坤造"}.get(sex_o)
-    life1 = ty.gongs_discription(sex_o)
-    life2 = ty.twostar_disc(sex_o)
-    lifedisc = ty.convert_gongs_text(life1, life2)
-    lifedisc2 = ty.stars_descriptions_text(3, 0)
-    lifedisc3 = ty.sixteen_gong_grades(3,0)
-    lifedisc4 = ty.shiti_jinfu_text(sex_o)
+    plate_ji = LIFE_PLATE_JI.get(style) if _is_life_chart_style(style) else None
+    if plate_ji is not None:
+        life1 = ty.gongs_discription(sex_o, plate_ji)
+        life2 = ty.twostar_disc(sex_o, plate_ji)
+        lifedisc = ty.convert_gongs_text(life1, life2)
+        lifedisc2 = ty.stars_descriptions_text(plate_ji, 0, life_ring=True)
+        lifedisc3 = ty.sixteen_gong_grades(plate_ji, 0, life_ring=True)
+        lifedisc4 = ty.shiti_jinfu_text(sex_o, plate_ji)
+        life_pan = ty.taiyi_life(sex_o, plate_ji)
+        life_vol20 = life_pan.get("卷二十", {})
+    else:
+        life1 = life2 = lifedisc = lifedisc2 = lifedisc3 = lifedisc4 = None
+        life_pan = life_vol20 = None
     yc = ty.year_chin()
     year_predict = f"太歲{yc}值宿，{su_dist.get(yc)}"
     home_vs_away3 = ttext.get("推太乙風雲飛鳥助戰法")
@@ -2568,6 +3069,9 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
         "lifedisc2": lifedisc2,
         "lifedisc3": lifedisc3,
         "lifedisc4": lifedisc4,
+        "life_vol20": life_vol20,
+        "life_pan": life_pan,
+        "plate_ji": plate_ji,
         "year_predict": year_predict,
         "home_vs_away3": home_vs_away3,
         "ts": ts,
@@ -2605,15 +3109,18 @@ with tabs[0]:
                 st.session_state.render_default = False
 
             if results:
-                if results["style"] == 5:
+                if _is_life_chart_style(results["style"]):
                     try:
                         start_pt = results["genchart1"][results["genchart1"].index('''viewBox="''')+22:].split(" ")[1]
-                        chart_meta = _build_chart_meta(results, is_life_chart=True)
+                        chart_meta = _build_chart_meta(
+                            results, is_life_chart=True, show_geju_markers=show_geju_markers,
+                        )
                         render_chart_explanation_seam()
+                        life_svg = _chart_svg_with_geju(results["genchart1"], chart_meta)
                         if rotation == "轉動":
-                            render_svg(results["genchart1"], int(start_pt), chart_meta)
+                            render_svg(life_svg, int(start_pt), chart_meta)
                         else:
-                            render_svg1(results["genchart1"], int(start_pt), chart_meta)
+                            render_svg1(life_svg, int(start_pt), chart_meta)
                     except (ValueError, IndexError) as e:
                         st.error(f"Failed to parse SVG viewBox: {str(e)}")
                     with st.expander(t("explanation")):
@@ -2630,6 +3137,118 @@ with tabs[0]:
                         if results.get("lifedisc4"):
                             st.markdown(t("shiti_jinfu"))
                             st.markdown(results["lifedisc4"])
+                            st.markdown("   ")
+                        _v20 = results.get("life_vol20") or {}
+                        if _v20:
+                            _fly = _v20.get("飛祿飛馬", {})
+                            _cur = _fly.get("當前") or {}
+                            if _cur:
+                                st.markdown(
+                                    f"{t('fly_lu_ma')}"
+                                    f"{_cur.get('期間', '')} "
+                                    f"祿{_cur.get('飛祿宮', '—')}／馬{_cur.get('飛馬宮', '—')}"
+                                )
+                            _she = _v20.get("十干合", {})
+                            _san = _v20.get("命宮三合", {})
+                            st.markdown(
+                                f"{t('sanhe_he')}"
+                                f"{_san.get('三合', '—')}（{_san.get('五行', '')}）｜"
+                                f"{_she.get('年干', '')}{_she.get('合干', '')}合{_she.get('合化', '')}"
+                            )
+                            _qi = _v20.get("奇耦上和", {})
+                            _sc = _v20.get("三才無筭", {})
+                            st.markdown(
+                                f"{t('qiou_sancai')}"
+                                f"{_qi.get('和數類型', '')}·{_qi.get('陰陽相配', '')}"
+                                f"｜{_sc.get('要訣', '')}"
+                            )
+                            _mg = _v20.get("百六行月卦", {})
+                            _dg = _v20.get("百六行日卦", {})
+                            st.markdown(
+                                f"{t('bailiu_gua')}"
+                                f"月{_mg.get('卦', '')}{_mg.get('爻名', '')}｜"
+                                f"日{_dg.get('卦', '')}{_dg.get('爻名', '')}"
+                            )
+                            _rg = _v20.get("百六入卦限", {})
+                            _cs = _rg.get("當前卦限", {})
+                            _ln = _rg.get("流年卦限", {})
+                            if _ln:
+                                st.markdown(
+                                    f"{t('rugua_xian')}"
+                                    f"{_cs.get('階段', '')}{_cs.get('卦', '')}"
+                                    f"{(_cs.get('當前爻') or {}).get('爻名', '')}｜"
+                                    f"流年{_ln.get('歲', '')}歲{_ln.get('卦', '')}{_ln.get('爻名', '')}"
+                                )
+                            _yj3 = _v20.get("陽九入三限", {})
+                            if _yj3:
+                                st.markdown(
+                                    f"{t('yangjiu_sanxian')}"
+                                    f"{_yj3.get('三限', '')}·{_yj3.get('吉凶', '')}｜"
+                                    f"{_yj3.get('斷語', '')[:40]}"
+                                )
+                            _wx = _v20.get("旺陷獨處同宮論", {})
+                            if _wx.get("獨處諸星") or _wx.get("同宮論歌"):
+                                _wx_line = "｜".join(
+                                    f"{x.get('星', x.get('星組', ''))}{x.get('旺陷', '')}"
+                                    for x in (_wx.get("獨處諸星") or [])[:3]
+                                )
+                                st.markdown(f"{t('wangxian_lun')}{_wx_line or '同宮論'}")
+                                with st.expander(t("wangxian_detail"), expanded=False):
+                                    for item in _wx.get("獨處諸星") or []:
+                                        st.markdown(
+                                            f"**{item.get('宮')}** {item.get('星')}·"
+                                            f"{item.get('旺陷', item.get('等第', ''))}"
+                                        )
+                                        st.caption((item.get("論歌") or "")[:120])
+                                    for item in _wx.get("同宮論歌") or []:
+                                        st.markdown(f"**{item.get('宮')}** {item.get('星組')}")
+                                        st.caption((item.get("論歌") or "")[:120])
+                            _zy = _v20.get("照限游年", {})
+                            _zz = _zy.get("照限", {})
+                            _yz = _zy.get("游年", {})
+                            st.markdown(
+                                f"{t('zhao_you')}"
+                                f"{_zz.get('類型', '')}限{_zz.get('地支', '')}｜"
+                                f"{_yz.get('年份', '')}年{_yz.get('地支', '')}"
+                            )
+                            for song in (_zy.get("星歌") or [])[:3]:
+                                scope = []
+                                if song.get("照限"):
+                                    scope.append("照限")
+                                if song.get("游年"):
+                                    scope.append("游年")
+                                st.caption(
+                                    f"【{'·'.join(scope)}·{song.get('星', '')}】"
+                                    f"{song.get('歌訣', '')[:80]}"
+                                )
+                            if len(_zy.get("星歌") or []) > 3:
+                                with st.expander(t("zhao_you_detail"), expanded=False):
+                                    for song in _zy.get("星歌") or []:
+                                        st.markdown(f"**{song.get('星', '')}** {song.get('歌訣', '')}")
+                            _gj = _v20.get("命盤格局", {})
+                            if _gj:
+                                st.markdown(
+                                    f"{t('life_geju')}"
+                                    + "；".join(f"{k}：{v}" for k, v in list(_gj.items())[:6])
+                                )
+                            _pal = _v20.get("十二宮旺衰絕空刑", {})
+                            if _pal:
+                                _pal_line = "｜".join(
+                                    f"{k}{v.get('狀態', '')}"
+                                    for k, v in _pal.items()
+                                    if v.get("狀態") in ("空", "刑", "絕")
+                                )
+                                if _pal_line:
+                                    st.markdown(f"{t('palace_states')}{_pal_line}")
+                                with st.expander(t("palace_state_detail"), expanded=False):
+                                    for pname, pinfo in _pal.items():
+                                        st.markdown(
+                                            f"**{pname}**（{pinfo.get('地支', '')}·"
+                                            f"{pinfo.get('狀態', '')}）"
+                                            f" {''.join(pinfo.get('星曜', []))}"
+                                        )
+                                        if pinfo.get("斷語"):
+                                            st.caption(pinfo["斷語"])
                             st.markdown("   ")
                         st.markdown(t("hexagram"))
                         st.markdown(f"{t('year_hex')}{results['ygua']}")
@@ -2652,12 +3271,15 @@ with tabs[0]:
                 else:
                     try:
                         start_pt2 = results["genchart2"][results["genchart2"].index('''viewBox="''')+22:].split(" ")[1]
-                        chart_meta = _build_chart_meta(results, is_life_chart=False)
+                        chart_meta = _build_chart_meta(
+                            results, is_life_chart=False, show_geju_markers=show_geju_markers,
+                        )
                         render_chart_explanation_seam()
+                        chart_svg = _chart_svg_with_geju(results["genchart2"], chart_meta)
                         if rotation == "轉動":
-                            render_svg(results["genchart2"], int(start_pt2), chart_meta)
+                            render_svg(chart_svg, int(start_pt2), chart_meta)
                         else:
-                            render_svg1(results["genchart2"], int(start_pt2), chart_meta)
+                            render_svg1(chart_svg, int(start_pt2), chart_meta)
                     except (ValueError, IndexError) as e:
                         st.error(f"Failed to parse SVG viewBox: {str(e)}")
                     with st.expander(t("explanation")):

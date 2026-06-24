@@ -210,7 +210,7 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
     mid = (start + end) / 2
     tx = (inner + outer) / 2 * math.cos(math.radians(mid))
     ty = (inner + outer) / 2 * math.sin(math.radians(mid))
-    t = draw.Text(label_str, 9, tx, ty, center=1, fill=text_fill,
+    t = draw.Text(label_str, 7.5, tx, ty, center=1, fill=text_fill,
                   font_family='sans-serif', font_weight='bold')
     sector_g.append(t)
     group.append(sector_g)

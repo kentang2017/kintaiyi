@@ -1188,12 +1188,27 @@ class Taiyi:
         place = config.Ganzhi_place(mg)
         return dict(zip(config.generate_ranges(num, 10, 11),{"男":config.new_list(self.di_zhi, place), "女":config.new_list(list(reversed(self.di_zhi)), place)}.get(sex)))
     #百六行限
+    def shouqi_ganzhi(self):
+        """受氣干支：日時納音策餘，自生日逆行（卷二十）。"""
+        gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
+        jz = config.jiazi()
+        day_idx = jz.index(gz[2])
+        rem = self.souqi_num() or 60
+        return jz[(day_idx - rem + 1) % 60]
+
     def bailiu_xingxian(self, sex):
-        sqn = self.souqi_num()
-        sqn_gua = dict(zip(range(1,65), config.jiazi())).get(sqn)
-        place = config.cheungsun.get(config.Ganzhiwuxing(sqn_gua[1]))
-        num= dict(zip(list("土金水木火"),[5,4,1,3,2])).get(config.Ganzhiwuxing(place))
-        return dict(zip(config.generate_ranges(num, 10, 11),{"男":config.new_list(self.di_zhi, place), "女":config.new_list(list(reversed(self.di_zhi)), place)}.get(sex)))
+        sqn_gua = self.shouqi_ganzhi()
+        place = config.Ganzhi_place(sqn_gua[0])
+        num = dict(zip(list("土金水木火"), [5, 4, 1, 3, 2])).get(
+            config.Ganzhiwuxing(sqn_gua[0])
+        )
+        return dict(zip(
+            config.generate_ranges(num, 10, 11),
+            {
+                "男": config.new_list(self.di_zhi, place),
+                "女": config.new_list(list(reversed(self.di_zhi)), place),
+            }.get(sex),
+        ))
 
     def souqi_num(self):
         gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
@@ -1356,7 +1371,7 @@ class Taiyi:
             new_degrees = [star_degrees.get(i) for i in self.twenty_eightstar(ji_style, taiyi_acumyear)]
             return chart.gen_chart_hour( list(sixteengongs.values())[-1]+[" "," "], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg,list(sixteengongs.values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear), ss1[0], new_degrees, sanqi=_sanqi, trigram_rotate=_trigram_rotate)
 #太乙命法
-    def gen_life_gong(self, sex):
+    def gen_life_gong(self, sex, ji_style: int = 4):
         stars = find_stars(self.year, self.month, self.day, self.hour, self.minute)
         res2 = { "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" ", "巳":" "}
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
@@ -1391,15 +1406,19 @@ class Taiyi:
         
         # 應用到整個結構
         ss1 = [[split_planets(cell) for cell in row] for row in ss]
-        dict1 = self.taiyi_life(sex).get("十二命宮排列")
-        res.update(dict1)
+        res.update(self._twelve_palace_map(sex))
         sg = list(res.values())
         _sanqi = config.sanqi(self.accnum(0, 0))
-        _ty_v = self.ty(4, 0)
+        _ty_v = self.ty(ji_style, 0)
         _eight_order = [1, 2, 3, 4, 6, 7, 8, 9]
         _ty_idx = _eight_order.index(_ty_v) if _ty_v in _eight_order else 0
         _trigram_rotate = _ty_idx * 45.0
-        return chart.gen_chart_life( list(self.sixteen_gong11(4,0).values())[-1], sg, [self.sixteen_gong11(4,0).get(i) for i in list(res.keys())], ss1[0], sanqi=_sanqi, trigram_rotate=_trigram_rotate)
+        _sixteen = self.sixteen_gong11(ji_style, 0)
+        return chart.gen_chart_life(
+            list(_sixteen.values())[-1], sg,
+            [_sixteen.get(i) for i in list(res.keys())],
+            ss1[0], sanqi=_sanqi, trigram_rotate=_trigram_rotate,
+        )
 
     def _twelve_palace_map(self, sex):
         """十二命宮地支→宮名（供命法排盤，避免 gen_life_gong_list 遞迴 taiyi_life）。"""
@@ -1415,12 +1434,13 @@ class Taiyi:
         arrangelist = {"順": config.new_list(self.di_zhi, mz_arrange_r), "逆": config.new_list(self.di_zhi, mz_arrange)}.get(direction)
         return dict(zip(arrangelist, twelve_gongs))
 
-    def gen_life_gong_list(self, sex):
+    def gen_life_gong_list(self, sex, plate_ji: int = 4):
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
         dict1 = self._twelve_palace_map(sex)
         res.update(dict1)
         sg = list(res.values())
-        return  list(self.sixteen_gong11(4,0).values())[-1], sg, [self.sixteen_gong11(4,0).get(i) for i in list(res.keys())]
+        sixteen = self.sixteen_gong11(plate_ji, 0)
+        return list(sixteen.values())[-1], sg, [sixteen.get(i) for i in list(res.keys())]
 
     def convert_gongs_text(self, a, b):
         c = {}
@@ -1440,8 +1460,8 @@ class Taiyi:
                 text_output += f"【{key}】\n{value}\n\n"
         return text_output.replace('[', '').replace(']', '').replace(',', '').replace("'","")
 
-    def gongs_discription_text(self, sex):
-        alld = self.gongs_discription_list(sex)
+    def gongs_discription_text(self, sex, plate_ji: int = 4):
+        alld = self.gongs_discription_list(sex, plate_ji)
         combined_dict = {}
         for category, subcategories in alld.items():
             combined_dict[category] = []
@@ -1456,9 +1476,9 @@ class Taiyi:
             formatted_text += "\n"
         return formatted_text
         
-    def twostar_disc(self, sex):
+    def twostar_disc(self, sex, plate_ji: int = 4):
         a = taiyi_life_dict.twostars
-        b = self.gongs_discription_list(sex)
+        b = self.gongs_discription_list(sex, plate_ji)
         b = {key: [''.join(value)] for key, value in b.items()}
         c = {}
         for key, values in b.items():
@@ -1475,18 +1495,16 @@ class Taiyi:
             c[key] = [item for item in values[0] if item]  # Remove empty lists
         return c
         
-    def gongs_discription_list(self, sex):
-        sixteengongs = self.sixteen_gong11(3,0)
-        t = self.gen_life_gong_list(sex)[1]
-        stars = self.gen_life_gong_list(sex)[2]
-        alld =  dict(zip(t, stars))
+    def gongs_discription_list(self, sex, plate_ji: int = 4):
+        _, t, stars = self.gen_life_gong_list(sex, plate_ji)
+        alld = dict(zip(t, stars))
         for key, value in alld.items():
             if not value:
                 alld[key] = ["空格"]
         return alld
     
-    def gongs_discription(self, sex):
-        alld = self.gongs_discription_list(sex)
+    def gongs_discription(self, sex, plate_ji: int = 4):
+        alld = self.gongs_discription_list(sex, plate_ji)
         combined_dict = {}
         for category, subcategories in alld.items():
             combined_dict[category] = []
@@ -1496,17 +1514,21 @@ class Taiyi:
         return combined_dict
     
     
-    def sixteen_gong2(self, ji_style, taiyi_acumyear):
-        original_dict = self.sixteen_gong1(ji_style, taiyi_acumyear)
+    def sixteen_gong2(self, ji_style, taiyi_acumyear, *, life_ring: bool = False):
+        original_dict = (
+            self.sixteen_gong11(ji_style, taiyi_acumyear)
+            if life_ring
+            else self.sixteen_gong1(ji_style, taiyi_acumyear)
+        )
         c = "五福,君基,臣基,民基,文昌,計神,小游,主大,客大,主參,客參,始擊,飛符,四神,天乙,地乙".split(",")
         a = {star: key for key, values in original_dict.items() for star in values if star in c}
-        d = dict(zip(self.di_zhi, range(0,13)))
+        d = dict(zip(self.di_zhi, range(0, 13)))
         for star, gong_value in a.items():
             a[star] = d[gong_value]
-        return  a
-    
-    def stars_descriptions(self, ji_style, taiyi_acumyear):
-        starszhi = self.sixteen_gong2(ji_style, taiyi_acumyear)
+        return a
+
+    def stars_descriptions(self, ji_style, taiyi_acumyear, *, life_ring: bool = False):
+        starszhi = self.sixteen_gong2(ji_style, taiyi_acumyear, life_ring=life_ring)
         c = "五福,君基,臣基,民基,文昌,計神,小游,主大,客大,主參,客參,始擊,飛符,四神,天乙,地乙".split(",")
         allstar = {}
         for i in c:
@@ -1517,24 +1539,36 @@ class Taiyi:
                 pass
         return allstar
 
-    def stars_descriptions_text(self, ji_style, taiyi_acumyear):
-        alld = self.stars_descriptions(ji_style, taiyi_acumyear)
+    def stars_descriptions_text(self, ji_style, taiyi_acumyear, *, life_ring: bool = False):
+        alld = self.stars_descriptions(ji_style, taiyi_acumyear, life_ring=life_ring)
         text = ""
         for key, value in alld.items():
             text += f"【{key}】\n{value}\n\n"
         return text
-    
-    def sixteen_gong_grades(self, ji_style, taiyi_acumyear):
-        original_dict = self.sixteen_gong1(ji_style, taiyi_acumyear)
-        c = "五福,君基,臣基,民基,小游,文昌,主大,主參,計神,始擊,客大,客參,四神,天乙,地乙,直符".split(",")
+
+    def sixteen_gong_grades(self, ji_style, taiyi_acumyear, *, life_ring: bool = False):
+        original_dict = (
+            self.sixteen_gong11(ji_style, taiyi_acumyear)
+            if life_ring
+            else self.sixteen_gong1(ji_style, taiyi_acumyear)
+        )
+        c = (
+            "五福,君基,臣基,民基,小游,文昌,主大,主參,計神,始擊,客大,客參,四神,天乙,地乙"
+            if life_ring
+            else "五福,君基,臣基,民基,小游,文昌,主大,主參,計神,始擊,客大,客參,四神,天乙,地乙,直符"
+        ).split(",")
         a = {star: key for key, values in original_dict.items() for star in values if star in c}
-        alld = dict(zip(c,[config.multi_key_dict_get(taiyi_life_dict.sixteen_three_grades.get(i), a.get(i)) for i in c])) 
+        alld = {
+            star: config.multi_key_dict_get(taiyi_life_dict.sixteen_three_grades[star], a.get(star))
+            for star in c
+            if star in taiyi_life_dict.sixteen_three_grades
+        }
         text = ""
         for key, value in alld.items():
             text += f"【{key}】\n{value}\n\n"
         return text
     
-    def taiyi_life(self, sex):
+    def taiyi_life(self, sex, plate_ji: int = 4):
         gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
         yz = gz[0][1]
         mz = gz[1][1]
@@ -1612,21 +1646,23 @@ class Taiyi:
                 "大游":config.bigyo(self.accnum(0,0)),
                 "小游":config.smyo(self.accnum(0,0)),
                 }
+        from .mingfa import zonghe as mingfa_zonghe  # noqa: PLC0415
         from .shiti_jinfu import match_life  # noqa: PLC0415
-        pan["十提金賦"] = match_life(self, sex, life=pan)
-        pan["十二宮星斷"] = self.gongs_discription(sex)
-        pan["雙星同宮論"] = self.twostar_disc(sex)
-        pan["諸星上中下三等"] = self.sixteen_gong_grades(3, 0)
+        pan["十提金賦"] = match_life(self, sex, life=pan, plate_ji=plate_ji)
+        pan["十二宮星斷"] = self.gongs_discription(sex, plate_ji)
+        pan["雙星同宮論"] = self.twostar_disc(sex, plate_ji)
+        pan["諸星上中下三等"] = self.sixteen_gong_grades(plate_ji, 0, life_ring=True)
+        pan["卷二十"] = mingfa_zonghe(self, sex, plate_ji=plate_ji)
         return pan
 
-    def shiti_jinfu(self, sex):
+    def shiti_jinfu(self, sex, plate_ji: int = 4):
         """太乙十提金賦（卷二十）：依命身宮及十二宮星曜匹配賦文。"""
         from .shiti_jinfu import match_life  # noqa: PLC0415
-        return match_life(self, sex)
+        return match_life(self, sex, plate_ji=plate_ji)
 
-    def shiti_jinfu_text(self, sex):
+    def shiti_jinfu_text(self, sex, plate_ji: int = 4):
         from .shiti_jinfu import format_text, match_life  # noqa: PLC0415
-        return format_text(match_life(self, sex))
+        return format_text(match_life(self, sex, plate_ji=plate_ji))
     
     def shi_geju(self, ji_style, taiyi_acumyear):
         """釋格局：依《太乙統宗寶鑑》卷四「釋掩迫關囚擊格對提挾執提四郭固四郭社」

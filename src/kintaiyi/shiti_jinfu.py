@@ -145,12 +145,12 @@ _STAR_NAMES_ORDERED = (
 )
 
 
-def match_life(taiyi, sex: str, life: dict | None = None) -> dict:
+def match_life(taiyi, sex: str, life: dict | None = None, *, plate_ji: int = 4) -> dict:
     """依太乙命法十二宮星曜匹配十提金賦。
 
     life 為已算好的命法 dict 時直接取用，避免 taiyi_life → shiti_jinfu 遞迴。
     """
-    palaces = taiyi.gongs_discription_list(sex)
+    palaces = taiyi.gongs_discription_list(sex, plate_ji)
     if life is None:
         palace_arr = taiyi._twelve_palace_map(sex)
         ming_zhi = next(iter(palace_arr))
