@@ -65,6 +65,48 @@ def _life_method_label(style: int) -> str:
     if style == 6:
         return to("太乙命法")
     return t("taiyi_life_method")
+
+
+def _render_zhao_you_songs(zhao_you: dict, *, preview: int = 6) -> None:
+    """命法區：照限游年歌匹配結果（預覽＋全文展開）。"""
+    songs = zhao_you.get("星歌") or []
+    zhao = zhao_you.get("照限") or {}
+    youn = zhao_you.get("游年") or {}
+    st.markdown(
+        f"{t('zhao_you')}"
+        f"{zhao.get('類型', '')}限{zhao.get('地支', '')}｜"
+        f"{youn.get('年份', '')}年{youn.get('地支', '')}"
+    )
+    if zhao.get("星曜"):
+        st.caption(f"照限星：{'、'.join(zhao['星曜'])}")
+    if youn.get("星曜"):
+        st.caption(f"游年星：{'、'.join(youn['星曜'])}")
+    if not songs:
+        st.caption(t("sector_panel_empty"))
+        return
+    st.caption(t("zhao_you_count").format(n=len(songs)))
+    for song in songs[:preview]:
+        scope = []
+        if song.get("照限"):
+            scope.append(t("zhao_you_scope_zhao"))
+        if song.get("游年"):
+            scope.append(t("zhao_you_scope_you"))
+        st.markdown(
+            f"**【{'·'.join(scope)}·{song.get('星', '')}】** {song.get('歌訣', '')}"
+        )
+    if len(songs) > preview:
+        with st.expander(t("zhao_you_detail"), expanded=False):
+            for song in songs:
+                scope = []
+                if song.get("照限"):
+                    scope.append(t("zhao_you_scope_zhao"))
+                if song.get("游年"):
+                    scope.append(t("zhao_you_scope_you"))
+                st.markdown(
+                    f"**【{'·'.join(scope)}·{song.get('星', '')}】** {song.get('歌訣', '')}"
+                )
+
+
 import re
 
 
@@ -286,7 +328,10 @@ TRANSLATIONS = {
         "rugua_xian": "百六入卦限︰",
         "yangjiu_sanxian": "陽九入三限︰",
         "wangxian_lun": "旺陷獨處同宮論︰",
-        "zhao_you_detail": "照限游年歌",
+        "zhao_you_detail": "照限游年歌全文",
+        "zhao_you_count": "共 {n} 首",
+        "zhao_you_scope_zhao": "照限",
+        "zhao_you_scope_you": "游年",
         "wangxian_detail": "星論詳情",
         "feifu_sisha": "飛符四殺︰",
         "junshi_vol15": "軍事應用︰",
@@ -496,7 +541,10 @@ TRANSLATIONS = {
         "rugua_xian": "Bailiu Hexagram Limits: ",
         "yangjiu_sanxian": "Yangjiu Three Limits: ",
         "wangxian_lun": "Star Prosperity Songs: ",
-        "zhao_you_detail": "Limit-Year Songs",
+        "zhao_you_detail": "Full limit-year songs",
+        "zhao_you_count": "{n} songs matched",
+        "zhao_you_scope_zhao": "Limit",
+        "zhao_you_scope_you": "Year",
         "wangxian_detail": "Star Discourse",
         "feifu_sisha": "Flying Talisman Four Kills: ",
         "junshi_vol15": "Military Application: ",
@@ -1590,17 +1638,31 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         }
         #__CONTAINER_ID__ .taiyi-stage-frame {
             width: 100%;
-            padding: 10px;
+            padding: 6px;
         }
         #__CONTAINER_ID__ .taiyi-svg-root {
             max-width: 100%;
         }
         #__CONTAINER_ID__ .taiyi-svg-root text,
         #__CONTAINER_ID__ .taiyi-svg-root tspan {
-            font-size: 8.5px !important;
+            font-size: 11.5px !important;
         }
         #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector > text {
-            font-size: 7.8px !important;
+            font-size: 10.5px !important;
+        }
+        #__CONTAINER_ID__ .taiyi-svg-root #layer1 text,
+        #__CONTAINER_ID__ .taiyi-svg-root #layer1 tspan {
+            font-size: 13px !important;
+        }
+        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-geju-label {
+            font-size: 11px !important;
+        }
+        #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root text,
+        #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root tspan {
+            font-size: 11px !important;
+        }
+        #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root .taiyi-sector > text {
+            font-size: 10px !important;
         }
     }
     </style>
@@ -3203,28 +3265,7 @@ with tabs[0]:
                                     for item in _wx.get("同宮論歌") or []:
                                         st.markdown(f"**{item.get('宮')}** {item.get('星組')}")
                                         st.caption((item.get("論歌") or "")[:120])
-                            _zy = _v20.get("照限游年", {})
-                            _zz = _zy.get("照限", {})
-                            _yz = _zy.get("游年", {})
-                            st.markdown(
-                                f"{t('zhao_you')}"
-                                f"{_zz.get('類型', '')}限{_zz.get('地支', '')}｜"
-                                f"{_yz.get('年份', '')}年{_yz.get('地支', '')}"
-                            )
-                            for song in (_zy.get("星歌") or [])[:3]:
-                                scope = []
-                                if song.get("照限"):
-                                    scope.append("照限")
-                                if song.get("游年"):
-                                    scope.append("游年")
-                                st.caption(
-                                    f"【{'·'.join(scope)}·{song.get('星', '')}】"
-                                    f"{song.get('歌訣', '')[:80]}"
-                                )
-                            if len(_zy.get("星歌") or []) > 3:
-                                with st.expander(t("zhao_you_detail"), expanded=False):
-                                    for song in _zy.get("星歌") or []:
-                                        st.markdown(f"**{song.get('星', '')}** {song.get('歌訣', '')}")
+                            _render_zhao_you_songs(_v20.get("照限游年", {}))
                             _gj = _v20.get("命盤格局", {})
                             if _gj:
                                 st.markdown(

@@ -880,7 +880,7 @@ def build_geju_overlay_svg(
             f'x="{cx:.2f}" y="{cy:.2f}" text-anchor="middle" dominant-baseline="middle" '
             f'fill="{text_color}" font-size="{_GEJU_LABEL_FONT_SIZE}" font-weight="700" '
             f'font-family="Noto Serif SC, KaiTi, serif" '
-            f'style="fill:{text_color} !important;font-size:{_GEJU_LABEL_FONT_SIZE}px !important;'
+            f'style="fill:{text_color} !important;'
             f'font-weight:700;paint-order:stroke;stroke:#141826;'
             f'stroke-width:{_GEJU_LABEL_STROKE_WIDTH}px;stroke-linejoin:round">'
             f"{label}</text>"
