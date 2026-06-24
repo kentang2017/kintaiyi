@@ -1624,9 +1624,9 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         #__CONTAINER_ID__ { padding-top: 0; padding-bottom: 0; }
         #__CONTAINER_ID__ .taiyi-card {
             border-radius: 18px;
-            padding: 5px;
+            padding: 3px;
         }
-        #__CONTAINER_ID__ .taiyi-card::before { inset: 8px; }
+        #__CONTAINER_ID__ .taiyi-card::before { inset: 6px; }
         #__CONTAINER_ID__ .taiyi-btn {
             width: 100%;
             text-align: center;
@@ -1638,31 +1638,31 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         }
         #__CONTAINER_ID__ .taiyi-stage-frame {
             width: 100%;
-            padding: 6px;
+            padding: 3px;
         }
         #__CONTAINER_ID__ .taiyi-svg-root {
             max-width: 100%;
         }
         #__CONTAINER_ID__ .taiyi-svg-root text,
         #__CONTAINER_ID__ .taiyi-svg-root tspan {
-            font-size: 11.5px !important;
+            font-size: 14px !important;
         }
         #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector > text {
-            font-size: 10.5px !important;
+            font-size: 12.5px !important;
         }
         #__CONTAINER_ID__ .taiyi-svg-root #layer1 text,
         #__CONTAINER_ID__ .taiyi-svg-root #layer1 tspan {
-            font-size: 13px !important;
+            font-size: 16px !important;
         }
         #__CONTAINER_ID__ .taiyi-svg-root .taiyi-geju-label {
-            font-size: 11px !important;
+            font-size: 12.5px !important;
         }
         #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root text,
         #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root tspan {
-            font-size: 11px !important;
+            font-size: 13px !important;
         }
         #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root .taiyi-sector > text {
-            font-size: 10px !important;
+            font-size: 11.5px !important;
         }
     }
     </style>
