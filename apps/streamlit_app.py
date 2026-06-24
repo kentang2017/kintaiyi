@@ -32,8 +32,17 @@ from kintaiyi.chart_view import (
     build_chart_view_model,
     build_geju_overlay_svg,
     build_geju_sector_markers,
+    geju_label_css,
+    mark_wenchang_spots_in_svg,
+    wenchang_spot_chart_css,
+    wuxing_theme_chart_css,
+    build_guxu_chart_model,
+    build_guxu_overlay_svg,
+    build_guxu_sector_hints,
     chart_svg_layout,
+    guxu_rotate_layer,
     sector_panel_layer_labels,
+    _layer2_gong_order,
 )
 
 import cn2an
@@ -65,6 +74,43 @@ def _life_method_label(style: int) -> str:
     if style == 6:
         return to("太乙命法")
     return t("taiyi_life_method")
+
+
+def _format_neiwai_gongji(nw: dict | None) -> str:
+    """內外占攻擊摘要：孤虛、宜攻方向與斷語。"""
+    if not nw:
+        return "—"
+    guxu = nw.get("孤虛", "—")
+    attack = nw.get("宜攻", "—")
+    verdict = nw.get("斷語", "—")
+    if st.session_state.get("lang", "zh") == "en":
+        return f"{guxu}, attack {attack} ({verdict})"
+    return f"{guxu}，宜攻{attack}（{verdict}）"
+
+
+def _format_guxu_duizhao(gx: dict | None) -> str:
+    """卷五攻擊與卷十七求索之孤虛對照摘要。"""
+    if not gx:
+        return ""
+    v5 = gx.get("卷五") or {}
+    v17 = gx.get("卷十七") or {}
+    attack_dir = v5.get("宜攻", "—")
+    seek_result = v17.get("求索", "—")
+    if st.session_state.get("lang", "zh") == "en":
+        return (
+            f"{t('guxu_duizhao')}"
+            f"{gx.get('孤虛', '—')} (sky-eye {gx.get('天目內外', '—')}); "
+            f"attack {attack_dir} ({v5.get('斷語', '')}); "
+            f"seek {seek_result}; "
+            f"{gx.get('對照', '')}: {gx.get('對照斷語', '')}"
+        )
+    return (
+        f"{t('guxu_duizhao')}"
+        f"{gx.get('孤虛', '—')}（天目{gx.get('天目內外', '—')}）·"
+        f"宜攻{attack_dir}（{v5.get('斷語', '')}）；"
+        f"求索{seek_result}；"
+        f"{gx.get('對照', '')}：{gx.get('對照斷語', '')}"
+    )
 
 
 def _render_zhao_you_songs(zhao_you: dict, *, preview: int = 6) -> None:
@@ -180,6 +226,8 @@ TRANSLATIONS = {
         "life_gender": "太乙命法性別",
         "rotation_label": "轉盤",
         "geju_markers_toggle": "顯示釋格局標記",
+        "guxu_overlay_toggle": "顯示孤虛標記",
+        "wuxing_color_toggle": "五行彩色排盤",
         "instant_btn": "即時盤",
         "ai_settings": "AI設置",
         "ai_provider": "AI 服務商",
@@ -295,6 +343,7 @@ TRANSLATIONS = {
         "wuyun_liuqi": "五運六氣︰",
         "wuyin_shu": "五音之數︰",
         "junshi_vol5": "軍事戰略︰",
+        "guxu_duizhao": "孤虛對照︰",
         "vol11": "州國災變︰",
         "tongyun_rugua": "統運入卦︰",
         "liunian_zhigua": "流年直卦︰",
@@ -393,6 +442,8 @@ TRANSLATIONS = {
         "life_gender": "Life Method Gender",
         "rotation_label": "Rotation",
         "geju_markers_toggle": "Show pattern markers (釋格局)",
+        "guxu_overlay_toggle": "Show Gu-Xu markers",
+        "wuxing_color_toggle": "Five-element color chart",
         "instant_btn": "Instant Chart",
         "ai_settings": "AI Settings",
         "ai_provider": "AI Provider",
@@ -508,6 +559,7 @@ TRANSLATIONS = {
         "wuyun_liuqi": "Five Movements & Six Qi: ",
         "wuyin_shu": "Five-Tone Numbers: ",
         "junshi_vol5": "Military Strategy: ",
+        "guxu_duizhao": "Gu-Xu Compare: ",
         "vol11": "State Disasters: ",
         "tongyun_rugua": "Cycle Hexagram: ",
         "liunian_zhigua": "Annual Hexagram: ",
@@ -806,7 +858,7 @@ def _chart_visual_text():
             "legend_ivory": "Ivory · labels, symbols, and fine inscriptions",
             "interaction_title": "Interaction",
             "rotation_hint": "Drag layers 4 and 6 to rotate. Tap for ±30° stepped viewing.",
-            "paint_hint": "Tap a sector for details and sync-highlight matching rings (up to four colors).",
+            "paint_hint": "Tap sectors on rings 3–5 to sync-highlight (same angle, up to 4 sectors).",
             "sector_panel_title": "Sector Reading",
             "sector_panel_empty": "No reading for this sector.",
             "sector_panel_geju": "Patterns (釋格局)",
@@ -815,10 +867,14 @@ def _chart_visual_text():
 
             "reset": "Reset View",
             "download_png": "Download Plate",
+            "toggle_geju_follow": "Patterns Follow",
+            "toggle_geju_fixed": "Patterns Fixed",
             "add_note": "Add Note",
-            "toggle_style_dense": "Data-Dense",
-            "toggle_style_compact": "Compact",
-            "toggle_style_traditional": "Traditional",
+        "toggle_style_dense": "Data-Dense",
+        "toggle_style_compact": "Compact",
+        "toggle_style_traditional": "Traditional",
+        "toggle_wuxing_color": "Five-Element Colors",
+        "toggle_wuxing_traditional": "Traditional Style",
             "tooltip_fallback": "Taiyi sector",
             "chart_kind": "Chart",
             "export_title": "Taiyi Plate",
@@ -845,7 +901,7 @@ def _chart_visual_text():
         "legend_ivory": "象牙白 · 盤面文字與細部刻記",
         "interaction_title": "互動",
         "rotation_hint": "拖曳第 4、6 層可旋轉，輕點則以 ±30° 校覽。",
-        "paint_hint": "點選扇區查看斷事，並聯動著色同角度外環（最多四色）。",
+        "paint_hint": "點選第3、4、5層扇區可聯動著色（同角度三層同步，最多四個扇區）。",
         "sector_panel_title": "扇區斷事",
         "sector_panel_empty": "此扇區尚無斷事資料。",
         "sector_panel_geju": "釋格局",
@@ -854,10 +910,14 @@ def _chart_visual_text():
 
         "reset": "重置視圖",
         "download_png": "下載盤式",
+        "toggle_geju_follow": "格局跟盤",
+        "toggle_geju_fixed": "格局固定",
         "add_note": "加入文字",
         "toggle_style_dense": "資料密集",
         "toggle_style_compact": "簡盤",
         "toggle_style_traditional": "傳統風格",
+        "toggle_wuxing_color": "五行彩色",
+        "toggle_wuxing_traditional": "傳統著色",
         "tooltip_fallback": "太乙盤位",
         "chart_kind": "盤式",
         "export_title": "太乙式盤",
@@ -894,7 +954,14 @@ def _load_export_qrcode_data_uri() -> str:
     return ""
 
 
-def _build_chart_meta(results: dict, is_life_chart: bool, *, show_geju_markers: bool = True) -> dict:
+def _build_chart_meta(
+    results: dict,
+    is_life_chart: bool,
+    *,
+    show_geju_markers: bool = True,
+    show_guxu_overlay: bool = True,
+    wuxing_color: bool = True,
+) -> dict:
     """Assemble display-only metadata for the Taiyi chart header/legend."""
     ui = _chart_visual_text()
     ty_instance = results.get("ty")
@@ -925,7 +992,7 @@ def _build_chart_meta(results: dict, is_life_chart: bool, *, show_geju_markers: 
         info_chips.append((ui["five_yuan"], results.get("wuyuan", "—")))
 
     highlights = [
-        "太乙", "文昌", "主筭", "客筭", "定筭",
+        "太乙", "主筭", "客筭", "定筭",
         str(results.get("homecal", "")),
         str(results.get("awaycal", "")),
         str(results.get("setcal", "")),
@@ -995,31 +1062,53 @@ def _build_chart_meta(results: dict, is_life_chart: bool, *, show_geju_markers: 
         ty=ty_obj,
         tn=results.get("tn", 0),
     )
-    geju_markers = build_geju_sector_markers(ttext) if show_geju_markers else {}
+    mishu_text = results.get("ts") or ""
+    geju_markers = (
+        build_geju_sector_markers(ttext, mishu_text=mishu_text)
+        if show_geju_markers
+        else {}
+    )
     _raw_svg = results.get("genchart1" if is_life_chart else "genchart2") or ""
+    view_half = _svg_view_half(_raw_svg, 500)
     geju_overlay_svg = (
         build_geju_overlay_svg(
             ttext,
             chart_style=chart_style,
             is_life=is_life_chart,
-            view_half=_svg_view_half(_raw_svg, 500),
+            view_half=view_half,
+            mishu_text=mishu_text,
         )
         if show_geju_markers
         else ""
     )
+    guxu_model = build_guxu_chart_model(ttext) if show_guxu_overlay and not is_life_chart else None
+    guxu_overlay_svg = (
+        build_guxu_overlay_svg(
+            ttext,
+            chart_style=chart_style,
+            is_life=is_life_chart,
+            view_half=view_half,
+        )
+        if show_guxu_overlay and not is_life_chart
+        else ""
+    )
     chart_layout = chart_svg_layout(chart_style, is_life=is_life_chart)
+    chart_layout = {
+        **chart_layout,
+        "guxu_rotate_layer": guxu_rotate_layer(chart_style, is_life=is_life_chart),
+    }
     sync_nums = "、".join(lid.replace("layer", "") for lid in chart_layout["sync_layers"])
     ui_out = dict(ui)
     is_en = st.session_state.get("lang", "zh") == "en"
     if is_en:
         ui_out["sector_click_hint"] = ui["sector_click_hint"]
         ui_out["paint_hint"] = (
-            f"Tap a sector for details; layers {sync_nums} sync-highlight at the same angle (up to 4 colors)."
+            f"Tap rings {sync_nums} to sync-highlight (up to 4 sectors)."
         )
     else:
         ui_out["sector_click_hint"] = ui["sector_click_hint"]
         ui_out["paint_hint"] = (
-            f"點選扇區查看斷事，第{sync_nums}層同角度聯動著色（最多四色）。"
+            f"點選第{sync_nums}層扇區可聯動著色（同角度同步，最多四個扇區）。"
         )
     rotate_layers = chart_layout.get("rotate_layers") or []
     if rotate_layers:
@@ -1038,9 +1127,20 @@ def _build_chart_meta(results: dict, is_life_chart: bool, *, show_geju_markers: 
     sector_panel = {
         "sectors": chart_view.get("sectors") or {},
         "geju": geju_markers,
+        "guxu": build_guxu_sector_hints(guxu_model) if guxu_model else {},
         "layer_labels": sector_panel_layer_labels(
             is_life=is_life_chart, chart_style=chart_style,
         ),
+        "layer2_gongs": _layer2_gong_order(ttext) if not is_life_chart else [],
+        "gong_by_branch": {
+            br: config.gong2.get(br)
+            for br in config.sixteen
+            if config.gong2.get(br)
+        },
+        "gong_names": {
+            str(i): config.num2gong(i) or ""
+            for i in (1, 2, 3, 4, 6, 7, 8, 9)
+        },
     }
 
     return {
@@ -1058,7 +1158,10 @@ def _build_chart_meta(results: dict, is_life_chart: bool, *, show_geju_markers: 
         "chart_view": chart_view,
         "geju_markers": geju_markers,
         "geju_overlay_svg": geju_overlay_svg,
+        "guxu_overlay_svg": guxu_overlay_svg,
         "show_geju_markers": show_geju_markers,
+        "show_guxu_overlay": show_guxu_overlay and not is_life_chart,
+        "wuxing_color": wuxing_color,
         "chart_layout": chart_layout,
         "sector_panel": sector_panel,
         "export_title": export_title,
@@ -1099,20 +1202,20 @@ def _prepare_svg_markup(svg: str, svg_id: str, num: int, aria_label: str) -> str
 
 
 def _chart_svg_with_geju(raw_svg: str, chart_meta: dict) -> str:
-    """Pre-inject geju labels into chart SVG before Streamlit renders it."""
-    if not chart_meta.get("show_geju_markers"):
-        return raw_svg
-    overlay = chart_meta.get("geju_overlay_svg", "")
-    if not overlay:
-        return raw_svg
-    return _inject_geju_overlay(raw_svg, overlay)
+    """Pre-inject geju / guxu overlays into chart SVG before Streamlit renders it."""
+    svg = mark_wenchang_spots_in_svg(raw_svg)
+    if chart_meta.get("show_geju_markers"):
+        svg = _inject_chart_overlay(svg, chart_meta.get("geju_overlay_svg", ""), "taiyi-geju-overlay")
+    if chart_meta.get("show_guxu_overlay"):
+        svg = _inject_chart_overlay(svg, chart_meta.get("guxu_overlay_svg", ""), "taiyi-guxu-overlay")
+    return svg
 
 
-def _inject_geju_overlay(svg_markup: str, overlay_svg: str) -> str:
-    """Append server-rendered geju markers before the closing </svg> tag."""
-    if not overlay_svg or "taiyi-geju-overlay" not in overlay_svg:
+def _inject_chart_overlay(svg_markup: str, overlay_svg: str, marker_class: str) -> str:
+    """Append server-rendered overlay group before the closing </svg> tag."""
+    if not overlay_svg or marker_class not in overlay_svg:
         return svg_markup
-    if "taiyi-geju-overlay" in svg_markup:
+    if marker_class in svg_markup:
         return svg_markup
     lower = svg_markup.lower()
     closing = lower.rfind("</svg>")
@@ -1136,6 +1239,141 @@ def _svg_view_half(svg: str, fallback: int) -> float:
     return float(fallback) / 2.0
 
 
+def _chart_export_overlay_css(glow_id: str, scope: str = ".taiyi-svg-root") -> str:
+    """Export rules shared by all style modes (孤虛／釋格局／文昌／重點高亮)."""
+    return f"""
+    {scope} .taiyi-guxu-border-inner {{
+        fill: none !important;
+        stroke: #4D8CFF !important;
+        stroke-width: 4.5px !important;
+        vector-effect: non-scaling-stroke;
+    }}
+    {scope} .taiyi-guxu-border-outer {{
+        fill: none !important;
+        stroke: #FFBF00 !important;
+        stroke-width: 4.5px !important;
+        vector-effect: non-scaling-stroke;
+    }}
+    {scope} .taiyi-guxu-arrow {{
+        stroke: #FFB300 !important;
+        stroke-width: 2.4px !important;
+    }}
+    {scope} .taiyi-guxu-label-inner,
+    {scope} .taiyi-guxu-label-sky-inner {{
+        fill: #4D8CFF !important;
+    }}
+    {scope} .taiyi-guxu-label-outer,
+    {scope} .taiyi-guxu-label-sky-outer {{
+        fill: #FFBF00 !important;
+    }}
+    {scope} .taiyi-guxu-label-attack {{
+        fill: #FFD54F !important;
+    }}
+""" + geju_label_css().replace(".taiyi-svg-root", scope) + wenchang_spot_chart_css(scope) + f"""
+    {scope} .taiyi-key-spot {{
+        fill: #fdf5cf !important;
+        font-weight: 700 !important;
+    }}
+    {scope} .taiyi-key-sector {{
+        stroke: rgba(212, 175, 55, 0.95) !important;
+        stroke-width: 2.3 !important;
+    }}
+    {scope} .taiyi-user-mark {{
+        stroke: rgba(245, 240, 225, 0.92) !important;
+        stroke-width: 2.1 !important;
+    }}
+    {scope} .taiyi-user-label {{
+        fill: #f5f0e1 !important;
+        font-weight: 700 !important;
+    }}
+    {scope} .taiyi-key-spot,
+    {scope} .taiyi-user-mark,
+    {scope} .taiyi-key-sector {{ filter: url(#{glow_id}); }}
+    """
+
+
+def _chart_export_css_bundle(glow_id: str) -> dict[str, str]:
+    """Per-mode SVG export CSS so downloaded PNG matches on-screen styling."""
+    scope = ".taiyi-svg-root"
+    shell = f"""
+    {scope} {{
+        background: radial-gradient(circle at 50% 44%, #1c2540 0%, #11172b 58%, #090c18 100%);
+        border-radius: 50%;
+    }}
+    {scope} path, {scope} polygon, {scope} rect, {scope} circle, {scope} ellipse {{
+        stroke: #d7bd6f !important;
+        stroke-width: 1.2 !important;
+        vector-effect: non-scaling-stroke;
+    }}
+    """
+    traditional_layers = f"""
+    {scope} text, {scope} tspan {{
+        fill: #f5f0e1 !important;
+        font-family: "Noto Serif SC", "Source Han Serif", "KaiTi", serif !important;
+        font-weight: 600 !important;
+    }}
+    {scope} .taiyi-sector > text {{
+        font-size: 9px !important;
+    }}
+    {scope} #layer1 path, {scope} #layer1 circle, {scope} #layer1 ellipse {{
+        fill: #c9a227 !important;
+    }}
+    {scope} #layer1 text, {scope} #layer1 tspan {{
+        fill: #f5f0e1 !important;
+        font-size: 11px !important;
+        font-weight: 700 !important;
+    }}
+    {scope} #layer2 path, {scope} #layer2 polygon, {scope} #layer2 rect {{
+        fill: rgba(20, 46, 68, 0.78) !important;
+    }}
+    {scope} #layer3 path, {scope} #layer3 polygon, {scope} #layer3 rect {{
+        fill: rgba(10, 28, 43, 0.88) !important;
+    }}
+    {scope} #layer4 path, {scope} #layer4 polygon, {scope} #layer4 rect {{
+        fill: rgba(15, 43, 62, 0.92) !important;
+    }}
+    {scope} #layer5 path, {scope} #layer5 polygon, {scope} #layer5 rect {{
+        fill: rgba(31, 49, 78, 0.82) !important;
+    }}
+    {scope} #layer6 path, {scope} #layer6 polygon, {scope} #layer6 rect {{
+        fill: rgba(17, 39, 56, 0.84) !important;
+    }}
+    {scope} #layer7 path, {scope} #layer7 polygon, {scope} #layer7 rect {{
+        fill: rgba(8, 22, 40, 0.95) !important;
+    }}
+    """
+    dense_overrides = f"""
+    {scope} text, {scope} tspan {{
+        font-size: 10px !important;
+        letter-spacing: 0.02em;
+    }}
+    {scope} .taiyi-sector > text {{
+        font-size: 9px !important;
+    }}
+    """
+    wuxing_layers = (
+        f"""
+    {scope} text, {scope} tspan {{
+        font-family: "Noto Serif SC", "Source Han Serif", "KaiTi", serif !important;
+        font-size: 9.5px !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.03em;
+    }}
+    {scope} .taiyi-sector > text {{
+        font-size: 8.5px !important;
+    }}
+"""
+        + wuxing_theme_chart_css(scope)
+    )
+    overlays = _chart_export_overlay_css(glow_id, scope)
+    traditional = shell + traditional_layers + overlays
+    return {
+        "traditional": traditional,
+        "dense": shell + traditional_layers + dense_overrides + overlays,
+        "wuxing": shell + wuxing_layers + overlays,
+    }
+
+
 def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool) -> None:
     """Render the Taiyi SVG inside a themed responsive shell without touching calculation logic."""
     if not svg or "svg" not in svg.lower():
@@ -1150,14 +1388,17 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     )
     component_key = hashlib.md5(
         f"{svg}|{interactive}|{chart_meta.get('show_geju_markers')}|"
-        f"{chart_meta.get('geju_overlay_svg', '')}|{sector_panel_json}".encode("utf-8")
+        f"{chart_meta.get('geju_overlay_svg', '')}|{chart_meta.get('show_guxu_overlay')}|"
+        f"{chart_meta.get('guxu_overlay_svg', '')}|{chart_meta.get('wuxing_color')}|"
+        f"{sector_panel_json}".encode("utf-8")
     ).hexdigest()[:10]
+    initial_style_mode = "wuxing" if chart_meta.get("wuxing_color") else "traditional"
     container_id = f"taiyi-shell-{component_key}"
     svg_id = f"taiyi-svg-{component_key}"
     glow_id = f"taiyi-glow-{component_key}"
-    svg_markup = _inject_geju_overlay(
+    svg_markup = _chart_svg_with_geju(
         _prepare_svg_markup(svg, svg_id, num, chart_meta["title"]),
-        chart_meta.get("geju_overlay_svg", ""),
+        chart_meta,
     )
 
     chips_html = "".join(
@@ -1179,38 +1420,11 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         for color_name, detail in chart_meta["legend"]
     )
 
-    export_css = """
-    .taiyi-svg-root {
-        background: radial-gradient(circle at 50% 44%, #1c2540 0%, #11172b 58%, #090c18 100%);
-        border-radius: 50%;
-    }
-    .taiyi-svg-root path, .taiyi-svg-root polygon, .taiyi-svg-root rect, .taiyi-svg-root circle, .taiyi-svg-root ellipse {
-        stroke: #d7bd6f !important;
-        stroke-width: 1.2 !important;
-        vector-effect: non-scaling-stroke;
-    }
-    .taiyi-svg-root text, .taiyi-svg-root tspan {
-        fill: #f5f0e1 !important;
-        font-family: "Noto Serif SC", "Source Han Serif", "KaiTi", serif !important;
-        font-weight: 600 !important;
-    }
-    .taiyi-svg-root .taiyi-sector > text {
-        font-size: 9px !important;
-    }
-    .taiyi-svg-root #layer1 path, .taiyi-svg-root #layer1 circle, .taiyi-svg-root #layer1 ellipse { fill: #c9a227 !important; }
-    .taiyi-svg-root #layer2 path, .taiyi-svg-root #layer2 polygon, .taiyi-svg-root #layer2 rect { fill: rgba(24, 56, 84, 0.95) !important; }
-    .taiyi-svg-root #layer3 path, .taiyi-svg-root #layer3 polygon, .taiyi-svg-root #layer3 rect { fill: rgba(14, 36, 56, 0.96) !important; }
-    .taiyi-svg-root #layer4 path, .taiyi-svg-root #layer4 polygon, .taiyi-svg-root #layer4 rect { fill: rgba(18, 52, 74, 0.97) !important; }
-    .taiyi-svg-root #layer5 path, .taiyi-svg-root #layer5 polygon, .taiyi-svg-root #layer5 rect { fill: rgba(34, 60, 94, 0.95) !important; }
-    .taiyi-svg-root #layer6 path, .taiyi-svg-root #layer6 polygon, .taiyi-svg-root #layer6 rect { fill: rgba(22, 48, 70, 0.96) !important; }
-    .taiyi-svg-root #layer7 path, .taiyi-svg-root #layer7 polygon, .taiyi-svg-root #layer7 rect { fill: rgba(10, 28, 50, 0.98) !important; }
-    .taiyi-svg-root .taiyi-key-spot,
-    .taiyi-svg-root .taiyi-user-mark,
-    .taiyi-svg-root .taiyi-key-sector { filter: url(#__GLOW_ID__); }
-    """
+    export_css_bundle = _chart_export_css_bundle(glow_id)
+    export_css = export_css_bundle["traditional"]
 
     template = """
-    <div id="__CONTAINER_ID__" class="taiyi-shell" data-style-mode="traditional" data-interactive="__INTERACTIVE__">
+    <div id="__CONTAINER_ID__" class="taiyi-shell" data-style-mode="__INITIAL_STYLE_MODE__" data-interactive="__INTERACTIVE__">
         <div class="taiyi-card">
             <div class="taiyi-stage">
                 <div class="taiyi-stage-frame">
@@ -1219,6 +1433,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                 </div>
                 <div class="taiyi-toolbar" aria-label="chart tools">
                     <button type="button" class="taiyi-btn" data-action="toggle-style">__STYLE_BUTTON__</button>
+                    <button type="button" class="taiyi-btn taiyi-btn-optional" data-action="toggle-geju-follow" hidden>__TOGGLE_GEJU_FOLLOW__</button>
                     <button type="button" class="taiyi-btn" data-action="reset">__RESET__</button>
                     <button type="button" class="taiyi-btn" data-action="add-note">__ADD_NOTE__</button>
                     <button type="button" class="taiyi-btn" data-action="download-png">__DOWNLOAD_PNG__</button>
@@ -1306,6 +1521,9 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         align-items: center;
         margin-top: 6px;
         padding: 0 4px 0;
+    }
+    #__CONTAINER_ID__ .taiyi-toolbar.has-geju-follow {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
     }
     #__CONTAINER_ID__ .taiyi-btn {
         appearance: none;
@@ -1397,8 +1615,10 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         stroke-width: 1.2 !important;
         transition: fill 180ms ease, stroke 180ms ease, filter 180ms ease, opacity 180ms ease;
     }
-    #__CONTAINER_ID__ .taiyi-svg-root text,
-    #__CONTAINER_ID__ .taiyi-svg-root tspan {
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root text,
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root tspan,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root text,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root tspan {
         fill: var(--ivory) !important;
         font-family: "Noto Serif SC", "Source Han Serif", "KaiTi", serif !important;
         font-size: 9.5px !important;
@@ -1406,42 +1626,80 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         letter-spacing: 0.03em;
         transition: fill 180ms ease, filter 180ms ease, opacity 180ms ease;
     }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector > text {
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root .taiyi-sector > text,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root .taiyi-sector > text {
         font-size: 8.5px !important;
     }
-    #__CONTAINER_ID__ .taiyi-svg-root #layer1 path,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer1 polygon,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer1 rect,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer1 circle,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer1 ellipse {
+    #__CONTAINER_ID__[data-style-mode="wuxing"] .taiyi-svg-root text,
+    #__CONTAINER_ID__[data-style-mode="wuxing"] .taiyi-svg-root tspan {
+        font-family: "Noto Serif SC", "Source Han Serif", "KaiTi", serif !important;
+        font-size: 9.5px !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.03em;
+        transition: fill 180ms ease, filter 180ms ease, opacity 180ms ease;
+    }
+    #__CONTAINER_ID__[data-style-mode="wuxing"] .taiyi-svg-root .taiyi-sector > text {
+        font-size: 8.5px !important;
+    }
+""" + wuxing_theme_chart_css("#__CONTAINER_ID__[data-style-mode=\"wuxing\"] .taiyi-svg-root") + """
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer1 path,
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer1 polygon,
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer1 rect,
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer1 circle,
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer1 ellipse,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer1 path,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer1 polygon,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer1 rect,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer1 circle,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer1 ellipse {
         fill: rgba(201, 162, 39, 0.94) !important;
         stroke: rgba(245, 240, 225, 0.82) !important;
         stroke-width: 1.8 !important;
     }
-    #__CONTAINER_ID__ .taiyi-svg-root #layer1 text,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer1 tspan {
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer1 text,
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer1 tspan,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer1 text,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer1 tspan {
         fill: #f5f0e1 !important;
         font-size: 11px !important;
         font-weight: 700 !important;
     }
-    #__CONTAINER_ID__ .taiyi-svg-root #layer2 path,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer2 polygon,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer2 rect { fill: rgba(20, 46, 68, 0.78) !important; }
-    #__CONTAINER_ID__ .taiyi-svg-root #layer3 path,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer3 polygon,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer3 rect { fill: rgba(10, 28, 43, 0.88) !important; }
-    #__CONTAINER_ID__ .taiyi-svg-root #layer4 path,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer4 polygon,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer4 rect { fill: rgba(15, 43, 62, 0.92) !important; }
-    #__CONTAINER_ID__ .taiyi-svg-root #layer5 path,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer5 polygon,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer5 rect { fill: rgba(31, 49, 78, 0.82) !important; }
-    #__CONTAINER_ID__ .taiyi-svg-root #layer6 path,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer6 polygon,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer6 rect { fill: rgba(17, 39, 56, 0.84) !important; }
-    #__CONTAINER_ID__ .taiyi-svg-root #layer7 path,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer7 polygon,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer7 rect { fill: rgba(8, 22, 40, 0.95) !important; }
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer2 path,
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer2 polygon,
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer2 rect,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer2 path,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer2 polygon,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer2 rect { fill: rgba(20, 46, 68, 0.78) !important; }
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer3 path,
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer3 polygon,
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer3 rect,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer3 path,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer3 polygon,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer3 rect { fill: rgba(10, 28, 43, 0.88) !important; }
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer4 path,
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer4 polygon,
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer4 rect,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer4 path,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer4 polygon,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer4 rect { fill: rgba(15, 43, 62, 0.92) !important; }
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer5 path,
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer5 polygon,
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer5 rect,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer5 path,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer5 polygon,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer5 rect { fill: rgba(31, 49, 78, 0.82) !important; }
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer6 path,
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer6 polygon,
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer6 rect,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer6 path,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer6 polygon,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer6 rect { fill: rgba(17, 39, 56, 0.84) !important; }
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer7 path,
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer7 polygon,
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer7 rect,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer7 path,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer7 polygon,
+    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer7 rect { fill: rgba(8, 22, 40, 0.95) !important; }
     #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root text,
     #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root tspan {
         font-size: 10px !important;
@@ -1479,6 +1737,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         fill: #fdf5cf !important;
         font-weight: 700 !important;
     }
+""" + wenchang_spot_chart_css("#__CONTAINER_ID__ .taiyi-svg-root") + """
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-key-sector {
         stroke: rgba(212, 175, 55, 0.95) !important;
         stroke-width: 2.3 !important;
@@ -1491,7 +1750,8 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         fill: #f5f0e1 !important;
         font-weight: 700 !important;
     }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-geju-overlay {
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-geju-overlay,
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-overlay {
         pointer-events: none;
     }
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-geju-label {
@@ -1501,6 +1761,41 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         font-size: 9px !important;
         font-weight: 700 !important;
         letter-spacing: 0.04em;
+    }
+""" + geju_label_css().replace(".taiyi-svg-root", "#__CONTAINER_ID__ .taiyi-svg-root") + """
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-label {
+        pointer-events: none;
+        user-select: none;
+        font-size: 9px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.04em;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-border-inner {
+        fill: none !important;
+        stroke: #4D8CFF !important;
+        stroke-width: 4.5px !important;
+        vector-effect: non-scaling-stroke;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-border-outer {
+        fill: none !important;
+        stroke: #FFBF00 !important;
+        stroke-width: 4.5px !important;
+        vector-effect: non-scaling-stroke;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-arrow {
+        stroke: #FFB300 !important;
+        stroke-width: 2.4px !important;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-label-inner,
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-label-sky-inner {
+        fill: #4D8CFF !important;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-label-outer,
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-label-sky-outer {
+        fill: #FFBF00 !important;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-label-attack {
+        fill: #FFD54F !important;
     }
     #__CONTAINER_ID__ .taiyi-sector-hint {
         margin: 8px 4px 0;
@@ -1654,7 +1949,8 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         #__CONTAINER_ID__ .taiyi-svg-root #layer1 tspan {
             font-size: 13.5px !important;
         }
-        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-geju-label {
+        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-geju-label,
+        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-label {
             font-size: 11px !important;
         }
         #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root text,
@@ -1682,11 +1978,20 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         const exportMeta = __EXPORT_META_JSON__;
         const chartLayout = __CHART_LAYOUT_JSON__;
         const sectorPanelData = __SECTOR_PANEL_JSON__;
+        const initialWuxingColor = __WUXING_COLOR__ === true || __WUXING_COLOR__ === "true";
         const sectorLookup = sectorPanelData.sectors || {};
-        const gejuByBranch = sectorPanelData.geju || {};
+        const gejuByGong = sectorPanelData.geju || {};
+        const guxuByBranch = sectorPanelData.guxu || {};
         const layerLabels = sectorPanelData.layer_labels || {};
+        const layer2Gongs = sectorPanelData.layer2_gongs || [];
+        const gongByBranch = sectorPanelData.gong_by_branch || {};
+        const gongNames = sectorPanelData.gong_names || {};
         const colorSyncLayers = chartLayout.sync_layers || ["layer3", "layer4", "layer5"];
         const rotateLayerIds = chartLayout.rotate_layers || [];
+        const gejuRotateLayerId = chartLayout.geju_rotate_layer || null;
+        const guxuRotateLayerId = chartLayout.guxu_rotate_layer || null;
+        const gejuOverlay = svg.querySelector(".taiyi-geju-overlay");
+        const guxuOverlay = svg.querySelector(".taiyi-guxu-overlay");
         const highlightPalette = ["#D4AF37", "#4A9C6D", "#7E8FA3", "#C41E3A"];
         const paletteByElement = {
             wood: { fill: "#4A9C6D", stroke: "#78C18D", text: "#F5F0E1" },
@@ -1723,6 +2028,8 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             drag: null,
             colored: new Map(),
             styleMode: "traditional",
+            wuxingColor: initialWuxingColor,
+            gejuFollowDisk: true,
             noteText: "",
             activeSectorKey: "",
         };
@@ -1940,6 +2247,10 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         function highlightImportantNodes() {
             const terms = highlightTerms.map((item) => compactText(String(item || ""))).filter(Boolean);
             svg.querySelectorAll("text").forEach((textNode) => {
+                if (textNode.classList.contains("taiyi-wenchang-spot")
+                    || textNode.querySelector(".taiyi-wenchang-spot")) {
+                    return;
+                }
                 const content = compactText(textNode.textContent);
                 if (!content) return;
                 if (terms.some((token) => token && content.includes(token))) {
@@ -1972,6 +2283,63 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             return Math.atan2(point.y - center.y, point.x - center.x) * 180 / Math.PI;
         }
 
+        function applyFollowOverlayRotation(overlay, immediate, rotateLayerId, labelSelector) {
+            if (!overlay || !rotateLayerId) return;
+            const anchorLayer = svg.querySelector("#" + rotateLayerId);
+            const center = anchorLayer ? getLayerCenter(anchorLayer) : getLayerCenter(svg);
+            overlay.style.transition = immediate ? "none" : "";
+            if (!state.gejuFollowDisk) {
+                overlay.removeAttribute("transform");
+                if (labelSelector) {
+                    overlay.querySelectorAll(labelSelector).forEach((label) => {
+                        label.removeAttribute("transform");
+                    });
+                }
+                return;
+            }
+            const angle = state.rotations[rotateLayerId] || 0;
+            overlay.setAttribute(
+                "transform",
+                "rotate(" + angle + " " + center.x + " " + center.y + ")"
+            );
+            if (labelSelector) {
+                overlay.querySelectorAll(labelSelector).forEach((label) => {
+                    const x = parseFloat(label.getAttribute("x") || center.x);
+                    const y = parseFloat(label.getAttribute("y") || center.y);
+                    label.setAttribute("transform", "rotate(" + (-angle) + " " + x + " " + y + ")");
+                });
+            }
+        }
+
+        function applyGuxuRotation(immediate) {
+            if (!guxuOverlay) return;
+            guxuOverlay.querySelectorAll(".taiyi-guxu-ring[data-rotate-layer]").forEach((group) => {
+                applyFollowOverlayRotation(
+                    group,
+                    immediate,
+                    group.getAttribute("data-rotate-layer"),
+                    ""
+                );
+            });
+            guxuOverlay.querySelectorAll(
+                ".taiyi-guxu-labels[data-rotate-layer], .taiyi-guxu-arrow-group[data-rotate-layer]"
+            ).forEach((group) => {
+                applyFollowOverlayRotation(
+                    group,
+                    immediate,
+                    group.getAttribute("data-rotate-layer"),
+                    ".taiyi-guxu-label"
+                );
+            });
+        }
+
+        function applyGejuRotation(immediate) {
+            applyFollowOverlayRotation(
+                gejuOverlay, immediate, gejuRotateLayerId, ".taiyi-geju-label"
+            );
+            applyGuxuRotation(immediate);
+        }
+
         function applyRotation(layerId, immediate) {
             const layer = svg.querySelector("#" + layerId);
             if (!layer) return;
@@ -1987,6 +2355,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                 const rotation = "rotate(" + (-angle) + " " + x + " " + y + ")";
                 textNode.setAttribute("transform", cleanText(base + " " + rotation));
             });
+            applyGejuRotation(immediate);
         }
 
         function rotateLayer(layerId, deltaAngle, immediate) {
@@ -2166,12 +2535,22 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             state.activeSectorKey = "";
         }
 
-        function renderGejuBlock(branch) {
-            if (!sectorPanelGeju || !branch) {
+        function gejuLookupKey(branch, layerId, sectorIdx) {
+            if (layerId === "layer2" && sectorIdx >= 0 && layer2Gongs[sectorIdx]) {
+                return String(layer2Gongs[sectorIdx]);
+            }
+            if (branch && gongByBranch[branch]) {
+                return String(gongByBranch[branch]);
+            }
+            return "";
+        }
+
+        function renderGejuBlock(gongKey) {
+            if (!sectorPanelGeju || !gongKey) {
                 if (sectorPanelGeju) sectorPanelGeju.innerHTML = "";
                 return;
             }
-            const items = gejuByBranch[branch] || [];
+            const items = gejuByGong[gongKey] || [];
             if (!items.length) {
                 sectorPanelGeju.innerHTML = "";
                 return;
@@ -2229,16 +2608,25 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             const posBranch = branch
                 || (sectorGroup ? sectorGroup.getAttribute("data-pos-branch") : "")
                 || (sectorGroup ? sectorGroup.getAttribute("data-branch") : "");
-            renderGejuBlock(posBranch);
+            const sectorIdx = Number.parseInt((key.split(":")[1] || "-1"), 10);
+            const layerId = key.split(":")[0] || "";
+            renderGejuBlock(gejuLookupKey(posBranch, layerId, sectorIdx));
+            if (listEl && posBranch && guxuByBranch[posBranch]) {
+                const guxuItem = document.createElement("li");
+                guxuItem.className = "taiyi-sector-panel-guxu";
+                guxuItem.textContent = guxuByBranch[posBranch];
+                listEl.appendChild(guxuItem);
+            }
             sectorPanel.hidden = false;
             queueFrameHeight();
         }
 
-        function openGejuPanel(branch) {
-            if (!branch || !sectorPanel) return;
+        function openGejuPanel(gongKey) {
+            if (!gongKey || !sectorPanel) return;
             clearSectorSelection();
             if (sectorPanelLayer) sectorPanelLayer.textContent = ui.sector_panel_geju || "釋格局";
-            if (sectorPanelTitle) sectorPanelTitle.textContent = branch;
+            const gongLabel = gongNames[gongKey] || gongKey;
+            if (sectorPanelTitle) sectorPanelTitle.textContent = gongLabel ? `${gongLabel}宮` : gongKey;
             const list = sectorPanel.querySelector(".taiyi-sector-panel-lines");
             if (list) {
                 list.innerHTML = "";
@@ -2246,7 +2634,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                 hint.textContent = ui.sector_click_hint || "";
                 list.appendChild(hint);
             }
-            renderGejuBlock(branch);
+            renderGejuBlock(gongKey);
             sectorPanel.hidden = false;
             queueFrameHeight();
         }
@@ -2271,8 +2659,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         function handleSectorPanelClick(sectorGroup, event) {
             event.preventDefault();
             event.stopPropagation();
-            const layerId = sectorGroup.getAttribute("data-layer") || "";
-            if (layerId && layerId !== "layer1") {
+            if (isColorableSector(sectorGroup)) {
                 handleSectorColorClick(sectorGroup, event);
             }
             openSectorPanelFromGroup(sectorGroup);
@@ -2291,21 +2678,25 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                 labelNode.addEventListener("click", (event) => {
                     event.preventDefault();
                     event.stopPropagation();
-                    openGejuPanel(labelNode.getAttribute("data-branch") || "");
+                    openGejuPanel(labelNode.getAttribute("data-gong") || "");
                 });
             });
             const closeButton = root.querySelector('[data-action="close-panel"]');
             if (closeButton) closeButton.addEventListener("click", closeSectorPanel);
         }
 
+        function isColorableSector(sectorGroup) {
+            const layerId = sectorGroup.getAttribute("data-layer") || "";
+            return colorSyncLayers.indexOf(layerId) !== -1;
+        }
+
         function handleSectorColorClick(sectorGroup, event) {
             event.preventDefault();
             event.stopPropagation();
-            const layerId = sectorGroup.getAttribute("data-layer") || "";
+            if (!isColorableSector(sectorGroup)) return;
             const fraction = getSectorFraction(sectorGroup);
-            const isSyncLayer = colorSyncLayers.indexOf(layerId) !== -1 && fraction !== null;
-            const key = isSyncLayer ? syncColorKey(fraction) : sectorColorKey(sectorGroup);
-            if (!key || key === ":") return;
+            if (fraction === null) return;
+            const key = syncColorKey(fraction);
             if (state.colored.has(key)) {
                 clearMarker(key);
                 state.colored.delete(key);
@@ -2314,16 +2705,12 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             if (state.colored.size >= highlightPalette.length) return;
             const color = highlightPalette[state.colored.size];
             state.colored.set(key, color);
-            if (isSyncLayer) {
-                applySyncMarker(fraction, color);
-            } else {
-                paintSectorGroup(sectorGroup, color);
-            }
+            applySyncMarker(fraction, color);
         }
 
         function setupColoring() {
             Array.from(svg.querySelectorAll(".taiyi-sector"))
-                .filter((sectorGroup) => sectorGroup.getAttribute("data-layer") !== "layer1")
+                .filter((sectorGroup) => isColorableSector(sectorGroup))
                 .forEach((sectorGroup) => sectorGroup.classList.add("taiyi-colorable"));
         }
 
@@ -2335,9 +2722,44 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             Array.from(state.colored.keys()).forEach((key) => clearMarker(key));
             state.colored.clear();
             closeSectorPanel();
-            root.setAttribute("data-style-mode", "traditional");
             state.styleMode = "traditional";
+            state.wuxingColor = initialWuxingColor;
+            state.gejuFollowDisk = true;
+            applyStyleMode();
             updateStyleButton();
+            updateGejuFollowButton();
+            applyGejuRotation(false);
+        }
+
+        function updateGejuFollowButton() {
+            const button = root.querySelector('[data-action="toggle-geju-follow"]');
+            if (!button || button.hidden) return;
+            button.textContent = state.gejuFollowDisk ? ui.toggle_geju_fixed : ui.toggle_geju_follow;
+            button.classList.toggle("is-active", state.gejuFollowDisk);
+            button.setAttribute("aria-pressed", state.gejuFollowDisk ? "true" : "false");
+        }
+
+        function toggleGejuFollow() {
+            state.gejuFollowDisk = !state.gejuFollowDisk;
+            applyGejuRotation(false);
+            updateGejuFollowButton();
+        }
+
+        function setupGejuFollowControl() {
+            const button = root.querySelector('[data-action="toggle-geju-follow"]');
+            const toolbar = root.querySelector(".taiyi-toolbar");
+            if (!button || !gejuOverlay || !gejuRotateLayerId) return;
+            if (rotateLayerIds.indexOf(gejuRotateLayerId) === -1) return;
+            button.hidden = false;
+            if (toolbar) toolbar.classList.add("has-geju-follow");
+            button.addEventListener("click", toggleGejuFollow);
+            updateGejuFollowButton();
+            applyGejuRotation(false);
+        }
+
+        function applyStyleMode() {
+            const mode = state.wuxingColor ? "wuxing" : state.styleMode;
+            root.setAttribute("data-style-mode", mode);
         }
 
         function updateStyleButton() {
@@ -2348,7 +2770,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
 
         function toggleStyleMode() {
             state.styleMode = state.styleMode === "traditional" ? "dense" : "traditional";
-            root.setAttribute("data-style-mode", state.styleMode);
+            applyStyleMode();
             updateStyleButton();
             setFrameHeight();
         }
@@ -2359,16 +2781,69 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             saveNote(nextValue);
         }
 
+        const exportCssByMode = __EXPORT_CSS_BY_MODE__;
+
+        function currentExportMode() {
+            return state.wuxingColor ? "wuxing" : state.styleMode;
+        }
+
+        function resolveExportCss() {
+            const mode = currentExportMode();
+            return (exportCssByMode && exportCssByMode[mode]) || exportCssByMode.traditional || __EXPORT_CSS__;
+        }
+
+        function bakeSvgVisualState(sourceRoot, targetRoot) {
+            const paintProps = [
+                "fill", "stroke", "stroke-width", "stroke-opacity", "fill-opacity",
+                "font-size", "font-weight", "font-family", "letter-spacing", "opacity",
+            ];
+            const sourceNodes = [sourceRoot, ...sourceRoot.querySelectorAll("*")];
+            const targetNodes = [targetRoot, ...targetRoot.querySelectorAll("*")];
+            sourceNodes.forEach((src, index) => {
+                const tgt = targetNodes[index];
+                if (!tgt || !src) return;
+                const computed = window.getComputedStyle(src);
+                paintProps.forEach((prop) => {
+                    const value = computed.getPropertyValue(prop);
+                    if (!value || value === "none" || value === "normal" || value === "rgba(0, 0, 0, 0)") {
+                        return;
+                    }
+                    tgt.style.setProperty(prop, value, "important");
+                });
+                if (src.hasAttribute("transform")) {
+                    tgt.setAttribute("transform", src.getAttribute("transform"));
+                }
+            });
+        }
+
+        function prepareSvgCloneForExport() {
+            closeSectorPanel();
+            const clone = svg.cloneNode(true);
+            clone.querySelectorAll(
+                ".taiyi-sector-active, .taiyi-rotatable, .is-dragging, .taiyi-colorable, .taiyi-sector-panel-target"
+            ).forEach((node) => {
+                node.classList.remove(
+                    "taiyi-sector-active",
+                    "taiyi-rotatable",
+                    "is-dragging",
+                    "taiyi-colorable",
+                    "taiyi-sector-panel-target"
+                );
+            });
+            bakeSvgVisualState(svg, clone);
+            const styleNode = document.createElementNS("http://www.w3.org/2000/svg", "style");
+            styleNode.textContent = resolveExportCss();
+            clone.insertBefore(styleNode, clone.firstChild);
+            return clone;
+        }
+
         function downloadPng() {
             const scale = 2;
             const viewBox = (svg.getAttribute("viewBox") || "0 0 __NUM__ __NUM__").split(/[ ,]+/);
             const width = parseFloat(viewBox[2]) || __NUM__;
             const height = parseFloat(viewBox[3]) || __NUM__;
 
-            const clone = svg.cloneNode(true);
-            const styleNode = document.createElementNS("http://www.w3.org/2000/svg", "style");
-            styleNode.textContent = __EXPORT_CSS__;
-            clone.insertBefore(styleNode, clone.firstChild);
+            const clone = prepareSvgCloneForExport();
 
             const serialized = new XMLSerializer().serializeToString(clone);
             const blob = new Blob([serialized], { type: "image/svg+xml;charset=utf-8" });
@@ -2522,7 +2997,9 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         highlightImportantNodes();
         setupSectorPanel();
         if (interactive) setupRotations();
+        setupGejuFollowControl();
         setupColoring();
+        applyStyleMode();
         updateStyleButton();
         updateNoteButton();
 
@@ -2542,7 +3019,10 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         template
         .replace("__CONTAINER_ID__", container_id)
         .replace("__INTERACTIVE__", "true" if interactive else "false")
+        .replace("__INITIAL_STYLE_MODE__", html_escape(initial_style_mode))
+        .replace("__WUXING_COLOR__", json.dumps(bool(chart_meta.get("wuxing_color"))))
         .replace("__STYLE_BUTTON__", html_escape(ui["toggle_style_dense"]))
+        .replace("__TOGGLE_GEJU_FOLLOW__", html_escape(ui["toggle_geju_fixed"]))
         .replace("__RESET__", html_escape(ui["reset"]))
         .replace("__ADD_NOTE__", html_escape(ui["add_note"]))
         .replace("__DOWNLOAD_PNG__", html_escape(ui["download_png"]))
@@ -2572,7 +3052,8 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         )
         .replace("__GLOW_ID__", glow_id)
         .replace("__NUM__", str(num))
-        .replace("__EXPORT_CSS__", json.dumps(export_css.replace("__GLOW_ID__", glow_id), ensure_ascii=False))
+        .replace("__EXPORT_CSS__", json.dumps(export_css, ensure_ascii=False))
+        .replace("__EXPORT_CSS_BY_MODE__", json.dumps(export_css_bundle, ensure_ascii=False))
     )
     html(html_content, height=max(920, abs(num) + 180), scrolling=False)
 
@@ -2700,6 +3181,11 @@ with st.sidebar:
     sex_o = st.selectbox(t("life_gender"), ('男', '女'), format_func=to)
     rotation = st.selectbox(t("rotation_label"), ('固定', '轉動'), format_func=to)
     show_geju_markers = st.toggle(t("geju_markers_toggle"), value=True, key="show_geju_markers")
+    show_wuxing_color = st.toggle(t("wuxing_color_toggle"), value=True, key="show_wuxing_color")
+    _is_life_option = option in ("太乙命法", "太乙命法 (魔改)")
+    show_guxu_overlay = False
+    if not _is_life_option:
+        show_guxu_overlay = st.toggle(t("guxu_overlay_toggle"), value=True, key="show_guxu_overlay")
 
     num_dict = {
         '時計太乙': 3, '年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '分計太乙': 4,
@@ -3175,7 +3661,10 @@ with tabs[0]:
                     try:
                         start_pt = results["genchart1"][results["genchart1"].index('''viewBox="''')+22:].split(" ")[1]
                         chart_meta = _build_chart_meta(
-                            results, is_life_chart=True, show_geju_markers=show_geju_markers,
+                            results,
+                            is_life_chart=True,
+                            show_geju_markers=show_geju_markers,
+                            wuxing_color=show_wuxing_color,
                         )
                         render_chart_explanation_seam()
                         life_svg = _chart_svg_with_geju(results["genchart1"], chart_meta)
@@ -3313,7 +3802,11 @@ with tabs[0]:
                     try:
                         start_pt2 = results["genchart2"][results["genchart2"].index('''viewBox="''')+22:].split(" ")[1]
                         chart_meta = _build_chart_meta(
-                            results, is_life_chart=False, show_geju_markers=show_geju_markers,
+                            results,
+                            is_life_chart=False,
+                            show_geju_markers=show_geju_markers,
+                            show_guxu_overlay=show_guxu_overlay,
+                            wuxing_color=show_wuxing_color,
                         )
                         render_chart_explanation_seam()
                         chart_svg = _chart_svg_with_geju(results["genchart2"], chart_meta)
@@ -3418,7 +3911,7 @@ with tabs[0]:
                             _js = _j5.get("將帥賢否", {}).get("我國將帥", {})
                             st.markdown(
                                 f"{t('junshi_vol5')}"
-                                f"{_nw.get('斷語', '—')}；"
+                                f"{_format_neiwai_gongji(_nw)}；"
                                 f"{_zk.get('斷語', '')}；"
                                 f"主算{_cd.get('長短', '—')}{_cd.get('和否', '')}（{_cd.get('斷語', '')}）；"
                                 f"{_zd.get('勝負', '')}")
@@ -3711,8 +4204,12 @@ with tabs[0]:
                                     f"見聞{_jw.get('天目內外', '—')}（{_jw.get('斷語', '')}）；"
                                     f"討捕{_tb.get('結果', '—')}（{'；'.join(_tb.get('得機', []))}）；"
                                     f"執囚{'可解' if _zq.get('可解') else '難解'}（{_zq.get('斷語', '')}）；"
-                                    f"求索{'有得' if _qs.get('有得') else '無得'}（{_qs.get('斷語', '')}）；"
+                                    f"求索{'有得' if _qs.get('有得') else '無得'}"
+                                    f"（{_qs.get('斷語', '')}）；"
                                     f"時計{_sj_items}")
+                            _gx17 = _format_guxu_duizhao(_jz.get("孤虛對照"))
+                            if _gx17:
+                                st.markdown(_gx17)
                         # —— 卷二／卷七：神將所主 ——
                         _sj = results["ttext"].get("神將所主", {})
                         if _sj:

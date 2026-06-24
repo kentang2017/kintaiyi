@@ -33,6 +33,8 @@ _PALACE_TEMPLATE = {
 _BAGUA_BY_GONG_NUM = {
     1: "乾", 2: "離", 3: "艮", 4: "震", 5: "中", 6: "兌", 7: "坤", 8: "坎", 9: "巽",
 }
+_EIGHT_ORDER = [1, 2, 3, 4, 6, 7, 8, 9]
+_GEJU_OPP = {1: 9, 9: 1, 2: 8, 8: 2, 3: 7, 7: 3, 4: 6, 6: 4}
 _TE_GONG_BRANCH = {"絳宮": "巳", "明堂": "丑", "玉堂": "卯"}
 _SANQI_KEYS = ("太歲青龍旗", "太陰黑旗", "害氣赤旗")
 _FEIFU_LABELS = ("飛符", "災殺", "鬼殺", "月殺", "天賊殺", "天史殺")
@@ -41,17 +43,18 @@ _ROTATION_ANGLE = 248.0
 _GEJU_LABEL_FONT_SIZE = 9
 _GEJU_LABEL_STROKE_WIDTH = 1.8
 _GEJU_SHORT_COLORS: dict[str, tuple[str, str, str]] = {
-    "掩": ("#7A1530", "#E8A4B4", "#FFF5F7"),
-    "迫": ("#B91C3C", "#F8C0CC", "#FFFFFF"),
-    "關": ("#A16207", "#F5D565", "#1C1400"),
-    "囚": ("#92400E", "#F0C27A", "#FFFAF0"),
-    "擊": ("#881337", "#FDA4AF", "#FFF1F3"),
-    "格": ("#581C87", "#D8B4FE", "#FAF5FF"),
-    "對": ("#1E4D7B", "#93C5FD", "#EFF6FF"),
-    "提": ("#166534", "#86EFAC", "#F0FDF4"),
-    "執": ("#3F3F8A", "#C7C9F5", "#F5F6FF"),
-    "四": ("#3F4E5C", "#A8BCC8", "#F8FAFC"),
+    "掩": ("#7A1530", "#E8A4B4", "#FF8FAB"),
+    "迫": ("#B91C3C", "#F8C0CC", "#FF4466"),
+    "關": ("#A16207", "#F5D565", "#FFD54F"),
+    "囚": ("#92400E", "#F0C27A", "#FF9E40"),
+    "擊": ("#881337", "#FDA4AF", "#FF6B9D"),
+    "格": ("#581C87", "#D8B4FE", "#C084FC"),
+    "對": ("#1E4D7B", "#93C5FD", "#60A5FA"),
+    "提": ("#166534", "#86EFAC", "#4ADE80"),
+    "執": ("#3F3F8A", "#C7C9F5", "#A78BFA"),
+    "四": ("#3F4E5C", "#A8BCC8", "#94A3B8"),
 }
+_GEJU_LABEL_SEP_COLOR = "#8A9BB0"
 _GEJU_TONE_COLORS: dict[str, tuple[str, str, str]] = {
     "danger": ("#B91C3C", "#F8C0CC", "#FFFFFF"),
     "warn": ("#A16207", "#F5D565", "#1C1400"),
@@ -741,40 +744,388 @@ def _geju_tone(key: str) -> str:
     return "info"
 
 
-def _branches_for_geju_entry(key: str, val: str, pos: dict[str, list[str]], ttext: dict) -> list[str]:
-    branches: set[str] = set()
+def _geju_mishu_search_terms(key: str) -> list[str]:
+    """《太乙秘書》局註中與釋格局 key 對應的檢索詞。"""
+    terms: list[str] = []
+    if "辰迫" in key:
+        terms.append("辰迫")
+    if "宮迫" in key:
+        if "外" in key:
+            terms.append("外迫")
+        elif "內" in key:
+            terms.append("內迫")
+        else:
+            terms.extend(["外迫", "內迫"])
+    if key.startswith("擊"):
+        if "辰" in key:
+            terms.append("辰擊")
+        if "宮" in key:
+            terms.append("宮擊")
+        terms.append("擊")
+    if "提挾" in key:
+        terms.extend(["提挾", "主挾", "客挾", "挾"])
+    if "提格" in key:
+        terms.append("提格")
+    if "四郭" in key:
+        terms.extend(["四郭", "四郭固"])
+    if "關囚" in key:
+        terms.extend(["關囚", "囚"])
+    elif key.startswith("囚"):
+        terms.append("囚")
+    elif key.startswith("關"):
+        terms.append("關")
+    if key.startswith("格"):
+        terms.append("格")
+    if key == "掩" or "(掩" in key or "掩)" in key:
+        terms.append("掩")
+    if key == "對":
+        terms.append("對")
+    if "執" in key:
+        terms.append("執")
+    deduped: list[str] = []
+    for t in terms:
+        if t and t not in deduped:
+            deduped.append(t)
+    return deduped
+
+
+def geju_mentioned_in_mishu(key: str, mishu_text: str | None) -> bool:
+    """格局是否於《太乙秘書》局註文字中被提及。"""
+    text = (mishu_text or "").strip()
+    if not text:
+        return False
+    return any(term in text for term in _geju_mishu_search_terms(key))
+
+
+def _entity_gong(label: str, ttext: dict) -> int | None:
+    """格局實體名 → 八宮號（略過中宮 5）。"""
+    int_fields = {
+        "太乙": _resolve_ty_gong(ttext),
+        "主大": ttext.get("主將"),
+        "主參": ttext.get("主參"),
+        "客大": ttext.get("客將"),
+        "客參": ttext.get("客參"),
+    }
+    if label in int_fields:
+        g = int_fields[label]
+        return g if isinstance(g, int) and 1 <= g <= 9 and g != 5 else None
+
+    branch = None
+    if label in ("文昌", "天目"):
+        wc = ttext.get("文昌")
+        if isinstance(wc, list) and wc:
+            branch = str(wc[0])
+    elif label == "始擊":
+        branch = ttext.get("始擊")
+    elif label in ("定目", "定計"):
+        branch = ttext.get("定目")
+    if isinstance(branch, str) and branch in _SIXTEEN_BRANCHES:
+        g = config.gong2.get(branch)
+        return g if isinstance(g, int) and g != 5 else None
+
+    if label in ("開", "開門", "生", "生門"):
+        dn = "開" if "開" in label else "生"
+        for gong, door in (ttext.get("八門分佈") or {}).items():
+            gnum = gong if isinstance(gong, int) else int(gong) if str(gong).isdigit() else None
+            if gnum and str(door).replace("門", "") == dn:
+                return gnum if gnum != 5 else None
+    return None
+
+
+def _ty_neighbor_gongs(ttext: dict) -> tuple[int | None, int | None]:
+    ty = _resolve_ty_gong(ttext)
+    if ty is None or ty not in _EIGHT_ORDER:
+        return None, None
+    idx = _EIGHT_ORDER.index(ty)
+    return _EIGHT_ORDER[(idx - 1) % 8], _EIGHT_ORDER[(idx + 1) % 8]
+
+
+def _gongs_for_geju_entry(key: str, val: str, ttext: dict) -> list[int]:
+    """釋格局條目 → 應標示之八宮號（與 shi_geju 宮位語意一致）。"""
+    if key == "無格局":
+        return []
+    ty = _resolve_ty_gong(ttext)
+    if ty is None:
+        return []
+
+    gongs: set[int] = set()
+    prev_g, next_g = _ty_neighbor_gongs(ttext)
+    opp = _GEJU_OPP.get(ty)
     blob = f"{key}{val}"
-    entity_aliases = (
-        ("太乙", ("太乙",)),
-        ("文昌", ("文昌", "天目")),
-        ("始擊", ("始擊",)),
-        ("定目", ("定目", "定計")),
-        ("主大", ("主大", "主將")),
-        ("主參", ("主參",)),
-        ("客大", ("客大", "客將")),
-        ("客參", ("客參",)),
-        ("開門", ("開",)),
-        ("生門", ("生",)),
-    )
-    for label, aliases in entity_aliases:
-        if any(alias in key or alias in blob for alias in aliases):
-            for br in pos.get(label, []):
-                branches.add(br)
-    for br in _SIXTEEN_BRANCHES:
-        if br in blob:
-            branches.add(br)
-    if not branches:
-        mini = {"釋格局": {key: val}, **ttext}
-        for br in _SIXTEEN_BRANCHES:
-            if _geju_for_branch(br, mini):
-                branches.add(br)
-    return [br for br in _SIXTEEN_BRANCHES if br in branches]
+
+    if key == "掩":
+        gongs.add(ty)
+    elif "關囚" in key:
+        gongs.add(ty)
+    elif key.startswith("囚("):
+        gongs.add(ty)
+    elif key.startswith("關("):
+        for ent in ("主大", "主參", "客大", "客參"):
+            if ent in key:
+                g = _entity_gong(ent, ttext)
+                if g:
+                    gongs.add(g)
+    elif key.startswith("格("):
+        if opp:
+            gongs.add(opp)
+    elif key == "對":
+        wc_g = _entity_gong("文昌", ttext)
+        if wc_g:
+            gongs.add(wc_g)
+    elif "宮迫" in key:
+        if "外" in key and next_g:
+            gongs.add(next_g)
+        elif "內" in key and prev_g:
+            gongs.add(prev_g)
+        else:
+            for ent in ("文昌", "始擊", "定目", "主大", "主參", "客大", "客參"):
+                if ent in key:
+                    g = _entity_gong(ent, ttext)
+                    if g:
+                        gongs.add(g)
+    elif key.startswith("擊("):
+        if "外宮" in key and next_g:
+            gongs.add(next_g)
+        elif "內宮" in key and prev_g:
+            gongs.add(prev_g)
+        else:
+            g = _entity_gong("始擊", ttext)
+            if g:
+                gongs.add(g)
+    elif "辰迫" in key:
+        for ent in ("文昌", "始擊", "定目"):
+            if ent in key:
+                g = _entity_gong(ent, ttext)
+                if g:
+                    gongs.add(g)
+    elif key == "提挾":
+        gongs.add(ty)
+    elif "執" in key:
+        gongs.add(ty)
+    elif "提格" in key and opp:
+        gongs.add(opp)
+    elif key == "四郭固":
+        gongs.add(ty)
+    else:
+        entity_aliases = (
+            ("太乙", ("太乙",)),
+            ("文昌", ("文昌", "天目")),
+            ("始擊", ("始擊",)),
+            ("定目", ("定目", "定計")),
+            ("主大", ("主大", "主將")),
+            ("主參", ("主參",)),
+            ("客大", ("客大", "客將")),
+            ("客參", ("客參",)),
+            ("開門", ("開",)),
+            ("生門", ("生",)),
+        )
+        for label, aliases in entity_aliases:
+            if any(alias in key or alias in blob for alias in aliases):
+                g = _entity_gong(label, ttext)
+                if g:
+                    gongs.add(g)
+        for i in _EIGHT_ORDER:
+            if config.num2gong(i) in blob:
+                gongs.add(i)
+
+    return [g for g in _EIGHT_ORDER if g in gongs]
+
+
+def _layer2_gong_order(ttext: dict) -> list[int]:
+    """與盤面 layer2 八門扇區順序一致（起二宮旋轉）。"""
+    doors = ttext.get("八門分佈") or {}
+    keys = [k for k in doors if isinstance(k, int) and k != 5]
+    if not keys:
+        return list(_EIGHT_ORDER)
+    return config.new_list(keys, 2)
+
+
+def _eight_gong_ring_layout(chart_style: int, *, is_life: bool) -> dict | None:
+    if is_life or chart_style in (5, 6):
+        return None
+    if chart_style in (0, 1):
+        return {
+            "layer_idx": 1,
+            "inner_radius": 13.0,
+            "layer_gap": 45.0,
+            "sector_count": 8,
+        }
+    return {
+        "layer_idx": 1,
+        "inner_radius": 3.0,
+        "layer_gap": 31.5,
+        "sector_count": 8,
+    }
+
+
+def _sector_angles_for_gong(gong: int, ttext: dict, layout: dict) -> tuple[float, float]:
+    order = _layer2_gong_order(ttext)
+    if gong in order:
+        idx = order.index(gong)
+    elif gong in _EIGHT_ORDER:
+        idx = _EIGHT_ORDER.index(gong)
+    else:
+        return _ROTATION_ANGLE, _ROTATION_ANGLE
+    count = layout["sector_count"]
+    start = (360.0 / count) * idx + _ROTATION_ANGLE
+    end = (360.0 / count) * (idx + 1) + _ROTATION_ANGLE
+    return start, end
+
+
+def _eight_gong_label_radius(layout: dict) -> float:
+    inner = layout["inner_radius"] + layout["layer_idx"] * layout["layer_gap"]
+    outer = layout["inner_radius"] + (layout["layer_idx"] + 1) * layout["layer_gap"]
+    return (inner + outer) / 2.0
 
 
 def _geju_palette(short: str, tone: str) -> tuple[str, str, str]:
     if short in _GEJU_SHORT_COLORS:
         return _GEJU_SHORT_COLORS[short]
     return _GEJU_TONE_COLORS.get(tone, _GEJU_TONE_COLORS["info"])
+
+
+def _geju_text_color(short: str, tone: str) -> str:
+    return _geju_palette(short, tone)[2]
+
+
+def _geju_label_tspans(entries: list[dict]) -> str:
+    """多格局並列時，各字（掩／迫／關…）分色 tspan。"""
+    parts: list[str] = []
+    for i, ent in enumerate(entries[:3]):
+        short = ent["short"]
+        color = _geju_text_color(short, ent.get("tone", "info"))
+        if i > 0:
+            sep = _GEJU_LABEL_SEP_COLOR
+            parts.append(
+                f'<tspan fill="{sep}" style="fill:{sep} !important">·</tspan>'
+            )
+        parts.append(
+            f'<tspan class="taiyi-geju-c-{short}" fill="{color}" '
+            f'style="fill:{color} !important">{short}</tspan>'
+        )
+    return "".join(parts)
+
+
+def geju_label_css() -> str:
+    """釋格局外環標記分色 CSS（覆蓋主題統一文字色）。"""
+    rules = [
+        "    .taiyi-svg-root .taiyi-geju-label tspan { font-weight: 700 !important; }",
+    ]
+    for short, (_bg, _stroke, text) in _GEJU_SHORT_COLORS.items():
+        rules.append(
+            f"    .taiyi-svg-root .taiyi-geju-c-{short} "
+            f"{{ fill: {text} !important; }}"
+        )
+    return "\n".join(rules)
+
+
+_WENCHANG_SPOT_COLOR = "#4D8CFF"
+_WENCHANG_SPOT_CLASS = "taiyi-wenchang-spot"
+
+
+def wenchang_spot_chart_css(scope: str = ".taiyi-svg-root") -> str:
+    """排盤內「文昌」：加粗、湖色藍（覆蓋主題統一文字色）。"""
+    return (
+        f"    {scope} .{_WENCHANG_SPOT_CLASS} {{\n"
+        f"        fill: {_WENCHANG_SPOT_COLOR} !important;\n"
+        "        font-weight: 700 !important;\n"
+        "    }"
+    )
+
+
+def _append_svg_class(open_tag: str, class_name: str) -> str:
+    if re.search(rf'\bclass="[^"]*\b{re.escape(class_name)}\b', open_tag):
+        return open_tag
+    if 'class="' in open_tag:
+        return re.sub(
+            r'class="([^"]*)"',
+            lambda m: f'class="{m.group(1)} {class_name}"',
+            open_tag,
+            count=1,
+        )
+    return open_tag[:-1] + f' class="{class_name}">'
+
+
+def mark_wenchang_spots_in_svg(svg_markup: str) -> str:
+    """為排盤扇區內「文昌」字樣加上湖色藍加粗樣式類別。"""
+    if "文昌" not in svg_markup:
+        return svg_markup
+
+    skip_tokens = ("taiyi-guxu", "taiyi-geju")
+
+    def style_tspan(match: re.Match[str]) -> str:
+        open_tag, content, close = match.group(1), match.group(2), match.group(3)
+        if content.strip() != "文昌":
+            return match.group(0)
+        if any(token in open_tag for token in skip_tokens):
+            return match.group(0)
+        return f"{_append_svg_class(open_tag, _WENCHANG_SPOT_CLASS)}{content}{close}"
+
+    styled = re.sub(
+        r"(<tspan\b[^>]*>)([^<]*)(</tspan>)",
+        style_tspan,
+        svg_markup,
+        flags=re.IGNORECASE,
+    )
+
+    def style_text(match: re.Match[str]) -> str:
+        open_tag, inner, close = match.group(1), match.group(2), match.group(3)
+        if any(token in open_tag for token in skip_tokens):
+            return match.group(0)
+        if re.search(r"<tspan\b", inner, flags=re.IGNORECASE):
+            return match.group(0)
+        if "文昌" not in inner:
+            return match.group(0)
+        return f"{_append_svg_class(open_tag, _WENCHANG_SPOT_CLASS)}{inner}{close}"
+
+    return re.sub(
+        r"(<text\b[^>]*>)(.*?)(</text>)",
+        style_text,
+        styled,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+
+
+def wuxing_theme_chart_css(scope: str = ".taiyi-svg-root") -> str:
+    """五行彩色排盤：依地支五行著色，調淡以契合深墨金主題。"""
+    fills = {
+        "blue": "rgba(53, 92, 140, 0.58)",
+        "brown": "rgba(112, 84, 58, 0.62)",
+        "green": "rgba(90, 140, 115, 0.55)",
+        "red": "rgba(148, 38, 58, 0.58)",
+        "gold": "rgba(186, 148, 52, 0.52)",
+        "orange": "rgba(128, 88, 46, 0.55)",
+        "silver": "rgba(118, 132, 152, 0.52)",
+        "black": "rgba(16, 36, 54, 0.78)",
+        "gray": "rgba(28, 52, 72, 0.72)",
+        "white": "rgba(22, 48, 68, 0.65)",
+    }
+    rules = [
+        f"    {scope} path,",
+        f"    {scope} polygon,",
+        f"    {scope} rect {{",
+        "        stroke: rgba(215, 189, 111, 0.72) !important;",
+        "        stroke-width: 1.15 !important;",
+        "    }",
+        f"    {scope} #layer1 path,",
+        f"    {scope} #layer1 circle,",
+        f"    {scope} #layer1 ellipse {{",
+        "        fill: rgba(186, 148, 52, 0.82) !important;",
+        "        stroke: rgba(245, 240, 225, 0.72) !important;",
+        "    }",
+        f"    {scope} text,",
+        f"    {scope} tspan {{",
+        "        fill: #ffffff !important;",
+        "    }",
+    ]
+    for name, color in fills.items():
+        rules.append(
+            f"    {scope} path[fill='{name}'],"
+            f"    {scope} polygon[fill='{name}'],"
+            f"    {scope} rect[fill='{name}'] {{ fill: {color} !important; }}"
+        )
+    rules.append(wenchang_spot_chart_css(scope))
+    return "\n".join(rules)
 
 
 def _outer_ring_layout(chart_style: int, *, is_life: bool) -> dict:
@@ -842,74 +1193,376 @@ def build_geju_overlay_svg(
     chart_style: int = 0,
     is_life: bool = False,
     view_half: float = 250.0,
+    mishu_text: str | None = None,
 ) -> str:
-    """於排盤最外環（金環裝飾帶）顯示釋格局文字標記。"""
-    markers = build_geju_sector_markers(ttext)
+    """於最外環金環帶顯示釋格局文字（角度對齊八宮扇區）。"""
+    markers = build_geju_sector_markers(ttext, mishu_text=mishu_text)
     if not markers:
         return ""
 
-    layout = _outer_ring_layout(chart_style, is_life=is_life)
-    label_r = _outer_label_radius(layout, view_half=view_half)
+    angle_layout = _eight_gong_ring_layout(chart_style, is_life=is_life)
+    if not angle_layout:
+        return ""
+
+    ttext = ttext or {}
+    ring_layout = _outer_ring_layout(chart_style, is_life=is_life)
+    label_r = _outer_label_radius(ring_layout, view_half=view_half)
     parts = ['<g class="taiyi-geju-overlay" data-source="server">']
 
-    for branch, items in markers.items():
+    for gong_key, items in markers.items():
         if not items:
             continue
-        start, end = _sector_angles_for_branch(branch, layout)
+        try:
+            gong = int(gong_key)
+        except (TypeError, ValueError):
+            continue
+        start, end = _sector_angles_for_gong(gong, ttext, angle_layout)
         mid_rad = math.radians((start + end) / 2.0)
-        shorts: list[str] = []
-        tone = "info"
+        entries: list[dict] = []
+        seen: set[str] = set()
         for item in items:
             short = str(item.get("short", "")).strip()
-            if not short or short in shorts:
+            if not short or short in seen:
                 continue
-            shorts.append(short)
-            if item.get("tone") == "danger":
-                tone = "danger"
-            elif item.get("tone") == "warn" and tone != "danger":
-                tone = "warn"
-        if not shorts:
+            seen.add(short)
+            entries.append({
+                "short": short,
+                "tone": item.get("tone", "info"),
+            })
+        if not entries:
             continue
 
-        label = "·".join(shorts[:3])
-        _fill, _stroke, text_color = _geju_palette(shorts[0], tone)
         cx = label_r * math.cos(mid_rad)
         cy = label_r * math.sin(mid_rad)
+        gong_name = config.num2gong(gong) or str(gong)
+        tspans = _geju_label_tspans(entries)
         parts.append(
-            f'<text class="taiyi-geju-label" data-branch="{branch}" '
+            f'<text class="taiyi-geju-label" data-gong="{gong}" data-gong-name="{gong_name}" '
             f'x="{cx:.2f}" y="{cy:.2f}" text-anchor="middle" dominant-baseline="middle" '
-            f'fill="{text_color}" font-size="{_GEJU_LABEL_FONT_SIZE}" font-weight="700" '
+            f'font-size="{_GEJU_LABEL_FONT_SIZE}" font-weight="700" '
             f'font-family="Noto Serif SC, KaiTi, serif" '
-            f'style="fill:{text_color} !important;'
-            f'font-weight:700;paint-order:stroke;stroke:#141826;'
+            f'style="font-weight:700;paint-order:stroke;stroke:#141826;'
             f'stroke-width:{_GEJU_LABEL_STROKE_WIDTH}px;stroke-linejoin:round">'
-            f"{label}</text>"
+            f"{tspans}</text>"
         )
 
     parts.append("</g>")
     return "".join(parts)
 
 
-def build_geju_sector_markers(ttext: dict | None) -> dict[str, list[dict]]:
-    """依釋格局將扇區地支對應的標記（供 SVG 外環標示）。"""
+_GUXU_INNER_STROKE = "#4D8CFF"
+_GUXU_OUTER_STROKE = "#FFBF00"
+_GUXU_LABEL_INNER = _GUXU_INNER_STROKE
+_GUXU_LABEL_OUTER = _GUXU_OUTER_STROKE
+_GUXU_LABEL_SKY = "#FFFFFF"
+_GUXU_LABEL_ATTACK = "#FFD54F"
+_GUXU_ARROW_COLOR = "#FFB300"
+_GUXU_LABEL_FONT = 10.5
+_GUXU_LABEL_STROKE = 2.0
+_GUXU_INNER_STROKE_WIDTH = 4.5
+_GUXU_OUTER_STROKE_WIDTH = 4.5
+
+
+def _guxu_text_style(fill: str) -> str:
+    return (
+        f"fill:{fill} !important;paint-order:stroke;"
+        f"stroke:#141826;stroke-width:{_GUXU_LABEL_STROKE}px"
+    )
+
+
+def _guxu_short_char(guxu: str) -> str:
+    if "虛" in guxu:
+        return "虛"
+    if "孤" in guxu:
+        return "孤"
+    return ""
+
+
+def _guxu_arrow_radii(chart_style: int, *, is_life: bool) -> tuple[float, float]:
+    """宜攻箭頭：自中心圓緣至第一環（八門）外緣稍外，避免遮擋外層文字。"""
+    if is_life or chart_style in (5, 6):
+        return 6.0, 50.0
+    if chart_style in (0, 1):
+        inner_base, gap = 13.0, 45.0
+    else:
+        inner_base, gap = 3.0, 31.5
+    r0 = inner_base + 1.5
+    r1 = inner_base + 2 * gap + min(6.0, gap * 0.12)
+    return r0, r1
+
+
+def _guxu_sync_layer_layouts(chart_style: int, *, is_life: bool) -> list[dict]:
+    """第 3／4／5 層扇區幾何（與 gen_chart / gen_chart_day / gen_chart_hour 一致）。"""
+    if is_life or chart_style in (5, 6):
+        return []
+    if chart_style in (0, 1):
+        inner_base, gap = 13.0, 45.0
+        specs: dict[int, tuple[int, tuple[str, ...]]] = {
+            3: (16, _SIXTEEN_BRANCHES),
+            4: (16, _SIXTEEN_BRANCHES),
+            5: (12, _PLANET_RING_BRANCHES),
+        }
+    else:
+        inner_base, gap = 3.0, 31.5
+        if chart_style == 2:
+            specs = {
+                3: (8, _SIXTEEN_BRANCHES),
+                4: (16, _SIXTEEN_BRANCHES),
+                5: (16, _SIXTEEN_BRANCHES),
+            }
+        else:
+            specs = {
+                3: (16, _SIXTEEN_BRANCHES),
+                4: (16, _SIXTEEN_BRANCHES),
+                5: (16, _SIXTEEN_BRANCHES),
+            }
+    layouts = []
+    for layer_num in (3, 4, 5):
+        count, order = specs[layer_num]
+        idx = layer_num - 1
+        layouts.append({
+            "layer": f"layer{layer_num}",
+            "layer_num": layer_num,
+            "inner_radius": inner_base + idx * gap,
+            "outer_radius": inner_base + layer_num * gap,
+            "sector_count": count,
+            "branch_order": order,
+        })
+    return layouts
+
+
+def _append_guxu_sector_borders(
+    parts: list[str],
+    branches: list[str],
+    *,
+    kind: str,
+    layout: dict,
+) -> None:
+    stroke = _GUXU_INNER_STROKE if kind == "inner" else _GUXU_OUTER_STROKE
+    width = _GUXU_INNER_STROKE_WIDTH if kind == "inner" else _GUXU_OUTER_STROKE_WIDTH
+    inner = layout["inner_radius"]
+    outer = layout["outer_radius"]
+    for br in branches:
+        if not br:
+            continue
+        start, end = _sector_angles_for_branch(br, layout)
+        parts.append(
+            f'<path class="taiyi-guxu-border taiyi-guxu-border-{kind}" '
+            f'data-branch="{br}" data-layer="{layout["layer"]}" '
+            f'd="{_guxu_wedge_path(start, end, inner, outer)}" fill="none" '
+            f'stroke="{stroke}" stroke-width="{width}" stroke-linejoin="round" '
+            f'pointer-events="none" '
+            f'style="fill:none !important;stroke:{stroke} !important;'
+            f'stroke-width:{width}px !important"/>'
+        )
+
+
+def _guxu_wedge_path(start: float, end: float, inner: float, outer: float) -> str:
+    sr, er = math.radians(start), math.radians(end)
+    sox, soy = outer * math.cos(sr), outer * math.sin(sr)
+    eox, eoy = outer * math.cos(er), outer * math.sin(er)
+    six, siy = inner * math.cos(sr), inner * math.sin(sr)
+    eix, eiy = inner * math.cos(er), inner * math.sin(er)
+    return (
+        f"M {six:.2f} {siy:.2f} L {sox:.2f} {soy:.2f} "
+        f"A {outer:.2f} {outer:.2f} 0 0 1 {eox:.2f} {eoy:.2f} "
+        f"L {eix:.2f} {eiy:.2f} "
+        f"A {inner:.2f} {inner:.2f} 0 0 0 {six:.2f} {siy:.2f} Z"
+    )
+
+
+def _guxu_label_xy(
+    branch: str,
+    layout: dict,
+    *,
+    radius: float | None = None,
+    tangential_offset: float = 0.0,
+) -> tuple[float, float]:
+    start, end = _sector_angles_for_branch(branch, layout)
+    mid_rad = math.radians((start + end) / 2.0)
+    inner = layout["inner_radius"]
+    outer = layout["outer_radius"]
+    r = radius if radius is not None else (inner + outer) / 2.0
+    cx = r * math.cos(mid_rad)
+    cy = r * math.sin(mid_rad)
+    if tangential_offset:
+        cx -= tangential_offset * math.sin(mid_rad)
+        cy += tangential_offset * math.cos(mid_rad)
+    return cx, cy
+
+
+def build_guxu_chart_model(ttext: dict | None) -> dict | None:
+    """由 pan 文句推算孤虛盤面模型。"""
+    ttext = ttext or {}
+    ty_g = _resolve_ty_gong(ttext)
+    wc = ttext.get("文昌")
+    sky = str(wc[0]) if isinstance(wc, list) and wc else None
+    if ty_g is None or not sky or sky not in _SIXTEEN_BRANCHES:
+        return None
+    return config.guxu_sectors(ty_g, sky)
+
+
+def build_guxu_sector_hints(model: dict | None) -> dict[str, str]:
+    """地支 → 扇區面板孤虛提示（點選 layer4 時顯示）。"""
+    if not model:
+        return {}
+    hints: dict[str, str] = {}
+    guxu = model.get("孤虛", "—")
+    attack = model.get("宜攻", "—")
+    sky = model.get("天目辰", "")
+    if sky:
+        hints[sky] = f"孤虛對照：{guxu}（天目）·宜攻{attack}"
+    for br in model.get("內辰") or []:
+        hints.setdefault(br, f"內側·虛（宜攻{attack}）")
+    for br in model.get("外辰") or []:
+        hints.setdefault(br, f"外側·孤（宜攻{attack}）")
+    for br in model.get("宜攻辰") or []:
+        hints[br] = f"宜攻{attack}（{guxu}）"
+    return hints
+
+
+def build_guxu_overlay_svg(
+    ttext: dict | None,
+    *,
+    chart_style: int = 0,
+    is_life: bool = False,
+    view_half: float = 250.0,
+) -> str:
+    """孤虛視覺化：第 3／4／5 層扇區加粗框線 + 外環字與宜攻箭頭。"""
+    if is_life or chart_style in (5, 6):
+        return ""
+    model = build_guxu_chart_model(ttext)
+    layer_layouts = _guxu_sync_layer_layouts(chart_style, is_life=is_life)
+    if not model or not layer_layouts:
+        return ""
+
+    label_layout = next((ly for ly in layer_layouts if ly["layer_num"] == 4), layer_layouts[0])
+    rotate_layers = chart_svg_layout(chart_style, is_life=is_life).get("rotate_layers") or []
+    ring_layout = _outer_ring_layout(chart_style, is_life=is_life)
+    outer_label_r = _outer_label_radius(ring_layout, view_half=view_half)
+    inner_branches = model.get("內辰") or []
+    outer_branches = model.get("外辰") or []
+    arrow_r0, arrow_r1 = _guxu_arrow_radii(chart_style, is_life=is_life)
+
+    parts = [
+        '<g class="taiyi-guxu-overlay" data-source="server">',
+        '<defs><marker id="guxu-arrowhead" markerWidth="6" markerHeight="6" '
+        'refX="5.5" refY="3" orient="auto">',
+        f'<path d="M0,0 L6,3 L0,6 Z" fill="{_GUXU_ARROW_COLOR}"/></marker></defs>',
+    ]
+
+    for layout in layer_layouts:
+        lid = layout["layer"]
+        rot_attr = f' data-rotate-layer="{lid}"' if lid in rotate_layers else ""
+        parts.append(f'<g class="taiyi-guxu-ring" data-layer="{lid}"{rot_attr}>')
+        _append_guxu_sector_borders(parts, inner_branches, kind="inner", layout=layout)
+        _append_guxu_sector_borders(parts, outer_branches, kind="outer", layout=layout)
+        parts.append("</g>")
+
+    label_rot = ""
+    if "layer4" in rotate_layers:
+        label_rot = ' data-rotate-layer="layer4"'
+    parts.append(f'<g class="taiyi-guxu-labels"{label_rot}>')
+    label_drawn: set[str] = set()
+    for br in inner_branches:
+        if br in label_drawn:
+            continue
+        label_drawn.add(br)
+        cx, cy = _guxu_label_xy(br, label_layout, radius=outer_label_r)
+        parts.append(
+            f'<text class="taiyi-guxu-label taiyi-guxu-label-inner" data-branch="{br}" '
+            f'x="{cx:.2f}" y="{cy:.2f}" text-anchor="middle" dominant-baseline="middle" '
+            f'fill="{_GUXU_LABEL_INNER}" font-size="{_GUXU_LABEL_FONT}" font-weight="700" '
+            f'font-family="Noto Serif SC, KaiTi, serif" pointer-events="none" '
+            f'style="{_guxu_text_style(_GUXU_LABEL_INNER)}">'
+            f"虛</text>"
+        )
+    for br in outer_branches:
+        if br in label_drawn:
+            continue
+        label_drawn.add(br)
+        cx, cy = _guxu_label_xy(br, label_layout, radius=outer_label_r)
+        parts.append(
+            f'<text class="taiyi-guxu-label taiyi-guxu-label-outer" data-branch="{br}" '
+            f'x="{cx:.2f}" y="{cy:.2f}" text-anchor="middle" dominant-baseline="middle" '
+            f'fill="{_GUXU_LABEL_OUTER}" font-size="{_GUXU_LABEL_FONT}" font-weight="700" '
+            f'font-family="Noto Serif SC, KaiTi, serif" pointer-events="none" '
+            f'style="{_guxu_text_style(_GUXU_LABEL_OUTER)}">'
+            f"孤</text>"
+        )
+    parts.append("</g>")
+
+    attack_branches = model.get("宜攻辰") or []
+    if attack_branches:
+        br = attack_branches[0]
+        arrow_rot = ' data-rotate-layer="layer4"' if "layer4" in rotate_layers else ""
+        parts.append(f'<g class="taiyi-guxu-arrow-group"{arrow_rot}>')
+        start, end = _sector_angles_for_branch(br, label_layout)
+        mid = (start + end) / 2.0
+        rad = math.radians(mid)
+        r0, r1 = arrow_r0, arrow_r1
+        x0, y0 = r0 * math.cos(rad), r0 * math.sin(rad)
+        x1, y1 = r1 * math.cos(rad), r1 * math.sin(rad)
+        parts.append(
+            f'<line class="taiyi-guxu-arrow" x1="{x0:.2f}" y1="{y0:.2f}" '
+            f'x2="{x1:.2f}" y2="{y1:.2f}" stroke="{_GUXU_ARROW_COLOR}" '
+            f'stroke-width="1.8" marker-end="url(#guxu-arrowhead)" pointer-events="none"/>'
+        )
+        attack_offset = 14.0 if br in label_drawn else 0.0
+        cx, cy = _guxu_label_xy(
+            br, label_layout, radius=outer_label_r, tangential_offset=attack_offset,
+        )
+        parts.append(
+            f'<text class="taiyi-guxu-label taiyi-guxu-label-attack" data-branch="{br}" '
+            f'x="{cx:.2f}" y="{cy:.2f}" text-anchor="middle" dominant-baseline="middle" '
+            f'fill="{_GUXU_LABEL_ATTACK}" font-size="{_GUXU_LABEL_FONT}" font-weight="700" '
+            f'font-family="Noto Serif SC, KaiTi, serif" pointer-events="none" '
+            f'style="paint-order:stroke;stroke:#141826;stroke-width:{_GUXU_LABEL_STROKE}px">'
+            f"宜攻</text>"
+        )
+        parts.append("</g>")
+
+    parts.append("</g>")
+    return "".join(parts)
+
+
+def build_geju_sector_markers(
+    ttext: dict | None,
+    *,
+    mishu_text: str | None = None,
+) -> dict[str, list[dict]]:
+    """依釋格局將八宮對應的標記（key 為宮號字串 "1"–"9"）。
+
+    僅納入《太乙秘書》局註文字中有提及的格局（mishu_text 為空則不顯示）。
+    """
     ttext = ttext or {}
     geju = ttext.get("釋格局") or {}
     if not geju or (len(geju) == 1 and "無格局" in geju):
         return {}
+    if not (mishu_text or "").strip():
+        return {}
 
-    pos = _chart_entity_positions(ttext)
     markers: dict[str, list[dict]] = {}
     for key, val in geju.items():
         if key == "無格局":
+            continue
+        if not geju_mentioned_in_mishu(key, mishu_text):
             continue
         entry = {
             "key": key,
             "short": _geju_short(key),
             "tone": _geju_tone(key),
             "text": _clip(str(val), 56),
+            "gong": None,
+            "gong_name": "",
         }
-        for branch in _branches_for_geju_entry(key, str(val), pos, ttext):
-            bucket = markers.setdefault(branch, [])
+        for gong in _gongs_for_geju_entry(key, str(val), ttext):
+            entry = {
+                **entry,
+                "gong": gong,
+                "gong_name": config.num2gong(gong) or "",
+            }
+            bucket = markers.setdefault(str(gong), [])
             if not any(item["key"] == key for item in bucket):
                 bucket.append(entry)
     return markers
@@ -952,36 +1605,58 @@ def sector_panel_layer_labels(*, is_life: bool = False, chart_style: int = 0) ->
     }
 
 
+def guxu_rotate_layer(chart_style: int = 0, *, is_life: bool = False) -> str | None:
+    """孤虛標記跟隨十六宮層（layer4）；僅當該層可轉時跟盤。"""
+    if is_life or chart_style in (5, 6):
+        return None
+    layout = chart_svg_layout(chart_style, is_life=is_life)
+    if "layer4" in (layout.get("rotate_layers") or []):
+        return "layer4"
+    return None
+
+
+def geju_rotate_layer(chart_style: int = 0, *, is_life: bool = False) -> str | None:
+    """釋格局標記置於八門層（layer2），該層不參與轉盤。"""
+    if is_life or chart_style in (5, 6):
+        return None
+    return None
+
+
 def chart_svg_layout(chart_style: int = 0, *, is_life: bool = False) -> dict:
     """各盤式 SVG 互動層配置（聯動著色、轉盤）。"""
     if is_life or chart_style in (5, 6):
         return {
             "chart_style": 5,
-            "sync_layers": ["layer2", "layer3", "layer4"],
+            "sync_layers": ["layer3", "layer4", "layer5"],
             "rotate_layers": [],
+            "geju_rotate_layer": None,
         }
     if chart_style in (0, 1):
         return {
             "chart_style": chart_style,
             "sync_layers": ["layer3", "layer4", "layer5"],
             "rotate_layers": ["layer4"],
+            "geju_rotate_layer": None,
         }
     if chart_style == 2:
         return {
             "chart_style": 2,
-            "sync_layers": ["layer4", "layer5", "layer6"],
+            "sync_layers": ["layer3", "layer4", "layer5"],
             "rotate_layers": ["layer5"],
+            "geju_rotate_layer": None,
         }
     if chart_style in (3, 4):
         return {
             "chart_style": chart_style,
             "sync_layers": ["layer3", "layer4", "layer5"],
             "rotate_layers": ["layer4", "layer6"],
+            "geju_rotate_layer": None,
         }
     return {
         "chart_style": chart_style,
         "sync_layers": ["layer3", "layer4", "layer5"],
         "rotate_layers": ["layer4"],
+        "geju_rotate_layer": None,
     }
 
 

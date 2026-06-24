@@ -2070,6 +2070,15 @@ def zhiqu_duili(ty, skyeyes, home_gen, home_cal, geju=None, sf_mask=False,
     return {"可解": ok or home_cal in (16, 26, 36), "斷語": "；".join(notes)}
 
 
+def _guxu_label(realm: str) -> str:
+    """孤虛斷語：外為孤、內為虛（卷五攻擊、卷十七求索同訣）。"""
+    if realm == "內":
+        return "內為虛"
+    if realm == "外":
+        return "外為孤"
+    return "—"
+
+
 def qiusuo_suode(ty, skyeyes, home_gen, geju=None, skyeyes_des=None,
                  sf_ge=False, wangzhuai=None):
     """求索有無所得（卷十七）"""
@@ -2100,7 +2109,12 @@ def qiusuo_suode(ty, skyeyes, home_gen, geju=None, skyeyes_des=None,
     if wx in ("旺", "相"):
         notes.append(f"主將立{wx}神，不可往見尊長請謁")
         found = False
-    return {"有得": found, "斷語": "；".join(notes)}
+    return {
+        "天目內外": realm,
+        "孤虛": _guxu_label(realm),
+        "有得": found,
+        "斷語": "；".join(notes),
+    }
 
 
 def shiji_zhanshi(ty, skyeyes, skyeyes_des, three_doors, five_gens, home_cal, away_cal,
@@ -2298,25 +2312,117 @@ def _calc_jianbei(num):
 def neiwai_gongji(ty, skyeyes):
     """內外占攻擊（卷五「明內外以占攻擊術」）。"""
     realm = _chen_realm(ty, skyeyes)
+    guxu = _guxu_label(realm)
     if realm == "內":
         return {
             "天目內外": "內",
-            "孤虛": "內為虛",
+            "孤虛": guxu,
             "宜攻": "外",
             "斷語": "天目在內地，可以攻外",
+            "要訣": "外為孤，內為虛",
         }
     if realm == "外":
         return {
             "天目內外": "外",
-            "孤虛": "外為孤",
+            "孤虛": guxu,
             "宜攻": "內",
             "斷語": "天目在外地，可以攻內",
+            "要訣": "外為孤，內為虛",
         }
     return {
         "天目內外": realm,
-        "孤虛": "—",
+        "孤虛": guxu,
         "宜攻": "—",
         "斷語": "天目與太乙同宮或居中，宜審時而動",
+        "要訣": "外為孤，內為虛",
+    }
+
+
+def guxu_duizhao(ty, skyeyes, home_gen=None, geju=None, skyeyes_des=None,
+                 sf_ge=False, wangzhuai=None):
+    """卷五「內外占攻擊」與卷十七「求索所得」孤虛對照。"""
+    attack = neiwai_gongji(ty, skyeyes)
+    seek = qiusuo_suode(
+        ty, skyeyes, home_gen or ty, geju, skyeyes_des, sf_ge, wangzhuai,
+    )
+    realm = attack["天目內外"]
+    guxu = attack["孤虛"]
+    base_seek = realm == "內"
+    seek_final = seek.get("有得", base_seek)
+
+    if realm == "內":
+        align = "同向"
+        align_note = "內為虛：宜攻外，請謁干求皆得"
+    elif realm == "外":
+        align = "同向"
+        align_note = "外為孤：宜攻內，不可請謁求索"
+    else:
+        align = "待定"
+        align_note = "天目與太乙同宮或居中，皆宜審格局而動"
+
+    if seek_final != base_seek and realm in ("內", "外"):
+        align = "格局修正"
+        align_note += (
+            f"；求索終判{'有得' if seek_final else '無得'}"
+            f"（{seek.get('斷語', '')}）"
+        )
+
+    return {
+        "天目內外": realm,
+        "孤虛": guxu,
+        "要訣": "天目在前為內、在後為外；外為孤，內為虛",
+        "卷五": {
+            "篇目": "明內外以占攻擊術",
+            "孤虛": guxu,
+            "宜攻": attack.get("宜攻", "—"),
+            "斷語": attack.get("斷語", ""),
+        },
+        "卷十七": {
+            "篇目": "明求索有無所得術",
+            "孤虛": seek.get("孤虛", _guxu_label(realm)),
+            "求索": "有得" if seek_final else "無得",
+            "斷語": seek.get("斷語", ""),
+        },
+        "對照": align,
+        "對照斷語": align_note,
+    }
+
+
+def guxu_sectors(ty, skyeyes):
+    """孤虛扇區資料：內外辰、天目、宜攻方向（供排盤視覺化）。"""
+    attack = neiwai_gongji(ty, skyeyes)
+    inner_branches: list[str] = []
+    outer_branches: list[str] = []
+    seq = list(sixteen)
+    gong2chen: dict[int, list[str]] = {}
+    for ch, p in gong2.items():
+        gong2chen.setdefault(p, []).append(ch)
+    chens = gong2chen.get(ty, [])
+    if len(chens) == 2 and skyeyes in seq:
+        p0, p1 = seq.index(chens[0]), seq.index(chens[1])
+        outer_branches = [seq[(p1 + 1) % 16]]
+        inner_branches = [seq[(p0 - 1) % 16]]
+    else:
+        for br in seq:
+            g = gong2.get(br)
+            realm = _realm_of_gong(ty, g)
+            if realm == "內":
+                inner_branches.append(br)
+            elif realm == "外":
+                outer_branches.append(br)
+    attack_dir = attack.get("宜攻", "—")
+    if attack_dir == "外":
+        attack_branches = list(outer_branches)
+    elif attack_dir == "內":
+        attack_branches = list(inner_branches)
+    else:
+        attack_branches = []
+    return {
+        **attack,
+        "天目辰": skyeyes,
+        "內辰": inner_branches,
+        "外辰": outer_branches,
+        "宜攻辰": attack_branches,
     }
 
 
@@ -2507,6 +2613,7 @@ def junshi_zhanlue(ty, home_cal, away_cal, skyeyes, shiji, three_doors, five_gen
     """卷五軍事戰略綜合"""
     return {
         "內外占攻擊": neiwai_gongji(ty, skyeyes),
+        "孤虛對照": guxu_duizhao(ty, skyeyes, home_gen, wangzhuai=wangzhuai),
         "太乙助主客": ty_zhuzhu_ke(ty, three_doors),
         "算長短緩急": {
             "主算": _calc_jianbei(home_cal),
@@ -3250,6 +3357,8 @@ def junshi_zhanduan(ty, home_cal, away_cal, skyeyes, shiji, skyeyes_des,
         "執囚對吏": zhiqu_duili(
             ty, skyeyes, home_gen, home_cal, geju, sf_mask, sf_hit, wangzhuai),
         "求索所得": qiusuo_suode(
+            ty, skyeyes, home_gen, geju, skyeyes_des, sf_ge, wangzhuai),
+        "孤虛對照": guxu_duizhao(
             ty, skyeyes, home_gen, geju, skyeyes_des, sf_ge, wangzhuai),
         "時計諸事": shiji_zhanshi(
             ty, skyeyes, skyeyes_des, three_doors, five_gens,

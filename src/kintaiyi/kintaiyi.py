@@ -12,7 +12,7 @@ import itertools
 from datetime import date
 from ephem import Date
 import numpy as np
-from cn2an import an2cn
+from cn2an import an2cn, cn2an
 from .taiyidict import tengan_shiji, su_dist
 from . import kinliuren
 from . import config
@@ -1175,11 +1175,30 @@ class Taiyi:
         return str(eightdoors)[1:-1].replace("'", "").replace(",", " |")
 
     def geteightdoors_text2(self, ji_style, taiyi_acumyear):
-        k = [an2cn(i) for i in list(self.geteightdoors(ji_style, taiyi_acumyear).keys())]
-        v = list(self.geteightdoors(ji_style, taiyi_acumyear).values())
-        eightdoors = dict(zip(k,v))
-        eightddors_status = dict(zip(k, list(jieqi.gong_wangzhuai(jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)).values())))
-        return [[i,eightdoors.get(i)+"門", eightddors_status.get(i)] for i in config.new_list(list(eightdoors.keys()), "二")]
+        doors = self.geteightdoors(ji_style, taiyi_acumyear)
+        k = [an2cn(i) for i in doors.keys()]
+        v = list(doors.values())
+        eightdoors = dict(zip(k, v))
+        wang_map = jieqi.gong_wangzhuai(
+            jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)
+        )
+        eightddors_status = dict(zip(k, list(wang_map.values())))
+        year_gan = config.gangzhi(
+            self.year, self.month, self.day, self.hour, self.minute,
+        )[0][0]
+        star_dist = config.taiyi_nine_stars(
+            self.accnum(ji_style, taiyi_acumyear), year_gan,
+        ).get("九星分布", {})
+        rows = []
+        for gong_cn in config.new_list(list(eightdoors.keys()), "二"):
+            gong_num = cn2an(gong_cn)
+            luoshu = config._LUOSHU_GONG.get(gong_num, "")
+            star_full = star_dist.get(luoshu, "")
+            star_short = star_full[1:] if star_full.startswith("天") else star_full
+            wx = eightddors_status.get(gong_cn, "")
+            wx_star = f"{wx}{star_short}" if wx and star_short else (wx or star_short)
+            rows.append([gong_cn, eightdoors.get(gong_cn) + "門", wx_star])
+        return rows
 
     #陽九行限
     def yangjiu_xingxian(self, sex):
