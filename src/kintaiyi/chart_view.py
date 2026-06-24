@@ -1162,6 +1162,11 @@ def _outer_ring_layout(chart_style: int, *, is_life: bool) -> dict:
     }
 
 
+def _guxu_angle_reference_layout() -> dict:
+    """孤虛框線角度基準：十六宮序（年／月／日計第 3／4／5 層同角對齊）。"""
+    return {"branch_order": _SIXTEEN_BRANCHES, "sector_count": 16}
+
+
 def _sector_angles_for_branch(branch: str, layout: dict) -> tuple[float, float]:
     order = layout["branch_order"]
     count = layout["sector_count"]
@@ -1176,6 +1181,11 @@ def _sector_angles_for_branch(branch: str, layout: dict) -> tuple[float, float]:
         end = (360.0 / 16) * (idx + 1) + _ROTATION_ANGLE
         return start, end
     return _ROTATION_ANGLE, _ROTATION_ANGLE
+
+
+def _guxu_sector_angles_for_branch(branch: str) -> tuple[float, float]:
+    """孤虛內／外框於第 3／4／5 層共用同一地支角度。"""
+    return _sector_angles_for_branch(branch, _guxu_angle_reference_layout())
 
 
 def _outer_label_radius(layout: dict, *, view_half: float = 250.0) -> float:
@@ -1259,8 +1269,8 @@ _GUXU_LABEL_ATTACK = "#FFD54F"
 _GUXU_ARROW_COLOR = "#FFB300"
 _GUXU_LABEL_FONT = 10.5
 _GUXU_LABEL_STROKE = 2.0
-_GUXU_INNER_STROKE_WIDTH = 4.5
-_GUXU_OUTER_STROKE_WIDTH = 4.5
+_GUXU_INNER_STROKE_WIDTH = 2.0
+_GUXU_OUTER_STROKE_WIDTH = 2.0
 
 
 def _guxu_text_style(fill: str) -> str:
@@ -1279,15 +1289,17 @@ def _guxu_short_char(guxu: str) -> str:
 
 
 def _guxu_arrow_radii(chart_style: int, *, is_life: bool) -> tuple[float, float]:
-    """宜攻箭頭：自中心圓緣至第一環（八門）外緣稍外，避免遮擋外層文字。"""
+    """宜攻箭頭：自中心圓緣至八門環前段，避免遮擋盤內文字。"""
     if is_life or chart_style in (5, 6):
-        return 6.0, 50.0
+        return 6.0, 36.0
     if chart_style in (0, 1):
         inner_base, gap = 13.0, 45.0
     else:
         inner_base, gap = 3.0, 31.5
-    r0 = inner_base + 1.5
-    r1 = inner_base + 2 * gap + min(6.0, gap * 0.12)
+    r0 = inner_base + 2.0
+    ring_inner = inner_base + gap
+    ring_outer = inner_base + 2 * gap
+    r1 = ring_inner + (ring_outer - ring_inner) * 0.28
     return r0, r1
 
 
@@ -1345,7 +1357,7 @@ def _append_guxu_sector_borders(
     for br in branches:
         if not br:
             continue
-        start, end = _sector_angles_for_branch(br, layout)
+        start, end = _guxu_sector_angles_for_branch(br)
         parts.append(
             f'<path class="taiyi-guxu-border taiyi-guxu-border-{kind}" '
             f'data-branch="{br}" data-layer="{layout["layer"]}" '
@@ -1428,7 +1440,7 @@ def build_guxu_overlay_svg(
     is_life: bool = False,
     view_half: float = 250.0,
 ) -> str:
-    """孤虛視覺化：第 3／4／5 層扇區加粗框線 + 外環字與宜攻箭頭。"""
+    """孤虛視覺化：內（虛）／外（孤）扇區細框線 + 外環字與宜攻箭頭。"""
     if is_life or chart_style in (5, 6):
         return ""
     model = build_guxu_chart_model(ttext)
@@ -1446,9 +1458,9 @@ def build_guxu_overlay_svg(
 
     parts = [
         '<g class="taiyi-guxu-overlay" data-source="server">',
-        '<defs><marker id="guxu-arrowhead" markerWidth="6" markerHeight="6" '
-        'refX="5.5" refY="3" orient="auto">',
-        f'<path d="M0,0 L6,3 L0,6 Z" fill="{_GUXU_ARROW_COLOR}"/></marker></defs>',
+        '<defs><marker id="guxu-arrowhead" markerWidth="4" markerHeight="4" '
+        'refX="3.4" refY="2" orient="auto">',
+        f'<path d="M0,0 L4,2 L0,4 Z" fill="{_GUXU_ARROW_COLOR}"/></marker></defs>',
     ]
 
     for layout in layer_layouts:
@@ -1506,7 +1518,7 @@ def build_guxu_overlay_svg(
         parts.append(
             f'<line class="taiyi-guxu-arrow" x1="{x0:.2f}" y1="{y0:.2f}" '
             f'x2="{x1:.2f}" y2="{y1:.2f}" stroke="{_GUXU_ARROW_COLOR}" '
-            f'stroke-width="1.8" marker-end="url(#guxu-arrowhead)" pointer-events="none"/>'
+            f'stroke-width="1.4" marker-end="url(#guxu-arrowhead)" pointer-events="none"/>'
         )
         attack_offset = 14.0 if br in label_drawn else 0.0
         cx, cy = _guxu_label_xy(
@@ -1624,38 +1636,18 @@ def geju_rotate_layer(chart_style: int = 0, *, is_life: bool = False) -> str | N
 
 def chart_svg_layout(chart_style: int = 0, *, is_life: bool = False) -> dict:
     """各盤式 SVG 互動層配置（聯動著色、轉盤）。"""
+    sync_layers = ["layer3", "layer4", "layer5"]
     if is_life or chart_style in (5, 6):
         return {
             "chart_style": 5,
-            "sync_layers": ["layer3", "layer4", "layer5"],
+            "sync_layers": sync_layers,
             "rotate_layers": [],
-            "geju_rotate_layer": None,
-        }
-    if chart_style in (0, 1):
-        return {
-            "chart_style": chart_style,
-            "sync_layers": ["layer3", "layer4", "layer5"],
-            "rotate_layers": ["layer4"],
-            "geju_rotate_layer": None,
-        }
-    if chart_style == 2:
-        return {
-            "chart_style": 2,
-            "sync_layers": ["layer3", "layer4", "layer5"],
-            "rotate_layers": ["layer5"],
-            "geju_rotate_layer": None,
-        }
-    if chart_style in (3, 4):
-        return {
-            "chart_style": chart_style,
-            "sync_layers": ["layer3", "layer4", "layer5"],
-            "rotate_layers": ["layer4", "layer6"],
             "geju_rotate_layer": None,
         }
     return {
         "chart_style": chart_style,
-        "sync_layers": ["layer3", "layer4", "layer5"],
-        "rotate_layers": ["layer4"],
+        "sync_layers": sync_layers,
+        "rotate_layers": list(sync_layers),
         "geju_rotate_layer": None,
     }
 

@@ -857,7 +857,7 @@ def _chart_visual_text():
             "legend_jade": "Jade green · manual focus markers",
             "legend_ivory": "Ivory · labels, symbols, and fine inscriptions",
             "interaction_title": "Interaction",
-            "rotation_hint": "Drag layers 4 and 6 to rotate. Tap for ±30° stepped viewing.",
+            "rotation_hint": "Drag rings 3–5 to rotate together; tap a sector to sync-highlight.",
             "paint_hint": "Tap sectors on rings 3–5 to sync-highlight (same angle, up to 4 sectors).",
             "sector_panel_title": "Sector Reading",
             "sector_panel_empty": "No reading for this sector.",
@@ -900,7 +900,7 @@ def _chart_visual_text():
         "legend_jade": "柔翠綠 · 手動點選的觀盤記號",
         "legend_ivory": "象牙白 · 盤面文字與細部刻記",
         "interaction_title": "互動",
-        "rotation_hint": "拖曳第 4、6 層可旋轉，輕點則以 ±30° 校覽。",
+        "rotation_hint": "拖曳第 3、4、5 層可聯動旋轉；輕點扇區則聯動著色。",
         "paint_hint": "點選第3、4、5層扇區可聯動著色（同角度三層同步，最多四個扇區）。",
         "sector_panel_title": "扇區斷事",
         "sector_panel_empty": "此扇區尚無斷事資料。",
@@ -1114,9 +1114,9 @@ def _build_chart_meta(
     if rotate_layers:
         rot_nums = "、".join(lid.replace("layer", "") for lid in rotate_layers)
         ui_out["rotation_hint"] = (
-            f"Drag layers {rot_nums} to rotate; tap for ±30° steps."
+            f"Drag rings {rot_nums} together to rotate; tap a sector to sync-highlight."
             if is_en
-            else f"拖曳第{rot_nums}層可旋轉，輕點則以 ±30° 校覽。"
+            else f"拖曳第{rot_nums}層可聯動旋轉；輕點扇區則聯動著色。"
         )
     else:
         ui_out["rotation_hint"] = (
@@ -1245,13 +1245,13 @@ def _chart_export_overlay_css(glow_id: str, scope: str = ".taiyi-svg-root") -> s
     {scope} .taiyi-guxu-border-inner {{
         fill: none !important;
         stroke: #4D8CFF !important;
-        stroke-width: 4.5px !important;
+        stroke-width: 2px !important;
         vector-effect: non-scaling-stroke;
     }}
     {scope} .taiyi-guxu-border-outer {{
         fill: none !important;
         stroke: #FFBF00 !important;
-        stroke-width: 4.5px !important;
+        stroke-width: 2px !important;
         vector-effect: non-scaling-stroke;
     }}
     {scope} .taiyi-guxu-arrow {{
@@ -1281,6 +1281,11 @@ def _chart_export_overlay_css(glow_id: str, scope: str = ".taiyi-svg-root") -> s
     {scope} .taiyi-user-mark {{
         stroke: rgba(245, 240, 225, 0.92) !important;
         stroke-width: 2.1 !important;
+    }}
+    {scope} path.taiyi-user-mark,
+    {scope} polygon.taiyi-user-mark,
+    {scope} rect.taiyi-user-mark {{
+        fill: var(--taiyi-user-fill) !important;
     }}
     {scope} .taiyi-user-label {{
         fill: #f5f0e1 !important;
@@ -1601,6 +1606,19 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         -webkit-user-select: none;
         touch-action: none;
     }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable,
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > path,
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > polygon,
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > rect {
+        touch-action: manipulation;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector > text,
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector > tspan {
+        pointer-events: none;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root > circle {
+        pointer-events: none;
+    }
     #__CONTAINER_ID__ .taiyi-svg-root * {
         user-select: none;
         -webkit-user-select: none;
@@ -1726,6 +1744,12 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector-panel-target {
         cursor: pointer;
     }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > path,
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > polygon,
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > rect,
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable-shape {
+        pointer-events: all;
+    }
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector-active path,
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector-active polygon,
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector-active rect {
@@ -1746,16 +1770,40 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         stroke: rgba(245, 240, 225, 0.92) !important;
         stroke-width: 2.1 !important;
     }
+    #__CONTAINER_ID__ .taiyi-svg-root path.taiyi-user-mark,
+    #__CONTAINER_ID__ .taiyi-svg-root polygon.taiyi-user-mark,
+    #__CONTAINER_ID__ .taiyi-svg-root rect.taiyi-user-mark,
+    #__CONTAINER_ID__ .taiyi-svg-root path[data-user-fill],
+    #__CONTAINER_ID__ .taiyi-svg-root polygon[data-user-fill],
+    #__CONTAINER_ID__ .taiyi-svg-root rect[data-user-fill] {
+        opacity: 1 !important;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root #layer3 .taiyi-sector > path,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer4 .taiyi-sector > path,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer5 .taiyi-sector > path,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer3 .taiyi-sector > polygon,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer4 .taiyi-sector > polygon,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer5 .taiyi-sector > polygon,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer3 .taiyi-sector > rect,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer4 .taiyi-sector > rect,
+    #__CONTAINER_ID__ .taiyi-svg-root #layer5 .taiyi-sector > rect {
+        pointer-events: all !important;
+        cursor: pointer;
+    }
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-user-label {
         fill: #f5f0e1 !important;
         font-weight: 700 !important;
     }
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-geju-overlay,
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-overlay {
-        pointer-events: none;
+        pointer-events: none !important;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-geju-overlay *,
+    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-overlay * {
+        pointer-events: none !important;
     }
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-geju-label {
-        pointer-events: all;
+        pointer-events: all !important;
         cursor: pointer;
         user-select: none;
         font-size: 9px !important;
@@ -1773,13 +1821,13 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-border-inner {
         fill: none !important;
         stroke: #4D8CFF !important;
-        stroke-width: 4.5px !important;
+        stroke-width: 2px !important;
         vector-effect: non-scaling-stroke;
     }
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-border-outer {
         fill: none !important;
         stroke: #FFBF00 !important;
-        stroke-width: 4.5px !important;
+        stroke-width: 2px !important;
         vector-effect: non-scaling-stroke;
     }
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-arrow {
@@ -1965,8 +2013,10 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
 
     <script>
     (() => {
+        try {
         const root = document.getElementById("__CONTAINER_ID__");
-        if (!root || root.dataset.bound === "true") return;
+        if (!root) return;
+        if (root.dataset.bound === "true") return;
         root.dataset.bound = "true";
 
         const svg = root.querySelector(".taiyi-svg-root");
@@ -1987,6 +2037,8 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         const gongByBranch = sectorPanelData.gong_by_branch || {};
         const gongNames = sectorPanelData.gong_names || {};
         const colorSyncLayers = chartLayout.sync_layers || ["layer3", "layer4", "layer5"];
+        const syncRotateLayers = colorSyncLayers.slice();
+        const syncRotateSet = new Set(syncRotateLayers);
         const rotateLayerIds = chartLayout.rotate_layers || [];
         const gejuRotateLayerId = chartLayout.geju_rotate_layer || null;
         const guxuRotateLayerId = chartLayout.guxu_rotate_layer || null;
@@ -2109,6 +2161,9 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         function setStyledColor(node, propertyName, value) {
             if (!node || !value) return;
             node.style.setProperty(propertyName, value, "important");
+            if (propertyName === "fill") {
+                node.style.setProperty("--taiyi-user-fill", value);
+            }
         }
 
         function getBranchFromLabel(label) {
@@ -2358,9 +2413,16 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             applyGejuRotation(immediate);
         }
 
+        function layersRotatedTogether(layerId) {
+            if (syncRotateSet.has(layerId)) return syncRotateLayers;
+            return [layerId];
+        }
+
         function rotateLayer(layerId, deltaAngle, immediate) {
-            state.rotations[layerId] = ((state.rotations[layerId] || 0) + deltaAngle) % 360;
-            applyRotation(layerId, immediate);
+            layersRotatedTogether(layerId).forEach((lid) => {
+                state.rotations[lid] = ((state.rotations[lid] || 0) + deltaAngle) % 360;
+                applyRotation(lid, immediate);
+            });
         }
 
         function setupRotations() {
@@ -2375,26 +2437,58 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                         layer.releasePointerCapture(event.pointerId);
                     }
                     const moved = state.drag.moved;
+                    const deferredTap = state.drag.deferCapture && !moved;
                     state.drag = null;
                     layer.classList.remove("is-dragging");
-                    if (!moved) {
+                    if (deferredTap) return;
+                    if (!moved && !syncRotateSet.has(layerId)) {
                         state.clickDirection[layerId] *= -1;
                         rotateLayer(layerId, 30 * state.clickDirection[layerId], false);
                     }
                 };
 
-                layer.addEventListener("pointerdown", (event) => {
-                    event.preventDefault();
+                function beginLayerDrag(event, deferCapture) {
                     const point = clientToSvgPoint(event.clientX, event.clientY);
                     const center = getLayerCenter(layer);
                     const angle = angleFromPoint(point, center);
-                    state.drag = { layerId: layerId, previousAngle: angle, startAngle: angle, moved: false };
+                    state.drag = {
+                        layerId: layerId,
+                        previousAngle: angle,
+                        startAngle: angle,
+                        moved: false,
+                        deferCapture: Boolean(deferCapture),
+                        pointerId: event.pointerId,
+                        originX: event.clientX,
+                        originY: event.clientY,
+                    };
+                    if (!deferCapture) {
+                        layer.classList.add("is-dragging");
+                        if (layer.setPointerCapture) layer.setPointerCapture(event.pointerId);
+                    }
+                }
+
+                function ensureLayerDragCapture(event) {
+                    if (!state.drag || state.drag.layerId !== layerId || !state.drag.deferCapture) return;
+                    state.drag.deferCapture = false;
+                    sectorTapState = null;
                     layer.classList.add("is-dragging");
                     if (layer.setPointerCapture) layer.setPointerCapture(event.pointerId);
+                }
+
+                layer.addEventListener("pointerdown", (event) => {
+                    const onColorable = Boolean(event.target.closest(".taiyi-colorable"));
+                    if (!onColorable) event.preventDefault();
+                    beginLayerDrag(event, onColorable);
                 });
 
                 layer.addEventListener("pointermove", (event) => {
                     if (!state.drag || state.drag.layerId !== layerId) return;
+                    if (state.drag.deferCapture) {
+                        const dx = event.clientX - state.drag.originX;
+                        const dy = event.clientY - state.drag.originY;
+                        if ((dx * dx) + (dy * dy) < 144) return;
+                        ensureLayerDragCapture(event);
+                    }
                     event.preventDefault();
                     const point = clientToSvgPoint(event.clientX, event.clientY);
                     const center = getLayerCenter(layer);
@@ -2433,7 +2527,11 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         function getLayerSectorGroups(layerId) {
             const layer = svg.querySelector("#" + layerId);
             if (!layer) return [];
-            return Array.from(layer.querySelectorAll(":scope > .taiyi-sector"));
+            const scoped = layer.querySelectorAll(":scope > .taiyi-sector");
+            if (scoped.length) return Array.from(scoped);
+            return Array.from(layer.children).filter(
+                (node) => node.classList && node.classList.contains("taiyi-sector")
+            );
         }
 
         function getSectorFraction(sectorGroup) {
@@ -2464,9 +2562,34 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             return "sync:" + fraction.toFixed(6);
         }
 
+        function branchSyncKey(branch) {
+            return "sync:br:" + (branch || "");
+        }
+
+        function getSyncBranch(sectorGroup) {
+            return sectorGroup.getAttribute("data-pos-branch")
+                || sectorGroup.getAttribute("data-branch")
+                || "";
+        }
+
+        function findSectorByBranch(layerId, branch) {
+            if (!branch) return null;
+            return getLayerSectorGroups(layerId).find(
+                (sectorGroup) => getSyncBranch(sectorGroup) === branch
+            ) || null;
+        }
+
         function applySyncMarker(fraction, color) {
             colorSyncLayers.forEach((layerId) => {
                 const sectorGroup = findSectorAtFraction(layerId, fraction);
+                if (sectorGroup) paintSectorGroup(sectorGroup, color);
+            });
+        }
+
+        function applySyncMarkerForBranch(branch, color) {
+            if (!branch) return;
+            colorSyncLayers.forEach((layerId) => {
+                const sectorGroup = findSectorByBranch(layerId, branch);
                 if (sectorGroup) paintSectorGroup(sectorGroup, color);
             });
         }
@@ -2478,13 +2601,24 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             });
         }
 
+        function clearSyncMarkerForBranch(branch) {
+            if (!branch) return;
+            colorSyncLayers.forEach((layerId) => {
+                const sectorGroup = findSectorByBranch(layerId, branch);
+                if (sectorGroup) restoreSectorGroup(sectorGroup);
+            });
+        }
+
         function paintSectorGroup(sectorGroup, color) {
             const match = sectorNodes(sectorGroup);
             if (!match.sector) return;
             if (!match.sector.dataset.originalFill) {
                 match.sector.dataset.originalFill = window.getComputedStyle(match.sector).fill || match.sector.dataset.semanticFill || "";
                 match.sector.dataset.originalStroke = window.getComputedStyle(match.sector).stroke || match.sector.dataset.semanticStroke || "";
+                match.sector.dataset.originalAttrFill = match.sector.getAttribute("fill") || "";
             }
+            match.sector.setAttribute("fill", color);
+            match.sector.setAttribute("data-user-fill", color);
             setStyledColor(match.sector, "fill", color);
             match.sector.classList.add("taiyi-user-mark");
             if (match.textNode) {
@@ -2500,7 +2634,16 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             if (!match.sector) return;
             const originalFill = match.sector.dataset.originalFill || "";
             const originalStroke = match.sector.dataset.originalStroke || "";
+            const originalAttrFill = match.sector.dataset.originalAttrFill || "";
+            if (originalAttrFill) {
+                match.sector.setAttribute("fill", originalAttrFill);
+            } else {
+                match.sector.removeAttribute("fill");
+            }
+            match.sector.removeAttribute("data-user-fill");
             if (originalFill) setStyledColor(match.sector, "fill", originalFill);
+            else match.sector.style.removeProperty("fill");
+            match.sector.style.removeProperty("--taiyi-user-fill");
             if (originalStroke) setStyledColor(match.sector, "stroke", originalStroke);
             match.sector.classList.remove("taiyi-user-mark");
             if (match.textNode) {
@@ -2515,10 +2658,18 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             if (parts.length !== 2) return null;
             const layer = svg.querySelector("#" + parts[0]);
             if (!layer) return null;
-            return layer.querySelector(':scope > .taiyi-sector[data-sector="' + parts[1] + '"]');
+            const scoped = layer.querySelector(':scope > .taiyi-sector[data-sector="' + parts[1] + '"]');
+            if (scoped) return scoped;
+            return getLayerSectorGroups(parts[0]).find(
+                (sectorGroup) => sectorGroup.getAttribute("data-sector") === parts[1]
+            ) || null;
         }
 
         function clearMarker(key) {
+            if (key.indexOf("sync:br:") === 0) {
+                clearSyncMarkerForBranch(key.slice(8));
+                return;
+            }
             if (key.indexOf("sync:") === 0) {
                 clearSyncMarker(parseFloat(key.slice(5)));
                 return;
@@ -2609,7 +2760,6 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                 || (sectorGroup ? sectorGroup.getAttribute("data-pos-branch") : "")
                 || (sectorGroup ? sectorGroup.getAttribute("data-branch") : "");
             const sectorIdx = Number.parseInt((key.split(":")[1] || "-1"), 10);
-            const layerId = key.split(":")[0] || "";
             renderGejuBlock(gejuLookupKey(posBranch, layerId, sectorIdx));
             if (listEl && posBranch && guxuByBranch[posBranch]) {
                 const guxuItem = document.createElement("li");
@@ -2656,47 +2806,24 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             openSectorPanelByKey(key, branch);
         }
 
-        function handleSectorPanelClick(sectorGroup, event) {
-            event.preventDefault();
-            event.stopPropagation();
-            if (isColorableSector(sectorGroup)) {
-                handleSectorColorClick(sectorGroup, event);
-            }
-            openSectorPanelFromGroup(sectorGroup);
-        }
-
-        function setupSectorPanel() {
-            if (!sectorPanel) return;
-            Array.from(svg.querySelectorAll(".taiyi-sector")).forEach((sectorGroup) => {
-                sectorGroup.classList.add("taiyi-sector-panel-target");
-                sectorGroup.addEventListener("pointerdown", (event) => {
-                    event.stopPropagation();
-                });
-                sectorGroup.addEventListener("click", (event) => handleSectorPanelClick(sectorGroup, event));
-            });
-            Array.from(svg.querySelectorAll(".taiyi-geju-label")).forEach((labelNode) => {
-                labelNode.addEventListener("click", (event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    openGejuPanel(labelNode.getAttribute("data-gong") || "");
-                });
-            });
-            const closeButton = root.querySelector('[data-action="close-panel"]');
-            if (closeButton) closeButton.addEventListener("click", closeSectorPanel);
-        }
-
         function isColorableSector(sectorGroup) {
             const layerId = sectorGroup.getAttribute("data-layer") || "";
             return colorSyncLayers.indexOf(layerId) !== -1;
         }
 
         function handleSectorColorClick(sectorGroup, event) {
-            event.preventDefault();
-            event.stopPropagation();
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
             if (!isColorableSector(sectorGroup)) return;
-            const fraction = getSectorFraction(sectorGroup);
-            if (fraction === null) return;
-            const key = syncColorKey(fraction);
+            const branch = getSyncBranch(sectorGroup);
+            let key = branch ? branchSyncKey(branch) : "";
+            if (!key) {
+                const fraction = getSectorFraction(sectorGroup);
+                if (fraction === null) return;
+                key = syncColorKey(fraction);
+            }
             if (state.colored.has(key)) {
                 clearMarker(key);
                 state.colored.delete(key);
@@ -2705,13 +2832,71 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             if (state.colored.size >= highlightPalette.length) return;
             const color = highlightPalette[state.colored.size];
             state.colored.set(key, color);
-            applySyncMarker(fraction, color);
+            if (branch) {
+                applySyncMarkerForBranch(branch, color);
+            } else {
+                applySyncMarker(getSectorFraction(sectorGroup), color);
+            }
         }
 
-        function setupColoring() {
-            Array.from(svg.querySelectorAll(".taiyi-sector"))
-                .filter((sectorGroup) => isColorableSector(sectorGroup))
-                .forEach((sectorGroup) => sectorGroup.classList.add("taiyi-colorable"));
+        function activateSector(sectorGroup, event) {
+            if (!sectorGroup) return;
+            if (state.drag && state.drag.moved) return;
+            if (isColorableSector(sectorGroup)) {
+                handleSectorColorClick(sectorGroup, event);
+            }
+            if (sectorPanel) {
+                openSectorPanelFromGroup(sectorGroup);
+            }
+        }
+
+        function bindSectorShape(shapeNode, sectorGroup) {
+            if (!shapeNode || shapeNode.dataset.sectorBound === "1") return;
+            shapeNode.dataset.sectorBound = "1";
+            const onActivate = (event) => {
+                if (state.drag && state.drag.moved) return;
+                if (event) {
+                    event.stopPropagation();
+                }
+                activateSector(sectorGroup, event);
+            };
+            shapeNode.addEventListener("click", onActivate);
+            shapeNode.addEventListener("pointerup", (event) => {
+                if (event.pointerType === "mouse") return;
+                onActivate(event);
+            });
+        }
+
+        function bindSectorInteractions() {
+            Array.from(svg.querySelectorAll(".taiyi-sector")).forEach((sectorGroup) => {
+                const shape = sectorGroup.querySelector("path, polygon, rect, circle, ellipse");
+                if (isColorableSector(sectorGroup)) {
+                    sectorGroup.classList.add("taiyi-colorable");
+                    if (shape) shape.classList.add("taiyi-colorable-shape");
+                }
+                if (sectorPanel) {
+                    sectorGroup.classList.add("taiyi-sector-panel-target");
+                }
+                if (shape) bindSectorShape(shape, sectorGroup);
+            });
+        }
+
+        function setupSectorPanel() {
+            bindSectorInteractions();
+            Array.from(svg.querySelectorAll(".taiyi-geju-label")).forEach((labelNode) => {
+                if (labelNode.dataset.gejuBound === "1") return;
+                labelNode.dataset.gejuBound = "1";
+                labelNode.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    openGejuPanel(labelNode.getAttribute("data-gong") || "");
+                });
+            });
+            const closeButton = root.querySelector('[data-action="close-panel"]');
+            if (closeButton && !closeButton.dataset.bound) {
+                closeButton.dataset.bound = "1";
+                closeButton.addEventListener("click", closeSectorPanel);
+            }
         }
 
         function resetView() {
@@ -2986,19 +3171,23 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             image.src = url;
         }
 
-        root.querySelector('[data-action="reset"]').addEventListener("click", resetView);
-        root.querySelector('[data-action="toggle-style"]').addEventListener("click", toggleStyleMode);
-        root.querySelector('[data-action="add-note"]').addEventListener("click", addNote);
-        root.querySelector('[data-action="download-png"]').addEventListener("click", downloadPng);
-
         loadSavedNote();
         ensureGlowFilter();
         annotateSvg();
         highlightImportantNodes();
         setupSectorPanel();
         if (interactive) setupRotations();
+
+        [
+            ["reset", resetView],
+            ["toggle-style", toggleStyleMode],
+            ["add-note", addNote],
+            ["download-png", downloadPng],
+        ].forEach(([action, handler]) => {
+            const button = root.querySelector('[data-action="' + action + '"]');
+            if (button) button.addEventListener("click", handler);
+        });
         setupGejuFollowControl();
-        setupColoring();
         applyStyleMode();
         updateStyleButton();
         updateNoteButton();
@@ -3011,6 +3200,17 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         window.addEventListener("load", queueFrameHeight, { once: true });
         setTimeout(queueFrameHeight, 80);
         setTimeout(queueFrameHeight, 260);
+        } catch (error) {
+            console.error("Taiyi chart init failed:", error);
+            const root = document.getElementById("__CONTAINER_ID__");
+            if (root) {
+                const alert = document.createElement("p");
+                alert.className = "taiyi-init-error";
+                alert.textContent = "排盤互動載入失敗，請重新整理頁面。";
+                alert.style.cssText = "color:#ffb4b4;padding:8px 12px;margin:8px 0;";
+                root.prepend(alert);
+            }
+        }
     })();
     </script>
     """
@@ -3034,7 +3234,19 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             "__SECTOR_PANEL_JSON__",
             json.dumps(chart_meta.get("sector_panel") or {}, ensure_ascii=False),
         )
-        .replace("__SECTOR_HINT__", html_escape(chart_meta.get("ui", ui).get("sector_click_hint", "")))
+        .replace(
+            "__SECTOR_HINT__",
+            html_escape(
+                " ".join(
+                    part
+                    for part in (
+                        chart_meta.get("ui", ui).get("sector_click_hint", ""),
+                        chart_meta.get("ui", ui).get("paint_hint", ""),
+                    )
+                    if part
+                )
+            ),
+        )
         .replace("__PANEL_CLOSE__", html_escape(chart_meta.get("ui", ui).get("sector_panel_close", "")))
 
         .replace(
