@@ -68,7 +68,14 @@ from kintaiyi.cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CE
 from kintaiyi.openai_client import OpenAIClient, DEFAULT_MODEL as DEFAULT_OPENAI_MODEL, TokenQuotaExceededError as OpenAITokenQuotaExceededError
 from kintaiyi.openai_compatible_client import OpenAICompatibleClient, TokenQuotaExceededError as CompatibleTokenQuotaExceededError
 from kintaiyi.game_theory import TaiyiGame, 主方策略列 as _gt_主方策略列, 客方策略列 as _gt_客方策略列
-from custom_css import get_custom_css
+from custom_css import get_custom_css, get_sidebar_cursor_fix_html, get_top_nav_html
+from sidebar_ui import render_grok_sidebar
+from chart_layout import (
+    build_chart_print_meta,
+    render_chart_mobile_params,
+    render_chart_side_panel,
+    render_chart_stage_open,
+)
 
 # 5=太乙命法(魔改·分計落宮)  6=太乙命法(時計落宮)
 LIFE_CHART_STYLES = frozenset({5, 6})
@@ -402,8 +409,36 @@ def render_changelog_html(md_text: str) -> str:
 # --- i18n: Translation dictionaries ---
 TRANSLATIONS = {
     "zh": {
-        "page_title": "堅太乙 - 太乙排盤",
+        "page_title": "堅太乙-太乙神數排盤",
         "lang_label": "語言 Language",
+        "sidebar_block_basic": "基本參數",
+        "sidebar_block_method": "太乙計式",
+        "sidebar_block_life": "命法設定",
+        "sidebar_block_visual": "盤面視覺",
+        "sidebar_block_ai": "AI 解盤",
+        "sidebar_block_advanced": "進階功能",
+        "sidebar_ai_connection": "連線設定",
+        "sidebar_ai_prompts": "提示詞",
+        "sidebar_ai_cerebras_hint": "使用環境變數或 Streamlit secrets 中的 Cerebras 金鑰。",
+        "sidebar_expand": "展開設定面板",
+        "sidebar_collapse": "收合為圖示模式",
+        "sidebar_icon_basic": "基本參數（日期、語言）",
+        "sidebar_icon_method": "太乙計式",
+        "sidebar_icon_life": "命法設定",
+        "sidebar_icon_visual": "盤面視覺",
+        "sidebar_icon_ai": "AI 解盤",
+        "sidebar_icon_advanced": "進階功能",
+        "date_label": "日期",
+        "time_label": "時間",
+        "run_chart_btn": "立即排盤",
+        "chart_summary": "干支曆",
+        "chart_meta_detail": "完整參數",
+        "kook_label": "局數",
+        "five_yuan_short": "五子元",
+        "three_five_more": "展開全文",
+        "chart_method_hint": "選擇太乙計式",
+        "acc_years_hint": "積年法",
+        "debug_info": "Session State",
         "param_header": "排盤參數設置",
         "year": "年",
         "month": "月",
@@ -418,7 +453,7 @@ TRANSLATIONS = {
         "geju_markers_toggle": "顯示釋格局標記",
         "guxu_overlay_toggle": "顯示孤虛標記",
         "wuxing_color_toggle": "五行彩色排盤",
-        "instant_btn": "即時盤",
+        "instant_btn": "使用現在時間（HKT）",
         "ai_settings": "AI設置",
         "ai_provider": "AI 服務商",
         "ai_model": "AI 模型",
@@ -647,8 +682,36 @@ TRANSLATIONS = {
         "acc_suffix": "數",
     },
     "en": {
-        "page_title": "KinTaiYi - Taiyi Divination Chart",
+        "page_title": "Kin Taiyi-Taiyi Divine Number Chart",
         "lang_label": "語言 Language",
+        "sidebar_block_basic": "Basic Parameters",
+        "sidebar_block_method": "Taiyi Method",
+        "sidebar_block_life": "Life Chart",
+        "sidebar_block_visual": "Chart Display",
+        "sidebar_block_ai": "AI Reading",
+        "sidebar_block_advanced": "Advanced",
+        "sidebar_ai_connection": "Connection",
+        "sidebar_ai_prompts": "Prompts",
+        "sidebar_ai_cerebras_hint": "Uses Cerebras API key from env or Streamlit secrets.",
+        "sidebar_expand": "Expand settings panel",
+        "sidebar_collapse": "Collapse to icon mode",
+        "sidebar_icon_basic": "Basic parameters (date, language)",
+        "sidebar_icon_method": "Taiyi method",
+        "sidebar_icon_life": "Life chart settings",
+        "sidebar_icon_visual": "Chart display",
+        "sidebar_icon_ai": "AI reading",
+        "sidebar_icon_advanced": "Advanced",
+        "date_label": "Date",
+        "time_label": "Time",
+        "run_chart_btn": "Run Chart",
+        "chart_summary": "Stem-Branch",
+        "chart_meta_detail": "Full parameters",
+        "kook_label": "Bureau No.",
+        "five_yuan_short": "Five Yuan",
+        "three_five_more": "Show full text",
+        "chart_method_hint": "Select Taiyi method",
+        "acc_years_hint": "Accumulation method",
+        "debug_info": "Session State",
         "param_header": "Chart Parameters",
         "year": "Year",
         "month": "Month",
@@ -663,7 +726,7 @@ TRANSLATIONS = {
         "geju_markers_toggle": "Show pattern markers (釋格局)",
         "guxu_overlay_toggle": "Show Gu-Xu markers",
         "wuxing_color_toggle": "Five-element color chart",
-        "instant_btn": "Instant Chart",
+        "instant_btn": "Use current time (HKT)",
         "ai_settings": "AI Settings",
         "ai_provider": "AI Provider",
         "ai_model": "AI Model",
@@ -1106,13 +1169,10 @@ def _chart_visual_text():
             "legend_ivory": "Ivory · labels, symbols, and fine inscriptions",
             "interaction_title": "Interaction",
             "rotation_hint": "Drag rings 3–5 to rotate together; tap a sector to sync-highlight.",
-            "paint_hint": "Tap sectors on rings 3–5 to sync-highlight (same angle, up to 4 sectors).",
             "sector_panel_title": "Sector Reading",
             "sector_panel_empty": "No reading for this sector.",
             "sector_panel_geju": "Patterns (釋格局)",
             "sector_panel_close": "Close",
-            "sector_click_hint": "Tap any sector to view classical readings below the chart.",
-
             "reset": "Reset View",
             "download_png": "Download Plate",
             "toggle_geju_follow": "Patterns Follow",
@@ -1149,13 +1209,10 @@ def _chart_visual_text():
         "legend_ivory": "象牙白 · 盤面文字與細部刻記",
         "interaction_title": "互動",
         "rotation_hint": "拖曳第 3、4、5 層可聯動旋轉；輕點扇區則聯動著色。",
-        "paint_hint": "點選第3、4、5層扇區可聯動著色（同角度三層同步，最多四個扇區）。",
         "sector_panel_title": "扇區斷事",
         "sector_panel_empty": "此扇區尚無斷事資料。",
         "sector_panel_geju": "釋格局",
         "sector_panel_close": "關閉",
-        "sector_click_hint": "點選盤上任一扇區，於下方顯示古典斷事。",
-
         "reset": "重置視圖",
         "download_png": "下載盤式",
         "toggle_geju_follow": "格局跟盤",
@@ -1345,19 +1402,8 @@ def _build_chart_meta(
         **chart_layout,
         "guxu_rotate_layer": guxu_rotate_layer(chart_style, is_life=is_life_chart),
     }
-    sync_nums = "、".join(lid.replace("layer", "") for lid in chart_layout["sync_layers"])
     ui_out = dict(ui)
     is_en = st.session_state.get("lang", "zh") == "en"
-    if is_en:
-        ui_out["sector_click_hint"] = ui["sector_click_hint"]
-        ui_out["paint_hint"] = (
-            f"Tap rings {sync_nums} to sync-highlight (up to 4 sectors)."
-        )
-    else:
-        ui_out["sector_click_hint"] = ui["sector_click_hint"]
-        ui_out["paint_hint"] = (
-            f"點選第{sync_nums}層扇區可聯動著色（同角度同步，最多四個扇區）。"
-        )
     rotate_layers = chart_layout.get("rotate_layers") or []
     if rotate_layers:
         rot_nums = "、".join(lid.replace("layer", "") for lid in rotate_layers)
@@ -1691,7 +1737,6 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                     <button type="button" class="taiyi-btn" data-action="add-note">__ADD_NOTE__</button>
                     <button type="button" class="taiyi-btn" data-action="download-png">__DOWNLOAD_PNG__</button>
                 </div>
-                <p class="taiyi-sector-hint" aria-live="polite">__SECTOR_HINT__</p>
                 <div class="taiyi-sector-panel" hidden aria-live="polite">
                     <div class="taiyi-sector-panel-header">
                         <div class="taiyi-sector-panel-heading">
@@ -2093,13 +2138,6 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     }
     #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-label-attack {
         fill: #FFD54F !important;
-    }
-    #__CONTAINER_ID__ .taiyi-sector-hint {
-        margin: 8px 4px 0;
-        font-size: 0.82rem;
-        color: var(--ivory-soft);
-        text-align: center;
-        line-height: 1.45;
     }
     #__CONTAINER_ID__ .taiyi-sector-panel {
         margin-top: 10px;
@@ -3049,12 +3087,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             const gongLabel = gongNames[gongKey] || gongKey;
             if (sectorPanelTitle) sectorPanelTitle.textContent = gongLabel ? `${gongLabel}宮` : gongKey;
             const list = sectorPanel.querySelector(".taiyi-sector-panel-lines");
-            if (list) {
-                list.innerHTML = "";
-                const hint = document.createElement("li");
-                hint.textContent = ui.sector_click_hint || "";
-                list.appendChild(hint);
-            }
+            if (list) list.innerHTML = "";
             renderGejuBlock(gongKey);
             sectorPanel.hidden = false;
             queueFrameHeight();
@@ -3509,19 +3542,6 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             "__SECTOR_PANEL_JSON__",
             json.dumps(chart_meta.get("sector_panel") or {}, ensure_ascii=False),
         )
-        .replace(
-            "__SECTOR_HINT__",
-            html_escape(
-                " ".join(
-                    part
-                    for part in (
-                        chart_meta.get("ui", ui).get("sector_click_hint", ""),
-                        chart_meta.get("ui", ui).get("paint_hint", ""),
-                    )
-                    if part
-                )
-            ),
-        )
         .replace("__PANEL_CLOSE__", html_escape(chart_meta.get("ui", ui).get("sector_panel_close", "")))
 
         .replace(
@@ -3556,29 +3576,9 @@ def render_svg1(svg, num, chart_meta):
 
 
 def render_chart_explanation_seam():
-    """Tighten the gap between the chart component and the following explanation expander."""
+    """Tighten mobile gaps: chart → 完整參數 → 解釋."""
     st.markdown(
-        """
-        <style>
-        @media (max-width: 768px) {
-            div[data-testid="stElementContainer"]:has(.taiyi-chart-seam-anchor)
-            + div[data-testid="stElementContainer"]:has(iframe) {
-                margin-bottom: -2.8rem !important;
-            }
-            div[data-testid="stElementContainer"]:has(.taiyi-chart-seam-anchor)
-            + div[data-testid="stElementContainer"]:has(iframe)
-            + div[data-testid="stElementContainer"] {
-                margin-top: 0 !important;
-            }
-            div[data-testid="stElementContainer"]:has(.taiyi-chart-seam-anchor)
-            + div[data-testid="stElementContainer"]:has(iframe)
-            + div[data-testid="stElementContainer"] div[data-testid="stExpander"] {
-                margin-top: 0 !important;
-            }
-        }
-        </style>
-        <div class="taiyi-chart-seam-anchor" aria-hidden="true"></div>
-        """,
+        '<div class="taiyi-chart-seam-anchor" aria-hidden="true"></div>',
         unsafe_allow_html=True,
     )
 
@@ -3630,411 +3630,45 @@ st.set_page_config(
     page_title=t("page_title"),
     page_icon=_page_icon,
 )
-# Inject Chinese classical theme CSS globally
+# Inject Grok dark theme CSS globally
 st.markdown(get_custom_css(), unsafe_allow_html=True)
+# st.markdown strips <script>; st.html runs JS to kill sidebar resize handle (Streamlit 1.52+)
+st.html(get_sidebar_cursor_fix_html(), unsafe_allow_javascript=True)
 # 定義基礎 URL
 BASE_URL_KINTAIYI = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/master/'
 BASE_URL_KINLIUREN = 'https://raw.githubusercontent.com/kentang2017/kinliuren/master/'
 
-# 側邊欄輸入
+# Grok-style top nav + fixed-width sidebar (see custom_css.py SIDEBAR_WIDTH_PX)
+st.markdown(get_top_nav_html(st.session_state.get("lang", "zh")), unsafe_allow_html=True)
+
+_MODELS = {
+    "CEREBRAS_MODEL_OPTIONS": CEREBRAS_MODEL_OPTIONS,
+    "CEREBRAS_MODEL_DESCRIPTIONS": CEREBRAS_MODEL_DESCRIPTIONS,
+    "OPENAI_MODEL_OPTIONS": OPENAI_MODEL_OPTIONS,
+    "OPENAI_MODEL_DESCRIPTIONS": OPENAI_MODEL_DESCRIPTIONS,
+    "XAI_MODEL_OPTIONS": XAI_MODEL_OPTIONS,
+    "XAI_MODEL_DESCRIPTIONS": XAI_MODEL_DESCRIPTIONS,
+    "DEEPSEEK_MODEL_OPTIONS": DEEPSEEK_MODEL_OPTIONS,
+    "DEEPSEEK_MODEL_DESCRIPTIONS": DEEPSEEK_MODEL_DESCRIPTIONS,
+    "QWEN_MODEL_OPTIONS": QWEN_MODEL_OPTIONS,
+    "QWEN_MODEL_DESCRIPTIONS": QWEN_MODEL_DESCRIPTIONS,
+}
 with st.sidebar:
-    lang_choice = st.selectbox(
-        "語言 Language",
-        ["中文", "English"],
-        index=0 if st.session_state.lang == "zh" else 1,
-        key="lang_select",
+    _sb = render_grok_sidebar(
+        t=t, to=to,
+        load_system_prompts=load_system_prompts,
+        save_system_prompts=save_system_prompts,
+        models=_MODELS,
     )
-    new_lang = "zh" if lang_choice == "中文" else "en"
-    if new_lang != st.session_state.lang:
-        st.session_state.lang = new_lang
-        st.rerun()
-
-    st.header(t("param_header"))
-    
-    now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-    col1, col2 = st.columns(2)
-    with col1:
-        my = st.number_input(t("year"), min_value=0, max_value=2100, value=now.year, key="year")
-        mm = st.number_input(t("month"), min_value=1, max_value=12, value=now.month, key="month")
-        md = st.number_input(t("day"), min_value=1, max_value=31, value=now.day, key="day")
-    with col2:
-        mh = st.number_input(t("hour"), min_value=0, max_value=23, value=now.hour, key="hour")
-        mmin = st.number_input(t("minute"), min_value=0, max_value=59, value=now.minute, key="minute")
-
-    st.markdown("---")
-    st.subheader(t("tongyun_query_header"))
-    tongyun_sync = st.checkbox(t("tongyun_sync_chart"), value=True, key="tongyun_sync_chart")
-    if tongyun_sync:
-        st.caption(t("tongyun_sync_hint").format(year=my))
-    else:
-        st.slider(
-            t("tongyun_query_year"),
-            min_value=-476,
-            max_value=2100,
-            value=int(st.session_state.get("tongyun_query_year", my)),
-            key="tongyun_query_year",
-        )
-
-    option = st.selectbox(
-        t("chart_method"),
-        ('時計太乙', '年計太乙', '月計太乙', '日計太乙', '分計太乙', '太乙命法', '太乙命法 (魔改)'),
-        format_func=to,
-    )
-    acum = st.selectbox(t("acc_years"), ('太乙統宗', '太乙金鏡', '太乙淘金歌', '太乙局'), format_func=to)
-    ten_ching = st.selectbox(t("ten_essences"), ('無', '有'), format_func=to)
-    sex_o = st.selectbox(t("life_gender"), ('男', '女'), format_func=to)
-    rotation = st.selectbox(t("rotation_label"), ('固定', '轉動'), format_func=to)
-    show_geju_markers = st.toggle(t("geju_markers_toggle"), value=True, key="show_geju_markers")
-    show_wuxing_color = st.toggle(t("wuxing_color_toggle"), value=True, key="show_wuxing_color")
-    _is_life_option = option in ("太乙命法", "太乙命法 (魔改)")
-    show_guxu_overlay = False
-    if not _is_life_option:
-        show_guxu_overlay = st.toggle(t("guxu_overlay_toggle"), value=True, key="show_guxu_overlay")
-
-    num_dict = {
-        '時計太乙': 3, '年計太乙': 0, '月計太乙': 1, '日計太乙': 2, '分計太乙': 4,
-        '太乙命法': 6, '太乙命法 (魔改)': 5,
-    }
-    style = num_dict[option]
-    tn_dict = {'太乙統宗': 0, '太乙金鏡': 1, '太乙淘金歌': 2, '太乙局': 3}
-    tn = tn_dict[acum]
-    tc_dict = {'有': 1, '無': 0}
-    tc = tc_dict[ten_ching]
-    
-    instant = st.button(t("instant_btn"), width="stretch")
-    
-    st.markdown("---")
-    st.header(t("ai_settings"))
-
-    ai_provider = st.selectbox(
-        t("ai_provider"),
-        options=["Cerebras", "OpenAI", "xAI (Grok)", "DeepSeek", "Qwen", "自定義"],
-        index=0,
-        key="ai_provider_selector",
-    )
-
-    if ai_provider == "OpenAI":
-        openai_api_key_input = st.text_input(
-            t("openai_api_key_label"),
-            type="password",
-            placeholder=t("openai_api_key_placeholder"),
-            key="openai_api_key_input",
-        )
-        selected_model = st.selectbox(
-            t("ai_model"),
-            options=OPENAI_MODEL_OPTIONS,
-            index=0,
-            key="openai_model_selector",
-            help="\n".join(f"• {k}: {v}" for k, v in OPENAI_MODEL_DESCRIPTIONS.items())
-        )
-    elif ai_provider == "xAI (Grok)":
-        openai_api_key_input = ""
-        st.text_input(
-            t("xai_api_key_label"),
-            type="password",
-            placeholder=t("xai_api_key_placeholder"),
-            key="xai_api_key_input",
-        )
-        selected_model = st.selectbox(
-            t("ai_model"),
-            options=XAI_MODEL_OPTIONS,
-            index=0,
-            key="xai_model_selector",
-            help="\n".join(f"• {k}: {v}" for k, v in XAI_MODEL_DESCRIPTIONS.items())
-        )
-    elif ai_provider == "DeepSeek":
-        openai_api_key_input = ""
-        st.text_input(
-            t("deepseek_api_key_label"),
-            type="password",
-            placeholder=t("deepseek_api_key_placeholder"),
-            key="deepseek_api_key_input",
-        )
-        selected_model = st.selectbox(
-            t("ai_model"),
-            options=DEEPSEEK_MODEL_OPTIONS,
-            index=0,
-            key="deepseek_model_selector",
-            help="\n".join(f"• {k}: {v}" for k, v in DEEPSEEK_MODEL_DESCRIPTIONS.items())
-        )
-    elif ai_provider == "Qwen":
-        openai_api_key_input = ""
-        st.text_input(
-            t("qwen_api_key_label"),
-            type="password",
-            placeholder=t("qwen_api_key_placeholder"),
-            key="qwen_api_key_input",
-        )
-        selected_model = st.selectbox(
-            t("ai_model"),
-            options=QWEN_MODEL_OPTIONS,
-            index=0,
-            key="qwen_model_selector",
-            help="\n".join(f"• {k}: {v}" for k, v in QWEN_MODEL_DESCRIPTIONS.items())
-        )
-    elif ai_provider == "自定義":
-        # ── Custom provider settings ──────────────────────────────
-        if "custom_provider_models" not in st.session_state:
-            st.session_state.custom_provider_models = []
-
-        st.text_input(
-            t("custom_provider_name"),
-            key="custom_provider_name",
-            placeholder="自定義服務商",
-        )
-        st.selectbox(
-            t("custom_provider_api_mode"),
-            options=[t("custom_provider_api_mode_option")],
-            key="custom_provider_api_mode",
-        )
-
-        # API key with show/hide and validate button
-        show_key = st.toggle(t("custom_provider_show_key"), key="custom_provider_show_key", value=False)
-        col_key, col_check = st.columns([3, 1])
-        with col_key:
-            st.text_input(
-                t("custom_provider_api_key"),
-                type="text" if show_key else "password",
-                key="custom_provider_api_key",
-            )
-        with col_check:
-            st.markdown("<br>", unsafe_allow_html=True)
-            check_key_btn = st.button(t("custom_provider_check_btn"), key="custom_provider_check_key_btn", width="stretch")
-
-        if check_key_btn:
-            _ckey = st.session_state.get("custom_provider_api_key", "").strip()
-            _chost = st.session_state.get("custom_provider_api_host", "").strip()
-            _cpath = st.session_state.get("custom_provider_api_path", "").strip()
-            _ccompat = st.session_state.get("custom_provider_network_compat", False)
-            if not _ckey:
-                st.error(t("custom_provider_api_key_missing"))
-            elif not _chost:
-                st.error(t("custom_provider_host_missing"))
-            else:
-                _proto = "http" if _ccompat else "https"
-                _base_url = f"{_proto}://{_chost}{_cpath}"
-                try:
-                    _check_client = OpenAICompatibleClient(api_key=_ckey, base_url=_base_url)
-                    _check_client.list_models()
-                    st.success(t("custom_provider_key_ok"))
-                except Exception as _check_err:
-                    st.error(t("custom_provider_key_fail").format(str(_check_err)))
-
-        # API host and path side by side
-        col_host, col_path = st.columns(2)
-        with col_host:
-            st.text_input(
-                t("custom_provider_api_host"),
-                key="custom_provider_api_host",
-                placeholder="api.openai.com",
-            )
-        with col_path:
-            st.text_input(
-                t("custom_provider_api_path"),
-                key="custom_provider_api_path",
-                placeholder="/v1",
-            )
-
-        # Network compatibility toggle
-        st.toggle(
-            t("custom_provider_network_compat"),
-            key="custom_provider_network_compat",
-            value=False,
-        )
-
-        # Models section
-        st.markdown(f"**{t('custom_provider_models_label')}**")
-        col_add_btn, col_reset_btn, col_fetch_btn = st.columns(3)
-        with col_add_btn:
-            open_add_model = st.button(t("custom_provider_add_model"), key="custom_provider_open_add_model", width="stretch")
-        with col_reset_btn:
-            reset_models_btn = st.button(t("custom_provider_reset_models"), key="custom_provider_reset_models_btn", width="stretch")
-        with col_fetch_btn:
-            fetch_models_btn = st.button(t("custom_provider_fetch_models"), key="custom_provider_fetch_models_btn", width="stretch")
-
-        if reset_models_btn:
-            st.session_state.custom_provider_models = []
-            st.rerun()
-
-        if fetch_models_btn:
-            _ckey = st.session_state.get("custom_provider_api_key", "").strip()
-            _chost = st.session_state.get("custom_provider_api_host", "").strip()
-            _cpath = st.session_state.get("custom_provider_api_path", "").strip()
-            _ccompat = st.session_state.get("custom_provider_network_compat", False)
-            if not _ckey:
-                st.error(t("custom_provider_api_key_missing"))
-            elif not _chost:
-                st.error(t("custom_provider_host_missing"))
-            else:
-                _proto = "http" if _ccompat else "https"
-                _base_url = f"{_proto}://{_chost}{_cpath}"
-                try:
-                    _fetch_client = OpenAICompatibleClient(api_key=_ckey, base_url=_base_url)
-                    _fetched = _fetch_client.list_models()
-                    st.session_state.custom_provider_models = _fetched
-                    st.success(t("custom_provider_fetch_ok").format(len(_fetched)))
-                    st.rerun()
-                except Exception as _fetch_err:
-                    st.error(t("custom_provider_fetch_fail").format(str(_fetch_err)))
-
-        if open_add_model:
-            st.session_state.custom_provider_add_model_open = True
-
-        if st.session_state.get("custom_provider_add_model_open"):
-            new_model_name = st.text_input(
-                t("custom_provider_models_label"),
-                key="custom_provider_new_model_input",
-                placeholder=t("custom_provider_new_model_placeholder"),
-                label_visibility="collapsed",
-            )
-            if st.button("✅", key="custom_provider_confirm_add_model"):
-                if new_model_name.strip():
-                    models = st.session_state.custom_provider_models
-                    if new_model_name.strip() not in models:
-                        models.append(new_model_name.strip())
-                        st.session_state.custom_provider_models = models
-                    st.session_state.custom_provider_add_model_open = False
-                    st.rerun()
-
-        _custom_models = st.session_state.get("custom_provider_models", [])
-        if _custom_models:
-            selected_model = st.selectbox(
-                t("ai_model"),
-                options=_custom_models,
-                index=0,
-                key="custom_model_selector",
-            )
-        else:
-            selected_model = st.text_input(
-                t("ai_model"),
-                key="custom_model_direct_input",
-                placeholder=t("custom_provider_new_model_placeholder"),
-            )
-    else:
-        openai_api_key_input = ""
-        selected_model = st.selectbox(
-            t("ai_model"),
-            options=CEREBRAS_MODEL_OPTIONS,
-            index=0,
-            key="cerebras_model_selector",
-            help="\n".join(f"• {k}: {v}" for k, v in CEREBRAS_MODEL_DESCRIPTIONS.items())
-        )
-    
-    system_prompts_data = load_system_prompts()
-    prompts_list = system_prompts_data.get("prompts", [])
-    prompt_names = [prompt["name"] for prompt in prompts_list]
-    selected_prompt = system_prompts_data.get("selected")
-    
-    if prompt_names:
-        selected_index = 0
-        if selected_prompt in prompt_names:
-            selected_index = prompt_names.index(selected_prompt)
-        
-        selected_name = st.selectbox(
-            t("select_prompt"),
-            options=prompt_names,
-            index=selected_index,
-            key="qwen_system_prompt_selector",
-            help=t("select_prompt_help")
-        )
-        
-        system_prompts_data["selected"] = selected_name
-        
-        selected_content = ""
-        for prompt in prompts_list:
-            if prompt["name"] == selected_name:
-                selected_content = prompt["content"]
-                break
-        
-        if 'qwen_system_prompt' not in st.session_state:
-            st.session_state.qwen_system_prompt = selected_content
-        elif selected_name != st.session_state.get("last_selected_qwen_prompt"):
-            st.session_state.qwen_system_prompt = selected_content
-        
-        st.session_state.last_selected_qwen_prompt = selected_name
-        
-        new_content = st.text_area(
-            t("edit_prompt"),
-            value=st.session_state.qwen_system_prompt,
-            height=150,
-            placeholder=t("edit_prompt_placeholder"),
-            key="qwen_system_editor"
-        )
-        
-        st.session_state.qwen_system_prompt = new_content
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button(t("update_prompt"), key="update_qwen_prompt_button"):
-                for prompt in prompts_list:
-                    if prompt["name"] == selected_name:
-                        prompt["content"] = new_content
-                        break
-                if save_system_prompts(system_prompts_data):
-                    st.toast(t("prompt_updated").format(selected_name))
-        
-        with col2:
-            if st.button(t("delete_prompt"), key="delete_qwen_prompt_button", 
-                        disabled=len(prompts_list) <= 1):
-                prompts_list = [p for p in prompts_list if p["name"] != selected_name]
-                system_prompts_data["prompts"] = prompts_list
-                if selected_name == selected_prompt and prompts_list:
-                    system_prompts_data["selected"] = prompts_list[0]["name"]
-                if save_system_prompts(system_prompts_data):
-                    st.toast(t("prompt_deleted").format(selected_name))
-                    st.rerun()
-    
-    if "qwen_form_key_suffix" not in st.session_state:
-        st.session_state.qwen_form_key_suffix = 0
-    
-    name_key = f"new_qwen_prompt_name_{st.session_state.qwen_form_key_suffix}"
-    content_key = f"new_qwen_prompt_content_{st.session_state.qwen_form_key_suffix}"
-    
-    with st.expander(t("add_prompt_expander"), expanded=False):
-        new_prompt_name = st.text_input(t("new_prompt_name"), key=name_key)
-        new_prompt_content = st.text_area(
-            t("new_prompt_content"),
-            height=100,
-            placeholder=t("new_prompt_placeholder"),
-            key=content_key
-        )
-        if st.button(t("add_prompt_btn"), key="add_qwen_prompt_button",
-                    disabled=not new_prompt_name or not new_prompt_content):
-            if new_prompt_name in prompt_names:
-                st.error(t("prompt_exists").format(new_prompt_name))
-            else:
-                prompts_list.append({
-                    "name": new_prompt_name,
-                    "content": new_prompt_content
-                })
-                system_prompts_data["prompts"] = prompts_list
-                if save_system_prompts(system_prompts_data):
-                    st.session_state.qwen_form_key_suffix += 1
-                    st.toast(t("prompt_added").format(new_prompt_name))
-                    st.rerun()
-    
-    if st.toggle(t("advanced_settings"), key="qwen_advanced_settings_toggle"):
-        st.session_state.qwen_max_tokens = st.slider(
-            t("max_tokens"),
-            1024, 32768,
-            st.session_state.get("qwen_max_tokens", 8192),
-            key="qwen_max_tokens_slider",
-            help=t("max_tokens_help")
-        )
-        st.session_state.qwen_temperature = st.slider(
-            t("temperature"),
-            0.0, 1.5,
-            st.session_state.get("qwen_temperature", 0.7),
-            step=0.05,
-            key="qwen_temperature_slider",
-            help=t("temperature_help")
-        )
-    
-    st.markdown("---")
-    if st.toggle(t("debug_mode"), key="debug_mode_toggle", help=t("debug_help")):
-        st.subheader(t("debug_info"))
-        st.write("Session State:")
-        st.json(st.session_state)
+my, mm, md, mh, mmin = _sb.my, _sb.mm, _sb.md, _sb.mh, _sb.mmin
+style, tn, tc, sex_o = _sb.style, _sb.tn, _sb.tc, _sb.sex_o
+rotation = _sb.rotation
+show_geju_markers = _sb.show_geju_markers
+show_wuxing_color = _sb.show_wuxing_color
+show_guxu_overlay = _sb.show_guxu_overlay
+instant = _sb.instant
+selected_model = _sb.selected_model
+openai_api_key_input = _sb.openai_api_key_input
 
 @st.cache_data
 def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
@@ -4144,6 +3778,8 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
         "ty": ty
     }
 
+
+
 # 創建標籤頁
 tabs = st.tabs([t('tab_chart'), t('tab_instructions'), t('tab_history'), t('tab_disaster'), t('tab_books'), t('tab_updates'), t('tab_guide'), t('tab_links')])
 
@@ -4170,14 +3806,33 @@ with tabs[0]:
                             show_geju_markers=show_geju_markers,
                             wuxing_color=show_wuxing_color,
                         )
-                        render_chart_explanation_seam()
-                        life_svg = _chart_svg_with_geju(results["genchart1"], chart_meta)
-                        if rotation == "轉動":
-                            render_svg(life_svg, int(start_pt), chart_meta)
-                        else:
-                            render_svg1(life_svg, int(start_pt), chart_meta)
+                        chart_life_main, chart_life_side = st.columns([1.65, 0.85], gap="large")
+                        with chart_life_main:
+                            render_chart_stage_open(
+                                print_meta=build_chart_print_meta(
+                                    results,
+                                    t=t,
+                                    is_life_chart=True,
+                                    life_method_label=_life_method_label(results["style"]),
+                                ),
+                            )
+                            render_chart_explanation_seam()
+                            life_svg = _chart_svg_with_geju(results["genchart1"], chart_meta)
+                            if rotation == "轉動":
+                                render_svg(life_svg, int(start_pt), chart_meta)
+                            else:
+                                render_svg1(life_svg, int(start_pt), chart_meta)
+                            render_chart_mobile_params(chart_meta, results, t=t)
+                        with chart_life_side:
+                            render_chart_side_panel(
+                                chart_meta, results, t=t, is_life_chart=True,
+                            )
                     except (ValueError, IndexError) as e:
                         st.error(f"Failed to parse SVG viewBox: {str(e)}")
+                    st.markdown(
+                        '<span class="chart-explanation-anchor" aria-hidden="true"></span>',
+                        unsafe_allow_html=True,
+                    )
                     with st.expander(t("explanation")):
                         st.title(t("taiyi_life_title"))
                         st.markdown(t("twelve_palaces"))
@@ -4327,7 +3982,6 @@ with tabs[0]:
                         st.markdown(results["ts"])
                         st.title(t("history_records"))
                         st.markdown(results["ch"])
-                    print(f"{config.gendatetime(my, mm, md, mh, mmin)} {results['zhao']} - {results['ty'].taiyi_life(results['sex_o']).get('性別')} - {config.taiyi_name(0)[0]} - {results['ty'].accnum(0, 0)} | \n{t('lunar_label')}︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n{results['gz']} |\n{config.kingyear(my)} |\n{t('taiyi_life_method')} - {results['ty'].kook(0, 0).get('文')} ({results['ttext'].get('局式').get('年')}) | \n{t('epoch_label')}︰{results['ttext'].get('紀元')} | {t('home_calc')}︰{results['homecal']} {t('away_calc')}︰{results['awaycal']} |")
                 else:
                     try:
                         start_pt2 = results["genchart2"][results["genchart2"].index('''viewBox="''')+22:].split(" ")[1]
@@ -4338,14 +3992,26 @@ with tabs[0]:
                             show_guxu_overlay=show_guxu_overlay,
                             wuxing_color=show_wuxing_color,
                         )
-                        render_chart_explanation_seam()
-                        chart_svg = _chart_svg_with_geju(results["genchart2"], chart_meta)
-                        if rotation == "轉動":
-                            render_svg(chart_svg, int(start_pt2), chart_meta)
-                        else:
-                            render_svg1(chart_svg, int(start_pt2), chart_meta)
+                        chart_main_col, chart_side_col = st.columns([1.65, 0.85], gap="large")
+                        with chart_main_col:
+                            render_chart_stage_open(
+                                print_meta=build_chart_print_meta(results, t=t),
+                            )
+                            render_chart_explanation_seam()
+                            chart_svg = _chart_svg_with_geju(results["genchart2"], chart_meta)
+                            if rotation == "轉動":
+                                render_svg(chart_svg, int(start_pt2), chart_meta)
+                            else:
+                                render_svg1(chart_svg, int(start_pt2), chart_meta)
+                            render_chart_mobile_params(chart_meta, results, t=t)
+                        with chart_side_col:
+                            render_chart_side_panel(chart_meta, results, t=t)
                     except (ValueError, IndexError) as e:
                         st.error(f"Failed to parse SVG viewBox: {str(e)}")
+                    st.markdown(
+                        '<span class="chart-explanation-anchor" aria-hidden="true"></span>',
+                        unsafe_allow_html=True,
+                    )
                     with st.expander(t("explanation")):
                         st.title(t("taiyi_mishu"))
                         st.markdown(results["ts"])
@@ -4791,18 +4457,8 @@ with tabs[0]:
                                 if _dyo_parts:
                                     st.markdown("；".join(_dyo_parts))
 
-
-                    
-                    print(f"{config.gendatetime(my, mm, md, mh, mmin)} | {t('acc_prefix')}{config.taiyi_name(results['style'])[0]}{t('acc_suffix')}︰{results['ty'].accnum(results['style'], results['tn'])} | \n"
-                          f"{t('lunar_label')}︰{results['lunard']} | {jieqi.jq(my, mm, md, mh, mmin)} |\n"
-                          f"{results['gz']} |\n"
-                          f"{config.kingyear(my)} |\n"
-                          f"{config.ty_method(results['tn'])}{results['ttext'].get('太乙計', '')} - {results['ty'].kook(results['style'], results['tn']).get('文', '')} "
-                          f"({results['ttext'].get('局式', {}).get('年', '')}) \n{t('five_yuan')}:{results['wuyuan']} | \n"
-                          f"{t('epoch_label')}︰{results['ttext'].get('紀元', '')} | {t('home_calc')}︰{results['homecal']} {t('away_calc')}︰{results['awaycal']} {t('set_calc')}︰{results['setcal']} |")
-
                 # ── 運籌博弈分析區塊 ──────────────────────────────────────
-                if st.toggle(t("game_theory_toggle"), key="game_theory_toggle_switch"):
+                if st.session_state.get("game_theory_toggle_switch"):
                     with st.spinner(t("game_theory_computing")):
                         try:
                             gt = TaiyiGame(results["ttext"])
@@ -4844,212 +4500,6 @@ with tabs[0]:
                             st.markdown(f"**主方最優純策略：** {gt_report['主方最優純策略']}")
                             st.markdown(f"**客方最優純策略：** {gt_report['客方最優純策略']}")
 
-                if st.button(t("ai_analyze_btn"), key="analyze_with_qwen"):
-                    with st.spinner(t("ai_analyzing")):
-                        _provider = st.session_state.get("ai_provider_selector", "Cerebras")
-                        if _provider == "OpenAI":
-                            _openai_key = st.session_state.get("openai_api_key_input", "").strip()
-                            if not _openai_key:
-                                st.error(t("openai_api_key_missing"))
-                            else:
-                                try:
-                                    client = OpenAIClient(api_key=_openai_key)
-                                    taiyi_prompt = format_taiyi_results_for_prompt(results)
-                                    if st.session_state.get("game_theory_toggle_switch"):
-                                        try:
-                                            gt_summary = TaiyiGame(results["ttext"]).格局摘要文字()
-                                            taiyi_prompt = taiyi_prompt + "\n\n" + gt_summary
-                                        except Exception as gt_err:
-                                            st.warning(f"博弈摘要生成失敗（不影響AI分析）：{gt_err}")
-                                    messages = [
-                                        {"role": "system", "content": st.session_state.qwen_system_prompt},
-                                        {"role": "user", "content": taiyi_prompt}
-                                    ]
-                                    api_params = {
-                                        "messages": messages,
-                                        "model": selected_model,
-                                        "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
-                                        "temperature": st.session_state.get("qwen_temperature", 0.7)
-                                    }
-                                    response = client.get_chat_completion(**api_params)
-                                    raw_response = response.choices[0].message.content
-                                    with st.expander(t("ai_result"), expanded=True):
-                                        st.markdown(raw_response)
-                                except OpenAITokenQuotaExceededError:
-                                    st.error(t("ai_openai_quota_exceeded"))
-                                except Exception as e:
-                                    st.error(t("ai_error").format(str(e)))
-                        elif _provider == "xAI (Grok)":
-                            _xai_key = st.session_state.get("xai_api_key_input", "").strip()
-                            if not _xai_key:
-                                st.error(t("xai_api_key_missing"))
-                            else:
-                                try:
-                                    client = OpenAICompatibleClient(api_key=_xai_key, base_url=XAI_BASE_URL)
-                                    taiyi_prompt = format_taiyi_results_for_prompt(results)
-                                    if st.session_state.get("game_theory_toggle_switch"):
-                                        try:
-                                            gt_summary = TaiyiGame(results["ttext"]).格局摘要文字()
-                                            taiyi_prompt = taiyi_prompt + "\n\n" + gt_summary
-                                        except Exception as gt_err:
-                                            st.warning(f"博弈摘要生成失敗（不影響AI分析）：{gt_err}")
-                                    messages = [
-                                        {"role": "system", "content": st.session_state.qwen_system_prompt},
-                                        {"role": "user", "content": taiyi_prompt}
-                                    ]
-                                    api_params = {
-                                        "messages": messages,
-                                        "model": selected_model,
-                                        "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
-                                        "temperature": st.session_state.get("qwen_temperature", 0.7)
-                                    }
-                                    response = client.get_chat_completion(**api_params)
-                                    raw_response = response.choices[0].message.content
-                                    with st.expander(t("ai_result"), expanded=True):
-                                        st.markdown(raw_response)
-                                except CompatibleTokenQuotaExceededError:
-                                    st.error(t("ai_xai_quota_exceeded"))
-                                except Exception as e:
-                                    st.error(t("ai_error").format(str(e)))
-                        elif _provider == "DeepSeek":
-                            _deepseek_key = st.session_state.get("deepseek_api_key_input", "").strip()
-                            if not _deepseek_key:
-                                st.error(t("deepseek_api_key_missing"))
-                            else:
-                                try:
-                                    client = OpenAICompatibleClient(api_key=_deepseek_key, base_url=DEEPSEEK_BASE_URL)
-                                    taiyi_prompt = format_taiyi_results_for_prompt(results)
-                                    if st.session_state.get("game_theory_toggle_switch"):
-                                        try:
-                                            gt_summary = TaiyiGame(results["ttext"]).格局摘要文字()
-                                            taiyi_prompt = taiyi_prompt + "\n\n" + gt_summary
-                                        except Exception as gt_err:
-                                            st.warning(f"博弈摘要生成失敗（不影響AI分析）：{gt_err}")
-                                    messages = [
-                                        {"role": "system", "content": st.session_state.qwen_system_prompt},
-                                        {"role": "user", "content": taiyi_prompt}
-                                    ]
-                                    api_params = {
-                                        "messages": messages,
-                                        "model": selected_model,
-                                        "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
-                                        "temperature": st.session_state.get("qwen_temperature", 0.7)
-                                    }
-                                    response = client.get_chat_completion(**api_params)
-                                    raw_response = response.choices[0].message.content
-                                    with st.expander(t("ai_result"), expanded=True):
-                                        st.markdown(raw_response)
-                                except CompatibleTokenQuotaExceededError:
-                                    st.error(t("ai_deepseek_quota_exceeded"))
-                                except Exception as e:
-                                    st.error(t("ai_error").format(str(e)))
-                        elif _provider == "Qwen":
-                            _qwen_key = st.session_state.get("qwen_api_key_input", "").strip()
-                            if not _qwen_key:
-                                st.error(t("qwen_api_key_missing"))
-                            else:
-                                try:
-                                    client = OpenAICompatibleClient(api_key=_qwen_key, base_url=QWEN_BASE_URL)
-                                    taiyi_prompt = format_taiyi_results_for_prompt(results)
-                                    if st.session_state.get("game_theory_toggle_switch"):
-                                        try:
-                                            gt_summary = TaiyiGame(results["ttext"]).格局摘要文字()
-                                            taiyi_prompt = taiyi_prompt + "\n\n" + gt_summary
-                                        except Exception as gt_err:
-                                            st.warning(f"博弈摘要生成失敗（不影響AI分析）：{gt_err}")
-                                    messages = [
-                                        {"role": "system", "content": st.session_state.qwen_system_prompt},
-                                        {"role": "user", "content": taiyi_prompt}
-                                    ]
-                                    api_params = {
-                                        "messages": messages,
-                                        "model": selected_model,
-                                        "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
-                                        "temperature": st.session_state.get("qwen_temperature", 0.7)
-                                    }
-                                    response = client.get_chat_completion(**api_params)
-                                    raw_response = response.choices[0].message.content
-                                    with st.expander(t("ai_result"), expanded=True):
-                                        st.markdown(raw_response)
-                                except CompatibleTokenQuotaExceededError:
-                                    st.error(t("ai_qwen_quota_exceeded"))
-                                except Exception as e:
-                                    st.error(t("ai_error").format(str(e)))
-                        elif _provider == "自定義":
-                            _ckey = st.session_state.get("custom_provider_api_key", "").strip()
-                            _chost = st.session_state.get("custom_provider_api_host", "").strip()
-                            _cpath = st.session_state.get("custom_provider_api_path", "").strip()
-                            _ccompat = st.session_state.get("custom_provider_network_compat", False)
-                            _cmodel = st.session_state.get("custom_model_selector") or st.session_state.get("custom_model_direct_input", "") or selected_model
-                            if not _ckey:
-                                st.error(t("custom_provider_api_key_missing"))
-                            elif not _chost:
-                                st.error(t("custom_provider_host_missing"))
-                            elif not _cmodel:
-                                st.error(t("custom_provider_no_models"))
-                            else:
-                                _proto = "http" if _ccompat else "https"
-                                _base_url = f"{_proto}://{_chost}{_cpath}"
-                                try:
-                                    client = OpenAICompatibleClient(api_key=_ckey, base_url=_base_url)
-                                    taiyi_prompt = format_taiyi_results_for_prompt(results)
-                                    if st.session_state.get("game_theory_toggle_switch"):
-                                        try:
-                                            gt_summary = TaiyiGame(results["ttext"]).格局摘要文字()
-                                            taiyi_prompt = taiyi_prompt + "\n\n" + gt_summary
-                                        except Exception as gt_err:
-                                            st.warning(f"博弈摘要生成失敗（不影響AI分析）：{gt_err}")
-                                    messages = [
-                                        {"role": "system", "content": st.session_state.qwen_system_prompt},
-                                        {"role": "user", "content": taiyi_prompt}
-                                    ]
-                                    api_params = {
-                                        "messages": messages,
-                                        "model": _cmodel,
-                                        "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
-                                        "temperature": st.session_state.get("qwen_temperature", 0.7)
-                                    }
-                                    response = client.get_chat_completion(**api_params)
-                                    raw_response = response.choices[0].message.content
-                                    with st.expander(t("ai_result"), expanded=True):
-                                        st.markdown(raw_response)
-                                except CompatibleTokenQuotaExceededError:
-                                    st.error(t("ai_custom_quota_exceeded"))
-                                except Exception as e:
-                                    st.error(t("ai_error").format(str(e)))
-                        else:
-                            cerebras_api_key = st.secrets.get("CEREBRAS_API_KEY") or os.getenv("CEREBRAS_API_KEY")
-                            if not cerebras_api_key:
-                                st.error(t("ai_key_missing"))
-                            else:
-                                try:
-                                    client = CerebrasClient(api_key=cerebras_api_key)
-                                    taiyi_prompt = format_taiyi_results_for_prompt(results)
-                                    # 若博弈分析已啟用，附加博弈摘要到提示詞
-                                    if st.session_state.get("game_theory_toggle_switch"):
-                                        try:
-                                            gt_summary = TaiyiGame(results["ttext"]).格局摘要文字()
-                                            taiyi_prompt = taiyi_prompt + "\n\n" + gt_summary
-                                        except Exception as gt_err:
-                                            st.warning(f"博弈摘要生成失敗（不影響AI分析）：{gt_err}")
-                                    messages = [
-                                        {"role": "system", "content": st.session_state.qwen_system_prompt},
-                                        {"role": "user", "content": taiyi_prompt}
-                                    ]
-                                    api_params = {
-                                        "messages": messages,
-                                        "model": selected_model,
-                                        "max_tokens": st.session_state.get("qwen_max_tokens", 8192),
-                                        "temperature": st.session_state.get("qwen_temperature", 0.7)
-                                    }
-                                    response = client.get_chat_completion(**api_params)
-                                    raw_response = response.choices[0].message.content
-                                    with st.expander(t("ai_result"), expanded=True):
-                                        st.markdown(raw_response)
-                                except TokenQuotaExceededError:
-                                    st.error(t("ai_quota_exceeded"))
-                                except Exception as e:
-                                    st.error(t("ai_error").format(str(e)))
         except Exception as e:
             st.error(t("gen_error").format(str(e)))
 
