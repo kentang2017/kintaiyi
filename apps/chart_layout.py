@@ -311,38 +311,48 @@ def render_chart_mobile_params(
     *,
     t,
 ) -> None:
-    """Mobile-only collapsible full parameters below chart."""
+    """Mobile-only collapsible full parameters below chart (優化版：更緊湊、減少空隙)."""
     chips = chart_meta.get("chips") or []
     three_five = ((results.get("three_door") or "") + (results.get("five_generals") or "")).strip()
-    if not chips and not three_five:
+    epoch = ((results.get("ttext") or {}).get("紀元", "") or "").strip()
+
+    if not chips and not three_five and not epoch:
         return
 
+    # 準備參數列
+    param_rows: list[tuple[str, str]] = list(chips)
+    if epoch:
+        param_rows.append((t("epoch_label"), epoch))
+
+    # 使用更緊湊的容器
     st.markdown(
-        '<span class="chart-mobile-params-anchor" aria-hidden="true"></span>',
+        '<div class="chart-mobile-params">',
         unsafe_allow_html=True,
     )
-    epoch = ((results.get("ttext") or {}).get("紀元", "") or "").strip()
+
     with st.expander(t("chart_meta_detail"), expanded=False):
-        param_rows: list[tuple[str, str]] = list(chips)
-        if epoch:
-            param_rows.append((t("epoch_label"), epoch))
+        # 參數區（手機版建議單欄，更緊湊）
         if param_rows:
-            cols = st.columns(2, gap="small")
-            for idx, (label, value) in enumerate(param_rows):
-                with cols[idx % 2]:
-                    st.markdown(
-                        f'<div class="chart-meta-detail-row">'
-                        f'<span class="chart-meta-detail-label">{html_escape(str(label))}</span>'
-                        f'<span class="chart-meta-detail-value">{html_escape(str(value))}</span>'
-                        f"</div>",
-                        unsafe_allow_html=True,
-                    )
+            for label, value in param_rows:
+                st.markdown(
+                    f'<div class="chart-meta-detail-row chart-meta-detail-row-mobile">'
+                    f'<span class="chart-meta-detail-label">{html_escape(str(label))}</span>'
+                    f'<span class="chart-meta-detail-value">{html_escape(str(value))}</span>'
+                    f'</div>',
+                    unsafe_allow_html=True,
+                )
+
+        # 三門五將區
         if three_five:
             st.markdown(
+                f'<div class="chart-mobile-three-five">'
                 f'<p class="chart-mobile-param-heading">{html_escape(t("three_five"))}</p>'
-                f'<p class="chart-mobile-param-body">{html_escape(three_five)}</p>',
+                f'<p class="chart-mobile-param-body">{html_escape(three_five)}</p>'
+                f'</div>',
                 unsafe_allow_html=True,
             )
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 def render_chart_mobile_meta(print_meta: str) -> None:
