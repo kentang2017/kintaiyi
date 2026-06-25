@@ -25,6 +25,19 @@ def _clamp_gregorian_date(value: datetime.date) -> datetime.date:
     return value
 
 
+def _apply_instant_hkt() -> None:
+    """Set sidebar date/time to current HKT; call before date widgets render."""
+    hkt_now = datetime.datetime.now(pytz.timezone("Asia/Hong_Kong"))
+    st.session_state.chart_date_mode = "gregorian"
+    st.session_state.chart_date = _clamp_gregorian_date(hkt_now.date())
+    st.session_state.chart_year = st.session_state.chart_date.year
+    st.session_state.chart_month = st.session_state.chart_date.month
+    st.session_state.chart_day = st.session_state.chart_date.day
+    st.session_state.chart_time = hkt_now.time().replace(second=0, microsecond=0)
+    st.session_state.chart_date_input = st.session_state.chart_date
+    st.session_state.chart_time_input = st.session_state.chart_time
+
+
 def _init_chart_date_state(now: datetime.datetime) -> None:
     if "chart_time" not in st.session_state:
         st.session_state.chart_time = now.time().replace(second=0, microsecond=0)
@@ -396,10 +409,13 @@ def render_grok_sidebar(
     new_lang = "zh" if lang_choice == "中文" else "en"
     if new_lang != st.session_state.lang:
         st.session_state.lang = new_lang
-        st.rerun()
+        st.session_state.pop("chart_meta_key", None)
 
     # ── 日期時間：西曆日曆（1800–2200）／公元前手動輸入 ─────────────────
     _init_chart_date_state(now)
+    if st.session_state.pop("apply_instant_hkt", False):
+        _apply_instant_hkt()
+        st.session_state.trigger_instant = True
 
     date_mode = st.radio(
         t("date_mode_label"),
@@ -471,14 +487,7 @@ def render_grok_sidebar(
 
     st.markdown('<div class="grok-sidebar-instant">', unsafe_allow_html=True)
     if st.button(t("instant_btn"), key="instant_hkt_btn", width="stretch"):
-        hkt_now = datetime.datetime.now(pytz.timezone("Asia/Hong_Kong"))
-        st.session_state.chart_date_mode = "gregorian"
-        st.session_state.chart_date = _clamp_gregorian_date(hkt_now.date())
-        st.session_state.chart_year = st.session_state.chart_date.year
-        st.session_state.chart_month = st.session_state.chart_date.month
-        st.session_state.chart_day = st.session_state.chart_date.day
-        st.session_state.chart_time = hkt_now.time().replace(second=0, microsecond=0)
-        st.session_state.trigger_instant = True
+        st.session_state.apply_instant_hkt = True
         st.rerun()
     st.markdown("</div>", unsafe_allow_html=True)
 

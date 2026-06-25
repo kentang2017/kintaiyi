@@ -406,6 +406,18 @@ def render_changelog_html(md_text: str) -> str:
     return '\n'.join(html_parts)
 
 
+@st.cache_data(show_spinner=False)
+def _render_changelog_html_cached(md_text: str) -> str:
+    return render_changelog_html(md_text)
+
+
+@st.cache_data(show_spinner=False)
+def _load_example_timeline_json() -> str:
+    path = os.path.join(_REPO_ROOT, "assets", "example.json")
+    with open(path, encoding="utf-8-sig") as f:
+        return f.read()
+
+
 # --- i18n: Translation dictionaries ---
 TRANSLATIONS = {
     "zh": {
@@ -435,6 +447,7 @@ TRANSLATIONS = {
         "date_bc_hint": "輸入負數年份（如 -2000 = 公元前 2000 年）",
         "time_label": "時間",
         "run_chart_btn": "立即排盤",
+        "chart_params_stale_hint": "側欄日期已變更，請按「立即排盤」更新。",
         "chart_summary": "干支曆",
         "chart_meta_detail": "完整參數",
         "kook_label": "局數",
@@ -712,6 +725,7 @@ TRANSLATIONS = {
         "date_bc_hint": "Enter a negative year (e.g. -2000 = 2000 BCE)",
         "time_label": "Time",
         "run_chart_btn": "Run Chart",
+        "chart_params_stale_hint": "Sidebar date changed — click Run Chart to refresh.",
         "chart_summary": "Stem-Branch",
         "chart_meta_detail": "Full parameters",
         "kook_label": "Bureau No.",
@@ -1068,6 +1082,7 @@ QWEN_MODEL_DESCRIPTIONS = {
 }
 
 # System Prompt Management Functions
+@st.cache_data(show_spinner=False)
 def load_system_prompts():
     SYSTEM_PROMPTS_FILE = os.path.join(_REPO_ROOT, "assets", "system_prompts.json")
     DEFAULT_SYSTEM_PROMPT = (
@@ -1101,6 +1116,7 @@ def save_system_prompts(prompts_data):
     try:
         with open(SYSTEM_PROMPTS_FILE, "w", encoding="utf-8") as f:
             json.dump(prompts_data, f, indent=2, ensure_ascii=False)
+        load_system_prompts.clear()
         return True
     except Exception as e:
         st.error(t("save_error").format(e))
@@ -1541,6 +1557,29 @@ def _svg_view_half(svg: str, fallback: int) -> float:
     return float(fallback) / 2.0
 
 
+def _sanqi_flag_chart_css(scope: str = ".taiyi-svg-root") -> str:
+    """三旗行宮：太陰黑旗在深底／PNG 匯出須保留金邊與可見填色。"""
+    return f"""
+    {scope} path.taiyi-sanqi-flag-banner.taiyi-sanqi-flag-black {{
+        fill: #1e2438 !important;
+        stroke: #d7bd6f !important;
+        stroke-width: 1.6 !important;
+    }}
+    {scope} path.taiyi-sanqi-flag-pole.taiyi-sanqi-flag-black {{
+        stroke: #d7bd6f !important;
+        stroke-width: 1.5 !important;
+    }}
+    {scope} path.taiyi-sanqi-flag-banner:not(.taiyi-sanqi-flag-black) {{
+        stroke: #e9cc88 !important;
+        stroke-width: 1.1 !important;
+    }}
+    {scope} path.taiyi-sanqi-flag-pole:not(.taiyi-sanqi-flag-black) {{
+        stroke: #e9cc88 !important;
+        stroke-width: 1.4 !important;
+    }}
+    """
+
+
 def _chart_export_overlay_css(glow_id: str, scope: str = ".taiyi-svg-root") -> str:
     """Export rules shared by all style modes (孤虛／釋格局／文昌／重點高亮)."""
     return f"""
@@ -1621,7 +1660,7 @@ def _chart_export_css_bundle(glow_id: str) -> dict[str, str]:
         stroke-width: 0.9 !important;
         fill: none !important;
     }}
-    """
+    """ + _sanqi_flag_chart_css(scope)
     traditional_layers = f"""
     {scope} text, {scope} tspan {{
         fill: #f5f0e1 !important;
@@ -1715,25 +1754,6 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     svg_markup = _chart_svg_with_geju(
         _prepare_svg_markup(svg, svg_id, num, chart_meta["title"]),
         chart_meta,
-    )
-
-    chips_html = "".join(
-        f"""
-        <div class="taiyi-meta-chip">
-            <span class="taiyi-meta-label">{html_escape(str(label))}</span>
-            <strong class="taiyi-meta-value">{html_escape(str(value))}</strong>
-        </div>
-        """
-        for label, value in chart_meta["chips"]
-    )
-    legend_html = "".join(
-        f"""
-        <div class="taiyi-legend-item">
-            <span class="taiyi-swatch taiyi-swatch-{color_name}"></span>
-            <span>{html_escape(detail)}</span>
-        </div>
-        """
-        for color_name, detail in chart_meta["legend"]
     )
 
     export_css_bundle = _chart_export_css_bundle(glow_id)
@@ -1939,6 +1959,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         stroke-width: 0.9 !important;
         fill: none !important;
     }
+""" + _sanqi_flag_chart_css("#__CONTAINER_ID__ .taiyi-svg-root") + """
     #__CONTAINER_ID__ .taiyi-svg-root * {
         user-select: none;
         -webkit-user-select: none;
@@ -3656,10 +3677,11 @@ st.set_page_config(
     page_title=t("page_title"),
     page_icon=_page_icon,
 )
-# Inject Grok dark theme CSS globally
-st.markdown(get_custom_css(), unsafe_allow_html=True)
-# st.markdown strips <script>; st.html runs JS to kill sidebar resize handle (Streamlit 1.52+)
-st.html(get_sidebar_cursor_fix_html(), unsafe_allow_javascript=True)
+# Inject Grok theme once per session (large CSS/JS bundle)
+if not st.session_state.get("_grok_assets_v2"):
+    st.markdown(get_custom_css(), unsafe_allow_html=True)
+    st.html(get_sidebar_cursor_fix_html(), unsafe_allow_javascript=True)
+    st.session_state._grok_assets_v2 = True
 # 定義基礎 URL
 BASE_URL_KINTAIYI = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/master/'
 BASE_URL_KINLIUREN = 'https://raw.githubusercontent.com/kentang2017/kinliuren/master/'
@@ -3805,32 +3827,112 @@ def gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc):
     }
 
 
+def _chart_input_key(my, mm, md, mh, mmin, style, tn, sex_o, tc) -> tuple:
+    return (my, mm, md, mh, mmin, style, tn, sex_o, tc)
+
+
+def _resolve_chart_results(
+    *,
+    instant: bool,
+    my: int,
+    mm: int,
+    md: int,
+    mh: int,
+    mmin: int,
+    style: int,
+    tn: int,
+    sex_o: str,
+    tc: int,
+) -> dict | None:
+    """Reuse session cache; only recompute Taiyi when user runs chart or first load."""
+    key = _chart_input_key(my, mm, md, mh, mmin, style, tn, sex_o, tc)
+    cached = st.session_state.get("chart_results")
+    cached_key = st.session_state.get("chart_input_key")
+
+    if instant:
+        results = gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc)
+        st.session_state.chart_results = results
+        st.session_state.chart_input_key = key
+        st.session_state.pop("chart_meta_key", None)
+        st.session_state.chart_params_stale = False
+        return results
+
+    if cached is not None and cached_key == key:
+        st.session_state.chart_params_stale = False
+        return cached
+
+    if cached is not None and cached_key != key:
+        st.session_state.chart_params_stale = True
+        return cached
+
+    results = gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc)
+    st.session_state.chart_results = results
+    st.session_state.chart_input_key = key
+    st.session_state.pop("chart_meta_key", None)
+    st.session_state.chart_params_stale = False
+    return results
+
+
+def _resolve_chart_meta(
+    results: dict,
+    *,
+    is_life_chart: bool,
+    show_geju_markers: bool,
+    show_guxu_overlay: bool,
+    show_wuxing_color: bool,
+) -> dict:
+    """Cache expensive overlay/sector-panel assembly across chat-only reruns."""
+    meta_key = (
+        st.session_state.get("chart_input_key"),
+        show_geju_markers,
+        show_guxu_overlay,
+        show_wuxing_color,
+        st.session_state.get("lang", "zh"),
+        results.get("style"),
+        is_life_chart,
+    )
+    if (
+        st.session_state.get("chart_meta_key") == meta_key
+        and st.session_state.get("chart_meta") is not None
+    ):
+        return st.session_state.chart_meta
+
+    meta = _build_chart_meta(
+        results,
+        is_life_chart=is_life_chart,
+        show_geju_markers=show_geju_markers,
+        show_guxu_overlay=show_guxu_overlay,
+        wuxing_color=show_wuxing_color,
+    )
+    st.session_state.chart_meta = meta
+    st.session_state.chart_meta_key = meta_key
+    return meta
+
 
 # 創建標籤頁
 tabs = st.tabs([t('tab_chart'), t('tab_instructions'), t('tab_history'), t('tab_disaster'), t('tab_books'), t('tab_updates'), t('tab_guide'), t('tab_links')])
 
 # 太乙排盤
 with tabs[0]:
-    output = st.empty()
-    with st_capture(output.code):
-        try:
-            if instant:
-                now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-                results = gen_results(now.year, now.month, now.day, now.hour, now.minute, style, tn, sex_o, tc)
-                st.session_state.render_default = False
-            else:
-                results = gen_results(my, mm, md, mh, mmin, style, tn, sex_o, tc)
-                st.session_state.render_default = False
+    try:
+        results = _resolve_chart_results(
+            instant=instant,
+            my=my, mm=mm, md=md, mh=mh, mmin=mmin,
+            style=style, tn=tn, sex_o=sex_o, tc=tc,
+        )
+        if st.session_state.get("chart_params_stale"):
+            st.caption(t("chart_params_stale_hint"))
 
-            if results:
+        if results:
                 if _is_life_chart_style(results["style"]):
                     try:
                         start_pt = results["genchart1"][results["genchart1"].index('''viewBox="''')+22:].split(" ")[1]
-                        chart_meta = _build_chart_meta(
+                        chart_meta = _resolve_chart_meta(
                             results,
                             is_life_chart=True,
                             show_geju_markers=show_geju_markers,
-                            wuxing_color=show_wuxing_color,
+                            show_guxu_overlay=show_guxu_overlay,
+                            show_wuxing_color=show_wuxing_color,
                         )
                         chart_life_main, chart_life_side = st.columns([1.65, 0.85], gap="large")
                         with chart_life_main:
@@ -3843,11 +3945,10 @@ with tabs[0]:
                                 ),
                             )
                             render_chart_explanation_seam()
-                            life_svg = _chart_svg_with_geju(results["genchart1"], chart_meta)
                             if rotation == "轉動":
-                                render_svg(life_svg, int(start_pt), chart_meta)
+                                render_svg(results["genchart1"], int(start_pt), chart_meta)
                             else:
-                                render_svg1(life_svg, int(start_pt), chart_meta)
+                                render_svg1(results["genchart1"], int(start_pt), chart_meta)
                             render_chart_mobile_params(chart_meta, results, t=t)
                         with chart_life_side:
                             render_chart_side_panel(
@@ -4011,12 +4112,12 @@ with tabs[0]:
                 else:
                     try:
                         start_pt2 = results["genchart2"][results["genchart2"].index('''viewBox="''')+22:].split(" ")[1]
-                        chart_meta = _build_chart_meta(
+                        chart_meta = _resolve_chart_meta(
                             results,
                             is_life_chart=False,
                             show_geju_markers=show_geju_markers,
                             show_guxu_overlay=show_guxu_overlay,
-                            wuxing_color=show_wuxing_color,
+                            show_wuxing_color=show_wuxing_color,
                         )
                         chart_main_col, chart_side_col = st.columns([1.65, 0.85], gap="large")
                         with chart_main_col:
@@ -4024,11 +4125,10 @@ with tabs[0]:
                                 print_meta=build_chart_print_meta(results, t=t),
                             )
                             render_chart_explanation_seam()
-                            chart_svg = _chart_svg_with_geju(results["genchart2"], chart_meta)
                             if rotation == "轉動":
-                                render_svg(chart_svg, int(start_pt2), chart_meta)
+                                render_svg(results["genchart2"], int(start_pt2), chart_meta)
                             else:
-                                render_svg1(chart_svg, int(start_pt2), chart_meta)
+                                render_svg1(results["genchart2"], int(start_pt2), chart_meta)
                             render_chart_mobile_params(chart_meta, results, t=t)
                         with chart_side_col:
                             render_chart_side_panel(chart_meta, results, t=t)
@@ -4526,8 +4626,8 @@ with tabs[0]:
                             st.markdown(f"**主方最優純策略：** {gt_report['主方最優純策略']}")
                             st.markdown(f"**客方最優純策略：** {gt_report['客方最優純策略']}")
 
-        except Exception as e:
-            st.error(t("gen_error").format(str(e)))
+    except Exception as e:
+        st.error(t("gen_error").format(str(e)))
 
 # 使用說明
 with tabs[1]:
@@ -4535,9 +4635,7 @@ with tabs[1]:
 
 # 太乙局數史例
 with tabs[2]:
-    with open(os.path.join(_REPO_ROOT, "assets", "example.json"), "r", encoding="utf-8-sig") as f:
-        data = f.read()
-    timeline(data, height=600)
+    timeline(_load_example_timeline_json(), height=600)
     with st.expander(t("list_label")):
         st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "docs/example.md"))
 
@@ -4552,7 +4650,7 @@ with tabs[4]:
 # 更新日誌
 with tabs[5]:
     _update_md = get_file_content_as_string(BASE_URL_KINTAIYI, "docs/update.md")
-    st.markdown(render_changelog_html(_update_md), unsafe_allow_html=True)
+    st.markdown(_render_changelog_html_cached(_update_md), unsafe_allow_html=True)
 
 # 看盤要領
 with tabs[6]:

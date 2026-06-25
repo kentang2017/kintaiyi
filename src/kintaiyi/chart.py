@@ -278,9 +278,12 @@ _ROTATION_ANGLE = 248  # 與 gen_chart 系列之 rotation_angle 一致
 # 三旗顏色（卷十）：青龍旗綠、太陰黑旗黑、害氣赤旗紅
 _SANQI_COLORS = {
     "太歲青龍旗": "#2faa5e",
-    "太陰黑旗": "#15171f",
+    "太陰黑旗": "#1e2438",
     "害氣赤旗": "#c43a2b",
 }
+_SANQI_FLAG_STROKE = "#e9cc88"
+_SANQI_BLACK_STROKE = "#d7bd6f"
+_SANQI_FLAG_CLASS = "taiyi-sanqi-flag"
 # 十六宮／十二宮地支序（供三旗定位角度；扇區序定義見檔案前段 _SIXTEEN / _TWELVE）
 # 注意：此序須與 gen_chart 等函式之十六宮扇區資料順序一致（起巳，順行），
 # 否則三旗會落在錯誤宮位（舊序起子，導致青旗/黑旗誤落乾、赤旗誤落坤）。
@@ -296,7 +299,7 @@ def _flag_angle(chen, palace_order=None):
     return _ROTATION_ANGLE + (360.0 / len(order)) * (idx + 0.5)
 
 
-def _draw_flag(d, ang_deg, r_inner, r_outer, color, tang=0.0):
+def _draw_flag(d, ang_deg, r_inner, r_outer, color, tang=0.0, flag_name=""):
     """繪一面旗：徑向旗桿 + 三角旗旆（tang 為切向偏移以避重疊）。"""
     import math as _m
     a = _m.radians(ang_deg)
@@ -304,7 +307,14 @@ def _draw_flag(d, ang_deg, r_inner, r_outer, color, tang=0.0):
     ta, tca = -sa, ca
     bx, by = r_inner * ca + tang * ta, r_inner * sa + tang * tca
     ex, ey = r_outer * ca + tang * ta, r_outer * sa + tang * tca
-    d.append(draw.Line(bx, by, ex, ey, stroke="#e9cc88", stroke_width=1.4))
+    is_black = flag_name == "太陰黑旗"
+    banner_stroke = _SANQI_BLACK_STROKE if is_black else _SANQI_FLAG_STROKE
+    banner_stroke_w = 1.6 if is_black else 1.1
+    pole_stroke_w = 1.5 if is_black else 1.4
+    kind_class = " taiyi-sanqi-flag-black" if is_black else ""
+    pole = draw.Line(bx, by, ex, ey, stroke=banner_stroke, stroke_width=pole_stroke_w)
+    pole.args["class"] = f"{_SANQI_FLAG_CLASS} taiyi-sanqi-flag-pole{kind_class}"
+    d.append(pole)
     ph = max(4.0, (r_outer - r_inner) * 0.7)
     W = max(3.5, (r_outer - r_inner) * 0.55)
     r_top, r_bot = r_outer, r_outer - ph
@@ -313,8 +323,12 @@ def _draw_flag(d, ang_deg, r_inner, r_outer, color, tang=0.0):
     mr = (r_top + r_bot) / 2.0
     mx, my = mr * ca + tang * ta, mr * sa + tang * tca
     tipx, tipy = mx + W * ta, my + W * tca
-    d.append(draw.Lines(p1x, p1y, p2x, p2y, tipx, tipy,
-                        close=True, fill=color, stroke="#e9cc88", stroke_width=1.1))
+    banner = draw.Lines(
+        p1x, p1y, p2x, p2y, tipx, tipy,
+        close=True, fill=color, stroke=banner_stroke, stroke_width=banner_stroke_w,
+    )
+    banner.args["class"] = f"{_SANQI_FLAG_CLASS} taiyi-sanqi-flag-banner{kind_class}"
+    d.append(banner)
 
 
 def ornament_outer_radius(outer_r: float, view_half: float = 250.0) -> float:
@@ -372,7 +386,10 @@ def _add_ornament(d, outer_r, jewels=16, sanqi=None, trigram_rotate=0.0, palace_
         for k, (name, ang) in enumerate(angles):
             if ang is None:
                 continue
-            _draw_flag(d, ang, r_in, r_out, _SANQI_COLORS[name], tang=tang_map.get(k, 0.0))
+            _draw_flag(
+                d, ang, r_in, r_out, _SANQI_COLORS[name],
+                tang=tang_map.get(k, 0.0), flag_name=name,
+            )
     # —— 4. 八卦天盤活盤 ——
     if band >= 26:
         tr = r_outer + (half - r_outer) * 0.55

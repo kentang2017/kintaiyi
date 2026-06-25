@@ -5,11 +5,14 @@ Sidebar: fixed 310px width, non-resizable (see SIDEBAR FIXED WIDTH block).
 
 from __future__ import annotations
 
+import functools
+
 
 # ── Fixed sidebar width (px) — do not expose resize handle ──────────────
 SIDEBAR_WIDTH_PX = 310
 
 
+@functools.lru_cache(maxsize=1)
 def get_custom_css() -> str:
     """Return global CSS injected via st.markdown(unsafe_allow_html=True)."""
     w = SIDEBAR_WIDTH_PX
@@ -906,6 +909,35 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
         display: none !important;
     }}
 }}
+
+/* 立即排盤：白底黑字（覆蓋 theme textColor 與 Streamlit 1.53 primary 按鈕） */
+[data-testid="stSidebar"] .grok-run-chart .stButton > button,
+[data-testid="stSidebar"] .grok-run-chart .stButton > button[kind="primary"],
+[data-testid="stSidebar"] .grok-run-chart .stButton > button[data-testid="baseButton-primary"],
+[data-testid="stSidebar"] .grok-run-chart button[data-testid="stBaseButton-primary"] {{
+    background: #f5f5f5 !important;
+    background-color: #f5f5f5 !important;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+}}
+[data-testid="stSidebar"] .grok-run-chart .stButton > button p,
+[data-testid="stSidebar"] .grok-run-chart .stButton > button span,
+[data-testid="stSidebar"] .grok-run-chart .stButton > button div,
+[data-testid="stSidebar"] .grok-run-chart .stButton > button *,
+[data-testid="stSidebar"] .grok-run-chart button[data-testid="stBaseButton-primary"] p,
+[data-testid="stSidebar"] .grok-run-chart button[data-testid="stBaseButton-primary"] span,
+[data-testid="stSidebar"] .grok-run-chart button[data-testid="stBaseButton-primary"] div,
+[data-testid="stSidebar"] .grok-run-chart button[data-testid="stBaseButton-primary"] * {{
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+}}
+[data-testid="stSidebar"] .grok-run-chart .stButton > button:hover:not(:disabled),
+[data-testid="stSidebar"] .grok-run-chart button[data-testid="stBaseButton-primary"]:hover:not(:disabled) {{
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    background: #f5f5f5 !important;
+    opacity: 0.88 !important;
+}}
 </style>
 """
 
@@ -986,10 +1018,13 @@ def get_sidebar_cursor_fix_html() -> str:
     }
 
     bindSidebar();
-    new MutationObserver(bindSidebar).observe(document.body, {
-        childList: true,
-        subtree: true,
-    });
+    var app = document.querySelector('[data-testid="stApp"]');
+    if (app) {
+        new MutationObserver(bindSidebar).observe(app, {
+            childList: true,
+            subtree: false,
+        });
+    }
     window.addEventListener("resize", scheduleApply, { passive: true });
 })();
 </script>
