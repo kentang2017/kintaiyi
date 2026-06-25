@@ -1855,6 +1855,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     </div>
 
     <style>
+<style>
     #__CONTAINER_ID__ {
         --bg-deep: #0d1b2a;
         --bg-panel: rgba(10, 22, 40, 0.94);
@@ -1866,7 +1867,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         --jade: #4a9c6d;
         --line: rgba(212, 175, 55, 0.35);
         --chart-max-width: 860px;
-        --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+        --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
         margin: 0;
         padding: 0;
         container-type: inline-size;
@@ -1874,6 +1875,8 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         font-family: "Noto Serif SC", "Source Han Serif", "KaiTi", serif;
     }
     #__CONTAINER_ID__ * { box-sizing: border-box; }
+
+    /* 圓盤外框 - 更現代輕盈 */
     #__CONTAINER_ID__ .taiyi-card {
         position: relative;
         overflow: hidden;
@@ -1881,7 +1884,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         border-radius: 20px;
         padding: 8px;
         background: linear-gradient(180deg, #0f1c2e 0%, #0a1628 100%);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        box-shadow: var(--shadow);
         isolation: isolate;
     }
     #__CONTAINER_ID__ .taiyi-card::before {
@@ -1892,7 +1895,6 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         border: 1px solid rgba(212, 175, 55, 0.18);
         pointer-events: none;
     }
-    
     #__CONTAINER_ID__ .taiyi-card::after {
         content: "";
         position: absolute;
@@ -1901,6 +1903,8 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         border: 1px solid rgba(212, 175, 55, 0.08);
         pointer-events: none;
     }
+
+    /* Toolbar 按鈕 - 現代風格 */
     #__CONTAINER_ID__ .taiyi-toolbar {
         position: relative;
         z-index: 2;
@@ -1931,19 +1935,19 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         width: 100%;
         min-width: 0;
     }
-    
     #__CONTAINER_ID__ .taiyi-btn:hover {
         background: rgba(212, 175, 55, 0.12);
         border-color: #d4af37;
         color: #f5e8c7;
         transform: translateY(-1px);
     }
-    
     #__CONTAINER_ID__ .taiyi-btn.is-active {
         background: rgba(212, 175, 55, 0.18);
         border-color: #d4af37;
         color: #f5e8c7;
     }
+
+    /* 圓盤主區域 */
     #__CONTAINER_ID__ .taiyi-stage {
         position: relative;
         z-index: 1;
@@ -1957,27 +1961,23 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         width: min(100%, var(--chart-max-width));
         aspect-ratio: 1 / 1;
         overflow: hidden;
-        border-radius: 22px;
+        border-radius: 20px;
         border: 1px solid rgba(212, 175, 55, 0.34);
-        background:
-            radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.09), transparent 42%),
-            radial-gradient(circle at 52% 49%, rgba(245, 240, 225, 0.07), transparent 58%),
-            linear-gradient(180deg, rgba(9, 21, 37, 0.98), rgba(5, 13, 23, 1));
-        padding: clamp(14px, 3vw, 26px);
+        background: linear-gradient(180deg, rgba(9, 21, 37, 0.98), rgba(5, 13, 23, 1));
+        padding: clamp(12px, 2.8vw, 24px);
         display: flex;
         align-items: center;
         justify-content: center;
     }
     #__CONTAINER_ID__ .taiyi-svg-backdrop {
         position: absolute;
-        inset: 10px;
-        border-radius: 18px;
+        inset: 8px;
+        border-radius: 16px;
         pointer-events: none;
-        background:
-            radial-gradient(circle at center, rgba(212, 175, 55, 0.06) 0, transparent 46%),
-            radial-gradient(circle at 28% 24%, rgba(245, 240, 225, 0.045), transparent 18%),
-            radial-gradient(circle at 72% 74%, rgba(245, 240, 225, 0.04), transparent 16%);
+        background: radial-gradient(circle at center, rgba(212, 175, 55, 0.06) 0, transparent 50%);
     }
+
+    /* SVG 根元素 */
     #__CONTAINER_ID__ .taiyi-svg-root {
         position: relative;
         z-index: 1;
@@ -1991,256 +1991,65 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         -webkit-user-select: none;
         touch-action: pan-x pan-y;
     }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable,
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > path,
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > polygon,
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > rect {
-        touch-action: manipulation;
-        -webkit-tap-highlight-color: transparent;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector > text,
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector > tspan {
-        pointer-events: none;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root > circle {
-        pointer-events: none;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root circle.taiyi-chart-bg {
-        stroke: none !important;
-        fill: #141826 !important;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root circle.taiyi-ornament-ring {
-        stroke: rgba(199, 154, 78, 0.5) !important;
-        stroke-width: 0.9 !important;
-        fill: none !important;
-    }
-""" + _sanqi_flag_chart_css("#__CONTAINER_ID__ .taiyi-svg-root") + """
-    #__CONTAINER_ID__ .taiyi-svg-root * {
-        user-select: none;
-        -webkit-user-select: none;
-        vector-effect: non-scaling-stroke;
-    }
+
+    /* 基本 SVG 樣式 */
     #__CONTAINER_ID__ .taiyi-svg-root path,
     #__CONTAINER_ID__ .taiyi-svg-root polygon,
     #__CONTAINER_ID__ .taiyi-svg-root rect,
     #__CONTAINER_ID__ .taiyi-svg-root circle,
     #__CONTAINER_ID__ .taiyi-svg-root ellipse {
         stroke: #d7bd6f !important;
-        stroke-width: 1.2 !important;
-        transition: fill 180ms ease, stroke 180ms ease, filter 180ms ease, opacity 180ms ease;
+        stroke-width: 1.15 !important;
+        transition: fill 180ms ease, stroke 180ms ease, filter 180ms ease;
     }
+
+    /* 文字樣式 - 更現代清晰 */
     #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root text,
     #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root tspan,
     #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root text,
     #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root tspan {
         fill: var(--ivory) !important;
         font-family: "Noto Serif SC", "Source Han Serif", "KaiTi", serif !important;
-        font-size: 9.5px !important;
+        font-size: 9.2px !important;
         font-weight: 600 !important;
-        letter-spacing: 0.03em;
-        transition: fill 180ms ease, filter 180ms ease, opacity 180ms ease;
-    }
-    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root .taiyi-sector > text,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root .taiyi-sector > text {
-        font-size: 8.5px !important;
+        letter-spacing: 0.025em;
     }
     #__CONTAINER_ID__[data-style-mode="wuxing"] .taiyi-svg-root text,
     #__CONTAINER_ID__[data-style-mode="wuxing"] .taiyi-svg-root tspan {
         font-family: "Noto Serif SC", "Source Han Serif", "KaiTi", serif !important;
-        font-size: 9.5px !important;
+        font-size: 9.2px !important;
         font-weight: 600 !important;
-        letter-spacing: 0.03em;
-        transition: fill 180ms ease, filter 180ms ease, opacity 180ms ease;
+        letter-spacing: 0.025em;
     }
-    #__CONTAINER_ID__[data-style-mode="wuxing"] .taiyi-svg-root .taiyi-sector > text {
-        font-size: 8.5px !important;
-    }
-""" + wuxing_theme_chart_css("#__CONTAINER_ID__[data-style-mode=\"wuxing\"] .taiyi-svg-root") + """
+
+    /* 各層填色 - 更乾淨現代 */
     #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer1 path,
     #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer1 polygon,
-    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer1 rect,
-    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer1 circle,
-    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer1 ellipse,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer1 path,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer1 polygon,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer1 rect,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer1 circle,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer1 ellipse {
-        fill: rgba(201, 162, 39, 0.94) !important;
-        stroke: rgba(245, 240, 225, 0.82) !important;
-        stroke-width: 1.8 !important;
-    }
-    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer1 text,
-    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer1 tspan,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer1 text,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer1 tspan {
-        fill: #f5f0e1 !important;
-        font-size: 11px !important;
-        font-weight: 700 !important;
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer1 rect {
+        fill: rgba(201, 162, 39, 0.92) !important;
+        stroke: rgba(245, 240, 225, 0.85) !important;
+        stroke-width: 1.6 !important;
     }
     #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer2 path,
     #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer2 polygon,
-    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer2 rect,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer2 path,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer2 polygon,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer2 rect { fill: rgba(20, 46, 68, 0.78) !important; }
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer2 rect { fill: rgba(20, 46, 68, 0.82) !important; }
     #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer3 path,
     #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer3 polygon,
-    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer3 rect,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer3 path,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer3 polygon,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer3 rect { fill: rgba(10, 28, 43, 0.88) !important; }
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer3 rect { fill: rgba(10, 28, 43, 0.9) !important; }
     #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer4 path,
     #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer4 polygon,
-    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer4 rect,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer4 path,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer4 polygon,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer4 rect { fill: rgba(15, 43, 62, 0.92) !important; }
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer4 rect { fill: rgba(15, 43, 62, 0.94) !important; }
     #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer5 path,
     #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer5 polygon,
-    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer5 rect,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer5 path,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer5 polygon,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer5 rect { fill: rgba(31, 49, 78, 0.82) !important; }
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer5 rect { fill: rgba(31, 49, 78, 0.86) !important; }
     #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer6 path,
     #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer6 polygon,
-    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer6 rect,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer6 path,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer6 polygon,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer6 rect { fill: rgba(17, 39, 56, 0.84) !important; }
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer6 rect { fill: rgba(17, 39, 56, 0.88) !important; }
     #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer7 path,
     #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer7 polygon,
-    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer7 rect,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer7 path,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer7 polygon,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer7 rect { fill: rgba(8, 22, 40, 0.95) !important; }
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root text,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root tspan {
-        font-size: 10px !important;
-        letter-spacing: 0.02em;
-    }
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root .taiyi-sector > text {
-        font-size: 9px !important;
-    }
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-stage-frame {
-        padding: clamp(10px, 2.2vw, 20px);
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-rotatable {
-        cursor: grab;
-        transform-box: fill-box;
-        transform-origin: center;
-        transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
-        touch-action: pan-x pan-y;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-rotatable.is-dragging {
-        cursor: grabbing;
-        transition: none;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable,
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector-panel-target {
-        cursor: pointer;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > path,
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > polygon,
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > rect,
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable-shape {
-        pointer-events: all;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector-active path,
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector-active polygon,
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector-active rect {
-        stroke: rgba(212, 175, 55, 0.98) !important;
-        stroke-width: 2.6 !important;
-        filter: url(#__GLOW_ID__);
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-key-spot {
-        fill: #fdf5cf !important;
-        font-weight: 700 !important;
-    }
-""" + wenchang_spot_chart_css("#__CONTAINER_ID__ .taiyi-svg-root") + """
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-key-sector {
-        stroke: rgba(212, 175, 55, 0.95) !important;
-        stroke-width: 2.3 !important;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-user-mark {
-        stroke: rgba(245, 240, 225, 0.92) !important;
-        stroke-width: 2.1 !important;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root path.taiyi-user-mark,
-    #__CONTAINER_ID__ .taiyi-svg-root polygon.taiyi-user-mark,
-    #__CONTAINER_ID__ .taiyi-svg-root rect.taiyi-user-mark,
-    #__CONTAINER_ID__ .taiyi-svg-root path[data-user-fill],
-    #__CONTAINER_ID__ .taiyi-svg-root polygon[data-user-fill],
-    #__CONTAINER_ID__ .taiyi-svg-root rect[data-user-fill] {
-        opacity: 1 !important;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root #layer3 .taiyi-sector > path,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer4 .taiyi-sector > path,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer5 .taiyi-sector > path,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer3 .taiyi-sector > polygon,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer4 .taiyi-sector > polygon,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer5 .taiyi-sector > polygon,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer3 .taiyi-sector > rect,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer4 .taiyi-sector > rect,
-    #__CONTAINER_ID__ .taiyi-svg-root #layer5 .taiyi-sector > rect {
-        pointer-events: all !important;
-        cursor: pointer;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-user-label {
-        fill: #f5f0e1 !important;
-        font-weight: 700 !important;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-geju-overlay,
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-overlay {
-        pointer-events: none !important;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-geju-overlay *,
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-overlay * {
-        pointer-events: none !important;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-geju-label {
-        pointer-events: all !important;
-        cursor: pointer;
-        user-select: none;
-        font-size: 9px !important;
-        font-weight: 700 !important;
-        letter-spacing: 0.04em;
-    }
-""" + geju_label_css().replace(".taiyi-svg-root", "#__CONTAINER_ID__ .taiyi-svg-root") + """
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-label {
-        pointer-events: none;
-        user-select: none;
-        font-size: 9px !important;
-        font-weight: 700 !important;
-        letter-spacing: 0.04em;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-border-inner {
-        fill: none !important;
-        stroke: #4D8CFF !important;
-        stroke-width: 2px !important;
-        vector-effect: non-scaling-stroke;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-border-outer {
-        fill: none !important;
-        stroke: #FFBF00 !important;
-        stroke-width: 2px !important;
-        vector-effect: non-scaling-stroke;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-arrow {
-        stroke: #FFB300 !important;
-        stroke-width: 2.4px !important;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-label-inner,
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-label-sky-inner {
-        fill: #4D8CFF !important;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-label-outer,
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-label-sky-outer {
-        fill: #FFBF00 !important;
-    }
-    #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-label-attack {
-        fill: #FFD54F !important;
-    }
+    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer7 rect { fill: rgba(8, 22, 40, 0.96) !important; }
+
+    /* Sector Panel - 更簡潔優雅 */
     #__CONTAINER_ID__ .taiyi-sector-panel {
         margin-top: 8px;
         padding: 14px 16px 12px;
@@ -2252,164 +2061,33 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     #__CONTAINER_ID__ .taiyi-sector-panel[hidden] {
         display: none !important;
     }
-    #__CONTAINER_ID__ .taiyi-sector-panel-header {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 10px;
-        margin-bottom: 8px;
-        padding-bottom: 8px;
-        border-bottom: 1px solid rgba(212, 175, 55, 0.22);
-    }
-    #__CONTAINER_ID__ .taiyi-sector-panel-heading {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        min-width: 0;
-    }
-    #__CONTAINER_ID__ .taiyi-sector-panel-layer {
-        font-size: 0.74rem;
-        color: var(--gold);
-        letter-spacing: 0.06em;
-    }
-    #__CONTAINER_ID__ .taiyi-sector-panel-title {
-        font-size: 1.05rem;
-        color: var(--ivory);
-        font-weight: 700;
-        line-height: 1.35;
-        word-break: break-word;
-    }
-    #__CONTAINER_ID__ .taiyi-sector-panel-close {
-        flex: 0 0 auto;
-        width: 28px;
-        height: 28px;
-        border: 1px solid rgba(212, 175, 55, 0.45);
-        border-radius: 999px;
-        background: rgba(8, 18, 34, 0.85);
-        color: var(--ivory-soft);
-        font-size: 1.1rem;
-        line-height: 1;
-        cursor: pointer;
-    }
-    #__CONTAINER_ID__ .taiyi-sector-panel-lines {
-        margin: 0;
-        padding: 0 0 0 1.1rem;
-        color: var(--ivory-soft);
-        font-size: 0.88rem;
-        line-height: 1.55;
-    }
-    #__CONTAINER_ID__ .taiyi-sector-panel-lines li + li {
-        margin-top: 4px;
-    }
-    #__CONTAINER_ID__ .taiyi-sector-panel-lines li.taiyi-sector-panel-empty {
-        list-style: none;
-        margin-left: -1.1rem;
-    }
-    #__CONTAINER_ID__ .taiyi-sector-panel-empty {
-        margin: 0;
-        color: rgba(232, 223, 200, 0.72);
-        font-size: 0.86rem;
-    }
-    #__CONTAINER_ID__ .taiyi-sector-panel-geju {
-        margin-top: 10px;
-        padding-top: 8px;
-        border-top: 1px dashed rgba(212, 175, 55, 0.24);
-    }
-    #__CONTAINER_ID__ .taiyi-sector-panel-geju-title {
-        font-size: 0.78rem;
-        color: var(--gold);
-        margin-bottom: 6px;
-        letter-spacing: 0.05em;
-    }
-    #__CONTAINER_ID__ .taiyi-geju-panel-item {
-        margin: 0 0 6px;
-        padding: 6px 8px;
-        border-radius: 8px;
-        font-size: 0.84rem;
-        line-height: 1.5;
-        background: rgba(255, 255, 255, 0.03);
-    }
-    #__CONTAINER_ID__ .taiyi-geju-panel-item[data-tone="danger"] {
-        border-left: 3px solid var(--cinnabar);
-    }
-    #__CONTAINER_ID__ .taiyi-geju-panel-item[data-tone="warn"] {
-        border-left: 3px solid #c9a227;
-    }
-    #__CONTAINER_ID__ .taiyi-geju-panel-item[data-tone="caution"] {
-        border-left: 3px solid #5b8fd0;
-    }
-    #__CONTAINER_ID__ .taiyi-geju-panel-item[data-tone="info"] {
-        border-left: 3px solid #7e8fa3;
-    }
-    #__CONTAINER_ID__ .taiyi-geju-panel-item strong {
-        color: var(--ivory);
-        margin-right: 6px;
-    }
 
-    /* Responsive 調整區 */
-    @container (max-width: 860px) {
-        #__CONTAINER_ID__ .taiyi-stage-frame {
-            padding: clamp(12px, 2.6vw, 18px);
-        }
-    }
+    /* 手機版優化 */
     @media (max-width: 768px) {
-        #__CONTAINER_ID__ { padding-top: 0; padding-bottom: 0; }
         #__CONTAINER_ID__ .taiyi-card {
-            border-radius: 18px;
-            padding: 3px;
+            border-radius: 16px;
+            padding: 4px;
         }
-        #__CONTAINER_ID__ .taiyi-card::before { inset: 6px; }
         #__CONTAINER_ID__ .taiyi-btn {
-            width: 100%;
-            text-align: center;
+            font-size: 0.74rem;
+            padding: 7px 10px;
         }
         #__CONTAINER_ID__ .taiyi-toolbar {
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            justify-content: stretch;
-            align-self: stretch;
         }
         #__CONTAINER_ID__ .taiyi-stage-frame {
-            width: 100%;
-            padding: 3px;
-        }
-        #__CONTAINER_ID__ .taiyi-svg-root {
-            max-width: 100%;
-            touch-action: pan-x pan-y;
-        }
-        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-rotatable {
-            touch-action: pan-x pan-y;
-        }
-        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable,
-        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > path,
-        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > polygon,
-        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable > rect,
-        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-colorable-shape {
-            touch-action: manipulation !important;
+            padding: 4px;
+            border-radius: 16px;
         }
         #__CONTAINER_ID__ .taiyi-svg-root text,
         #__CONTAINER_ID__ .taiyi-svg-root tspan {
-            font-size: 12px !important;
-        }
-        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector > text {
-            font-size: 11px !important;
-        }
-        #__CONTAINER_ID__ .taiyi-svg-root #layer1 text,
-        #__CONTAINER_ID__ .taiyi-svg-root #layer1 tspan {
-            font-size: 13.5px !important;
-        }
-        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-geju-label,
-        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-guxu-label {
-            font-size: 11px !important;
-        }
-        #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root text,
-        #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root tspan {
             font-size: 11.5px !important;
         }
-        #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root .taiyi-sector > text {
+        #__CONTAINER_ID__ .taiyi-svg-root .taiyi-sector > text {
             font-size: 10.5px !important;
         }
     }
-    </style>
+</style>
 
     <script>
     (() => {
