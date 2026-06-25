@@ -6,6 +6,7 @@ import math
 import re
 
 from . import config
+from .chart import ornament_outer_radius
 from .taiyidict import su_dist
 
 # 與 chart.gen_chart 十六宮扇區順序一致（起巳順行）
@@ -1249,12 +1250,9 @@ def _guxu_sector_angles_for_branch(branch: str) -> tuple[float, float]:
 
 
 def _outer_label_radius(layout: dict, *, view_half: float = 250.0) -> float:
-    """與 chart._add_ornament 外緣金環帶一致，標記置於最外可視環帶中央。"""
+    """與 chart._add_ornament 外緣金環一致，標記置於最外可視環帶。"""
     outer_data = layout["inner_radius"] + (layout["layer_idx"] + 1) * layout["layer_gap"]
-    band = max(view_half - outer_data, 1.0)
-    r1 = outer_data + max(2.0, band * 0.30)
-    r2 = outer_data + max(5.0, band * 0.62)
-    return (r1 + r2) / 2.0
+    return ornament_outer_radius(outer_data, view_half)
 
 
 def build_geju_overlay_svg(
@@ -1348,10 +1346,13 @@ def _guxu_short_char(guxu: str) -> str:
     return ""
 
 
+_GUXU_ARROW_RING_FACTOR = 0.12
+
+
 def _guxu_arrow_radii(chart_style: int, *, is_life: bool) -> tuple[float, float]:
-    """宜攻箭頭：自中心圓緣至八門環前段，避免遮擋盤內文字。"""
+    """宜攻箭頭：自中心圓緣略向外延伸，避免遮擋盤內文字。"""
     if is_life or chart_style in (5, 6):
-        return 6.0, 36.0
+        return 6.0, 28.0
     if chart_style in (0, 1):
         inner_base, gap = 13.0, 45.0
     else:
@@ -1359,7 +1360,7 @@ def _guxu_arrow_radii(chart_style: int, *, is_life: bool) -> tuple[float, float]
     r0 = inner_base + 2.0
     ring_inner = inner_base + gap
     ring_outer = inner_base + 2 * gap
-    r1 = ring_inner + (ring_outer - ring_inner) * 0.28
+    r1 = ring_inner + (ring_outer - ring_inner) * _GUXU_ARROW_RING_FACTOR
     return r0, r1
 
 
@@ -1518,9 +1519,9 @@ def build_guxu_overlay_svg(
 
     parts = [
         '<g class="taiyi-guxu-overlay" data-source="server">',
-        '<defs><marker id="guxu-arrowhead" markerWidth="4" markerHeight="4" '
-        'refX="3.4" refY="2" orient="auto">',
-        f'<path d="M0,0 L4,2 L0,4 Z" fill="{_GUXU_ARROW_COLOR}"/></marker></defs>',
+        '<defs><marker id="guxu-arrowhead" markerWidth="3" markerHeight="3" '
+        'refX="2.5" refY="1.5" orient="auto">',
+        f'<path d="M0,0 L3,1.5 L0,3 Z" fill="{_GUXU_ARROW_COLOR}"/></marker></defs>',
     ]
 
     for layout in layer_layouts:

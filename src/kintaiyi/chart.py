@@ -317,11 +317,17 @@ def _draw_flag(d, ang_deg, r_inner, r_outer, color, tang=0.0):
                         close=True, fill=color, stroke="#e9cc88", stroke_width=1.1))
 
 
+def ornament_outer_radius(outer_r: float, view_half: float = 250.0) -> float:
+    """外緣單線金環半徑（與 _add_ornament 一致，供 overlay 標記定位）。"""
+    band = max(view_half - outer_r, 1.0)
+    return outer_r + max(3.5, band * 0.45)
+
+
 def _add_ornament(d, outer_r, jewels=16, sanqi=None, trigram_rotate=0.0, palace_order=None):
     """古典美學裝飾層（純附加，不改動宮位座標與 viewBox）。
 
     1. 玄色古典底盤（深靛墨）襯托全局，最外環不再露白，白／米色文字清晰可見；
-    2. 外緣雙線金環、八方珠飾；
+    2. 外緣單線金環；
     3. 三旗行宮旗旆（卷十）：青龍旗(綠)、太陰黑旗(黑)、害氣赤旗(紅)，
        按各旗所落地支宮位之角度顯示於外緣，同宮者切向散開避免重疊；
     4. 八卦天盤活盤：外緣空間足夠(≥26px)時，依後天八卦方位序置八卦，
@@ -334,18 +340,14 @@ def _add_ornament(d, outer_r, jewels=16, sanqi=None, trigram_rotate=0.0, palace_
     half = (d.view_box[2] / 2.0) if getattr(d, "view_box", None) else 250.0
     band = half - outer_r
     # —— 1. 玄色古典底盤 ——
-    d.insert(0, draw.Circle(0, 0, half, fill="#141826", stroke="#c79a4e", stroke_width=1.6))
-    d.append(draw.Circle(0, 0, 13, stroke="#c79a4e", stroke_width=0.9, fill="none"))
-    # —— 2. 外緣雙線金環 + 八方珠飾 ——
-    r1 = outer_r + max(2.0, band * 0.30)
-    r2 = outer_r + max(5.0, band * 0.62)
-    d.append(draw.Circle(0, 0, r1, stroke="#c79a4e", stroke_width=1.3, fill="none"))
-    d.append(draw.Circle(0, 0, r2, stroke="#c79a4e", stroke_width=0.9, fill="none"))
-    rr = (r1 + r2) / 2.0
-    for i in range(jewels):
-        ang = _m.radians((360 / jewels) * i + _ROTATION_ANGLE + (360 / jewels) / 2)
-        d.append(draw.Circle(rr * _m.cos(ang), rr * _m.sin(ang), 1.7,
-                             fill="#e9cc88", stroke="none"))
+    bg = draw.Circle(0, 0, half, fill="#141826", stroke="none")
+    bg.args["class"] = "taiyi-chart-bg"
+    d.insert(0, bg)
+    # —— 2. 外緣單線金環 ——
+    r_outer = ornament_outer_radius(outer_r, half)
+    ring = draw.Circle(0, 0, r_outer, stroke="#c79a4e", stroke_width=0.9, fill="none")
+    ring.args["class"] = "taiyi-ornament-ring"
+    d.append(ring)
     # —— 3. 三旗行宮旗旆 ——
     if sanqi:
         items = [("太歲青龍旗", sanqi.get("太歲青龍旗")),
@@ -373,7 +375,7 @@ def _add_ornament(d, outer_r, jewels=16, sanqi=None, trigram_rotate=0.0, palace_
             _draw_flag(d, ang, r_in, r_out, _SANQI_COLORS[name], tang=tang_map.get(k, 0.0))
     # —— 4. 八卦天盤活盤 ——
     if band >= 26:
-        tr = r2 + (half - r2) * 0.55
+        tr = r_outer + (half - r_outer) * 0.55
         for i in range(8):
             ang = _m.radians(_ROTATION_ANGLE + (360.0 / 16) * (2 * i + 0.5) + trigram_rotate)
             d.append(draw.Text(_EIGHT_PALACE_TRIGRAMS[i], 12, tr * _m.cos(ang), tr * _m.sin(ang),

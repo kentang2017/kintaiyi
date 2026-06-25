@@ -330,16 +330,22 @@ def render_chart_mobile_params(
             )
 
 
-def render_chart_stage_open(*, print_meta: str = "") -> None:
-    """Marker + radial stage styling; mobile print-meta overlay in top-left."""
-    overlay = ""
-    if print_meta.strip():
-        overlay = (
-            f'<div class="chart-stage-mobile-meta" aria-label="Chart metadata">'
-            f'<div class="chart-print-meta">{html_escape(print_meta)}</div>'
-            f"</div>"
-        )
+def render_chart_mobile_meta(print_meta: str) -> None:
+    """Mobile-only summary text above chart (not overlapping the disk)."""
+    if not print_meta.strip():
+        return
     st.markdown(
-        f'<div class="chart-stage-marker" aria-hidden="true"></div>{overlay}',
+        f'<div class="chart-stage-mobile-meta" aria-label="Chart metadata">'
+        f'<div class="chart-print-meta">{html_escape(print_meta)}</div>'
+        f"</div>",
+        unsafe_allow_html=True,
+    )
+
+
+def render_chart_stage_open(*, print_meta: str = "") -> None:
+    """Marker + radial stage styling; mobile meta sits above the chart."""
+    render_chart_mobile_meta(print_meta)
+    st.markdown(
+        '<div class="chart-stage-marker" aria-hidden="true"></div>',
         unsafe_allow_html=True,
     )

@@ -530,6 +530,11 @@ input:focus, textarea:focus,
 .chart-stage-mobile-meta {{
     display: none;
 }}
+@media (min-width: 900px) {{
+    div[data-testid="stVerticalBlock"]:has(> .chart-stage-mobile-meta) {{
+        display: none !important;
+    }}
+}}
 .chart-meta-gz-row {{
     display: flex;
     flex-wrap: wrap;
@@ -683,29 +688,29 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
     }}
     .chart-stage-mobile-meta {{
         display: block;
-        position: absolute;
-        top: 0.45rem;
-        left: 0.5rem;
-        z-index: 5;
-        max-width: min(92%, 22rem);
-        pointer-events: none;
+        position: static;
+        width: 100%;
+        max-width: 100%;
+        margin: 0 0 0.4rem 0;
+        padding: 0;
     }}
     .chart-mobile-params-anchor {{
         display: none !important;
     }}
     .chart-print-meta {{
-        font-size: 0.58rem;
-        line-height: 1.38;
+        font-size: 0.6rem;
+        line-height: 1.42;
         color: var(--text-secondary);
         white-space: pre-wrap;
         word-break: break-word;
         margin: 0;
-        padding: 0.35rem 0.45rem;
-        background: rgba(10, 10, 10, 0.78);
+        padding: 0.4rem 0.5rem;
+        background: rgba(255, 255, 255, 0.04);
         border: 1px solid var(--border-subtle);
         border-radius: var(--radius-sm);
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
+    }}
+    div[data-testid="stVerticalBlock"]:has(> .chart-stage-mobile-meta) + div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
+        margin-top: 0 !important;
     }}
 }}
 div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) iframe {{

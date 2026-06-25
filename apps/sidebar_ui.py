@@ -359,21 +359,52 @@ def render_grok_sidebar(
         st.session_state.lang = new_lang
         st.rerun()
 
-    # ── 日期時間（並排）────────────────────────────────────────────────
-    if "chart_date" not in st.session_state:
-        st.session_state.chart_date = now.date()
+    # ── 日期時間（年可輸入負數，如 -2000 = 公元前2000年）────────────────
+    if "chart_year" not in st.session_state:
+        st.session_state.chart_year = now.year
+        st.session_state.chart_month = now.month
+        st.session_state.chart_day = now.day
     if "chart_time" not in st.session_state:
         st.session_state.chart_time = now.time().replace(second=0, microsecond=0)
 
     date_col, time_col = st.columns(2)
     with date_col:
-        picked_date = st.date_input(t("date_label"), value=st.session_state.chart_date, key="chart_date_input")
+        st.caption(t("date_label"))
+        y_col, m_col, d_col = st.columns([2, 1, 1])
+        with y_col:
+            my = int(st.number_input(
+                t("year"),
+                min_value=-2000,
+                max_value=3000,
+                value=int(st.session_state.chart_year),
+                step=1,
+                key="chart_year_input",
+            ))
+        with m_col:
+            mm = int(st.number_input(
+                t("month"),
+                min_value=1,
+                max_value=12,
+                value=int(st.session_state.chart_month),
+                step=1,
+                key="chart_month_input",
+            ))
+        with d_col:
+            md = int(st.number_input(
+                t("day"),
+                min_value=1,
+                max_value=31,
+                value=int(st.session_state.chart_day),
+                step=1,
+                key="chart_day_input",
+            ))
     with time_col:
         picked_time = st.time_input(t("time_label"), value=st.session_state.chart_time, key="chart_time_input")
-    st.session_state.chart_date = picked_date
+    st.session_state.chart_year = my
+    st.session_state.chart_month = mm
+    st.session_state.chart_day = md
     st.session_state.chart_time = picked_time
 
-    my, mm, md = picked_date.year, picked_date.month, picked_date.day
     mh, mmin = picked_time.hour, picked_time.minute
 
     # ── 主行為：立即排盤 ───────────────────────────────────────────────
@@ -384,7 +415,9 @@ def render_grok_sidebar(
     st.markdown('<div class="grok-sidebar-instant">', unsafe_allow_html=True)
     if st.button(t("instant_btn"), key="instant_hkt_btn", width="stretch"):
         hkt_now = datetime.datetime.now(pytz.timezone("Asia/Hong_Kong"))
-        st.session_state.chart_date = hkt_now.date()
+        st.session_state.chart_year = hkt_now.year
+        st.session_state.chart_month = hkt_now.month
+        st.session_state.chart_day = hkt_now.day
         st.session_state.chart_time = hkt_now.time().replace(second=0, microsecond=0)
         st.session_state.trigger_instant = True
         st.rerun()

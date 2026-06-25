@@ -1604,6 +1604,15 @@ def _chart_export_css_bundle(glow_id: str) -> dict[str, str]:
         stroke-width: 1.2 !important;
         vector-effect: non-scaling-stroke;
     }}
+    {scope} circle.taiyi-chart-bg {{
+        stroke: none !important;
+        fill: #141826 !important;
+    }}
+    {scope} circle.taiyi-ornament-ring {{
+        stroke: rgba(199, 154, 78, 0.5) !important;
+        stroke-width: 0.9 !important;
+        fill: none !important;
+    }}
     """
     traditional_layers = f"""
     {scope} text, {scope} tspan {{
@@ -1912,6 +1921,15 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     }
     #__CONTAINER_ID__ .taiyi-svg-root > circle {
         pointer-events: none;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root circle.taiyi-chart-bg {
+        stroke: none !important;
+        fill: #141826 !important;
+    }
+    #__CONTAINER_ID__ .taiyi-svg-root circle.taiyi-ornament-ring {
+        stroke: rgba(199, 154, 78, 0.5) !important;
+        stroke-width: 0.9 !important;
+        fill: none !important;
     }
     #__CONTAINER_ID__ .taiyi-svg-root * {
         user-select: none;
