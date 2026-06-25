@@ -153,30 +153,45 @@ def build_chart_print_meta(
             f"{results.get('zhao', '')} - {sex_label} - "
             f"{config.taiyi_name(0)[0]} - {ty.accnum(0, 0)} |"
         )
-    else:
-        style = results.get("style", 0)
-        tn = results.get("tn", 0)
         lines.append(
-            f"{config.gendatetime(year, month, day, hour, minute)} | "
-            f"{t('acc_prefix')}{config.taiyi_name(style)[0]}{t('acc_suffix')}︰"
-            f"{ty.accnum(style, tn)} |"
+            f"{t('lunar_label')}︰{results.get('lunard', '')} | "
+            f"{jieqi.jq(year, month, day, hour, minute)} |"
         )
-
-    lines.append(f"{results.get('gz', '')} |")
-
-    if is_life_chart:
+        lines.append(f"{results.get('gz', '')} |")
         lines.append(
             f"{life_method_label or t('taiyi_life_method')} - "
             f"{ty.kook(0, 0).get('文', '')} "
             f"({ttext.get('局式', {}).get('年', '')}) |"
+        )
+        lines.append(
+            f"{t('epoch_label')}︰{ttext.get('紀元', '')} | "
+            f"{t('home_calc')}︰{results.get('homecal', '')} "
+            f"{t('away_calc')}︰{results.get('awaycal', '')} |"
         )
     else:
         style = results.get("style", 0)
         tn = results.get("tn", 0)
         method = f"{config.ty_method(tn)}{ttext.get('太乙計', '')}"
         lines.append(
+            f"{config.gendatetime(year, month, day, hour, minute)} | "
+            f"{t('acc_prefix')}{config.taiyi_name(style)[0]}{t('acc_suffix')}︰"
+            f"{ty.accnum(style, tn)} |"
+        )
+        lines.append(
+            f"{t('lunar_label')}︰{results.get('lunard', '')} | "
+            f"{jieqi.jq(year, month, day, hour, minute)} |"
+        )
+        lines.append(f"{results.get('gz', '')} |")
+        lines.append(
             f"{method} - {ty.kook(style, tn).get('文', '')} "
-            f"({ttext.get('局式', {}).get('年', '')})"
+            f"({ttext.get('局式', {}).get('年', '')}) | "
+            f"{t('five_yuan')}:{results.get('wuyuan', '')} |"
+        )
+        lines.append(
+            f"{t('epoch_label')}︰{ttext.get('紀元', '')} | "
+            f"{t('home_calc')}︰{results.get('homecal', '')} "
+            f"{t('away_calc')}︰{results.get('awaycal', '')} "
+            f"{t('set_calc')}︰{results.get('setcal', '')} |"
         )
 
     return "\n".join(lines)

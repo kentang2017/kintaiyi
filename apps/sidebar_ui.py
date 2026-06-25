@@ -11,6 +11,45 @@ import streamlit as st
 
 from kintaiyi.openai_compatible_client import OpenAICompatibleClient
 
+_GREGORIAN_MIN = datetime.date(1800, 1, 1)
+_GREGORIAN_MAX = datetime.date(2200, 12, 31)
+_BC_YEAR_MIN = -2000
+_BC_YEAR_MAX = -1
+
+
+def _clamp_gregorian_date(value: datetime.date) -> datetime.date:
+    if value < _GREGORIAN_MIN:
+        return _GREGORIAN_MIN
+    if value > _GREGORIAN_MAX:
+        return _GREGORIAN_MAX
+    return value
+
+
+def _init_chart_date_state(now: datetime.datetime) -> None:
+    if "chart_time" not in st.session_state:
+        st.session_state.chart_time = now.time().replace(second=0, microsecond=0)
+    if "chart_date" not in st.session_state:
+        year = int(st.session_state.get("chart_year", now.year))
+        month = int(st.session_state.get("chart_month", now.month))
+        day = int(st.session_state.get("chart_day", now.day))
+        if _GREGORIAN_MIN.year <= year <= _GREGORIAN_MAX.year:
+            try:
+                st.session_state.chart_date = _clamp_gregorian_date(
+                    datetime.date(year, month, day),
+                )
+            except ValueError:
+                st.session_state.chart_date = _clamp_gregorian_date(now.date())
+        else:
+            st.session_state.chart_date = _clamp_gregorian_date(now.date())
+    if "chart_year" not in st.session_state:
+        st.session_state.chart_year = st.session_state.chart_date.year
+        st.session_state.chart_month = st.session_state.chart_date.month
+        st.session_state.chart_day = st.session_state.chart_date.day
+    if "chart_date_mode" not in st.session_state:
+        st.session_state.chart_date_mode = (
+            "bc" if int(st.session_state.chart_year) < 0 else "gregorian"
+        )
+
 
 @dataclass
 class SidebarState:
@@ -359,45 +398,63 @@ def render_grok_sidebar(
         st.session_state.lang = new_lang
         st.rerun()
 
-    # ── 日期時間（年可輸入負數，如 -2000 = 公元前2000年）────────────────
-    if "chart_year" not in st.session_state:
-        st.session_state.chart_year = now.year
-        st.session_state.chart_month = now.month
-        st.session_state.chart_day = now.day
-    if "chart_time" not in st.session_state:
-        st.session_state.chart_time = now.time().replace(second=0, microsecond=0)
+    # ── 日期時間：西曆日曆（1800–2200）／公元前手動輸入 ─────────────────
+    _init_chart_date_state(now)
+
+    date_mode = st.radio(
+        t("date_mode_label"),
+        options=["gregorian", "bc"],
+        format_func=lambda m: t("date_mode_gregorian") if m == "gregorian" else t("date_mode_bc"),
+        horizontal=True,
+        key="chart_date_mode",
+    )
 
     date_col, time_col = st.columns(2)
     with date_col:
-        st.caption(t("date_label"))
-        y_col, m_col, d_col = st.columns([2, 1, 1])
-        with y_col:
-            my = int(st.number_input(
-                t("year"),
-                min_value=-2000,
-                max_value=3000,
-                value=int(st.session_state.chart_year),
-                step=1,
-                key="chart_year_input",
-            ))
-        with m_col:
-            mm = int(st.number_input(
-                t("month"),
-                min_value=1,
-                max_value=12,
-                value=int(st.session_state.chart_month),
-                step=1,
-                key="chart_month_input",
-            ))
-        with d_col:
-            md = int(st.number_input(
-                t("day"),
-                min_value=1,
-                max_value=31,
-                value=int(st.session_state.chart_day),
-                step=1,
-                key="chart_day_input",
-            ))
+        if date_mode == "gregorian":
+            st.session_state.chart_date = _clamp_gregorian_date(st.session_state.chart_date)
+            picked_date = st.date_input(
+                t("date_label"),
+                value=st.session_state.chart_date,
+                min_value=_GREGORIAN_MIN,
+                max_value=_GREGORIAN_MAX,
+                key="chart_date_input",
+            )
+            st.session_state.chart_date = picked_date
+            my, mm, md = picked_date.year, picked_date.month, picked_date.day
+        else:
+            st.caption(t("date_bc_hint"))
+            bc_year = int(st.session_state.get("chart_year", _BC_YEAR_MIN))
+            if bc_year > _BC_YEAR_MAX:
+                bc_year = _BC_YEAR_MIN
+            y_col, m_col, d_col = st.columns([2, 1, 1])
+            with y_col:
+                my = int(st.number_input(
+                    t("year"),
+                    min_value=_BC_YEAR_MIN,
+                    max_value=_BC_YEAR_MAX,
+                    value=bc_year,
+                    step=1,
+                    key="chart_year_input",
+                ))
+            with m_col:
+                mm = int(st.number_input(
+                    t("month"),
+                    min_value=1,
+                    max_value=12,
+                    value=int(st.session_state.chart_month),
+                    step=1,
+                    key="chart_month_input",
+                ))
+            with d_col:
+                md = int(st.number_input(
+                    t("day"),
+                    min_value=1,
+                    max_value=31,
+                    value=int(st.session_state.chart_day),
+                    step=1,
+                    key="chart_day_input",
+                ))
     with time_col:
         picked_time = st.time_input(t("time_label"), value=st.session_state.chart_time, key="chart_time_input")
     st.session_state.chart_year = my
@@ -415,9 +472,11 @@ def render_grok_sidebar(
     st.markdown('<div class="grok-sidebar-instant">', unsafe_allow_html=True)
     if st.button(t("instant_btn"), key="instant_hkt_btn", width="stretch"):
         hkt_now = datetime.datetime.now(pytz.timezone("Asia/Hong_Kong"))
-        st.session_state.chart_year = hkt_now.year
-        st.session_state.chart_month = hkt_now.month
-        st.session_state.chart_day = hkt_now.day
+        st.session_state.chart_date_mode = "gregorian"
+        st.session_state.chart_date = _clamp_gregorian_date(hkt_now.date())
+        st.session_state.chart_year = st.session_state.chart_date.year
+        st.session_state.chart_month = st.session_state.chart_date.month
+        st.session_state.chart_day = st.session_state.chart_date.day
         st.session_state.chart_time = hkt_now.time().replace(second=0, microsecond=0)
         st.session_state.trigger_instant = True
         st.rerun()
