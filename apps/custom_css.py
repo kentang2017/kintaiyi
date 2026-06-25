@@ -44,6 +44,30 @@ def get_custom_css() -> str:
     --radius-sm:     8px;
     --radius-md:     12px;
     --radius-lg:     16px;
+    /* 十二運色系 — 低飽和、暗色主題適配 */
+    --yun-1:  #3b5998;
+    --yun-2:  #6b4c93;
+    --yun-3:  #b8860b;
+    --yun-4:  #4a6741;
+    --yun-5:  #8b6f47;
+    --yun-6:  #5b7c99;
+    --yun-7:  #c0706c;
+    --yun-8:  #7d6b8d;
+    --yun-9:  #5c8a7a;
+    --yun-10: #94695a;
+    --yun-11: #6b8299;
+    --yun-12: #8b7355;
+    /* 吉凶色標 */
+    --yun-ji-fu:    #f59e0b;
+    --yun-ji-ji:    #22c55e;
+    --yun-ji-xiong: #ef4444;
+    --yun-ji-zai:   #dc2626;
+    /* 值卦色系 — 與五層計式對應 */
+    --hex-year:   #6b4c93;
+    --hex-month:  #4a6741;
+    --hex-day:    #b8860b;
+    --hex-hour:   #5b7c99;
+    --hex-minute: #7d6b8d;
 }}
 
 /* ── GLOBAL ─────────────────────────────────────────────────────────── */
@@ -646,26 +670,35 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
 @media (max-width: 899px) {{
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
         border: 1px solid var(--border-subtle);
-        padding-bottom: 0.65rem !important;
-        margin-bottom: 0.1rem !important;
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
     }}
     div[data-testid="stVerticalBlock"]:has(iframe) {{
         margin-top: 0 !important;
         margin-bottom: 0 !important;
+        padding: 0 !important;
+        gap: 0 !important;
     }}
     div[data-testid="stElementContainer"]:has(iframe) {{
         margin-bottom: 0 !important;
+        margin-top: 0 !important;
+        padding: 0 !important;
+    }}
+    .stHtml {{
+        margin: 0 !important;
+        padding: 0 !important;
     }}
     div[data-testid="stVerticalBlock"]:has(> .chart-mobile-params-anchor) {{
-        margin-top: 0.2rem !important;
+        margin-top: 0 !important;
         margin-bottom: 0 !important;
+        padding-top: 0 !important;
     }}
     div[data-testid="stVerticalBlock"]:has(> .chart-mobile-params-anchor) [data-testid="stExpander"] {{
         margin-top: 0 !important;
         margin-bottom: 0.15rem !important;
     }}
     div[data-testid="stHorizontalBlock"]:has(.chart-stage-marker) {{
-        margin-bottom: 0.15rem !important;
+        margin-bottom: 0 !important;
         gap: 0.35rem !important;
     }}
     div[data-testid="stVerticalBlock"]:has(> .chart-explanation-anchor) {{
@@ -831,6 +864,488 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
     font-size: 0.78rem;
 }}
 
+/* ── YUN TIMELINE + CARDS (統運十二運) ──────────────────────────────── */
+.yun-section {{
+    margin: 0.5rem 0 0.8rem;
+    padding: 0;
+}}
+.yun-query-note {{
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    padding: 0.4rem 0.65rem;
+    margin-bottom: 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+}}
+
+/* ── 十二運時間軸 ──────────────────────────────────── */
+.yun-timeline-container {{
+    padding: 0.85rem 1rem 0.65rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    margin-bottom: 0.65rem;
+}}
+.yun-timeline-header {{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.55rem;
+}}
+.yun-timeline-label {{
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+}}
+.yun-cycle-num {{
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 0.88rem;
+}}
+.yun-timeline-sub {{
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}}
+.yun-timeline-track {{
+    display: flex;
+    gap: 2px;
+    height: 38px;
+    border-radius: 6px;
+    overflow: hidden;
+}}
+.yun-timeline-seg {{
+    flex-grow: var(--seg-flex, 100);
+    flex-shrink: 0;
+    flex-basis: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.025);
+    border: none;
+    border-top: 2px solid transparent;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+}}
+.yun-timeline-seg:hover {{
+    background: rgba(255, 255, 255, 0.06);
+}}
+.yun-timeline-seg.yun-current {{
+    background: color-mix(in srgb, var(--yun-color) 16%, transparent);
+    border-top-color: var(--yun-color);
+    border-bottom-color: var(--yun-color);
+}}
+.yun-timeline-seg-name {{
+    font-size: 0.66rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    padding: 0 3px;
+}}
+.yun-timeline-seg.yun-current .yun-timeline-seg-name {{
+    color: var(--text-primary);
+}}
+.yun-timeline-seg-years {{
+    font-size: 0.58rem;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}}
+.yun-timeline-marker {{
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--yun-color);
+    animation: yun-pulse 2s ease-in-out infinite;
+}}
+@keyframes yun-pulse {{
+    0%, 100% {{ opacity: 0.5; }}
+    50% {{ opacity: 1; box-shadow: 0 0 6px var(--yun-color); }}
+}}
+.yun-timeline-progress {{
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 999px;
+    margin-top: 0.5rem;
+    overflow: hidden;
+    position: relative;
+}}
+.yun-timeline-progress-bar {{
+    height: 100%;
+    background: linear-gradient(90deg, var(--yun-color), color-mix(in srgb, var(--yun-color) 60%, transparent));
+    border-radius: 999px;
+    transition: width 0.4s ease;
+    display: flex;
+    align-items: center;
+    padding-left: 0.5rem;
+}}
+.yun-timeline-progress-text {{
+    font-size: 0.58rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}}
+
+/* ── 當前運勢卡片 ──────────────────────────────────── */
+.yun-card {{
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--yun-color, var(--text-muted));
+    border-radius: 14px;
+    padding: 0.95rem 1.05rem;
+    margin-bottom: 0.65rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}}
+.yun-card--current {{
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--yun-color) 24%, transparent),
+                0 4px 18px rgba(0, 0, 0, 0.28);
+}}
+.yun-card-header {{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.7rem;
+}}
+.yun-card-yun-name {{
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}}
+.yun-card-ji-badge {{
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 0.18rem 0.55rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-subtle);
+}}
+.yun-ji-dot {{
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}}
+.yun-ji-fu .yun-ji-dot    {{ background: var(--yun-ji-fu); }}
+.yun-ji-ji .yun-ji-dot    {{ background: var(--yun-ji-ji); }}
+.yun-ji-xiong .yun-ji-dot {{ background: var(--yun-ji-xiong); }}
+.yun-ji-zai .yun-ji-dot   {{ background: var(--yun-ji-zai); }}
+.yun-ji-fu    {{ color: var(--yun-ji-fu); }}
+.yun-ji-ji    {{ color: var(--yun-ji-ji); }}
+.yun-ji-xiong {{ color: var(--yun-ji-xiong); }}
+.yun-ji-zai   {{ color: var(--yun-ji-zai); }}
+
+.yun-card-body {{
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}}
+.yun-card-gua {{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 3.5rem;
+    padding: 0.3rem 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+}}
+.yun-card-gua-symbol {{
+    font-size: 1.75rem;
+    line-height: 1;
+    color: var(--text-primary);
+    margin-bottom: 0.2rem;
+}}
+.yun-card-gua-name {{
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}}
+.yun-card-info {{
+    flex: 1;
+    min-width: 0;
+}}
+.yun-card-yao {{
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.3rem;
+}}
+.yun-card-meta {{
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 0.35rem;
+}}
+.yun-card-duan {{
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}}
+.yun-card-gua-seq {{
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    margin-top: 0.45rem;
+}}
+.yun-card-gua-seq-item {{
+    font-size: 0.68rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-muted);
+    border: 1px solid transparent;
+}}
+.yun-card-gua-seq-current {{
+    color: var(--text-primary);
+    font-weight: 600;
+    background: color-mix(in srgb, var(--yun-color) 14%, transparent);
+    border-color: var(--yun-color);
+}}
+.yun-card-progress {{
+    height: 3px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 999px;
+    margin: 0.7rem 0 0;
+    overflow: hidden;
+}}
+.yun-card-progress-fill {{
+    height: 100%;
+    background: var(--yun-color);
+    border-radius: 999px;
+    transition: width 0.4s ease;
+}}
+.yun-card-details {{
+    margin-top: 0.6rem;
+    font-size: 0.78rem;
+}}
+.yun-card-details summary {{
+    color: var(--text-muted);
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    margin-bottom: 0.3rem;
+}}
+.yun-card-details summary::-webkit-details-marker {{
+    display: none;
+}}
+.yun-card-details-body {{
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin: 0.35rem 0 0;
+}}
+
+/* ── 折疊子卡片 ──────────────────────────────────── */
+.yun-sub-card {{
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    margin-bottom: 0.4rem;
+    overflow: hidden;
+    transition: background 0.15s ease;
+}}
+.yun-sub-card[open] {{
+    background: rgba(255, 255, 255, 0.035);
+}}
+.yun-sub-card-header {{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.55rem 0.85rem;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    transition: background 0.15s ease;
+}}
+.yun-sub-card-header:hover {{
+    background: rgba(255, 255, 255, 0.03);
+}}
+.yun-sub-card-header::-webkit-details-marker {{
+    display: none;
+}}
+.yun-sub-card-title {{
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+}}
+.yun-sub-card-preview {{
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 55%;
+}}
+.yun-sub-card-body {{
+    padding: 0 0.85rem 0.65rem;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}}
+.yun-sub-card-body p {{
+    margin: 0.15rem 0;
+}}
+.yun-sub-card-note {{
+    color: var(--text-muted) !important;
+    font-size: 0.72rem !important;
+    margin-top: 0.3rem !important;
+}}
+
+/* ── 卦象觀象六爻列表 ──────────────────────────────── */
+.yun-gua-xiang {{
+    color: var(--text-primary) !important;
+    font-size: 0.82rem !important;
+    margin-bottom: 0.4rem !important;
+}}
+.yun-gua-yao-current-line {{
+    color: var(--text-primary) !important;
+    font-weight: 500;
+    font-size: 0.78rem !important;
+    margin-bottom: 0.5rem !important;
+}}
+.yun-gua-yao-list {{
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-top: 0.3rem;
+}}
+.yun-gua-yao-item {{
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.35rem 0.55rem;
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 6px;
+    border-left: 2px solid transparent;
+}}
+.yun-gua-yao-item.yun-gua-yao-active {{
+    color: var(--text-secondary);
+}}
+.yun-gua-yao-item.yun-gua-yao-current {{
+    color: var(--text-primary);
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.05);
+    border-left-color: var(--yun-color, var(--text-primary));
+}}
+.yun-gua-yao-idx {{
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    min-width: 3.5rem;
+    flex-shrink: 0;
+}}
+.yun-gua-yao-current .yun-gua-yao-idx {{
+    color: var(--yun-color, var(--text-primary));
+}}
+
+/* ── 觀象期十二月 ──────────────────────────────────── */
+.yun-month-grid {{
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.3rem;
+    margin-top: 0.4rem;
+}}
+.yun-month-item {{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.3rem 0.2rem;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-subtle);
+    font-size: 0.68rem;
+}}
+.yun-month-ben {{
+    border-color: color-mix(in srgb, var(--yun-color) 30%, var(--border-subtle));
+}}
+.yun-month-bian {{
+    opacity: 0.7;
+}}
+.yun-month-seq {{
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.62rem;
+}}
+.yun-month-gua {{
+    color: var(--text-secondary);
+    font-size: 0.76rem;
+    font-weight: 600;
+}}
+.yun-month-yao {{
+    color: var(--text-muted);
+    font-size: 0.6rem;
+}}
+
+/* ── 歷史驗例 ──────────────────────────────────── */
+.yun-hist-item {{
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--border-subtle);
+}}
+.yun-hist-item:last-child {{
+    border-bottom: none;
+}}
+.yun-hist-exact {{
+    background: rgba(255, 255, 255, 0.02);
+    padding-left: 0.5rem;
+    border-left: 2px solid var(--yun-color, var(--text-muted));
+    border-radius: 0 4px 4px 0;
+}}
+.yun-hist-year {{
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+}}
+.yun-hist-gua {{
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+}}
+.yun-hist-summary {{
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}}
+
+/* ── 響應式 ──────────────────────────────────── */
+@media (max-width: 768px) {{
+    .yun-timeline-track {{ height: 44px; }}
+    .yun-timeline-seg-name {{ font-size: 0.58rem; }}
+    .yun-card-body {{ flex-direction: column; align-items: center; text-align: center; }}
+    .yun-card-gua {{ flex-direction: row; gap: 0.5rem; }}
+    .yun-card-info {{ text-align: center; }}
+    .yun-card-meta {{ justify-content: center; }}
+    .yun-card-gua-seq {{ justify-content: center; }}
+    .yun-month-grid {{ grid-template-columns: repeat(4, 1fr); }}
+    .yun-sub-card-preview {{ max-width: 45%; }}
+}}
+
 [data-testid="stMetric"] {{
     background: var(--bg-elevated) !important;
     border: 1px solid var(--border-subtle) !important;
@@ -937,6 +1452,292 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
     -webkit-text-fill-color: #000000 !important;
     background: #f5f5f5 !important;
     opacity: 0.88 !important;
+}}
+
+/* ── 流日卦時間軸 (LIURI) ──────────────────────────────────── */
+.liuri-section {{
+    margin: 0.5rem 0 0.8rem;
+}}
+.liuri-header {{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    padding: 0 0.2rem;
+}}
+.liuri-label {{
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+}}
+.liuri-scroll-hint {{
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}}
+.liuri-track {{
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.4rem 0.2rem 0.6rem;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-subtle) transparent;
+}}
+.liuri-track::-webkit-scrollbar {{
+    height: 4px;
+}}
+.liuri-track::-webkit-scrollbar-track {{
+    background: transparent;
+}}
+.liuri-track::-webkit-scrollbar-thumb {{
+    background: var(--border-subtle);
+    border-radius: 2px;
+}}
+
+/* ── 流日卡片 ──────────────────────────────────── */
+.liuri-card {{
+    flex: 0 0 auto;
+    width: 78px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+    padding: 0.5rem 0.4rem 0.4rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    text-align: center;
+}}
+.liuri-card:hover {{
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--border-strong);
+}}
+.liuri-card.liuri-selected {{
+    background: color-mix(in srgb, var(--hex-day) 14%, transparent);
+    border-color: color-mix(in srgb, var(--hex-day) 50%, var(--border-subtle));
+    box-shadow: 0 0 10px color-mix(in srgb, var(--hex-day) 20%, transparent);
+}}
+.liuri-date {{
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+}}
+.liuri-weekday {{
+    font-size: 0.58rem;
+    color: var(--text-muted);
+    line-height: 1;
+}}
+.liuri-weekday.liuri-weekend {{
+    color: var(--yun-ji-xiong);
+}}
+.liuri-symbol {{
+    font-size: 1.5rem;
+    line-height: 1.1;
+    color: var(--text-primary);
+    margin-top: 0.15rem;
+}}
+.liuri-name {{
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    line-height: 1;
+}}
+
+/* ── 六爻迷你圖 ──────────────────────────────────── */
+.liuri-lines {{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0.2rem 0;
+    width: 100%;
+    align-items: center;
+}}
+.liuri-line {{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    height: 4px;
+    width: 100%;
+}}
+.liuri-line-bar {{
+    width: 70%;
+    height: 3px;
+    background: var(--text-muted);
+    border-radius: 1px;
+    opacity: 0.5;
+}}
+.liuri-line.liuri-yin .liuri-line-bar-l,
+.liuri-line.liuri-yin .liuri-line-bar-r {{
+    width: 30%;
+}}
+.liuri-line.liuri-yin .liuri-line-bar-r {{
+    margin-left: 3px;
+}}
+/* 動爻著色 */
+.liuri-line.liuri-line-active .liuri-line-bar {{
+    background: var(--yun-ji-fu);
+    opacity: 1;
+    height: 4px;
+    box-shadow: 0 0 4px var(--yun-ji-fu);
+}}
+.liuri-selected .liuri-line.liuri-line-active .liuri-line-bar {{
+    background: var(--hex-day);
+    box-shadow: 0 0 5px var(--hex-day);
+}}
+
+.liuri-yao {{
+    font-size: 0.6rem;
+    font-weight: 600;
+    line-height: 1;
+    margin-top: 0.1rem;
+}}
+
+/* ── 卦象解讀卡片 ──────────────────────────────────── */
+.hex-detail-card {{
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--hex-color, var(--text-muted));
+    border-radius: 14px;
+    padding: 0.95rem 1.05rem;
+    margin-top: 0.65rem;
+    margin-bottom: 0.65rem;
+}}
+.hex-detail-header {{
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    margin-bottom: 0.5rem;
+}}
+.hex-detail-symbol {{
+    font-size: 2.4rem;
+    line-height: 1;
+    color: var(--text-primary);
+    flex-shrink: 0;
+}}
+.hex-detail-title {{
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}}
+.hex-detail-name {{
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}}
+.hex-detail-layer {{
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}}
+.hex-detail-body {{
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}}
+.hex-detail-xiang {{
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+}}
+.hex-detail-label {{
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    display: block;
+    margin-bottom: 0.3rem;
+}}
+.hex-detail-xiang p {{
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin: 0;
+}}
+
+/* ── 卦象解讀卡片 header（補充動爻標示）── */
+.hex-detail-yao {{
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}}
+.hex-detail-zongshu summary {{
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.3rem 0;
+}}
+.hex-detail-zongshu p {{
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin: 0.4rem 0;
+}}
+
+/* ── 古典解讀卡片群 ──────────────────────────────────── */
+.classic-reading-section {{
+    margin-top: 0.5rem;
+}}
+.classic-card {{
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+}}
+.classic-card-header {{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.6rem;
+    padding: 0.6rem 0.85rem;
+    cursor: pointer;
+    list-style: none;
+    transition: background 0.15s ease;
+}}
+.classic-card-header::-webkit-details-marker {{
+    display: none;
+}}
+.classic-card-header:hover {{
+    background: rgba(255, 255, 255, 0.04);
+}}
+.classic-card-title {{
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+}}
+.classic-card-preview {{
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: right;
+    flex: 1;
+}}
+.classic-card-body {{
+    padding: 0.6rem 0.85rem 0.8rem;
+    border-top: 1px solid var(--border-subtle);
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+}}
+.classic-card-body p {{
+    margin: 0.3rem 0;
+}}
+.classic-card[open] .classic-card-header {{
+    border-bottom: 1px solid var(--border-subtle);
 }}
 </style>
 """

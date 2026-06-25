@@ -76,6 +76,7 @@ from chart_layout import (
     render_chart_side_panel,
     render_chart_stage_open,
 )
+from hex_timeline import render_hex_timeline, render_classic_reading
 
 # 5=太乙命法(魔改·分計落宮)  6=太乙命法(時計落宮)
 LIFE_CHART_STYLES = frozenset({5, 6})
@@ -609,6 +610,38 @@ TRANSLATIONS = {
         "tongyun_same_gua_yao": "同卦爻例",
         "tongyun_near_examples": "近例",
         "tongyun_year_delta": "相差 {delta} 年",
+        "yun_timeline_label": "統運 · 第",
+        "yun_per_cycle": "年 / 週期",
+        "yun_years": "年",
+        "yun_yao_year": "入爻第",
+        "yun_gua_year": "入卦第",
+        "yun_ce": "策",
+        "yun_cycle": "週期第",
+        "yun_expand_huofu": "展開爻位禍福全文",
+        "yun_ganzhi": "干支",
+        "yun_year_suffix": "年",
+        "yun_zhigua": "直卦",
+        "yun_yao_suffix": "爻",
+        "yun_mff": "命爻法",
+        "yun_ben_bian": "本變",
+        "yun_dong_yao": "動爻",
+        "yun_najia": "納甲",
+        "yun_fangwei": "方位",
+        "yun_fenye": "分野",
+        "yun_xiang_yue": "象曰",
+        "yun_yao_guanxiang": "入爻觀象",
+        "hex_xiang_yue": "象曰",
+        "hex_zongshu": "卦象總述",
+        "liuri_label": "流日卦運",
+        "liuri_scroll_hint": "← 滑動查看未來 →",
+        "star_distribution_label": "星曜分佈",
+        "disaster_fenye_label": "災變分野",
+        "qi_music_label": "運氣音律",
+        "fenye_label": "分野疆界",
+        "junshi_label": "軍事戰略",
+        "wuyun_label": "五運六氣",
+        "xingxian_label": "行限推論",
+        "guiyun_label": "大小遊軌運",
         "life_query_age": "命法查詢虛歲",
         "life_query_year": "照限游年年份",
         "fenye": "分野疆界︰",
@@ -887,6 +920,38 @@ TRANSLATIONS = {
         "tongyun_same_gua_yao": "Same hexagram/yao",
         "tongyun_near_examples": "Nearby examples",
         "tongyun_year_delta": "Δ {delta} yr",
+        "yun_timeline_label": "Cycle · No.",
+        "yun_per_cycle": "yr / cycle",
+        "yun_years": "yr",
+        "yun_yao_year": "Yao yr",
+        "yun_gua_year": "Gua yr",
+        "yun_ce": "Ce",
+        "yun_cycle": "Cycle",
+        "yun_expand_huofu": "Expand full yao fortune text",
+        "yun_ganzhi": "Stem-Branch",
+        "yun_year_suffix": "",
+        "yun_zhigua": "Direct hexagram",
+        "yun_yao_suffix": "",
+        "yun_mff": "Yao method",
+        "yun_ben_bian": "Origin→Changed",
+        "yun_dong_yao": "Moving yao",
+        "yun_najia": "Najia",
+        "yun_fangwei": "Direction",
+        "yun_fenye": "Domain",
+        "yun_xiang_yue": "Image says",
+        "yun_yao_guanxiang": "Yao observation",
+        "hex_xiang_yue": "Image says",
+        "hex_zongshu": "Hexagram overview",
+        "liuri_label": "Daily Hexagram Flow",
+        "liuri_scroll_hint": "← Scroll for future →",
+        "star_distribution_label": "Star Distribution",
+        "disaster_fenye_label": "Disasters & Domains",
+        "qi_music_label": "Qi & Music",
+        "fenye_label": "Territorial Divisions",
+        "junshi_label": "Military Strategy",
+        "wuyun_label": "Five Phases & Six Qi",
+        "xingxian_label": "Cycle Limits",
+        "guiyun_label": "Great/Small Rotation",
         "life_query_age": "Life chart age",
         "life_query_year": "Limit/year query",
         "fenye": "Territorial Divisions: ",
@@ -4092,13 +4157,10 @@ with tabs[0]:
                                         if pinfo.get("斷語"):
                                             st.caption(pinfo["斷語"])
                             st.markdown("   ")
-                        st.markdown(t("hexagram"))
-                        st.markdown(f"{t('year_hex')}{results['ygua']}")
-                        st.markdown(f"{t('month_hex')}{results['mgua']}")
-                        st.markdown(f"{t('day_hex')}{results['dgua']}")
-                        st.markdown(f"{t('hour_hex')}{results['hgua']}")
-                        st.markdown(f"{t('minute_hex')}{results['mingua']}")
-                        st.markdown("   ")
+                        # —— 流日卦時間軸 ——
+                        _hex_html = render_hex_timeline(results, t=t)
+                        if _hex_html:
+                            st.html(_hex_html)
                         st.markdown(t("yang_nine"))
                         st.markdown(format_text(results["yjxx"]))
                         st.markdown("   ")
@@ -4134,454 +4196,25 @@ with tabs[0]:
                             render_chart_side_panel(chart_meta, results, t=t)
                     except (ValueError, IndexError) as e:
                         st.error(f"Failed to parse SVG viewBox: {str(e)}")
+                    # —— 流日卦時間軸 ——
+                    _hex_html = render_hex_timeline(results, t=t)
+                    if _hex_html:
+                        st.html(_hex_html)
                     st.markdown(
                         '<span class="chart-explanation-anchor" aria-hidden="true"></span>',
                         unsafe_allow_html=True,
                     )
                     with st.expander(t("explanation")):
-                        st.title(t("taiyi_mishu"))
-                        st.markdown(results["ts"])
-                        st.title(t("history_records"))
-                        st.markdown(results["ch"])
-                        st.title(t("chart_analysis"))
-                        st.markdown(f"{t('year_star_predict')}{results['year_predict']}")
-                        st.markdown(f"{t('start_star_predict')}{results['sj_su_predict']}")
-                        st.markdown(f"{t('ten_stem_predict')}{results['tg_sj_su_predict']}")
-                        st.markdown(f"{t('sky_ground_method')}{results['ty'].ty_gong_dist(results['style'], results['tn'])}")
-                        st.markdown(f"{t('three_five')}{results['three_door'] + results['five_generals']}")
-                        st.markdown(f"{t('home_away')}{results['home_vs_away1']}")
-                        st.markdown(f"{t('win_loss')}{results['ttext'].get('推少多以占勝負')}")
-                        st.markdown(f"{t('wind_cloud')}{results['home_vs_away3']}")
-                        st.markdown(f"{t('solitary')}{results['ttext'].get('推孤單以占成敗')}")
-                        st.markdown(f"{t('yin_yang_adversity')}{results['ttext'].get('推陰陽以占厄會')}")
-                        st.markdown(f"{t('emperor_tour')}{results['ttext'].get('明天子巡狩之期術')}")
-                        st.markdown(f"{t('ruler_base')}{results['ttext'].get('明君基太乙所主術')}")
-                        st.markdown(f"{t('minister_base')}{results['ttext'].get('明臣基太乙所主術')}")
-                        st.markdown(f"{t('people_base')}{results['ttext'].get('明民基太乙所主術')}")
-                        st.markdown(f"{t('five_blessings')}{results['ttext'].get('明五福太乙所主術')}")
-                        st.markdown(f"{t('five_blessings_calc')}{results['ttext'].get('明五福吉算所主術')}")
-                        st.markdown(f"{t('heaven_yi')}{results['ttext'].get('明天乙太乙所主術')}")
-                        st.markdown(f"{t('earth_yi')}{results['ttext'].get('明地乙太乙所主術')}")
-                        st.markdown(f"{t('zhifu')}{results['ttext'].get('明值符太乙所主術')}")
-                        # —— 十六宮分佈 ——
-                        _16 = results["ttext"].get("十六宮分佈", {})
-                        if _16:
-                            _16_parts = []
-                            for zhi, stars in _16.items():
-                                if stars:
-                                    _16_parts.append(f"{zhi}[{'、'.join(stars)}]")
-                            if _16_parts:
-                                st.markdown(f"{t('sixteen_palace')}{'；'.join(_16_parts)}")
-                        # —— 卷四：釋格局 ——
-                        _sg = results["ttext"].get("釋格局", {})
-                        if _sg:
-                            _sg_text = "；".join([f"{k}——{v}" for k, v in _sg.items()])
-                            st.markdown(f"{t('shi_geju')}{_sg_text}")
-                        # —— 卷十：三旗行宮 ——
-                        _sq = results["ttext"].get("三旗行宮", {})
-                        if _sq:
-                            st.markdown(f"{t('sanqi')}太歲青龍旗{_sq.get('太歲青龍旗')}、太陰黑旗{_sq.get('太陰黑旗')}、害氣赤旗{_sq.get('害氣赤旗')}（{_sq.get('會合')}）")
-                        # —— 卷十：九宮貴神 ——
-                        _ng = results["ttext"].get("九宮貴神", {})
-                        if _ng:
-                            _dist = _ng.get("九宮貴神分布", {})
-                            _dist_text = "、".join([f"{g}宮{nm}" for g, nm in _dist.items()])
-                            st.markdown(f"{t('nine_gods')}直事貴神爲{_ng.get('直事貴神')}（小周餘{_ng.get('小周餘')}）；鈎宮分布：{_dist_text}")
-                        # —— 卷六：太乙九星 ——
-                        _ts = results["ttext"].get("太乙九星", {})
-                        if _ts:
-                            _ts_dist = _ts.get("九星分布", {})
-                            _ts_text = "、".join([f"{g}宮{nm}" for g, nm in _ts_dist.items()])
-                            st.markdown(
-                                f"{t('taiyi_stars')}直符{_ts.get('直符九星')}（入宮{_ts.get('入星宮年數')}年）"
-                                f"；{_ts.get('直符所主')}；分布：{_ts_text}")
-                        # —— 卷六：文昌九星 ——
-                        _ws = results["ttext"].get("文昌九星", {})
-                        if _ws:
-                            _ws_dist = _ws.get("文昌九星分布", {})
-                            _ws_text = "、".join([f"{g}宮{nm}" for g, nm in _ws_dist.items()])
-                            st.markdown(
-                                f"{t('wenchang_stars')}直事{_ws.get('直事文昌星')}（入宮{_ws.get('入宮年數')}年）"
-                                f"；臨{_ws.get('臨宮分野')}；分布：{_ws_text}")
-                        # —— 卷三：五運六氣 ——
-                        _wl = results["ttext"].get("五運六氣", {})
-                        if _wl:
-                            _hui = "、".join(_wl.get("歲會天符", []))
-                            st.markdown(
-                                f"{t('wuyun_liuqi')}{_wl.get('五運')}（{_wl.get('太過不及')}）"
-                                f"司天{_wl.get('司天')}{_wl.get('司天化')}、在泉{_wl.get('在泉')}{_wl.get('在泉化')}；"
-                                f"{_wl.get('主氣', '')}{_wl.get('客氣', '')}；歲會：{_hui}")
-                        # —— 卷三：五音之數 ——
-                        _wy = results["ttext"].get("五音之數", {})
-                        if _wy:
-                            _hm = _wy.get("主算五音", {})
-                            _am = _wy.get("客算五音", {})
-                            _ty = _wy.get("太乙五音", {})
-                            st.markdown(
-                                f"{t('wuyin_shu')}主算{_hm.get('音')}（{_hm.get('所主')}）"
-                                f"、客算{_am.get('音')}（{_am.get('所主')}）"
-                                f"、太乙宮{_ty.get('音', '—')}；"
-                                f"主斷：{_hm.get('斷語', '')}")
-                        # —— 卷五：軍事戰略 ——
-                        _j5 = results["ttext"].get("軍事戰略", {})
-                        if _j5:
-                            _nw = _j5.get("內外占攻擊", {})
-                            _zk = _j5.get("太乙助主客", {})
-                            _cd = _j5.get("算長短緩急", {}).get("主算", {})
-                            _zd = _j5.get("主客動靜", {})
-                            _fx = _j5.get("輔相賢否", {}).get("我國輔相", {})
-                            _js = _j5.get("將帥賢否", {}).get("我國將帥", {})
-                            st.markdown(
-                                f"{t('junshi_vol5')}"
-                                f"{_format_neiwai_gongji(_nw)}；"
-                                f"{_zk.get('斷語', '')}；"
-                                f"主算{_cd.get('長短', '—')}{_cd.get('和否', '')}（{_cd.get('斷語', '')}）；"
-                                f"{_zd.get('勝負', '')}")
-                            _line5 = []
-                            if _fx.get("斷語"):
-                                _line5.append(f"輔相{_fx.get('賢否', '')}（{_fx['斷語']}）")
-                            if _js.get("斷語"):
-                                _line5.append(f"將帥{_js.get('賢否', '')}（{_js['斷語']}）")
-                            _sz = _j5.get("數有所主", {}).get("主算", {})
-                            if _sz.get("斷語"):
-                                _line5.append(f"主算{_sz.get('音')}音（{_sz['斷語']}）")
-                            if _line5:
-                                st.markdown("；".join(_line5))
-                        # —— 州國災變（飛符四殺、城名厄會等）——
-                        _v11 = results["ttext"].get("卷十一", {})
-                        if _v11:
-                            _ff = _v11.get("飛符四殺", {})
-                            _zy = _v11.get("州國災變月數", {})
-                            _eh = _v11.get("城名厄會", {})
-                            _sn = _v11.get("城名歲內災發", {})
-                            _bh = _v11.get("十六宮間變化", {})
-                            st.markdown(
-                                f"{t('vol11')}"
-                                f"飛符{_ff.get('飛符', '—')}，"
-                                f"災{_ff.get('災殺', '—')}鬼{_ff.get('鬼殺', '—')}；"
-                                f"州國災月{_zy.get('斷語', '—')}")
-                            _line11 = []
-                            if _eh.get("斷語"):
-                                _line11.append(f"城名{_eh.get('城名', '')}{_eh['斷語']}")
-                            if _sn.get("斷語"):
-                                _line11.append(_sn["斷語"])
-                            if _ff.get("城名斷語"):
-                                _line11.append(_ff["城名斷語"])
-                            if _bh.get("加神"):
-                                _line11.append(
-                                    f"十六神以{_bh['加神']}為樞（{_bh['要訣']}）")
-                            if _line11:
-                                st.markdown("；".join(_line11))
-                        _ttext = _display_ttext(results)
-                        _chart_ty = results["ty"]
-                        _tongyun_qy = _resolve_tongyun_year(_chart_ty.year)
-                        if _tongyun_qy != _chart_ty.year:
-                            st.info(
-                                t("tongyun_query_note").format(
-                                    query=_tongyun_qy, chart=_chart_ty.year,
-                                )
-                            )
-                        # —— 卷十二：統運入卦 ——
-                        _v12 = _ttext.get("卷十二", {})
-                        if _v12:
-                            _rg = _v12.get("統運入卦", {})
-                            _hf = _v12.get("入爻禍福", {})
-                            _lz = _v12.get("流年直卦", {})
-                            _bg = _v12.get("變卦納甲", {})
-                            _sw = _v12.get("災厄首尾", {})
-                            _yj = _v12.get("要訣", "")
-                            _gua_fu = _rg.get("卦符", "")
-                            _gua_label = (
-                                f"{_rg.get('卦', '—')}{_gua_fu}"
-                                if _gua_fu
-                                else _rg.get("卦", "—")
-                            )
-                            st.markdown(
-                                f"{t('tongyun_rugua')}"
-                                f"{_rg.get('運', '—')}·{_gua_label}{_rg.get('爻名', '')}"
-                                f"（入卦第{_rg.get('入卦年數', '—')}年、"
-                                f"入爻第{_rg.get('入爻年數', '—')}年）；"
-                                f"週期第{_rg.get('週期序', '—')}輪；"
-                                f"{t('ruyao_huofu')}"
-                                f"{_hf.get('所主', _rg.get('斷語', ''))}")
-                            _line12 = []
-                            if _lz:
-                                _lz_fu = _lz.get("卦符", "")
-                                _lz_gua = (
-                                    f"{_lz.get('直卦', '—')}{_lz_fu}"
-                                    if _lz_fu
-                                    else _lz.get("直卦", "—")
-                                )
-                                _line12.append(
-                                    f"{t('liunian_zhigua')}{_lz.get('干支', '')}"
-                                    f"{_lz_gua}{_lz.get('爻名', '')}"
-                                    f"（{_lz.get('命爻法', '')}）")
-                            if _bg:
-                                _nj = _bg.get("納甲", {})
-                                _line12.append(
-                                    f"{t('bian_gua_najia')}"
-                                    f"{_bg.get('本卦', '')}→{_bg.get('變卦', '')}"
-                                    f"{_bg.get('爻名', '')}；"
-                                    f"{_nj.get('納甲', '')}·{_nj.get('方位', '')}")
-                            if _sw and _sw.get("是否首尾"):
-                                _line12.append(
-                                    f"{t('shouwei')}"
-                                    f"{'、'.join(_sw.get('首尾標記', []))}；"
-                                    f"{_sw.get('斷語', '')}")
-                            if _yj:
-                                _line12.append(_yj)
-                            if _line12:
-                                st.markdown("；".join(_line12))
-                            _sy = _v12.get("十二運立成", {})
-                            _hist = _v12.get("歷史入爻", [])
-                            _gqx = _v12.get("觀象期", {})
-                            _jz = _v12.get("歲本建子", {})
-                            if _sy or _hist or _gqx or _jz:
-                                with st.expander(t("tongyun_detail"), expanded=False):
-                                    if _sy:
-                                        st.markdown(
-                                            f"{t('shier_yun')}"
-                                            f"大週{_sy.get('大週', '—')}年，"
-                                            f"{_sy.get('起運', '')}→{_sy.get('終運', '')}")
-                                        if _hf.get("要訣"):
-                                            st.caption(_hf["要訣"])
-                                        for row in _sy.get("十二運", []):
-                                            _guas = "→".join(row.get("卦序", []))
-                                            st.markdown(
-                                                f"· {row.get('運')}（{row.get('總年')}年）：{_guas}")
-                                    if _hist:
-                                        st.markdown(t("lishi_ruyao"))
-                                        for h in _hist:
-                                            st.markdown(
-                                                f"· {h.get('紀年', '')}："
-                                                f"{h.get('運', '')}·"
-                                                f"{h.get('卦', '')}{h.get('爻', '')}")
-                                    if _gqx.get("十二月直事"):
-                                        st.markdown(f"**{t('tongyun_extended')}**")
-                                        st.caption(_gqx.get("要訣", ""))
-                                        for m in _gqx["十二月直事"]:
-                                            st.markdown(
-                                                f"· {m.get('月序')}月（{m.get('月建')}）"
-                                                f"{m.get('階段')}·{m.get('卦')}"
-                                                f"{m.get('爻名', '')}")
-                                    if _jz:
-                                        st.caption(
-                                            f"{_jz.get('太乙歲本', '')}·"
-                                            f"太乙歲{_jz.get('太乙歲', '—')}／"
-                                            f"時王歲{_jz.get('時王歲', '—')}")
-                        # —— 卷十四：行支編年 ——
-                        _v14 = _ttext.get("卷十四", {})
-                        if _v14:
-                            _hz = _v14.get("行支編年", {})
-                            _tip14 = _v14.get("要訣", "")
-                            _exact = _hz.get("當年例", [])
-                            _line14 = [t("hangzhi_biannian")]
-                            if _exact:
-                                e = _exact[0]
-                                _line14.append(
-                                    f"{e.get('紀年', '')}·"
-                                    f"{e.get('卦', '')}{e.get('爻', '')}："
-                                    f"{e.get('摘要', '')}")
-                            elif _tip14:
-                                _line14.append(_tip14)
-                            st.markdown("".join(_line14) if len(_line14) == 1 else "；".join(_line14))
-                        # —— 卷十三：統十二運卦象 ——
-                        _v13 = _ttext.get("卷十三", {})
-                        if _v13:
-                            _gx = _v13.get("統運卦象", {})
-                            _yj13 = _v13.get("要訣", "")
-                            _xiang = _gx.get("象曰", "")
-                            _yao_gx = _gx.get("當前爻觀象", "")
-                            _line13 = [
-                                f"{t('gua_xiang')}"
-                                f"{_gx.get('運', '—')}·{_gx.get('卦', '—')}"
-                                f"{_gx.get('爻名', '')}"
-                                f"（經{_gx.get('經年', '—')}年）",
-                            ]
-                            if _xiang:
-                                _line13.append(
-                                    f"象曰{_xiang[:48]}{'…' if len(_xiang) > 48 else ''}")
-                            if _yao_gx:
-                                _line13.append(f"入爻觀象：{_yao_gx[:60]}{'…' if len(_yao_gx) > 60 else ''}")
-                            if _yj13:
-                                _line13.append(_yj13)
-                            st.markdown("；".join(_line13))
-                            _full = _v13.get("卦象全文") or {}
-                            _zongshu = _gx.get("總述") or _full.get("總述", "")
-                            if _zongshu:
-                                with st.expander(t("gua_xiang_detail"), expanded=False):
-                                    if _full.get("爻觀象"):
-                                        st.markdown("**六爻觀象**")
-                                        for yi, text in sorted(_full["爻觀象"].items()):
-                                            mark = "←" if yi == _gx.get("爻") else ""
-                                            st.markdown(f"· 第{yi}爻{text}{mark}")
-                                    st.markdown("**卦象總述**")
-                                    st.markdown(_zongshu)
-                        _render_tongyun_history_compare(_tongyun_qy)
-                        # —— 卷八：分野疆界 ——
-                        _v8 = results["ttext"].get("卷八", {})
-                        if _v8:
-                            _fy = _v8.get("太乙分野", {})
-                            _te = _v8.get("絳宮明堂玉堂", {})
-                            _line8 = [
-                                f"{t('fenye')}"
-                                f"{_fy.get('宮名', '—')}宮·{_fy.get('州', '—')}",
-                            ]
-                            if _fy.get("城名"):
-                                _line8.append(f"城名{_fy['城名']}（{_fy.get('城名干支', '')}）")
-                            if _v8.get("歲建分野", {}).get("國"):
-                                _sz = _v8["歲建分野"]
-                                _line8.append(f"歲建{_sz.get('地支', '')}·{_sz.get('國', '')}分")
-                            st.markdown("；".join(_line8))
-                        # —— 卷九：大小遊軌運 ——
+                        # —— 古典解讀卡片群（全部整合，無重複）——
+                        _classic_html, _wuzhen_data = render_classic_reading(results, t=t)
+                        if _classic_html:
+                            st.markdown(_classic_html, unsafe_allow_html=True)
+                        # —— 五陣置旗八陣圖（軍事戰略卡片附屬，含 dataframe）——
+                        if _wuzhen_data:
+                            _render_wuzhen_bazhen_viz(_wuzhen_data)
+                        st.markdown("---")
+                        # —— 卷九：大小遊軌運（含 dataframe，無法 HTML 化）——
                         _render_vol9_explanation(results["ttext"].get("卷九", {}))
-                        # —— 卷十：天目合會 ——
-                        _v10 = results["ttext"].get("卷十", {})
-                        if _v10:
-                            _wq10 = _v10.get("五運六氣", {})
-                            _hh = _v10.get("天目合會", [])
-                            st.markdown(
-                                f"{t('vol10_hehui')}"
-                                f"{_wq10.get('五運', '—')}·{_wq10.get('司天', '—')}；"
-                                f"{'、'.join(_hh) if _hh else '主客氣調'}")
-                        # —— 卷十八：十精雲氣 ——
-                        _v18 = results["ttext"].get("卷十八", {})
-                        if _v18:
-                            _sj = _v18.get("十精數", {})
-                            _same = _v18.get("與太乙同宮", [])
-                            st.markdown(
-                                f"{t('yunqi')}"
-                                f"十精數{_sj.get('十精數', '—')}·{_sj.get('斷語', '')}；"
-                                f"同宮{'、'.join(_same) if _same else '無'}")
-                            if _v18.get("要訣"):
-                                st.caption(_v18["要訣"])
-                        # —— 卷十五：軍事應用 ——
-                        _jy = results["ttext"].get("軍事應用", {})
-                        if _jy:
-                            _qb = _jy.get("奇兵伏兵", {})
-                            _wz = _jy.get("五陣置旗", {})
-                            _hz = _wz.get("主陣旗", {})
-                            _az = _jy.get("安營置陣", {})
-                            _cs = _jy.get("出兵稱神", {}).get("主稱神", {})
-                            _cx = _jy.get("陳兵出鄉", {}).get("主", {})
-                            _fh = _jy.get("分合用兵", {})
-                            _gf = _jy.get("五音觀風察將", {})
-                            _js = _jy.get("軍勢勝負", {})
-                            st.markdown(
-                                f"{t('junshi_vol15')}"
-                                f"主奇兵{_qb.get('主奇兵位', '—')}、客奇兵{_qb.get('客奇兵位', '—')}；"
-                                f"{_qb.get('伏兵', '')}；"
-                                f"主陣{_hz.get('陣型', '—')}{_hz.get('旗色', '')}、"
-                                f"出鄉{_cx.get('出鄉', '—')}；"
-                                f"{_az.get('斷語', '')}")
-                            _line2_parts = []
-                            if _cs.get("咒"):
-                                _line2_parts.append(
-                                    f"稱神{_cs.get('祀方', '')}（{_cs.get('咒', '')}）")
-                            if _fh.get("斷語"):
-                                _line2_parts.append(f"分合{_fh['斷語']}")
-                            if _gf.get("斷語"):
-                                _line2_parts.append(f"察將{_gf['斷語']}")
-                            if _js.get("斷語"):
-                                _line2_parts.append(f"軍勢{_js['斷語']}")
-                            if _line2_parts:
-                                st.markdown("；".join(_line2_parts))
-                            _render_wuzhen_bazhen_viz(_wz)
-                        # —— 卷十七：軍事占斷 ——
-                        _jz = results["ttext"].get("軍事占斷", {})
-                        if _jz:
-                            _dd = _jz.get("敵國動靜", {})
-                            _jm = _jz.get("間諜虛實", {})
-                            _ds = _jz.get("敵使虛實", {})
-                            _dl = _jz.get("敵兵來方", {})
-                            _cy = _jz.get("出兵用時", {})
-                            _jw = _jz.get("見聞虛實", {})
-                            _tb = _jz.get("討捕叛亡", {})
-                            _zq = _jz.get("執囚對吏", {})
-                            _qs = _jz.get("求索所得", {})
-                            _sj = _jz.get("時計諸事", {})
-                            st.markdown(
-                                f"{t('junshi_vol17')}"
-                                f"{_dd.get('動靜', '—')}（{_dd.get('斷語', '')}）；"
-                                f"間諜{_jm.get('間諜', '—')}；"
-                                f"敵使{_ds.get('虛實', '—')}；"
-                                f"{_dl.get('方向', '')}{_dl.get('兵勢', '')}；"
-                                f"出兵{_cy.get('主方', {}).get('斷語', '')}")
-                            if _jw or _tb or _zq or _qs or _sj:
-                                _sj_items = "、".join(_sj.get("諸事", [])) if _sj else ""
-                                st.markdown(
-                                    f"見聞{_jw.get('天目內外', '—')}（{_jw.get('斷語', '')}）；"
-                                    f"討捕{_tb.get('結果', '—')}（{'；'.join(_tb.get('得機', []))}）；"
-                                    f"執囚{'可解' if _zq.get('可解') else '難解'}（{_zq.get('斷語', '')}）；"
-                                    f"求索{'有得' if _qs.get('有得') else '無得'}"
-                                    f"（{_qs.get('斷語', '')}）；"
-                                    f"時計{_sj_items}")
-                            _gx17 = _format_guxu_duizhao(_jz.get("孤虛對照"))
-                            if _gx17:
-                                st.markdown(_gx17)
-                        # —— 卷二／卷七：神將所主 ——
-                        _sj = results["ttext"].get("神將所主", {})
-                        if _sj:
-                            _16 = _sj.get("十六宮間神", {})
-                            _tm = _16.get("天目所臨", {})
-                            _9g = _sj.get("九宮所主", {})
-                            _jy = _sj.get("陰陽絕易", {})
-                            _bm = _sj.get("八門所主", {})
-                            _ty = _sj.get("天乙所主", {})
-                            _dy = _sj.get("地乙所主", {})
-                            _zf = _sj.get("直符所主", {})
-                            _fs = _sj.get("四神所主", {})
-                            _dyo = _sj.get("大遊所主", {})
-                            _xyo = _sj.get("小遊所主", {})
-                            _jy_hits = _jy.get("臨宮", [])
-                            _jy_txt = (
-                                "、".join(h["類型"] for h in _jy_hits if isinstance(h, dict))
-                                if _jy_hits and isinstance(_jy_hits[0], dict)
-                                else str(_jy_hits[0]) if _jy_hits else "—"
-                            )
-                            def _god_part(label, block):
-                                if not block:
-                                    return ""
-                                duan = block.get("斷語") or block.get("本象", "")
-                                if not duan or str(duan) == "None":
-                                    return ""
-                                return f"{label}（{duan}）；"
-
-                            _line1 = (
-                                f"{t('shenjiang_suozhu')}"
-                                f"天目臨{_tm.get('神', '—')}（{_tm.get('所主', '')}）；"
-                                f"九宮{_9g.get('太乙落宮', '—')}（{_9g.get('所主', '')}）；"
-                                f"絕易{_jy_txt}；"
-                                f"值事{_bm.get('值事八門', '—')}門{_bm.get('值事所主', '')}；"
-                                f"太乙臨{_bm.get('太乙所臨門', '—')}門（{_bm.get('太乙門吉凶', '')}）；"
-                                f"{_god_part('天乙', _ty)}"
-                                f"{_god_part('地乙', _dy)}"
-                                f"{_god_part('直符', _zf)}"
-                                f"{_god_part('四神', _fs)}"
-                            ).rstrip("；")
-                            st.markdown(_line1)
-                            if _dyo or _xyo:
-                                _dytm = _dyo.get("大遊天目", {})
-                                _xyo_c = _xyo.get("合宮", []) if _xyo else []
-                                _xyo_real = [
-                                    c for c in _xyo_c
-                                    if c and not str(c).startswith("無特殊")
-                                ]
-                                _xyo_txt = (
-                                    "；".join(_xyo_real)
-                                    if _xyo_real
-                                    else (_xyo.get("本象", "") if _xyo else "")
-                                )
-                                _dyo_parts = []
-                                if _dyo.get("凶筭所主"):
-                                    _dyo_parts.append(
-                                        f"大遊（{_dyo['凶筭所主']}）")
-                                if _dytm.get("本象"):
-                                    _dyo_parts.append(f"大遊天目（{_dytm['本象']}）")
-                                if _xyo_txt:
-                                    _dyo_parts.append(f"小遊（{_xyo_txt}）")
-                                if _dyo_parts:
-                                    st.markdown("；".join(_dyo_parts))
 
                 # ── 運籌博弈分析區塊 ──────────────────────────────────────
                 if st.session_state.get("game_theory_toggle_switch"):
