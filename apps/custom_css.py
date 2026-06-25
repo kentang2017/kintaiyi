@@ -14,7 +14,7 @@ SIDEBAR_WIDTH_PX = 310
 
 @functools.lru_cache(maxsize=1)
 def get_custom_css() -> str:
-    """Return global CSS injected via st.markdown(unsafe_allow_html=True)."""
+    """Return global CSS injected via st.html()."""
     w = SIDEBAR_WIDTH_PX
     return f"""
 <style>
@@ -83,6 +83,17 @@ html, body, .stApp {{
 
 [data-testid="stIconMaterial"] {{
     font-family: 'Material Symbols Rounded' !important;
+}}
+
+/* Replace sidebar collapse button icon (>>/<<) with hamburger menu (☰) */
+[data-testid="stSidebarCollapseButton"] [data-testid="stIconMaterial"] {{
+    font-size: 0 !important;
+}}
+[data-testid="stSidebarCollapseButton"] [data-testid="stIconMaterial"]::before {{
+    content: "menu" !important;
+    font-family: 'Material Symbols Rounded' !important;
+    font-size: 1.3rem !important;
+    font-variation-settings: 'wght' 400, 'GRAD' 0, 'opsz' 24 !important;
 }}
 
 /* Hide default Streamlit header chrome for cleaner Grok look */
@@ -557,8 +568,25 @@ input:focus, textarea:focus,
 .chart-stage-mobile-meta {{
     display: none;
 }}
+/* Base print-meta styling — always applies, not just in mobile media query.
+   This prevents font-size from reverting to Streamlit default on re-render. */
+.chart-print-meta {{
+    font-size: 0.6rem !important;
+    line-height: 1.42 !important;
+    letter-spacing: 0 !important;
+    color: var(--text-secondary) !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    margin: 0 !important;
+    padding: 0.4rem 0.5rem !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-sm) !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}}
 @media (min-width: 900px) {{
-    div[data-testid="stVerticalBlock"]:has(> .chart-stage-mobile-meta) {{
+    div[data-testid="stVerticalBlock"]:has(.chart-stage-mobile-meta) {{
         display: none !important;
     }}
 }}
@@ -659,7 +687,7 @@ input:focus, textarea:focus,
     height: 0 !important;
     width: 0 !important;
 }}
-div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
+div[data-testid="stVerticalBlock"]:has(.chart-stage-marker) {{
     position: relative;
     align-items: center;
     background: radial-gradient(ellipse 78% 58% at 50% 42%, rgba(255, 255, 255, 0.035), transparent 72%);
@@ -668,11 +696,15 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
     margin-bottom: 0.25rem;
 }}
 @media (max-width: 899px) {{
-    div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
+    /* chart-stage-marker is nested inside stMarkdownContainer, not a direct
+       child of stVerticalBlock — use :has() without > combinator */
+    div[data-testid="stVerticalBlock"]:has(.chart-stage-marker) {{
         border: 1px solid var(--border-subtle);
-        padding-bottom: 0 !important;
+        padding: 0.15rem 0.15rem 0 !important;
         margin-bottom: 0 !important;
+        margin-top: 0 !important;
     }}
+    /* iframe container — zero all spacing */
     div[data-testid="stVerticalBlock"]:has(iframe) {{
         margin-top: 0 !important;
         margin-bottom: 0 !important;
@@ -683,29 +715,52 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
         margin-bottom: 0 !important;
         margin-top: 0 !important;
         padding: 0 !important;
+        height: auto !important;
+    }}
+    /* iframe itself — no border/gap */
+    div[data-testid="stElementContainer"]:has(iframe) iframe {{
+        margin: 0 !important;
+        padding: 0 !important;
+        display: block;
     }}
     .stHtml {{
         margin: 0 !important;
         padding: 0 !important;
     }}
-    div[data-testid="stVerticalBlock"]:has(> .chart-mobile-params-anchor) {{
-        margin-top: 0 !important;
+    /* 完整參數 expander — flush against chart, minimal gap.
+       .chart-mobile-params-anchor is nested inside <p> -> stMarkdownContainer
+       -> stElementContainer -> stVerticalBlock, so use :has() without > */
+    div[data-testid="stVerticalBlock"]:has(.chart-mobile-params-anchor) {{
+        margin-top: 0.15rem !important;
         margin-bottom: 0 !important;
         padding-top: 0 !important;
+        padding-bottom: 0 !important;
     }}
-    div[data-testid="stVerticalBlock"]:has(> .chart-mobile-params-anchor) [data-testid="stExpander"] {{
+    div[data-testid="stVerticalBlock"]:has(.chart-mobile-params-anchor) [data-testid="stExpander"] {{
         margin-top: 0 !important;
-        margin-bottom: 0.15rem !important;
+        margin-bottom: 0 !important;
     }}
     div[data-testid="stHorizontalBlock"]:has(.chart-stage-marker) {{
         margin-bottom: 0 !important;
-        gap: 0.35rem !important;
+        gap: 0 !important;
+        flex-direction: column !important;
     }}
-    div[data-testid="stVerticalBlock"]:has(> .chart-explanation-anchor) {{
+    /* Hide the right-column container (chart-side-panel) on mobile — it's
+       display:none via .chart-summary-desktop but its wrapper div still
+       occupies vertical space, creating the large gap. */
+    div[data-testid="stHorizontalBlock"]:has(.chart-stage-marker) > div:has(.chart-summary-desktop) {{
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+    }}
+    div[data-testid="stVerticalBlock"]:has(.chart-explanation-anchor) {{
         margin-top: 0.1rem !important;
         margin-bottom: 0 !important;
     }}
-    div[data-testid="stVerticalBlock"]:has(> .chart-explanation-anchor) [data-testid="stExpander"] {{
+    div[data-testid="stVerticalBlock"]:has(.chart-explanation-anchor) [data-testid="stExpander"] {{
         margin-top: 0 !important;
         margin-bottom: 0.25rem !important;
     }}
@@ -727,35 +782,142 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
         position: static;
         width: 100%;
         max-width: 100%;
-        margin: 0 0 0.4rem 0;
-        padding: 0;
+        margin: 0 0 0.25rem 0 !important;
+        padding: 0 !important;
+        /* Fixed container — doesn't shift when chart content changes */
+        min-height: 5.85rem;
+        box-sizing: border-box;
     }}
     .chart-mobile-params-anchor {{
         display: none !important;
     }}
     .chart-print-meta {{
-        font-size: 0.6rem;
-        line-height: 1.42;
-        color: var(--text-secondary);
-        white-space: pre-wrap;
-        word-break: break-word;
-        margin: 0;
-        padding: 0.4rem 0.5rem;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid var(--border-subtle);
-        border-radius: var(--radius-sm);
+        /* Mobile-only: fixed min-height to absorb variable line-count */
+        min-height: 5.6rem;
+        box-sizing: border-box;
+        overflow: hidden;
     }}
-    div[data-testid="stVerticalBlock"]:has(> .chart-stage-mobile-meta) + div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
+    div[data-testid="stVerticalBlock"]:has(.chart-stage-mobile-meta) + div[data-testid="stVerticalBlock"]:has(.chart-stage-marker) {{
         margin-top: 0 !important;
     }}
+    /* Seam anchor: zero-height spacer between chart and 完整參數/解釋 */
+    div[data-testid="stVerticalBlock"]:has(.taiyi-chart-seam-anchor) {{
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+    }}
+    .taiyi-chart-seam-anchor {{
+        display: block !important;
+        height: 0 !important;
+        width: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }}
+    /* Reduce block-container bottom padding for tablets (768-899px) */
+    .main .block-container,
+    [data-testid="stMainBlockContainer"] {{
+        padding-bottom: 0.75rem !important;
+    }}
+    /* ── 完整參數以下的內容：確保 CSS 接得上 ── */
+    /* stHtml 容器：保留 margin/padding 為 0 但不影響內部 section */
+    [data-testid="stHtml"] {{
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }}
+    /* 流日卦時間軸 */
+    .liuri-section {{
+        margin: 0.4rem 0 0.6rem !important;
+        padding: 0 0.2rem !important;
+    }}
+    .liuri-track {{
+        padding: 0.3rem 0.1rem 0.5rem !important;
+        gap: 0.35rem !important;
+    }}
+    .liuri-card {{
+        width: 68px !important;
+        padding: 0.4rem 0.3rem 0.3rem !important;
+    }}
+    .liuri-card .liuri-date {{ font-size: 0.62rem !important; }}
+    .liuri-card .liuri-name {{ font-size: 0.6rem !important; }}
+    .liuri-card .liuri-symbol {{ font-size: 1rem !important; }}
+    /* 統運入卦時間軸 */
+    .yun-section {{
+        margin: 0.4rem 0 0.6rem !important;
+        padding: 0 0.2rem !important;
+    }}
+    .yun-timeline-track {{
+        height: 44px !important;
+    }}
+    .yun-timeline-seg-name {{
+        font-size: 0.58rem !important;
+    }}
+    .yun-card-body {{
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+    }}
+    .yun-card-gua {{
+        flex-direction: row !important;
+        gap: 0.5rem !important;
+    }}
+    .yun-card-info {{
+        text-align: center !important;
+    }}
+    .yun-card-meta {{
+        justify-content: center !important;
+    }}
+    .yun-card-gua-seq {{
+        justify-content: center !important;
+    }}
+    .yun-month-grid {{
+        grid-template-columns: repeat(4, 1fr) !important;
+    }}
+    .yun-sub-card-preview {{
+        max-width: 45% !important;
+    }}
+    /* 古典解讀卡片 */
+    .classic-reading-section {{
+        margin-top: 0.3rem !important;
+    }}
+    .classic-card {{
+        margin-bottom: 0.4rem !important;
+    }}
+    .classic-card-header {{
+        padding: 0.5rem 0.65rem !important;
+    }}
+    .classic-card-title {{
+        font-size: 0.8rem !important;
+    }}
+    .classic-card-preview {{
+        font-size: 0.68rem !important;
+    }}
+    .classic-card-body {{
+        padding: 0.5rem 0.65rem 0.6rem !important;
+        font-size: 0.78rem !important;
+        line-height: 1.55 !important;
+    }}
+    /* 解釋 expander 區域 */
+    div[data-testid="stVerticalBlock"]:has(.chart-explanation-anchor) {{
+        margin-top: 0.3rem !important;
+    }}
+    div[data-testid="stVerticalBlock"]:has(.chart-explanation-anchor) [data-testid="stExpander"] {{
+        margin-top: 0 !important;
+        margin-bottom: 0.3rem !important;
+    }}
 }}
-div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) iframe {{
+div[data-testid="stVerticalBlock"]:has(.chart-stage-marker) iframe {{
     max-width: min(92vw, 640px) !important;
     margin-left: auto !important;
     margin-right: auto !important;
     display: block;
 }}
-div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
+div[data-testid="stVerticalBlock"]:has(.chart-stage-marker) .taiyi-shell {{
     max-width: min(92vw, 640px);
     margin-left: auto;
     margin-right: auto;
@@ -1398,9 +1560,11 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
         padding: 0.5rem 0.75rem;
         flex-wrap: wrap;
     }}
-    .main .block-container {{
+    .main .block-container,
+    [data-testid="stMainBlockContainer"] {{
         padding-left: 0.5rem !important;
         padding-right: 0.5rem !important;
+        padding-bottom: 0.75rem !important;
     }}
     /* Mobile: sidebar overlay when open only */
     [data-testid="stSidebar"][aria-expanded="true"] {{
@@ -1420,7 +1584,7 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
     }}
 }}
 @media (min-width: 900px) {{
-    div[data-testid="stVerticalBlock"]:has(> .chart-mobile-params-anchor) {{
+    div[data-testid="stVerticalBlock"]:has(.chart-mobile-params-anchor) {{
         display: none !important;
     }}
 }}
@@ -1833,19 +1997,8 @@ def get_sidebar_cursor_fix_html() -> str:
 
 
 def get_top_nav_html(lang: str = "zh") -> str:
-    """Sticky top navigation bar (Grok-style)."""
-    if lang == "en":
-        brand = "Kin Taiyi-Taiyi Divine Number Chart"
-    else:
-        brand = "堅太乙-太乙神數排盤"
-    return f"""
-<nav class="grok-topnav" aria-label="Main navigation">
-  <div class="grok-topnav-brand">
-    <div class="grok-topnav-logo" aria-hidden="true">乙</div>
-    <p class="grok-topnav-title">{brand}</p>
-  </div>
-</nav>
-"""
+    """Sticky top navigation bar (Grok-style). Empty — no logo, no title."""
+    return ""
 
 
 def sidebar_section(title: str) -> None:

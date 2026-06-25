@@ -1,7 +1,7 @@
 pendulum==2.1.2
 cerebras-cloud-sdk
 openai>=1.0.0
-streamlit==1.53.1
+streamlit==1.58.0
 streamlit-screen-stats==0.0.82
 streamlit-local-storage==0.0.25
 streamlit-browser-session-storage==0.0.12
