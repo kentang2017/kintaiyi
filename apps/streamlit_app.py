@@ -1877,38 +1877,29 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     #__CONTAINER_ID__ .taiyi-card {
         position: relative;
         overflow: hidden;
-        border: 1px solid rgba(212, 175, 55, 0.62);
-        border-radius: 22px;
-        padding: 10px;
-        background:
-            radial-gradient(circle at 12% 16%, rgba(212, 175, 55, 0.13), transparent 30%),
-            radial-gradient(circle at 88% 12%, rgba(196, 30, 58, 0.12), transparent 24%),
-            linear-gradient(180deg, rgba(18, 33, 52, 0.98), rgba(10, 22, 40, 0.98));
-        box-shadow: var(--shadow);
+        border: 1px solid rgba(212, 175, 55, 0.45);
+        border-radius: 20px;
+        padding: 8px;
+        background: linear-gradient(180deg, #0f1c2e 0%, #0a1628 100%);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
         isolation: isolate;
     }
-    #__CONTAINER_ID__ .taiyi-card::before,
+    #__CONTAINER_ID__ .taiyi-card::before {
+        content: "";
+        position: absolute;
+        inset: 6px;
+        border-radius: 16px;
+        border: 1px solid rgba(212, 175, 55, 0.18);
+        pointer-events: none;
+    }
+    
     #__CONTAINER_ID__ .taiyi-card::after {
         content: "";
         position: absolute;
-        inset: 10px;
+        inset: 2px;
         border-radius: 18px;
+        border: 1px solid rgba(212, 175, 55, 0.08);
         pointer-events: none;
-    }
-    /* 美學調整區 */
-    #__CONTAINER_ID__ .taiyi-card::before {
-        border: 1px solid rgba(212, 175, 55, 0.25);
-        background:
-            radial-gradient(circle at 10% 20%, rgba(245, 240, 225, 0.08) 0 1px, transparent 1.5px),
-            radial-gradient(circle at 82% 24%, rgba(245, 240, 225, 0.08) 0 1px, transparent 1.5px),
-            radial-gradient(circle at 26% 86%, rgba(245, 240, 225, 0.06) 0 1px, transparent 1.5px),
-            radial-gradient(circle at 76% 78%, rgba(212, 175, 55, 0.08) 0 1px, transparent 1.5px);
-        background-size: 160px 160px, 200px 200px, 180px 180px, 220px 220px;
-        opacity: 0.9;
-    }
-    #__CONTAINER_ID__ .taiyi-card::after {
-        inset: 3px;
-        border: 1px solid rgba(212, 175, 55, 0.12);
     }
     #__CONTAINER_ID__ .taiyi-toolbar {
         position: relative;
@@ -1927,32 +1918,31 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     }
     #__CONTAINER_ID__ .taiyi-btn {
         appearance: none;
-        border: 1px solid rgba(212, 175, 55, 0.38);
-        border-radius: 999px;
-        background: linear-gradient(180deg, rgba(18, 37, 58, 0.82), rgba(9, 24, 38, 0.88));
-        color: var(--ivory);
+        border: 1px solid rgba(212, 175, 55, 0.32);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.04);
+        color: #d4af37;
         font-family: inherit;
-        font-size: 0.76rem;
-        line-height: 1;
-        padding: 9px 12px;
+        font-size: 0.78rem;
+        padding: 8px 14px;
         cursor: pointer;
-        transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, color 180ms ease;
-        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+        transition: all 0.2s ease;
         white-space: nowrap;
         width: 100%;
         min-width: 0;
-        backdrop-filter: blur(8px);
     }
+    
     #__CONTAINER_ID__ .taiyi-btn:hover {
+        background: rgba(212, 175, 55, 0.12);
+        border-color: #d4af37;
+        color: #f5e8c7;
         transform: translateY(-1px);
-        color: var(--gold);
-        border-color: rgba(212, 175, 55, 0.7);
-        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
     }
+    
     #__CONTAINER_ID__ .taiyi-btn.is-active {
-        color: var(--gold);
-        border-color: rgba(212, 175, 55, 0.78);
-        box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.18), 0 10px 22px rgba(0, 0, 0, 0.28);
+        background: rgba(212, 175, 55, 0.18);
+        border-color: #d4af37;
+        color: #f5e8c7;
     }
     #__CONTAINER_ID__ .taiyi-stage {
         position: relative;
@@ -2252,12 +2242,12 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         fill: #FFD54F !important;
     }
     #__CONTAINER_ID__ .taiyi-sector-panel {
-        margin-top: 10px;
-        padding: 12px 14px 10px;
-        border: 1px solid rgba(212, 175, 55, 0.42);
+        margin-top: 8px;
+        padding: 14px 16px 12px;
+        border: 1px solid rgba(212, 175, 55, 0.28);
         border-radius: 14px;
-        background: linear-gradient(180deg, rgba(16, 30, 48, 0.96), rgba(8, 18, 34, 0.98));
-        box-shadow: inset 0 1px 0 rgba(212, 175, 55, 0.12);
+        background: rgba(15, 25, 42, 0.96);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
     }
     #__CONTAINER_ID__ .taiyi-sector-panel[hidden] {
         display: none !important;
