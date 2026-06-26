@@ -327,14 +327,19 @@ def _render_ai_provider_block(
             st.session_state.last_selected_qwen_prompt = selected_name
 
             with st.expander(t("edit_prompt"), expanded=False):
-                st.session_state.qwen_system_prompt = st.text_area(
+                # Widget key is qwen_system_editor (Streamlit owns it).
+                # Seed it from qwen_system_prompt only if key is absent.
+                if "qwen_system_editor" not in st.session_state:
+                    st.session_state.qwen_system_editor = st.session_state.get("qwen_system_prompt", "")
+                edited_prompt = st.text_area(
                     t("edit_prompt"),
-                    value=st.session_state.qwen_system_prompt,
                     height=100,
                     placeholder=t("edit_prompt_placeholder"),
                     key="qwen_system_editor",
                     label_visibility="collapsed",
                 )
+                # Mirror back to non-widget key for downstream consumers
+                st.session_state.qwen_system_prompt = edited_prompt
                 col_u, col_d = st.columns(2)
                 with col_u:
                     if st.button(t("update_prompt"), key="update_qwen_prompt_button"):
@@ -378,14 +383,16 @@ def _render_ai_provider_block(
                         st.rerun()
 
     with st.expander(t("advanced_settings"), expanded=False):
+        if "qwen_max_tokens_slider" not in st.session_state:
+            st.session_state.qwen_max_tokens_slider = st.session_state.get("qwen_max_tokens", 8192)
         st.session_state.qwen_max_tokens = st.slider(
             t("max_tokens"), 1024, 32768,
-            st.session_state.get("qwen_max_tokens", 8192),
             key="qwen_max_tokens_slider", help=t("max_tokens_help"),
         )
+        if "qwen_temperature_slider" not in st.session_state:
+            st.session_state.qwen_temperature_slider = st.session_state.get("qwen_temperature", 0.7)
         st.session_state.qwen_temperature = st.slider(
             t("temperature"), 0.0, 1.5,
-            st.session_state.get("qwen_temperature", 0.7),
             step=0.05, key="qwen_temperature_slider", help=t("temperature_help"),
         )
 
@@ -406,10 +413,12 @@ def render_grok_sidebar(
     st.markdown('<div class="grok-sidebar-shell">', unsafe_allow_html=True)
 
     # ── 語言（緊湊，置頂）──────────────────────────────────────────────
+    # Use key= only; no index= to avoid reconciliation conflicts on rerun.
+    if "lang_select" not in st.session_state:
+        st.session_state.lang_select = "中文" if st.session_state.lang == "zh" else "English"
     lang_choice = st.selectbox(
         t("lang_label"),
         ["中文", "English"],
-        index=0 if st.session_state.lang == "zh" else 1,
         key="lang_select",
         label_visibility="collapsed",
     )
@@ -436,8 +445,8 @@ def render_grok_sidebar(
     date_col, time_col = st.columns(2)
     with date_col:
         if date_mode == "gregorian":
-            # Read widget value via key — widget owns chart_date_input.
-            # _clamp ensures stored state is always in-range on first render.
+            # Widget key chart_date_input is the single source of truth.
+            # Only seed/clamp if missing or out of range — never pass value= with key=.
             _cur = st.session_state.get("chart_date_input")
             if _cur is None or _cur < _GREGORIAN_MIN or _cur > _GREGORIAN_MAX:
                 st.session_state.chart_date_input = _clamp_gregorian_date(
@@ -445,7 +454,6 @@ def render_grok_sidebar(
                 )
             picked_date = st.date_input(
                 t("date_label"),
-                value=st.session_state.chart_date_input,
                 min_value=_GREGORIAN_MIN,
                 max_value=_GREGORIAN_MAX,
                 key="chart_date_input",
@@ -453,41 +461,49 @@ def render_grok_sidebar(
             my, mm, md = picked_date.year, picked_date.month, picked_date.day
         else:
             st.caption(t("date_bc_hint"))
-            bc_year = int(st.session_state.get("chart_year", _BC_YEAR_MIN))
-            if bc_year > _BC_YEAR_MAX:
-                bc_year = _BC_YEAR_MIN
             y_col, m_col, d_col = st.columns([2, 1, 1])
             with y_col:
+                if "chart_year_input" not in st.session_state:
+                    bc_year = int(st.session_state.get("chart_year", _BC_YEAR_MIN))
+                    if bc_year > _BC_YEAR_MAX or bc_year < _BC_YEAR_MIN:
+                        bc_year = _BC_YEAR_MIN
+                    st.session_state.chart_year_input = bc_year
                 my = int(st.number_input(
                     t("year"),
                     min_value=_BC_YEAR_MIN,
                     max_value=_BC_YEAR_MAX,
-                    value=bc_year,
                     step=1,
                     key="chart_year_input",
                 ))
             with m_col:
+                if "chart_month_input" not in st.session_state:
+                    st.session_state.chart_month_input = int(st.session_state.get("chart_month", now.month))
                 mm = int(st.number_input(
                     t("month"),
                     min_value=1,
                     max_value=12,
-                    value=int(st.session_state.get("chart_month", now.month)),
                     step=1,
                     key="chart_month_input",
                 ))
             with d_col:
+                if "chart_day_input" not in st.session_state:
+                    st.session_state.chart_day_input = int(st.session_state.get("chart_day", now.day))
                 md = int(st.number_input(
                     t("day"),
                     min_value=1,
                     max_value=31,
-                    value=int(st.session_state.get("chart_day", now.day)),
                     step=1,
                     key="chart_day_input",
                 ))
     with time_col:
+        # Widget key chart_time_input is the single source of truth.
+        # Only seed if missing — never pass value= with key=.
+        if "chart_time_input" not in st.session_state:
+            st.session_state.chart_time_input = st.session_state.get(
+                "chart_time", now.time().replace(second=0, microsecond=0),
+            )
         picked_time = st.time_input(
             t("time_label"),
-            value=st.session_state.get("chart_time_input", now.time().replace(second=0, microsecond=0)),
             key="chart_time_input",
         )
     # Sync legacy mirror vars from widget-owned state for downstream consumers.
@@ -577,9 +593,13 @@ def render_grok_sidebar(
             if tongyun_sync:
                 st.caption(t("tongyun_sync_hint").format(year=my))
             else:
+                # Seed widget default from chart year only on first render;
+                # after that, widget key owns the value.
+                if "tongyun_query_year" not in st.session_state:
+                    st.session_state.tongyun_query_year = my
                 st.slider(
                     t("tongyun_query_year"), min_value=-476, max_value=2100,
-                    value=int(st.session_state.get("tongyun_query_year", my)), key="tongyun_query_year",
+                    key="tongyun_query_year",
                 )
         with st.expander(t("debug_mode"), expanded=False):
             if st.toggle(t("debug_mode"), key="debug_mode_toggle", help=t("debug_help")):
