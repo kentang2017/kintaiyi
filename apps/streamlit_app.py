@@ -3746,7 +3746,10 @@ st.set_page_config(
 # sanitization (unlike st.html in 1.58). Re-injecting every run guarantees
 # the <style> block survives reruns (date change, sidebar toggle, etc.).
 st.markdown(get_custom_css(), unsafe_allow_html=True)
-st.html(get_sidebar_cursor_fix_html(), unsafe_allow_javascript=True)
+# Sidebar cursor fix is now pure CSS — no JS injection needed.
+# Previous st.html(..., unsafe_allow_javascript=True) caused React error #185
+# because each rerun created a new iframe with a MutationObserver that
+# triggered cascading DOM mutations.
 # 定義基礎 URL
 BASE_URL_KINTAIYI = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/master/'
 BASE_URL_KINLIUREN = 'https://raw.githubusercontent.com/kentang2017/kinliuren/master/'
@@ -4165,11 +4168,11 @@ with tabs[0]:
                         # —— 流日卦時間軸 ——
                         _hex_html = render_hex_timeline(results, t=t)
                         if _hex_html:
-                            st.html(_hex_html)
+                            st.markdown(_hex_html, unsafe_allow_html=True)
                         # —— 統運入卦時間軸 + 運勢卡片 ——
                         _yun_html = render_yun_section(results, t=t)
                         if _yun_html:
-                            st.html(_yun_html)
+                            st.markdown(_yun_html, unsafe_allow_html=True)
                         st.markdown(t("yang_nine"))
                         st.markdown(format_text(results["yjxx"]))
                         st.markdown("   ")
@@ -4208,11 +4211,11 @@ with tabs[0]:
                     # —— 流日卦時間軸 ——
                     _hex_html = render_hex_timeline(results, t=t)
                     if _hex_html:
-                        st.html(_hex_html)
+                        st.markdown(_hex_html, unsafe_allow_html=True)
                     # —— 統運入卦時間軸 + 運勢卡片 ——
                     _yun_html = render_yun_section(results, t=t)
                     if _yun_html:
-                        st.html(_yun_html)
+                        st.markdown(_yun_html, unsafe_allow_html=True)
                     st.markdown(
                         '<span class="chart-explanation-anchor" aria-hidden="true"></span>',
                         unsafe_allow_html=True,
