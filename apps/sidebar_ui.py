@@ -28,36 +28,43 @@ def _clamp_gregorian_date(value: datetime.date) -> datetime.date:
 def _apply_instant_hkt() -> None:
     """Set sidebar date/time to current HKT; call before date widgets render."""
     hkt_now = datetime.datetime.now(pytz.timezone("Asia/Hong_Kong"))
+    _d = _clamp_gregorian_date(hkt_now.date())
+    _t = hkt_now.time().replace(second=0, microsecond=0)
+    # Write directly to widget keys (programmatic update — safe before render)
     st.session_state.chart_date_mode = "gregorian"
-    st.session_state.chart_date = _clamp_gregorian_date(hkt_now.date())
-    st.session_state.chart_year = st.session_state.chart_date.year
-    st.session_state.chart_month = st.session_state.chart_date.month
-    st.session_state.chart_day = st.session_state.chart_date.day
-    st.session_state.chart_time = hkt_now.time().replace(second=0, microsecond=0)
-    st.session_state.chart_date_input = st.session_state.chart_date
-    st.session_state.chart_time_input = st.session_state.chart_time
+    st.session_state.chart_date_input = _d
+    st.session_state.chart_time_input = _t
+    # Sync legacy state variables for downstream consumers
+    st.session_state.chart_date = _d
+    st.session_state.chart_year = _d.year
+    st.session_state.chart_month = _d.month
+    st.session_state.chart_day = _d.day
+    st.session_state.chart_time = _t
 
 
 def _init_chart_date_state(now: datetime.datetime) -> None:
-    if "chart_time" not in st.session_state:
-        st.session_state.chart_time = now.time().replace(second=0, microsecond=0)
-    if "chart_date" not in st.session_state:
+    # chart_date_input / chart_time_input are widget keys (chart_date_input,
+    # chart_time_input). Only seed them when absent so widget state is stable.
+    if "chart_time_input" not in st.session_state:
+        st.session_state.chart_time_input = now.time().replace(second=0, microsecond=0)
+    if "chart_date_input" not in st.session_state:
         year = int(st.session_state.get("chart_year", now.year))
         month = int(st.session_state.get("chart_month", now.month))
         day = int(st.session_state.get("chart_day", now.day))
-        if _GREGORIAN_MIN.year <= year <= _GREGORIAN_MAX.year:
-            try:
-                st.session_state.chart_date = _clamp_gregorian_date(
-                    datetime.date(year, month, day),
-                )
-            except ValueError:
-                st.session_state.chart_date = _clamp_gregorian_date(now.date())
-        else:
-            st.session_state.chart_date = _clamp_gregorian_date(now.date())
+        try:
+            _d = datetime.date(year, month, day)
+        except ValueError:
+            _d = now.date()
+        st.session_state.chart_date_input = _clamp_gregorian_date(_d)
+    # Legacy mirror variables (read-only consumers; never assigned during render)
+    if "chart_date" not in st.session_state:
+        st.session_state.chart_date = st.session_state.chart_date_input
     if "chart_year" not in st.session_state:
-        st.session_state.chart_year = st.session_state.chart_date.year
-        st.session_state.chart_month = st.session_state.chart_date.month
-        st.session_state.chart_day = st.session_state.chart_date.day
+        st.session_state.chart_year = st.session_state.chart_date_input.year
+        st.session_state.chart_month = st.session_state.chart_date_input.month
+        st.session_state.chart_day = st.session_state.chart_date_input.day
+    if "chart_time" not in st.session_state:
+        st.session_state.chart_time = st.session_state.chart_time_input
     if "chart_date_mode" not in st.session_state:
         st.session_state.chart_date_mode = (
             "bc" if int(st.session_state.chart_year) < 0 else "gregorian"
@@ -410,6 +417,7 @@ def render_grok_sidebar(
     if new_lang != st.session_state.lang:
         st.session_state.lang = new_lang
         st.session_state.pop("chart_meta_key", None)
+        st.session_state.pop("chart_meta", None)
 
     # ── 日期時間：西曆日曆（公元1年–2030）／公元前手動輸入 ─────────────────
     _init_chart_date_state(now)
@@ -428,15 +436,20 @@ def render_grok_sidebar(
     date_col, time_col = st.columns(2)
     with date_col:
         if date_mode == "gregorian":
-            st.session_state.chart_date = _clamp_gregorian_date(st.session_state.chart_date)
+            # Read widget value via key — widget owns chart_date_input.
+            # _clamp ensures stored state is always in-range on first render.
+            _cur = st.session_state.get("chart_date_input")
+            if _cur is None or _cur < _GREGORIAN_MIN or _cur > _GREGORIAN_MAX:
+                st.session_state.chart_date_input = _clamp_gregorian_date(
+                    _cur if _cur is not None else st.session_state.get("chart_date", now.date())
+                )
             picked_date = st.date_input(
                 t("date_label"),
-                value=st.session_state.chart_date,
+                value=st.session_state.chart_date_input,
                 min_value=_GREGORIAN_MIN,
                 max_value=_GREGORIAN_MAX,
                 key="chart_date_input",
             )
-            st.session_state.chart_date = picked_date
             my, mm, md = picked_date.year, picked_date.month, picked_date.day
         else:
             st.caption(t("date_bc_hint"))
@@ -458,7 +471,7 @@ def render_grok_sidebar(
                     t("month"),
                     min_value=1,
                     max_value=12,
-                    value=int(st.session_state.chart_month),
+                    value=int(st.session_state.get("chart_month", now.month)),
                     step=1,
                     key="chart_month_input",
                 ))
@@ -467,12 +480,19 @@ def render_grok_sidebar(
                     t("day"),
                     min_value=1,
                     max_value=31,
-                    value=int(st.session_state.chart_day),
+                    value=int(st.session_state.get("chart_day", now.day)),
                     step=1,
                     key="chart_day_input",
                 ))
     with time_col:
-        picked_time = st.time_input(t("time_label"), value=st.session_state.chart_time, key="chart_time_input")
+        picked_time = st.time_input(
+            t("time_label"),
+            value=st.session_state.get("chart_time_input", now.time().replace(second=0, microsecond=0)),
+            key="chart_time_input",
+        )
+    # Sync legacy mirror vars from widget-owned state for downstream consumers.
+    # These are read-only mirrors — never assigned back to a widget key.
+    st.session_state.chart_date = st.session_state.get("chart_date_input", st.session_state.get("chart_date"))
     st.session_state.chart_year = my
     st.session_state.chart_month = mm
     st.session_state.chart_day = md
