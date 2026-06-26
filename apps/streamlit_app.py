@@ -3161,7 +3161,20 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             const sectorGroup = findSectorGroupByKey(key);
             if (sectorGroup) sectorGroup.classList.add("taiyi-sector-active");
 
-            if (sectorPanelLayer) sectorPanelLayer.textContent = layerLabel;
+            // For planet ring layers (layer5/6/7), show the 十六宮 name
+            // instead of the generic "行星環" label.
+            const isPlanetLayer = ["layer5", "layer6", "layer7"].indexOf(layerId) !== -1;
+            const posBranch = branch
+                || (sectorGroup ? sectorGroup.getAttribute("data-pos-branch") : "")
+                || (sectorGroup ? sectorGroup.getAttribute("data-branch") : "");
+            let displayLabel = layerLabel;
+            if (isPlanetLayer && posBranch) {
+                const gongNum = gongByBranch[posBranch];
+                const gongName = gongNum != null ? (gongNames[String(gongNum)] || "") : "";
+                if (gongName) displayLabel = gongName + "宮";
+            }
+
+            if (sectorPanelLayer) sectorPanelLayer.textContent = displayLabel;
             if (sectorPanelTitle) {
                 sectorPanelTitle.textContent = entry && entry.title
                     ? entry.title
