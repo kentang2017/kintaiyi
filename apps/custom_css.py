@@ -705,9 +705,10 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
 @media (max-width: 899px) {{
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
         border: 1px solid var(--border-subtle);
-        padding-bottom: 0 !important;
+        padding: 2px 2px 0 !important;
         margin-bottom: 0 !important;
     }}
+    /* Kill all extra vertical space around the chart iframe */
     div[data-testid="stVerticalBlock"]:has(iframe) {{
         margin-top: 0 !important;
         margin-bottom: 0 !important;
@@ -723,12 +724,17 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
         margin: 0 !important;
         padding: 0 !important;
     }}
-    div[data-testid="stVerticalBlock"]:has(> .chart-mobile-params-anchor) {{
+    /* Tighten the iframe element itself — reduce inherent iframe spacing */
+    iframe {{
+        margin-bottom: 0 !important;
+    }}
+    /* chart-mobile-params: zero gap from chart above */
+    div[data-testid="stVerticalBlock"]:has(> .chart-mobile-params) {{
         margin-top: 0 !important;
         margin-bottom: 0 !important;
         padding-top: 0 !important;
     }}
-    div[data-testid="stVerticalBlock"]:has(> .chart-mobile-params-anchor) [data-testid="stExpander"] {{
+    div[data-testid="stVerticalBlock"]:has(> .chart-mobile-params) [data-testid="stExpander"] {{
         margin-top: 0 !important;
         margin-bottom: 0.15rem !important;
     }}
@@ -762,7 +768,7 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
         position: static;
         width: 100%;
         max-width: 100%;
-        margin: 0 0 0.4rem 0;
+        margin: 0 0 0.2rem 0;
         padding: 0;
     }}
     .chart-mobile-params-anchor {{
@@ -775,13 +781,25 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
         white-space: pre-wrap;
         word-break: break-word;
         margin: 0;
-        padding: 0.4rem 0.5rem;
+        padding: 0.3rem 0.4rem;
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid var(--border-subtle);
         border-radius: var(--radius-sm);
     }}
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-mobile-meta) + div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
         margin-top: 0 !important;
+    }}
+    /* taiyi-chart-seam-anchor: zero height, zero margin */
+    .taiyi-chart-seam-anchor {{
+        display: none !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }}
+    div[data-testid="stVerticalBlock"]:has(> .taiyi-chart-seam-anchor) {{
+        margin: 0 !important;
+        padding: 0 !important;
+        height: 0 !important;
     }}
 }}
 div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) iframe {{

@@ -2510,8 +2510,16 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             const offsetHeight = root.offsetHeight || 0;
             const scrollHeight = root.scrollHeight || 0;
             const isMobileViewport = window.matchMedia && window.matchMedia("(max-width: 899px)").matches;
+            // Mobile: the stage-frame is max-width 92vw (~340px on phone).
+            // The chart is aspect-ratio 1/1, so height ≈ width ≈ 340.
+            // Add toolbar (~44px) + card padding (~6px) = ~390.
+            // Cap mobile height to avoid large vertical gap.
+            const mobileCap = 560;
             const heightAdjustment = isMobileViewport ? -22 : 0;
-            const height = Math.ceil(Math.max(rectHeight, offsetHeight, scrollHeight) + heightAdjustment);
+            let height = Math.ceil(Math.max(rectHeight, offsetHeight, scrollHeight) + heightAdjustment);
+            if (isMobileViewport && height > mobileCap) {
+                height = mobileCap;
+            }
             if (Math.abs(height - lastReportedHeight) < 2) {
                 return;
             }
@@ -3673,7 +3681,12 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         .replace("__EXPORT_CSS__", json.dumps(export_css, ensure_ascii=False))
         .replace("__EXPORT_CSS_BY_MODE__", json.dumps(export_css_bundle, ensure_ascii=False))
     )
-    st.components.v1.html(html_content, height=max(920, abs(num) + 180))
+    # Use a moderate initial height; JS inside the component auto-resizes
+    # to actual content height via setFrameHeight. On mobile the JS measures
+    # the real height (which is smaller due to CSS @media scaling) and posts
+    # a smaller value back to Streamlit, closing the gap.
+    _initial_height = max(720, abs(num) + 120)
+    st.components.v1.html(html_content, height=_initial_height)
 
 
 def render_svg(svg, num, chart_meta):
