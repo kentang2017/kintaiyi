@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import date
+import datetime as _dt
 
 from . import config
 from . import taiyi_life_dict
@@ -489,7 +490,7 @@ def _year_gua_at_age(taiyi, age: int) -> tuple[int, str]:
 def bailiu_rugua_xian(taiyi, sex: str, age: int | None = None) -> dict:
     """百六入卦限、流年卦限（卷二十）。"""
     if age is None:
-        age = config.calculateAge(date(taiyi.year, taiyi.month, taiyi.day))
+        age = config.calculateAge(_dt.date(taiyi.year, taiyi.month, taiyi.day) if taiyi.year >= 1 else _dt.date(1, 1, 1))
     birth_num, _ = taiyi.life_start_gua()
     birth_gua = _gua_name(birth_num)
     qi_gz = _shouqi_ganzhi(taiyi)
@@ -551,7 +552,7 @@ def yangjiu_san_xian(
 ) -> dict:
     """陽九入三限所主災祥（卷二十：初1-25、中26-50、末51-75）。"""
     if age is None:
-        age = config.calculateAge(date(taiyi.year, taiyi.month, taiyi.day))
+        age = config.calculateAge(_dt.date(taiyi.year, taiyi.month, taiyi.day) if taiyi.year >= 1 else _dt.date(1, 1, 1))
     period = "初限" if age <= 25 else "中限" if age <= 50 else "末限"
     _, yj_zhi = _age_limit_branch(taiyi, sex, age, kind="陽九")
     stars = _stars_at_branch(taiyi, yj_zhi, plate_ji=plate_ji)
@@ -632,7 +633,7 @@ def zhao_xian_you_nian(
 ) -> dict:
     """諸星照限游年歌（卷二十全文匹配）。"""
     if age is None:
-        age = config.calculateAge(date(taiyi.year, taiyi.month, taiyi.day))
+        age = config.calculateAge(_dt.date(taiyi.year, taiyi.month, taiyi.day) if taiyi.year >= 1 else _dt.date(1, 1, 1))
     query_year = query_year or date.today().year
     limit_type, zhao_zhi = _age_limit_branch(taiyi, sex, age)
     you_zhi = config.gangzhi(query_year, 6, 15, 12, 0)[0][1]

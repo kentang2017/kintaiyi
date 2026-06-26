@@ -12,6 +12,80 @@ from html import escape as _esc
 
 from kintaiyi import config
 
+# ── 負數年份（公元前）日期支援 ─────────────────────────────
+import sxtwl as _sxtwl
+
+
+class _SafeDate:
+    """輕量 date 替代品，支援負數年份。內部使用 sxtwl JD 運算。"""
+    __slots__ = ("_year", "_month", "_day")
+
+    def __init__(self, year: int, month: int, day: int):
+        self._year = year
+        self._month = month
+        self._day = day
+
+    @classmethod
+    def _from_jd(cls, jd: float) -> "_SafeDate":
+        t = _sxtwl.JD2DD(jd)
+        return cls(int(t.Y), int(t.M), int(t.D))
+
+    @property
+    def year(self) -> int:
+        return self._year
+
+    @property
+    def month(self) -> int:
+        return self._month
+
+    @property
+    def day(self) -> int:
+        return self._day
+
+    def weekday(self) -> int:
+        # 0=Monday ... 6=Sunday  (same as datetime.date.weekday)
+        jd = _sxtwl.toJD(_sxtwl.Time(self._year, self._month, self._day, 12, 0, 0))
+        # JD 0 = Monday (Julian Day week cycle: JD mod 7 -> 0=Monday)
+        return int(jd + 0.5) % 7
+
+    def __add__(self, other: timedelta) -> "_SafeDate":
+        jd = _sxtwl.toJD(_sxtwl.Time(self._year, self._month, self._day, 12, 0, 0))
+        return self._from_jd(jd + other.days)
+
+    def __radd__(self, other: timedelta) -> "_SafeDate":
+        return self.__add__(other)
+
+    def __sub__(self, other):
+        if isinstance(other, timedelta):
+            jd = _sxtwl.toJD(_sxtwl.Time(self._year, self._month, self._day, 12, 0, 0))
+            return self._from_jd(jd - other.days)
+        if isinstance(other, _SafeDate):
+            jd1 = _sxtwl.toJD(_sxtwl.Time(self._year, self._month, self._day, 12, 0, 0))
+            jd2 = _sxtwl.toJD(_sxtwl.Time(other._year, other._month, other._day, 12, 0, 0))
+            return timedelta(days=int(round(jd1 - jd2)))
+        if isinstance(other, date):
+            jd1 = _sxtwl.toJD(_sxtwl.Time(self._year, self._month, self._day, 12, 0, 0))
+            jd2 = _sxtwl.toJD(_sxtwl.Time(other.year, other.month, other.day, 12, 0, 0))
+            return timedelta(days=int(round(jd1 - jd2)))
+        return NotImplemented
+
+    def __eq__(self, other) -> bool:
+        if isinstance(other, _SafeDate):
+            return self._year == other._year and self._month == other._month and self._day == other._day
+        if isinstance(other, date):
+            return self._year == other.year and self._month == other.month and self._day == other.day
+        return False
+
+    def __hash__(self) -> int:
+        return hash((self._year, self._month, self._day))
+
+
+def _safe_date(year: int, month: int, day: int):
+    """構建 date 物件，支援負數年份。year >= 1 時回傳標準 datetime.date。"""
+    if year >= 1:
+        return date(year, month, day)
+    return _SafeDate(year, month, day)
+
 # ── 爻位吉凶 ────────────────────────────────────────────
 
 _JI_COLOR: dict[int, str] = {
@@ -103,7 +177,7 @@ def render_hex_timeline(results: dict, *, t) -> str:
     if ty is None:
         return ""
 
-    base_date = date(ty.year, ty.month, ty.day)
+    base_date = _safe_date(ty.year, ty.month, ty.day)
     num_days = 15  # 當日 + 14 天
 
     # 初始化選中日期

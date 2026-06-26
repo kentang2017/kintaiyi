@@ -11,8 +11,8 @@ import streamlit as st
 
 from kintaiyi.openai_compatible_client import OpenAICompatibleClient
 
-_GREGORIAN_MIN = datetime.date(1800, 1, 1)
-_GREGORIAN_MAX = datetime.date(2200, 12, 31)
+_GREGORIAN_MIN = datetime.date(1, 1, 1)
+_GREGORIAN_MAX = datetime.date(2030, 12, 31)
 _BC_YEAR_MIN = -2000
 _BC_YEAR_MAX = -1
 
@@ -411,7 +411,7 @@ def render_grok_sidebar(
         st.session_state.lang = new_lang
         st.session_state.pop("chart_meta_key", None)
 
-    # ── 日期時間：西曆日曆（1800–2200）／公元前手動輸入 ─────────────────
+    # ── 日期時間：西曆日曆（公元1年–2030）／公元前手動輸入 ─────────────────
     _init_chart_date_state(now)
     if st.session_state.pop("apply_instant_hkt", False):
         _apply_instant_hkt()

@@ -262,6 +262,41 @@ html.grok-sb-collapsed [data-testid="stMainBlockContainer"],
     resize: none !important;
 }}
 /* Transparent shield over sidebar/main boundary — blocks col-resize hover zone */
+/* 手機版「完整參數」區塊優化 */
+@media (max-width: 768px) {{
+    .chart-mobile-params {{
+        margin-top: 4px !important;
+        margin-bottom: 8px !important;
+    }}
+
+    .chart-mobile-params .streamlit-expanderHeader {{
+        padding: 6px 12px !important;
+        font-size: 0.9rem !important;
+    }}
+
+    .chart-mobile-params .streamlit-expanderContent {{
+        padding: 8px 12px 4px !important;
+    }}
+
+    .chart-meta-detail-row-mobile {{
+        margin-bottom: 4px !important;
+        padding: 4px 0 !important;
+    }}
+
+    .chart-mobile-three-five {{
+        margin-top: 8px !important;
+    }}
+
+    .chart-mobile-param-heading {{
+        font-size: 0.85rem !important;
+        margin-bottom: 4px !important;
+    }}
+
+    .chart-mobile-param-body {{
+        font-size: 0.82rem !important;
+        line-height: 1.4 !important;
+    }}
+}}
 @media (min-width: 769px) {{
     [data-testid="stSidebar"][aria-expanded="true"]::after {{
         content: "" !important;

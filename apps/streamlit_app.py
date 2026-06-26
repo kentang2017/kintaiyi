@@ -61,8 +61,6 @@ from kintaiyi.tongyun_display import apply_tongyun_query, historical_compare
 from kintaiyi.taiyidict import tengan_shiji, su_dist
 from kintaiyi.taiyimishu import taiyi_yingyang
 from kintaiyi.historytext import chistory
-import streamlit.components.v1 as components
-from streamlit.components.v1 import html
 import pandas as pd
 from kintaiyi.cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL, TokenQuotaExceededError
 from kintaiyi.openai_client import OpenAIClient, DEFAULT_MODEL as DEFAULT_OPENAI_MODEL, TokenQuotaExceededError as OpenAITokenQuotaExceededError
@@ -77,6 +75,7 @@ from chart_layout import (
     render_chart_stage_open,
 )
 from hex_timeline import render_hex_timeline, render_classic_reading
+from yun_timeline import render_yun_section
 
 # 5=太乙命法(魔改·分計落宮)  6=太乙命法(時計落宮)
 LIFE_CHART_STYLES = frozenset({5, 6})
@@ -422,7 +421,7 @@ def _load_example_timeline_json() -> str:
 # --- i18n: Translation dictionaries ---
 TRANSLATIONS = {
     "zh": {
-        "page_title": "堅太乙-太乙神數排盤",
+        #"page_title": "堅太乙-太乙神數排盤",
         "lang_label": "語言 Language",
         "sidebar_block_basic": "基本參數",
         "sidebar_block_method": "太乙計式",
@@ -445,7 +444,7 @@ TRANSLATIONS = {
         "date_mode_label": "日期",
         "date_mode_gregorian": "西曆",
         "date_mode_bc": "公元前",
-        "date_bc_hint": "輸入負數年份（如 -2000 = 公元前 2000 年）",
+        "date_bc_hint": "",
         "time_label": "時間",
         "run_chart_btn": "立即排盤",
         "chart_params_stale_hint": "側欄日期已變更，請按「立即排盤」更新。",
@@ -755,7 +754,7 @@ TRANSLATIONS = {
         "date_mode_label": "Date",
         "date_mode_gregorian": "Gregorian",
         "date_mode_bc": "BCE",
-        "date_bc_hint": "Enter a negative year (e.g. -2000 = 2000 BCE)",
+        "date_bc_hint": "",
         "time_label": "Time",
         "run_chart_btn": "Run Chart",
         "chart_params_stale_hint": "Sidebar date changed — click Run Chart to refresh.",
@@ -2510,7 +2509,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             const rectHeight = root.getBoundingClientRect ? root.getBoundingClientRect().height : 0;
             const offsetHeight = root.offsetHeight || 0;
             const scrollHeight = root.scrollHeight || 0;
-            const isMobileViewport = window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
+            const isMobileViewport = window.matchMedia && window.matchMedia("(max-width: 899px)").matches;
             const heightAdjustment = isMobileViewport ? -22 : 0;
             const height = Math.ceil(Math.max(rectHeight, offsetHeight, scrollHeight) + heightAdjustment);
             if (Math.abs(height - lastReportedHeight) < 2) {
@@ -3674,7 +3673,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         .replace("__EXPORT_CSS__", json.dumps(export_css, ensure_ascii=False))
         .replace("__EXPORT_CSS_BY_MODE__", json.dumps(export_css_bundle, ensure_ascii=False))
     )
-    html(html_content, height=max(920, abs(num) + 180), scrolling=False)
+    st.components.v1.html(html_content, height=max(920, abs(num) + 180))
 
 
 def render_svg(svg, num, chart_meta):
@@ -3715,7 +3714,7 @@ def timeline(data, height=800):
             timeline = new TL.Timeline('timeline-embed', {source_param}, additionalOptions);
         </script>
     '''
-    components.html(htmlcode, height=height)
+    st.components.v1.html(htmlcode, height=height)
 
 @contextmanager
 def st_capture(output_func):
@@ -3742,17 +3741,20 @@ st.set_page_config(
     page_title=t("page_title"),
     page_icon=_page_icon,
 )
-# Inject Grok theme once per session (large CSS/JS bundle)
-if not st.session_state.get("_grok_assets_v2"):
-    st.markdown(get_custom_css(), unsafe_allow_html=True)
-    st.html(get_sidebar_cursor_fix_html(), unsafe_allow_javascript=True)
-    st.session_state._grok_assets_v2 = True
+# Inject Grok theme CSS on every run.
+# st.markdown(unsafe_allow_html=True) injects raw <style> without DOMPurify
+# sanitization (unlike st.html in 1.58). Re-injecting every run guarantees
+# the <style> block survives reruns (date change, sidebar toggle, etc.).
+st.markdown(get_custom_css(), unsafe_allow_html=True)
+st.html(get_sidebar_cursor_fix_html(), unsafe_allow_javascript=True)
 # 定義基礎 URL
 BASE_URL_KINTAIYI = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/master/'
 BASE_URL_KINLIUREN = 'https://raw.githubusercontent.com/kentang2017/kinliuren/master/'
 
-# Grok-style top nav + fixed-width sidebar (see custom_css.py SIDEBAR_WIDTH_PX)
-st.markdown(get_top_nav_html(st.session_state.get("lang", "zh")), unsafe_allow_html=True)
+# Grok-style top nav (disabled — empty HTML, no logo/title)
+_nav_html = get_top_nav_html(st.session_state.get("lang", "zh"))
+if _nav_html:
+    st.markdown(_nav_html, unsafe_allow_html=True)
 
 _MODELS = {
     "CEREBRAS_MODEL_OPTIONS": CEREBRAS_MODEL_OPTIONS,
@@ -3986,7 +3988,7 @@ with tabs[0]:
             style=style, tn=tn, sex_o=sex_o, tc=tc,
         )
         if st.session_state.get("chart_params_stale"):
-            st.caption(t("chart_params_stale_hint"))
+            pass  # suppress stale hint text on mobile
 
         if results:
                 if _is_life_chart_style(results["style"]):
@@ -4043,9 +4045,12 @@ with tabs[0]:
                         from kintaiyi import mingfa as _mingfa_mod
 
                         _ty_life = results["ty"]
-                        _default_age = config.calculateAge(
-                            datetime.date(_ty_life.year, _ty_life.month, _ty_life.day)
-                        )
+                        try:
+                            _default_age = config.calculateAge(
+                                datetime.date(_ty_life.year, _ty_life.month, _ty_life.day)
+                            )
+                        except (ValueError, OverflowError):
+                            _default_age = 0
                         _life_age = st.slider(
                             t("life_query_age"),
                             0,
@@ -4161,6 +4166,10 @@ with tabs[0]:
                         _hex_html = render_hex_timeline(results, t=t)
                         if _hex_html:
                             st.html(_hex_html)
+                        # —— 統運入卦時間軸 + 運勢卡片 ——
+                        _yun_html = render_yun_section(results, t=t)
+                        if _yun_html:
+                            st.html(_yun_html)
                         st.markdown(t("yang_nine"))
                         st.markdown(format_text(results["yjxx"]))
                         st.markdown("   ")
@@ -4200,6 +4209,10 @@ with tabs[0]:
                     _hex_html = render_hex_timeline(results, t=t)
                     if _hex_html:
                         st.html(_hex_html)
+                    # —— 統運入卦時間軸 + 運勢卡片 ——
+                    _yun_html = render_yun_section(results, t=t)
+                    if _yun_html:
+                        st.html(_yun_html)
                     st.markdown(
                         '<span class="chart-explanation-anchor" aria-hidden="true"></span>',
                         unsafe_allow_html=True,

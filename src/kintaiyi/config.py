@@ -15,7 +15,6 @@ import datetime
 from .ruler import ruler_data
 import cn2an
 from cn2an import an2cn
-from ephem import Date
 from sxtwl import fromSolar
 from . import jieqi
 from bidict import bidict
@@ -409,10 +408,10 @@ def find_wx_relation(zhi1, zhi2):
 #換算干支
 def gangzhi1(year, month, day, hour, minute):
     if hour == 23:
-        d = Date(round((Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day+1).zfill(2), str(0).zfill(2)))), 3))
+        d_year, d_month, d_day, d_hour = year, month, day + 1, 0
     else:
-        d = Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
-    dd = list(d.tuple())
+        d_year, d_month, d_day, d_hour = year, month, day, hour
+    dd = [d_year, d_month, d_day, d_hour]
     cdate = fromSolar(dd[0], dd[1], dd[2])
     yTG,mTG,dTG,hTG = "{}{}".format(tian_gan[cdate.getYearGZ().tg], di_zhi[cdate.getYearGZ().dz]), "{}{}".format(tian_gan[cdate.getMonthGZ().tg],di_zhi[cdate.getMonthGZ().dz]), "{}{}".format(tian_gan[cdate.getDayGZ().tg], di_zhi[cdate.getDayGZ().dz]), "{}{}".format(tian_gan[cdate.getHourGZ(dd[3]).tg], di_zhi[cdate.getHourGZ(dd[3]).dz])
     if year < 1900:
@@ -470,10 +469,10 @@ def gangzhi(year, month, day, hour, minute):
     if year < 0:
         year = year + 1 
     if hour == 23:
-        d = Date(round((Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day+1).zfill(2), str(0).zfill(2)))), 3))
+        d_year, d_month, d_day, d_hour = year, month, day + 1, 0
     else:
-        d = Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
-    dd = list(d.tuple())
+        d_year, d_month, d_day, d_hour = year, month, day, hour
+    dd = [d_year, d_month, d_day, d_hour]
     cdate = fromSolar(dd[0], dd[1], dd[2])
     yTG,mTG,dTG,hTG = "{}{}".format(tian_gan[cdate.getYearGZ().tg], di_zhi[cdate.getYearGZ().dz]), "{}{}".format(tian_gan[cdate.getMonthGZ().tg],di_zhi[cdate.getMonthGZ().dz]), "{}{}".format(tian_gan[cdate.getDayGZ().tg], di_zhi[cdate.getDayGZ().dz]), "{}{}".format(tian_gan[cdate.getHourGZ(dd[3]).tg], di_zhi[cdate.getHourGZ(dd[3]).dz])
     if year < 1900:
