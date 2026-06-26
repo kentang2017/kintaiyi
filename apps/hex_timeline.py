@@ -231,11 +231,14 @@ def render_hex_timeline(results: dict, *, t) -> str:
     detail_html = render_hex_detail_card(sel_name, sel_symbol, "day", t("day_hex"), sel_yao, t=t)
 
     # JS：點選卡片 → 更新 query param → 觸發 rerun
+    # Guard against duplicate click listener binding across Streamlit reruns
     js_code = """
 <script>
 (function(){
+  if (window.__liuriCardsBound) return;
   var cards = document.querySelectorAll('.liuri-card[data-offset]');
   if(!cards.length) return;
+  window.__liuriCardsBound = true;
   cards.forEach(function(card) {
     card.style.cursor = 'pointer';
     card.addEventListener('click', function() {
@@ -261,7 +264,7 @@ def render_hex_timeline(results: dict, *, t) -> str:
 </section>
 {js_code}"""
 
-    # 讀取 query param 更新選中
+    # 讀取 query param 更新選中 — 讀完必須清除，否則每次 rerun 都會重新觸發
     qp = st.query_params
     if "liuri_offset" in qp:
         try:
@@ -270,6 +273,8 @@ def render_hex_timeline(results: dict, *, t) -> str:
                 st.session_state[sel_key] = new_offset
         except (ValueError, TypeError):
             pass
+        # 清除 query param，防止殘留導致無限 rerun 迴圈
+        del st.query_params["liuri_offset"]
 
     return section_html
 

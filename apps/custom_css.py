@@ -1831,8 +1831,11 @@ def get_sidebar_cursor_fix_html() -> str:
     }
 
     function bindSidebar() {
+        // Guard against duplicate injection across Streamlit reruns
+        if (window.__grokSidebarBound) return;
         var wrapper = document.querySelector('[data-testid="stSidebar"]');
-        if (!wrapper || wrapper.dataset.grokLayoutBound === "1") return;
+        if (!wrapper) return;
+        window.__grokSidebarBound = true;
         wrapper.dataset.grokLayoutBound = "1";
         lastExpanded = null;
         applySidebarState();
