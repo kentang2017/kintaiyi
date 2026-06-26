@@ -1471,6 +1471,48 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
     [data-testid="stSidebar"][aria-expanded="false"] [data-testid="stSidebarContent"] {{
         display: none !important;
     }}
+
+    /* ── Mobile gap reduction ──────────────────────────────────── */
+    /* Force the chart columns stacked on mobile to use minimal gap
+       regardless of gap="large" in st.columns() */
+    [data-testid="stHorizontalBlock"] {{
+        gap: 0.25rem !important;
+        flex-wrap: wrap;
+    }}
+    /* Reduce vertical spacing between sequential Streamlit elements */
+    div[data-testid="stVerticalBlock"] {{
+        gap: 0.4rem !important;
+    }}
+    /* yun section + cards: tighter spacing */
+    .yun-section {{
+        margin: 0.25rem 0 !important;
+    }}
+    .yun-timeline-container {{
+        padding: 0.5rem 0.6rem 0.45rem !important;
+        margin-bottom: 0.35rem !important;
+    }}
+    .yun-card {{
+        margin-bottom: 0.35rem !important;
+        padding: 0.55rem 0.65rem !important;
+    }}
+    .yun-sub-card {{
+        margin-bottom: 0.3rem !important;
+    }}
+    /* liuri timeline: tighter */
+    .liuri-track {{
+        padding: 0.25rem 0.15rem 0.4rem !important;
+        gap: 0.35rem !important;
+    }}
+    .liuri-card {{
+        width: 70px !important;
+        padding: 0.35rem 0.3rem 0.3rem !important;
+    }}
+    /* hex detail card: less margin */
+    .hex-detail-card {{
+        margin-top: 0.35rem !important;
+        margin-bottom: 0.35rem !important;
+        padding: 0.6rem 0.7rem !important;
+    }}
 }}
 @media (min-width: 900px) {{
     div[data-testid="stVerticalBlock"]:has(> .chart-mobile-params-anchor) {{
@@ -1509,7 +1551,15 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
 
 /* ── 流日卦時間軸 (LIURI) ──────────────────────────────────── */
 .liuri-section {{
-    margin: 0.5rem 0 0.8rem;
+    margin: 0.35rem 0 0.5rem;
+}}
+/* Anchor wrapper around each liuri card — makes the card clickable
+   without st.button.  Strip default link styling. */
+.liuri-card-link {{
+    display: flex;
+    text-decoration: none !important;
+    color: inherit !important;
+    -webkit-tap-highlight-color: transparent;
 }}
 .liuri-header {{
     display: flex;

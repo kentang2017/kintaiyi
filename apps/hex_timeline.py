@@ -220,8 +220,14 @@ def render_hex_timeline(results: dict, *, t) -> str:
         weekday = weekday_labels[d.weekday()]
         ji_color = _JI_COLOR.get(yao_idx, "var(--text-muted)")
         weekend_cls = " liuri-weekend" if is_weekend else ""
+        aria_label = f"{date_str} {weekday} {_esc(gua_name)} {_esc(yao_name)}"
 
+        # Wrap each card in an anchor so clicking sets ?liuri_offset=N,
+        # which Streamlit reads on rerun to switch the selected day.
+        # This replaces the 15 st.button widgets that showed as white bars.
         cards_html.append(
+            f'<a class="liuri-card-link" href="?liuri_offset={i}" '
+            f'aria-label="{aria_label}">'
             f'<div class="{cls}" data-offset="{i}">'
             f'<span class="liuri-date">{date_str}</span>'
             f'<span class="liuri-weekday{weekend_cls}">{weekday}</span>'
@@ -229,7 +235,7 @@ def render_hex_timeline(results: dict, *, t) -> str:
             f'<span class="liuri-name">{_esc(gua_name)}</span>'
             f'{lines_html}'
             f'<span class="liuri-yao" style="color: {ji_color};">{_esc(yao_name)}</span>'
-            f"</div>"
+            f"</div></a>"
         )
 
     inner = "".join(cards_html)
@@ -253,24 +259,9 @@ def render_hex_timeline(results: dict, *, t) -> str:
   {detail_html}
 </section>"""
 
-    # ── 日期選擇按鈕（Streamlit native，不含 JS）──
-    # 用 st.button 替代 JS click handler，避免 st.html iframe 操作 parent DOM
-    btn_cols = st.columns(min(num_days, 7))
-    for i in range(num_days):
-        d = base_date + timedelta(days=i)
-        gua_name_btn, _, _ = _compute_day_gua(d.year, d.month, d.day)
-        if not gua_name_btn:
-            continue
-        col = btn_cols[i % len(btn_cols)]
-        date_str = f"{d.month}/{d.day}"
-        is_sel = (i == st.session_state[sel_key])
-        if col.button(
-            f"{'▶ ' if is_sel else ''}{date_str} {_esc(gua_name_btn)}",
-            key=f"liuri_btn_{i}",
-            use_container_width=True,
-        ):
-            st.session_state[sel_key] = i
-            st.rerun()
+    # ── 日期選擇按鈕已移除 ──
+    # 改為直接點擊上方 HTML 卡片切換日期，
+    # 不再生成 15 個白色 st.button。
 
     return section_html
 
