@@ -10,11 +10,12 @@ import os
 import pickle
 import itertools
 from itertools import cycle, repeat, starmap
-from datetime import datetime, timedelta
+from datetime import date
 import datetime
 from .ruler import ruler_data
 import cn2an
 from cn2an import an2cn
+from ephem import Date
 from sxtwl import fromSolar
 from . import jieqi
 from bidict import bidict
@@ -407,33 +408,18 @@ def find_wx_relation(zhi1, zhi2):
 
 #換算干支
 def gangzhi1(year, month, day, hour, minute):
-    if year == 0:
-        return ["無效"]
-    
-    if year < 0:
-        year = year + 1
     if hour == 23:
-        # 23時跨日子時
-        dt = datetime(year, month, day) + timedelta(days=1)
-        dt = dt.replace(hour=0, minute=0, second=0)
-        hour_for_calc = 0
+        d = Date(round((Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day+1).zfill(2), str(0).zfill(2)))), 3))
     else:
-        dt = datetime(year, month, day, hour, 0, 0)
-        hour_for_calc = hour
-    cdate = fromSolar(dt.year, dt.month, dt.day)
-
-    yTG = "{}{}".format(tian_gan[cdate.getYearGZ().tg], di_zhi[cdate.getYearGZ().dz])
-    mTG = "{}{}".format(tian_gan[cdate.getMonthGZ().tg], di_zhi[cdate.getMonthGZ().dz])
-    dTG = "{}{}".format(tian_gan[cdate.getDayGZ().tg], di_zhi[cdate.getDayGZ().dz])
-    hTG = "{}{}".format(tian_gan[cdate.getHourGZ(hour_for_calc).tg], di_zhi[cdate.getHourGZ(hour_for_calc).dz])
-
+        d = Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
+    dd = list(d.tuple())
+    cdate = fromSolar(dd[0], dd[1], dd[2])
+    yTG,mTG,dTG,hTG = "{}{}".format(tian_gan[cdate.getYearGZ().tg], di_zhi[cdate.getYearGZ().dz]), "{}{}".format(tian_gan[cdate.getMonthGZ().tg],di_zhi[cdate.getMonthGZ().dz]), "{}{}".format(tian_gan[cdate.getDayGZ().tg], di_zhi[cdate.getDayGZ().dz]), "{}{}".format(tian_gan[cdate.getHourGZ(dd[3]).tg], di_zhi[cdate.getHourGZ(dd[3]).dz])
     if year < 1900:
         mTG1 = find_lunar_month(yTG).get(lunar_date_d(year, month, day).get("月"))
     else:
         mTG1 = mTG
-
     hTG1 = find_lunar_hour(dTG).get(hTG[1])
-
     return [yTG, mTG1, dTG, hTG1]
 #金函玉鏡
 def gpan(year, month, day, hour, minute):
@@ -482,23 +468,22 @@ def gangzhi(year, month, day, hour, minute):
     if year == 0:
         return ["無效"]
     if year < 0:
-        year += 1
+        year = year + 1 
     if hour == 23:
-        dt = datetime(year, month, day) + timedelta(days=1)
-        hour_for_gz = 0
+        d = Date(round((Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day+1).zfill(2), str(0).zfill(2)))), 3))
     else:
-        dt = datetime(year, month, day, hour)
-        hour_for_gz = hour
-    cdate = fromSolar(dt.year, dt.month, dt.day)
-    yTG = f"{tian_gan[cdate.getYearGZ().tg]}{di_zhi[cdate.getYearGZ().dz]}"
-    mTG = f"{tian_gan[cdate.getMonthGZ().tg]}{di_zhi[cdate.getMonthGZ().dz]}"
-    dTG = f"{tian_gan[cdate.getDayGZ().tg]}{di_zhi[cdate.getDayGZ().dz]}"
-    hTG = f"{tian_gan[cdate.getHourGZ(hour_for_gz).tg]}{di_zhi[cdate.getHourGZ(hour_for_gz).dz]}"
-
-    mTG1 = find_lunar_month(yTG).get(lunar_date_d(year, month, day).get("月")) if year < 1900 else mTG
+        d = Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
+    dd = list(d.tuple())
+    cdate = fromSolar(dd[0], dd[1], dd[2])
+    yTG,mTG,dTG,hTG = "{}{}".format(tian_gan[cdate.getYearGZ().tg], di_zhi[cdate.getYearGZ().dz]), "{}{}".format(tian_gan[cdate.getMonthGZ().tg],di_zhi[cdate.getMonthGZ().dz]), "{}{}".format(tian_gan[cdate.getDayGZ().tg], di_zhi[cdate.getDayGZ().dz]), "{}{}".format(tian_gan[cdate.getHourGZ(dd[3]).tg], di_zhi[cdate.getHourGZ(dd[3]).dz])
+    if year < 1900:
+        mTG1 = find_lunar_month(yTG).get(lunar_date_d(year, month, day).get("月"))
+    else:
+        mTG1 = mTG
     hTG1 = find_lunar_hour(dTG).get(hTG[1])
     zi = gangzhi1(year, month, day, 0, 0)[3]
-    gangzhi_minute = minutes_jiazi_d(zi).get(f"{hour}:{minute}")
+    hourminute = str(hour)+":"+str(minute)
+    gangzhi_minute = minutes_jiazi_d(zi).get(hourminute)
     return [yTG, mTG1, dTG, hTG1, gangzhi_minute]
 
 #五虎遁，起正月
