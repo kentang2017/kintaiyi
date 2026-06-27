@@ -10,7 +10,6 @@ import time
 import itertools
 from datetime import date
 from ephem import Date
-import numpy as np
 from cn2an import an2cn
 from taiyidict import tengan_shiji, su_dist
 #import kinliuren
@@ -249,7 +248,7 @@ class Taiyi:
 
     def ty(self, ji_style, taiyi_acumyear):
         """求太乙所在"""
-        arrangement = np.repeat(np.arange(10), 3)
+        arrangement = [x for x in range(10) for _ in range(3)]  # [0,0,0,1,1,1,...,9,9,9]
         arrangement_r = list(reversed(arrangement))
         yy_dict = {
             "陽": dict(zip(range(1, 73), list(itertools.chain.from_iterable([list(arrangement)[3:15] + list(arrangement)[18:]] * 3)))),

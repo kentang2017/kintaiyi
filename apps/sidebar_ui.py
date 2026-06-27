@@ -12,9 +12,9 @@ import streamlit as st
 from kintaiyi.openai_compatible_client import OpenAICompatibleClient
 
 _GREGORIAN_MIN = datetime.date(1, 1, 1)
-_GREGORIAN_MAX = datetime.date(2030, 12, 31)
-_BC_YEAR_MIN = -2000
-_BC_YEAR_MAX = -1
+_GREGORIAN_MAX = datetime.date(2300, 12, 31)
+_UNIFIED_YEAR_MIN = -3000
+_UNIFIED_YEAR_MAX = 2300
 
 
 def _clamp_gregorian_date(value: datetime.date) -> datetime.date:
@@ -43,19 +43,29 @@ def _apply_instant_hkt() -> None:
 
 
 def _init_chart_date_state(now: datetime.datetime) -> None:
-    # chart_date_input / chart_time_input are widget keys (chart_date_input,
-    # chart_time_input). Only seed them when absent so widget state is stable.
+    # chart_date_input / chart_year_input / chart_month_input / chart_day_input /
+    # chart_time_input are widget keys. Only seed them when absent so widget state is stable.
+    if "chart_date_mode" not in st.session_state:
+        st.session_state.chart_date_mode = "gregorian"
     if "chart_time_input" not in st.session_state:
         st.session_state.chart_time_input = now.time().replace(second=0, microsecond=0)
     if "chart_date_input" not in st.session_state:
-        year = int(st.session_state.get("chart_year", now.year))
-        month = int(st.session_state.get("chart_month", now.month))
-        day = int(st.session_state.get("chart_day", now.day))
+        _y = int(st.session_state.get("chart_year", now.year))
+        if _y < 1:
+            _y = now.year
         try:
-            _d = datetime.date(year, month, day)
+            st.session_state.chart_date_input = datetime.date(_y, now.month, now.day)
         except ValueError:
-            _d = now.date()
-        st.session_state.chart_date_input = _clamp_gregorian_date(_d)
+            st.session_state.chart_date_input = now.date()
+    if "chart_year_input" not in st.session_state:
+        year = int(st.session_state.get("chart_year", now.year))
+        if year > 0 or year < _UNIFIED_YEAR_MIN:
+            year = _UNIFIED_YEAR_MIN
+        st.session_state.chart_year_input = year
+    if "chart_month_input" not in st.session_state:
+        st.session_state.chart_month_input = int(st.session_state.get("chart_month", now.month))
+    if "chart_day_input" not in st.session_state:
+        st.session_state.chart_day_input = int(st.session_state.get("chart_day", now.day))
     # Legacy mirror variables (read-only consumers; never assigned during render)
     if "chart_date" not in st.session_state:
         st.session_state.chart_date = st.session_state.chart_date_input
@@ -65,10 +75,6 @@ def _init_chart_date_state(now: datetime.datetime) -> None:
         st.session_state.chart_day = st.session_state.chart_date_input.day
     if "chart_time" not in st.session_state:
         st.session_state.chart_time = st.session_state.chart_time_input
-    if "chart_date_mode" not in st.session_state:
-        st.session_state.chart_date_mode = (
-            "bc" if int(st.session_state.chart_year) < 0 else "gregorian"
-        )
 
 
 @dataclass
@@ -428,73 +434,27 @@ def render_grok_sidebar(
         st.session_state.pop("chart_meta_key", None)
         st.session_state.pop("chart_meta", None)
 
-    # ── 日期時間：西曆日曆（公元1年–2030）／公元前手動輸入 ─────────────────
+    # ── 日期時間：日曆點選（公元1年–2300）──────────────────────────────
     _init_chart_date_state(now)
     if st.session_state.pop("apply_instant_hkt", False):
         _apply_instant_hkt()
         st.session_state.trigger_instant = True
 
-    date_mode = st.radio(
-        t("date_mode_label"),
-        options=["gregorian", "bc"],
-        format_func=lambda m: t("date_mode_gregorian") if m == "gregorian" else t("date_mode_bc"),
-        horizontal=True,
-        key="chart_date_mode",
-    )
-
     date_col, time_col = st.columns(2)
     with date_col:
-        if date_mode == "gregorian":
-            # Widget key chart_date_input is the single source of truth.
-            # Only seed/clamp if missing or out of range — never pass value= with key=.
-            _cur = st.session_state.get("chart_date_input")
-            if _cur is None or _cur < _GREGORIAN_MIN or _cur > _GREGORIAN_MAX:
-                st.session_state.chart_date_input = _clamp_gregorian_date(
-                    _cur if _cur is not None else st.session_state.get("chart_date", now.date())
-                )
-            picked_date = st.date_input(
-                t("date_label"),
-                min_value=_GREGORIAN_MIN,
-                max_value=_GREGORIAN_MAX,
-                key="chart_date_input",
+        # 日曆點選模式（公元1年~2300年）
+        _cur = st.session_state.get("chart_date_input")
+        if _cur is None or _cur < _GREGORIAN_MIN or _cur > _GREGORIAN_MAX:
+            st.session_state.chart_date_input = _clamp_gregorian_date(
+                _cur if _cur is not None else st.session_state.get("chart_date", now.date())
             )
-            my, mm, md = picked_date.year, picked_date.month, picked_date.day
-        else:
-            st.caption(t("date_bc_hint"))
-            y_col, m_col, d_col = st.columns([2, 1, 1])
-            with y_col:
-                if "chart_year_input" not in st.session_state:
-                    bc_year = int(st.session_state.get("chart_year", _BC_YEAR_MIN))
-                    if bc_year > _BC_YEAR_MAX or bc_year < _BC_YEAR_MIN:
-                        bc_year = _BC_YEAR_MIN
-                    st.session_state.chart_year_input = bc_year
-                my = int(st.number_input(
-                    t("year"),
-                    min_value=_BC_YEAR_MIN,
-                    max_value=_BC_YEAR_MAX,
-                    step=1,
-                    key="chart_year_input",
-                ))
-            with m_col:
-                if "chart_month_input" not in st.session_state:
-                    st.session_state.chart_month_input = int(st.session_state.get("chart_month", now.month))
-                mm = int(st.number_input(
-                    t("month"),
-                    min_value=1,
-                    max_value=12,
-                    step=1,
-                    key="chart_month_input",
-                ))
-            with d_col:
-                if "chart_day_input" not in st.session_state:
-                    st.session_state.chart_day_input = int(st.session_state.get("chart_day", now.day))
-                md = int(st.number_input(
-                    t("day"),
-                    min_value=1,
-                    max_value=31,
-                    step=1,
-                    key="chart_day_input",
-                ))
+        picked_date = st.date_input(
+            t("date_label"),
+            min_value=_GREGORIAN_MIN,
+            max_value=_GREGORIAN_MAX,
+            key="chart_date_input",
+        )
+        my, mm, md = picked_date.year, picked_date.month, picked_date.day
     with time_col:
         # Widget key chart_time_input is the single source of truth.
         # Only seed if missing — never pass value= with key=.
@@ -508,7 +468,11 @@ def render_grok_sidebar(
         )
     # Sync legacy mirror vars from widget-owned state for downstream consumers.
     # These are read-only mirrors — never assigned back to a widget key.
-    st.session_state.chart_date = st.session_state.get("chart_date_input", st.session_state.get("chart_date"))
+    _sync_year = my if my >= 1 else 1
+    try:
+        st.session_state.chart_date = datetime.date(_sync_year, mm, md)
+    except ValueError:
+        st.session_state.chart_date = datetime.date(_sync_year, 1, 1)
     st.session_state.chart_year = my
     st.session_state.chart_month = mm
     st.session_state.chart_day = md
@@ -584,27 +548,8 @@ def render_grok_sidebar(
             t=t, load_system_prompts=load_system_prompts, save_system_prompts=save_system_prompts, models=models,
         )
 
-    # ── 進階（預設收合）────────────────────────────────────────────────
+    # ── 進階功能已從側面板隱藏，運籌博奕分析保持於主頁顯示 ──
     game_theory_enabled = st.session_state.get("game_theory_toggle_switch", False)
-    with st.expander(t("sidebar_block_advanced"), expanded=False):
-        game_theory_enabled = st.toggle(t("game_theory_toggle"), key="game_theory_toggle_switch", value=False)
-        with st.expander(t("tongyun_query_header"), expanded=False):
-            tongyun_sync = st.checkbox(t("tongyun_sync_chart"), value=True, key="tongyun_sync_chart")
-            if tongyun_sync:
-                st.caption(t("tongyun_sync_hint").format(year=my))
-            else:
-                # Seed widget default from chart year only on first render;
-                # after that, widget key owns the value.
-                if "tongyun_query_year" not in st.session_state:
-                    st.session_state.tongyun_query_year = my
-                st.slider(
-                    t("tongyun_query_year"), min_value=-476, max_value=2100,
-                    key="tongyun_query_year",
-                )
-        with st.expander(t("debug_mode"), expanded=False):
-            if st.toggle(t("debug_mode"), key="debug_mode_toggle", help=t("debug_help")):
-                st.caption(t("debug_info"))
-                st.json(st.session_state)
 
     st.markdown("</div>", unsafe_allow_html=True)
 

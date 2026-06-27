@@ -11,16 +11,13 @@ Game Theory）及線性規劃（Linear Programming）運籌博弈原理，計算
   - 「主算 / 客算」提供兵力算數之量化比（payoff 基準）
   - 「七大兵法格局」（雷公入水、臨津問道等）各對應一種古典作戰模式，映射為現代
     博弈論的純策略（Pure Strategy），組合成零和支付矩陣（Payoff Matrix）
-  - scipy.optimize.linprog 求解混合策略 Nash 均衡
+  - 純 Python 線性規劃（單形法）求解混合策略 Nash 均衡
   - 線性規劃求主方「最大期望勝率」之最優混合比例
 """
 
 from __future__ import annotations
 
 from typing import Any
-
-import numpy as np
-from scipy.optimize import linprog
 
 # ---------------------------------------------------------------------------
 # 常數定義
@@ -125,6 +122,340 @@ _八宮旺衰係數: dict[str, float] = {
 
 
 # ---------------------------------------------------------------------------
+# 純 Python 線性規劃（單形法）求解器
+# ---------------------------------------------------------------------------
+
+
+class _LPResult:
+    """模擬 scipy.optimize.linprog 回傳結果的簡易容器。"""
+
+    __slots__ = ("success", "x", "fun")
+
+    def __init__(self, success: bool, x: list[float], fun: float) -> None:
+        self.success = success
+        self.x = x
+        self.fun = fun
+
+
+def _simplex_lp(
+    c: list[float],
+    A_ub: list[list[float]] | None = None,
+    b_ub: list[float] | None = None,
+    A_eq: list[list[float]] | None = None,
+    b_eq: list[float] | None = None,
+    bounds: list[tuple[float | None, float | None]] | None = None,
+) -> _LPResult:
+    """
+    純 Python 兩階段單形法（Two-Phase Simplex）線性規劃求解器。
+
+    最小化 c^T x  subject to  A_ub x <= b_ub,  A_eq x = b_eq,  lb <= x <= ub
+
+    此函式模擬 scipy.optimize.linprog 的介面，回傳具有 .success、.x、.fun
+    屬性的 _LPResult 物件。適用於小規模 LP 問題（如 4×4 零和博弈）。
+
+    參數
+    ----
+    c : list[float]
+        目標函數係數向量（最小化）。
+    A_ub : list[list[float]] | None
+        不等式約束矩陣（≤）。
+    b_ub : list[float] | None
+        不等式約束右側值。
+    A_eq : list[list[float]] | None
+        等式約束矩陣。
+    b_eq : list[float] | None
+        等式約束右側值。
+    bounds : list[tuple[float | None, float | None]] | None
+        各變數的下界與上界；None 表示無界。
+
+    回傳
+    ----
+    _LPResult
+        具 .success（bool）、.x（list[float]）、.fun（float）屬性。
+    """
+    n_var = len(c)
+    if A_ub is None:
+        A_ub = []
+        b_ub = []
+    if A_eq is None:
+        A_eq = []
+        b_eq = []
+    if bounds is None:
+        bounds = [(0.0, None)] * n_var
+
+    # --- 變數替換：將所有變數轉為非負變數 ---
+    # 'shift': x = lo + x'   (lb 有限)
+    # 'split': x = x_pos - x_neg  (lb = -inf, ub = None)
+    # 'flip':  x = ub - x'   (lb = -inf, ub 有限)
+    substitutions: list[tuple[str, float, int, int]] = []  # (mode, offset, idx1, idx2)
+    extra_ub: list[tuple[int, float]] = []
+    n_new = 0
+    new_c: list[float] = []
+
+    for i in range(n_var):
+        lb, ub = bounds[i]
+        if lb is None and ub is None:
+            substitutions.append(("split", 0.0, n_new, n_new + 1))
+            new_c.append(c[i])
+            new_c.append(-c[i])
+            n_new += 2
+        elif lb is None:
+            substitutions.append(("flip", ub, n_new, -1))
+            new_c.append(-c[i])
+            n_new += 1
+        else:
+            lo = lb if lb is not None else 0.0
+            substitutions.append(("shift", lo, n_new, -1))
+            new_c.append(c[i])
+            n_new += 1
+            if ub is not None:
+                extra_ub.append((n_new - 1, ub - lo))
+
+    def _transform(row: list[float], rhs: float) -> tuple[list[float], float]:
+        nr = [0.0] * n_new
+        nrhs = rhs
+        for i in range(n_var):
+            mode, offset, idx1, idx2 = substitutions[i]
+            if mode == "shift":
+                nr[idx1] += row[i]
+                nrhs -= row[i] * offset
+            elif mode == "split":
+                nr[idx1] += row[i]
+                nr[idx2] += -row[i]
+            elif mode == "flip":
+                nr[idx1] += -row[i]
+                nrhs -= row[i] * offset
+        return nr, nrhs
+
+    # 轉換不等式約束
+    all_A_ub: list[list[float]] = []
+    all_b_ub: list[float] = []
+    for k in range(len(A_ub)):
+        nr, nrhs = _transform(A_ub[k], b_ub[k])
+        all_A_ub.append(nr)
+        all_b_ub.append(nrhs)
+    for var_idx, ub_val in extra_ub:
+        br = [0.0] * n_new
+        br[var_idx] = 1.0
+        all_A_ub.append(br)
+        all_b_ub.append(ub_val)
+
+    # 轉換等式約束
+    all_A_eq: list[list[float]] = []
+    all_b_eq: list[float] = []
+    for k in range(len(A_eq)):
+        nr, nrhs = _transform(A_eq[k], b_eq[k])
+        all_A_eq.append(nr)
+        all_b_eq.append(nrhs)
+
+    # 目標函數常數偏移
+    obj_offset = 0.0
+    for i in range(n_var):
+        mode, offset, _, _ = substitutions[i]
+        if mode == "shift":
+            obj_offset += c[i] * offset
+        elif mode == "flip":
+            obj_offset += c[i] * offset
+
+    # --- 構建標準型表格 ---
+    # 變數：[結構變數(n_new), slack(n_ineq), 人工變數(n_art)]
+    n_ineq = len(all_A_ub)
+    n_eq = len(all_A_eq)
+
+    # 確定哪些不等式約束需要人工變數（b < 0）
+    ineq_need_art = [all_b_ub[k] < 0 for k in range(n_ineq)]
+    n_art = n_eq + sum(1 for x in ineq_need_art if x)
+
+    total_vars = n_new + n_ineq + n_art
+    art_start = n_new + n_ineq
+
+    tableau: list[list[float]] = []
+    rhs_list: list[float] = []
+    basis: list[int] = []
+    art_vars: list[int] = []
+
+    # 不等式約束
+    for k in range(n_ineq):
+        row = [0.0] * total_vars
+        b = all_b_ub[k]
+        if b >= 0:
+            for j in range(n_new):
+                row[j] = all_A_ub[k][j]
+            row[n_new + k] = 1.0  # slack
+            basis.append(n_new + k)
+        else:
+            for j in range(n_new):
+                row[j] = -all_A_ub[k][j]
+            row[n_new + k] = 1.0  # slack 充當人工變數
+            basis.append(n_new + k)
+            art_vars.append(n_new + k)
+        tableau.append(row)
+        rhs_list.append(abs(b))
+
+    # 等式約束（始終需人工變數）
+    art_counter = 0
+    for k in range(n_eq):
+        row = [0.0] * total_vars
+        b = all_b_eq[k]
+        coeffs = all_A_eq[k]
+        if b < 0:
+            coeffs = [-v for v in coeffs]
+            b = -b
+        for j in range(n_new):
+            row[j] = coeffs[j]
+        row[art_start + art_counter] = 1.0
+        basis.append(art_start + art_counter)
+        art_vars.append(art_start + art_counter)
+        art_counter += 1
+        tableau.append(row)
+        rhs_list.append(abs(b))
+
+    n_rows = len(tableau)
+
+    # --- Phase 1：最小化人工變數之和（若有） ---
+    if art_vars:
+        phase1_cost = [0.0] * total_vars
+        for ai in art_vars:
+            phase1_cost[ai] = 1.0
+
+        reduced_cost = _compute_reduced_cost(tableau, basis, phase1_cost, total_vars, n_rows)
+        _simplex_iterate(tableau, rhs_list, basis, reduced_cost, art_vars, total_vars, n_rows)
+
+        # 檢查可行性
+        phase1_opt = sum(phase1_cost[basis[r]] * rhs_list[r] for r in range(n_rows))
+        if phase1_opt > 1e-7:
+            return _LPResult(False, [0.0] * n_var, 0.0)
+
+    # --- Phase 2：最小化原始目標 ---
+    phase2_cost = [0.0] * total_vars
+    for j in range(n_new):
+        phase2_cost[j] = new_c[j]
+    # 人工變數在 Phase 2 中禁止進基
+    forbidden = list(art_vars)
+
+    reduced_cost2 = _compute_reduced_cost(tableau, basis, phase2_cost, total_vars, n_rows)
+    _simplex_iterate(tableau, rhs_list, basis, reduced_cost2, forbidden, total_vars, n_rows)
+
+    # 提取解
+    x_new = [0.0] * n_new
+    for r in range(n_rows):
+        if basis[r] < n_new:
+            x_new[basis[r]] = rhs_list[r]
+
+    # 還原到原始變數空間
+    x_orig = [0.0] * n_var
+    for i in range(n_var):
+        mode, offset, idx1, idx2 = substitutions[i]
+        if mode == "shift":
+            x_orig[i] = offset + x_new[idx1]
+        elif mode == "split":
+            x_orig[i] = x_new[idx1] - x_new[idx2]
+        elif mode == "flip":
+            x_orig[i] = offset - x_new[idx1]
+
+    fun = obj_offset + sum(c[i] * x_orig[i] for i in range(n_var))
+    return _LPResult(True, x_orig, fun)
+
+
+def _compute_reduced_cost(
+    tableau: list[list[float]],
+    basis: list[int],
+    cost: list[float],
+    n_cols: int,
+    n_rows: int,
+) -> list[float]:
+    """計算單形法的 reduced cost 行（z_j - c_j）。"""
+    reduced = [0.0] * n_cols
+    for j in range(n_cols):
+        z_j = 0.0
+        for r in range(n_rows):
+            z_j += cost[basis[r]] * tableau[r][j]
+        reduced[j] = z_j - cost[j]
+    return reduced
+
+
+def _simplex_iterate(
+    tableau: list[list[float]],
+    rhs: list[float],
+    basis: list[int],
+    reduced_cost: list[float],
+    forbidden: list[int],
+    n_cols: int,
+    n_rows: int,
+) -> None:
+    """
+    執行單形法迭代，就地修改 tableau、rhs、basis、reduced_cost。
+
+    使用 Bland 規則避免循環。
+
+    參數
+    ----
+    tableau : 約束矩陣
+    rhs : 右側值
+    basis : 當前基變數索引列表
+    reduced_cost : 目標行的 reduced cost（z_j - c_j）
+    forbidden : 不允許進基的變數索引
+    n_cols : 變數總數
+    n_rows : 約束總數
+    """
+    eps = 1e-9
+    max_iter = 1000
+    forbidden_set = set(forbidden)
+
+    for _ in range(max_iter):
+        # Bland 規則：選最小索引的正 reduced cost 變數進基（最小化問題）
+        pivot_col = -1
+        for j in range(n_cols):
+            if j in forbidden_set:
+                continue
+            if reduced_cost[j] > eps:
+                pivot_col = j
+                break
+
+        if pivot_col == -1:
+            break  # 最優解已達成（所有 reduced cost <= 0）
+
+        # 最小比值測試
+        pivot_row = -1
+        min_ratio = float("inf")
+        for r in range(n_rows):
+            if tableau[r][pivot_col] > eps:
+                ratio = rhs[r] / tableau[r][pivot_col]
+                if ratio < min_ratio - eps:
+                    min_ratio = ratio
+                    pivot_row = r
+                elif abs(ratio - min_ratio) < eps and pivot_row >= 0:
+                    if basis[r] < basis[pivot_row]:
+                        pivot_row = r
+
+        if pivot_row == -1:
+            return  # 無界問題
+
+        # 旋轉操作
+        pivot_val = tableau[pivot_row][pivot_col]
+        for j in range(n_cols):
+            tableau[pivot_row][j] /= pivot_val
+        rhs[pivot_row] /= pivot_val
+
+        for r in range(n_rows):
+            if r == pivot_row:
+                continue
+            factor = tableau[r][pivot_col]
+            if abs(factor) < eps:
+                continue
+            for j in range(n_cols):
+                tableau[r][j] -= factor * tableau[pivot_row][j]
+            rhs[r] -= factor * rhs[pivot_row]
+
+        basis[pivot_row] = pivot_col
+
+        # 更新 reduced cost
+        factor = reduced_cost[pivot_col]
+        for j in range(n_cols):
+            reduced_cost[j] -= factor * tableau[pivot_row][j]
+
+
+# ---------------------------------------------------------------------------
 # 主類別：TaiyiGame
 # ---------------------------------------------------------------------------
 
@@ -134,7 +465,7 @@ class TaiyiGame:
     太乙神數博弈分析類別
 
     以 pan() 回傳的 result dict 為輸入，根據古法「推主客相闗法」及「七大兵法格局」
-    自動建構零和支付矩陣，並使用 scipy.optimize.linprog 計算純策略 / 混合策略
+    自動建構零和支付矩陣，並以純 Python 線性規劃（單形法）計算純策略 / 混合策略
     Nash 均衡，提供主方最優混合策略及期望勝率。
 
     此處以古法太乙神數推演為本，輔以現代零和博弈論（Zero-Sum Game Theory）
@@ -147,11 +478,11 @@ class TaiyiGame:
 
     屬性
     ----
-    支付矩陣 : np.ndarray, shape (4, 4)
+    支付矩陣 : list[list[float]], shape (4, 4)
         主方視角零和支付矩陣（正值代表主方有利，負值代表客方有利）。
-    主方均衡策略 : np.ndarray, shape (4,)
+    主方均衡策略 : list[float], shape (4,)
         主方最優混合策略概率分佈。
-    客方均衡策略 : np.ndarray, shape (4,)
+    客方均衡策略 : list[float], shape (4,)
         客方最優混合策略概率分佈。
     博弈均衡值 : float
         博弈均衡（Game Value），即主方的期望支付值。
@@ -170,11 +501,11 @@ class TaiyiGame:
             「八門值事」等古法關鍵欄位。
         """
         self._pan = pan_result
-        self.支付矩陣: np.ndarray = self._建構支付矩陣()
+        self.支付矩陣: list[list[float]] = self._建構支付矩陣()
         game_val, 主策略, 客策略 = self._求Nash均衡()
         self.博弈均衡值: float = game_val
-        self.主方均衡策略: np.ndarray = 主策略
-        self.客方均衡策略: np.ndarray = 客策略
+        self.主方均衡策略: list[float] = 主策略
+        self.客方均衡策略: list[float] = 客策略
 
     # ------------------------------------------------------------------
     # 私有方法：支付矩陣建構
@@ -391,7 +722,7 @@ class TaiyiGame:
             return 0.0
         return _八宮旺衰係數.get(str(狀態), 0.0)
 
-    def _建構支付矩陣(self) -> np.ndarray:
+    def _建構支付矩陣(self) -> list[list[float]]:
         """
         根據古法推算結果自動建構 4×4 零和支付矩陣。
 
@@ -413,30 +744,38 @@ class TaiyiGame:
 
         回傳
         ----
-        np.ndarray, shape (4, 4)
+        list[list[float]], shape (4, 4)
             主方視角支付矩陣。
         """
         # 基礎非對稱博弈結構（反映四大兵法策略間的本質制約關係）
         # 此處以古典兵法「攻守奇正」相互制約原理為本，輔以博弈論策略對（Strategy Profile）初始化
-        base = np.array(
-            [
-                [0.0, 1.0, -1.0, 2.0],  # 謀攻 vs [謀、正、奇、守]
-                [-1.0, 0.0, 2.0, 1.0],  # 正攻 vs [謀、正、奇、守]
-                [1.0, -2.0, 0.0, 1.5],  # 奇兵 vs [謀、正、奇、守]
-                [-2.0, -1.0, -1.5, 0.0],  # 守勢 vs [謀、正、奇、守]
-            ],
-            dtype=float,
-        )
+        base: list[list[float]] = [
+            [0.0, 1.0, -1.0, 2.0],  # 謀攻 vs [謀、正、奇、守]
+            [-1.0, 0.0, 2.0, 1.0],  # 正攻 vs [謀、正、奇、守]
+            [1.0, -2.0, 0.0, 1.5],  # 奇兵 vs [謀、正、奇、守]
+            [-2.0, -1.0, -1.5, 0.0],  # 守勢 vs [謀、正、奇、守]
+        ]
+
+        # 輔助函式：對整個矩陣加上一個純量偏移
+        def _add_scalar(matrix: list[list[float]], val: float) -> None:
+            for i in range(len(matrix)):
+                for j in range(len(matrix[0])):
+                    matrix[i][j] += val
+
+        # 輔助函式：對某一列加上一個純量偏移
+        def _add_scalar_to_row(matrix: list[list[float]], row: int, val: float) -> None:
+            for j in range(len(matrix[row])):
+                matrix[row][j] += val
 
         # 1. 主客相闗法：基準偏移
         # 此處以古法「推主客相闗法」主客強弱為本，輔以博弈論支付函數基準偏移原理
         base_offset = self._解析主客相闗強度()
-        base += base_offset
+        _add_scalar(base, base_offset)
 
         # 2. 算數差值：兵力強弱全局加成
         # 此處以古法「主算 / 客算」兵力算數比較為本，輔以博弈論支付函數縮放原理
         cal_delta = self._解析算數差值()
-        base += cal_delta * 1.5  # 縮放至合理影響範圍
+        _add_scalar(base, cal_delta * 1.5)  # 縮放至合理影響範圍
 
         # 3. 七大兵法格局調整
         # 此處以古法七大兵法格局（雷公入水等）是否成局為本，
@@ -448,44 +787,44 @@ class TaiyiGame:
             格局文字 = str(格局值)
             # 判斷兵法是否成局（含吉字則正向，否則反向）
             if any(吉 in 格局文字 for 吉 in _兵法吉凶字串):
-                base[row, col] += delta
+                base[row][col] += delta
             else:
-                base[row, col] -= delta * 0.5  # 不成局則反向但力度減半
+                base[row][col] -= delta * 0.5  # 不成局則反向但力度減半
 
         # 4. 八門值事補正謀攻策略列（策略索引 0：謀攻）
         # 此處以古法「八門值事」吉凶判斷為本，輔以博弈論邊際效益補正原理
         八門加成 = self._解析八門值事加成()
-        base[0, :] += 八門加成  # 謀攻策略受八門吉凶直接影響
+        _add_scalar_to_row(base, 0, 八門加成)  # 謀攻策略受八門吉凶直接影響
 
         # 5. 太乙局數：遁法攻守傾向調節
         # 此處以古法陽遁主攻、陰遁主守為本，輔以博弈論攻守傾向（Offensive/Defensive Bias）原理
         局數, 遁法, 三才理年 = self._解析太乙局數()
         if 遁法 in _遁法攻守調節:
             for 策略索引, 調節量 in _遁法攻守調節[遁法]:
-                base[策略索引, :] += 調節量
+                _add_scalar_to_row(base, 策略索引, 調節量)
 
         # 6. 太乙局數：三才理年策略層次加成
         # 此處以古法三才理天/理地/理人對應之治理層次為本，輔以博弈論層級優勢原理
         if 三才理年 in _三才理年策略加成:
             for 策略索引, 調節量 in _三才理年策略加成[三才理年]:
-                base[策略索引, :] += 調節量
+                _add_scalar_to_row(base, 策略索引, 調節量)
 
         # 7. 太乙落宮：九宮方位策略加成
         # 此處以古法太乙落宮九宮方位為本，輔以博弈論位置效應（Positional Effect）原理
         落宮 = self._解析太乙落宮()
         if 落宮 in _太乙落宮策略加成:
             for 策略索引, 調節量 in _太乙落宮策略加成[落宮]:
-                base[策略索引, :] += 調節量
+                _add_scalar_to_row(base, 策略索引, 調節量)
 
         # 8. 主客筭旺衰：軍力態勢加成
         # 此處以古法「主筭 / 客筭」旺衰描述為本，輔以博弈論軍力態勢量化原理
         主旺衰, 客旺衰 = self._解析主客筭旺衰()
         # 主筭旺 → 主方攻勢策略（謀攻 + 正攻）增益
-        base[0, :] += 主旺衰 * 0.5
-        base[1, :] += 主旺衰 * 0.5
+        _add_scalar_to_row(base, 0, 主旺衰 * 0.5)
+        _add_scalar_to_row(base, 1, 主旺衰 * 0.5)
         # 客筭旺 → 主方受壓，守勢策略需求增加（反向影響）
-        base[2, :] -= 客旺衰 * 0.3
-        base[3, :] -= 客旺衰 * 0.3
+        _add_scalar_to_row(base, 2, -客旺衰 * 0.3)
+        _add_scalar_to_row(base, 3, -客旺衰 * 0.3)
 
         # 9. 三門五將：策略可行域約束
         # 此處以古法「推三門具不具」與「推五將發不發」軍事態勢為本，
@@ -493,21 +832,21 @@ class TaiyiGame:
         三門五將加成 = self._解析三門五將()
         # 正值利攻 → 加成謀攻與正攻；負值利守 → 加成守勢
         if 三門五將加成 > 0:
-            base[0, :] += 三門五將加成 * 0.5
-            base[1, :] += 三門五將加成 * 0.5
+            _add_scalar_to_row(base, 0, 三門五將加成 * 0.5)
+            _add_scalar_to_row(base, 1, 三門五將加成 * 0.5)
         else:
-            base[3, :] -= 三門五將加成 * 0.5  # 負值取反為正
-            base[2, :] -= 三門五將加成 * 0.3
+            _add_scalar_to_row(base, 3, -三門五將加成 * 0.5)  # 負值取反為正
+            _add_scalar_to_row(base, 2, -三門五將加成 * 0.3)
 
         # 10. 定算：全局期望值調節
         # 此處以古法「定算」綜合數值為本，輔以博弈論全局期望值偏移原理
         定算加成 = self._解析定算()
-        base += 定算加成  # 全局性偏移
+        _add_scalar(base, 定算加成)  # 全局性偏移
 
         # 11. 八宮旺衰：太乙落宮旺衰環境加成
         # 此處以古法八宮旺相休囚狀態為本，輔以博弈論環境因子原理
         旺衰加成 = self._解析八宮旺衰()
-        base += 旺衰加成 * 0.5  # 旺衰影響全局但力度適中
+        _add_scalar(base, 旺衰加成 * 0.5)  # 旺衰影響全局但力度適中
 
         return base
 
@@ -515,7 +854,7 @@ class TaiyiGame:
     # 私有方法：Nash 均衡求解
     # ------------------------------------------------------------------
 
-    def _求Nash均衡(self) -> tuple[float, np.ndarray, np.ndarray]:
+    def _求Nash均衡(self) -> tuple[float, list[float], list[float]]:
         """
         以線性規劃（LP）求解零和博弈的混合策略 Nash 均衡。
 
@@ -528,73 +867,75 @@ class TaiyiGame:
 
         回傳
         ----
-        tuple[float, np.ndarray, np.ndarray]
+        tuple[float, list[float], list[float]]
             (博弈均衡值, 主方均衡策略概率向量, 客方均衡策略概率向量)
         """
         A = self.支付矩陣
-        m, n = A.shape  # m=4 (主方策略數), n=4 (客方策略數)
+        m = len(A)  # m=4 (主方策略數)
+        n = len(A[0])  # n=4 (客方策略數)
 
         # ---- 主方 LP：max v ↔ min -v ----
         # 決策變數 x = [p_0, p_1, ..., p_{m-1}, v]
         # 此處以主方極小極大問題（Maximin Problem）為本，輔以線性規劃對偶理論（LP Duality）
-        c_主 = np.zeros(m + 1)
-        c_主[-1] = -1.0  # 最小化 -v
+        c_主 = [0.0] * m + [-1.0]  # 最小化 -v
 
         # 不等式約束：對每個客方策略 j，sum_i A[i,j] * p_i ≥ v
         # → -sum_i A[i,j] * p_i + v ≤ 0
-        A_ub_主 = np.zeros((n, m + 1))
+        A_ub_主 = [[0.0] * (m + 1) for _ in range(n)]
         for j in range(n):
-            A_ub_主[j, :m] = -A[:, j]
-            A_ub_主[j, m] = 1.0
-        b_ub_主 = np.zeros(n)
+            col_j = [A[i][j] for i in range(m)]  # A[:, j]
+            for i in range(m):
+                A_ub_主[j][i] = -col_j[i]
+            A_ub_主[j][m] = 1.0
+        b_ub_主 = [0.0] * n
 
         # 等式約束：sum_i p_i = 1
-        A_eq_主 = np.zeros((1, m + 1))
-        A_eq_主[0, :m] = 1.0
-        b_eq_主 = np.array([1.0])
+        A_eq_主 = [[1.0] * m + [0.0]]
+        b_eq_主 = [1.0]
 
         # 邊界：p_i ≥ 0, v 無界
         bounds_主 = [(0.0, None)] * m + [(None, None)]
 
-        res_主 = linprog(c_主, A_ub=A_ub_主, b_ub=b_ub_主, A_eq=A_eq_主, b_eq=b_eq_主, bounds=bounds_主, method="highs")
+        res_主 = _simplex_lp(c_主, A_ub=A_ub_主, b_ub=b_ub_主, A_eq=A_eq_主, b_eq=b_eq_主, bounds=bounds_主)
 
         if res_主.success:
-            p_主 = np.clip(res_主.x[:m], 0, None)
-            p_主 /= p_主.sum() if p_主.sum() > 0 else 1.0
+            p_主 = [max(0.0, v) for v in res_主.x[:m]]
+            s_主 = sum(p_主)
+            p_主 = [v / s_主 for v in p_主] if s_主 > 0 else [1.0 / m] * m
             game_value: float = float(-res_主.fun)
         else:
             # LP 求解失敗時退化為均等混合策略
-            p_主 = np.ones(m) / m
-            game_value = float(np.min(np.max(A, axis=0)))
+            p_主 = [1.0 / m] * m
+            game_value = float(min(max(col) for col in zip(*A)))
 
         # ---- 客方 LP：min v ↔ min v ----
         # 決策變數 y = [q_0, q_1, ..., q_{n-1}, v]
         # 此處以客方極小化問題（Minimax Problem）為本，輔以線性規劃對偶理論
-        c_客 = np.zeros(n + 1)
-        c_客[-1] = 1.0  # 最小化 v
+        c_客 = [0.0] * n + [1.0]  # 最小化 v
 
         # 不等式約束：對每個主方策略 i，sum_j A[i,j] * q_j ≤ v
         # → sum_j A[i,j] * q_j - v ≤ 0
-        A_ub_客 = np.zeros((m, n + 1))
+        A_ub_客 = [[0.0] * (n + 1) for _ in range(m)]
         for i in range(m):
-            A_ub_客[i, :n] = A[i, :]
-            A_ub_客[i, n] = -1.0
-        b_ub_客 = np.zeros(m)
+            for j in range(n):
+                A_ub_客[i][j] = A[i][j]
+            A_ub_客[i][n] = -1.0
+        b_ub_客 = [0.0] * m
 
         # 等式約束：sum_j q_j = 1
-        A_eq_客 = np.zeros((1, n + 1))
-        A_eq_客[0, :n] = 1.0
-        b_eq_客 = np.array([1.0])
+        A_eq_客 = [[1.0] * n + [0.0]]
+        b_eq_客 = [1.0]
 
         bounds_客 = [(0.0, None)] * n + [(None, None)]
 
-        res_客 = linprog(c_客, A_ub=A_ub_客, b_ub=b_ub_客, A_eq=A_eq_客, b_eq=b_eq_客, bounds=bounds_客, method="highs")
+        res_客 = _simplex_lp(c_客, A_ub=A_ub_客, b_ub=b_ub_客, A_eq=A_eq_客, b_eq=b_eq_客, bounds=bounds_客)
 
         if res_客.success:
-            p_客 = np.clip(res_客.x[:n], 0, None)
-            p_客 /= p_客.sum() if p_客.sum() > 0 else 1.0
+            p_客 = [max(0.0, v) for v in res_客.x[:n]]
+            s_客 = sum(p_客)
+            p_客 = [v / s_客 for v in p_客] if s_客 > 0 else [1.0 / n] * n
         else:
-            p_客 = np.ones(n) / n
+            p_客 = [1.0 / n] * n
 
         return game_value, p_主, p_客
 
@@ -652,8 +993,8 @@ class TaiyiGame:
         else:
             勝率判斷 = "客方大勝（博弈均衡值顯著負值，客方策略佔優）"
 
-        主方最優純策略索引 = int(np.argmax(self.主方均衡策略))
-        客方最優純策略索引 = int(np.argmax(self.客方均衡策略))
+        主方最優純策略索引 = max(range(len(self.主方均衡策略)), key=lambda i: self.主方均衡策略[i])
+        客方最優純策略索引 = max(range(len(self.客方均衡策略)), key=lambda i: self.客方均衡策略[i])
 
         # 太乙局數摘要
         局數, 遁法, 三才理年 = self._解析太乙局數()
@@ -675,7 +1016,7 @@ class TaiyiGame:
         return {
             "主方策略列": 主方策略列,
             "客方策略列": 客方策略列,
-            "支付矩陣": self.支付矩陣.tolist(),
+            "支付矩陣": [row[:] for row in self.支付矩陣],
             "主方均衡策略": [round(float(p), 4) for p in self.主方均衡策略],
             "客方均衡策略": [round(float(p), 4) for p in self.客方均衡策略],
             "博弈均衡值": round(self.博弈均衡值, 4),
@@ -707,10 +1048,11 @@ class TaiyiGame:
             含最優策略比例、最大期望支付值及策略建議文字。
         """
         A = self.支付矩陣
-        m, n = A.shape
+        m = len(A)
+        n = len(A[0])
         # 與 Nash 均衡主方 LP 等價，直接使用已求得結果
         比例 = {主方策略列[i]: round(float(self.主方均衡策略[i]), 4) for i in range(m)}
-        最優索引 = int(np.argmax(self.主方均衡策略))
+        最優索引 = max(range(len(self.主方均衡策略)), key=lambda i: self.主方均衡策略[i])
         主要策略 = 主方策略列[最優索引]
 
         # 融合太乙局數與落宮資訊於建議文字

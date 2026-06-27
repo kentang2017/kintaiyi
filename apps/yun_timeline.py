@@ -175,8 +175,7 @@ def _render_timeline(rugua: dict, shier_yun: dict, *, t) -> str:
     {"".join(segs_html)}
   </div>
   <div class="yun-timeline-progress">
-    <div class="yun-timeline-progress-bar" style="width: {pct}%;">
-      <span class="yun-timeline-progress-text">{elapsed} / {seg_total} {_esc(t("yun_years"))}</span>
+    <div class="yun-timeline-progress-bar" style="width: {pct}%">
     </div>
   </div>
 </div>"""

@@ -58,7 +58,6 @@ The following packages are automatically installed:
 | `pytz` | Timezone support |
 | `bidict` | Bidirectional dictionary |
 | `drawsvg` | SVG board rendering |
-| `numpy` | Numeric computation |
 | `kerykeion` | Astrological calculations |
 | `astropy` | Astronomical computation |
 

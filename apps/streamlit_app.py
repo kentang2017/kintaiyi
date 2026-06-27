@@ -555,9 +555,9 @@ TRANSLATIONS = {
         "minute_hex": "分卦：",
         "yang_nine": "【陽九行限】",
         "bai_liu": "【百六行限】",
-        "taiyi_mishu": "《太乙秘書》︰",
+        "taiyi_mishu": "《太乙秘書》",
         "history_records": "史事記載︰",
-        "chart_analysis": "太乙盤局分析︰",
+        "chart_analysis": "太乙盤局分析",
         "year_star_predict": "太歲值宿斷事︰",
         "start_star_predict": "始擊值宿斷事︰",
         "ten_stem_predict": "十天干歲始擊落宮預測︰",
@@ -577,7 +577,7 @@ TRANSLATIONS = {
         "heaven_yi": "明天乙太乙所主術︰",
         "earth_yi": "明地乙太乙所主術︰",
         "zhifu": "明值符太乙所主術︰",
-        "shi_geju": "釋格局︰",
+        "shi_geju": "釋格局",
         "sanqi": "三旗行宮︰",
         "nine_gods": "九宮貴神︰",
         "taiyi_stars": "太乙九星︰",
@@ -588,16 +588,16 @@ TRANSLATIONS = {
         "guxu_duizhao": "孤虛對照︰",
         "vol11": "州國災變︰",
         "tongyun_rugua": "統運入卦︰",
-        "liunian_zhigua": "流年直卦︰",
+        "liunian_zhigua": "流年直卦",
         "ruyao_huofu": "入爻禍福︰",
         "shier_yun": "十二運立成︰",
         "lishi_ruyao": "歷史入爻例︰",
         "tongyun_detail": "統運詳情",
-        "gua_xiang": "卦象觀象︰",
+        "gua_xiang": "卦象觀象",
         "gua_xiang_detail": "卦象詳情",
-        "bian_gua_najia": "變卦納甲︰",
-        "shouwei": "災厄首尾︰",
-        "hangzhi_biannian": "行支編年︰",
+        "bian_gua_najia": "變卦納甲",
+        "shouwei": "災厄首尾",
+        "hangzhi_biannian": "行支編年",
         "tongyun_extended": "統運延伸",
         "tongyun_query_header": "統運查詢",
         "tongyun_sync_chart": "與排盤年同步",
@@ -688,7 +688,7 @@ TRANSLATIONS = {
         "side_home": "主",
         "side_away": "客",
         "junshi_vol17": "軍事占斷︰",
-        "shenjiang_suozhu": "神將所主︰",
+        "shenjiang_suozhu": "神將所主",
         # AI
         "ai_analyze_btn": "🔍 使用AI分析排盤結果",
         "ai_analyzing": "AI正在分析太乙排盤結果...",
@@ -1864,7 +1864,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         --ivory-soft: #e8dfc8;
         --jade: #4a9c6d;
         --line: rgba(212, 175, 55, 0.35);
-        --chart-max-width: 860px;
+        --chart-max-width: 900px;
         --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
         margin: 0;
         padding: 0;
@@ -2509,16 +2509,10 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             const rectHeight = root.getBoundingClientRect ? root.getBoundingClientRect().height : 0;
             const offsetHeight = root.offsetHeight || 0;
             const scrollHeight = root.scrollHeight || 0;
-            const isMobileViewport = window.matchMedia && window.matchMedia("(max-width: 899px)").matches;
-            // Mobile: the stage-frame is max-width 92vw (~340px on phone).
-            // The chart is aspect-ratio 1/1, so height ≈ width ≈ 340.
-            // Add toolbar (~44px) + card padding (~6px) = ~390.
-            // Cap mobile height to avoid large vertical gap.
-            const mobileCap = 560;
-            const heightAdjustment = isMobileViewport ? -22 : 0;
-            let height = Math.ceil(Math.max(rectHeight, offsetHeight, scrollHeight) + heightAdjustment);
-            if (isMobileViewport && height > mobileCap) {
-                height = mobileCap;
+            let height = Math.ceil(Math.max(rectHeight, offsetHeight, scrollHeight));
+            // Guard: never send a non-positive height — it would collapse the iframe to 0.
+            if (height <= 0) {
+                return;
             }
             if (Math.abs(height - lastReportedHeight) < 2) {
                 return;
@@ -3155,7 +3149,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             if (!sectorPanel) return;
             const entry = sectorLookup[key] || null;
             const layerId = key.split(":")[0] || "";
-            const layerLabel = layerLabels[layerId] || layerId;
+            const layerLabel = layerLabels[layerId] || "";
             clearSectorSelection();
             state.activeSectorKey = key;
             const sectorGroup = findSectorGroupByKey(key);
@@ -3681,11 +3675,8 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         .replace("__EXPORT_CSS__", json.dumps(export_css, ensure_ascii=False))
         .replace("__EXPORT_CSS_BY_MODE__", json.dumps(export_css_bundle, ensure_ascii=False))
     )
-    # Use a moderate initial height; JS inside the component auto-resizes
-    # to actual content height via setFrameHeight. On mobile the JS measures
-    # the real height (which is smaller due to CSS @media scaling) and posts
-    # a smaller value back to Streamlit, closing the gap.
-    _initial_height = max(720, abs(num) + 120)
+    # st.components.v1.html with fixed height — st.iframe has auto-sizing issues on desktop.
+    _initial_height = max(900, abs(num) + 200)
     st.components.v1.html(html_content, height=_initial_height)
 
 
@@ -4238,15 +4229,15 @@ with tabs[0]:
                         _classic_html, _wuzhen_data = render_classic_reading(results, t=t)
                         if _classic_html:
                             st.markdown(_classic_html, unsafe_allow_html=True)
-                        # —— 五陣置旗八陣圖（軍事戰略卡片附屬，含 dataframe）——
-                        if _wuzhen_data:
-                            _render_wuzhen_bazhen_viz(_wuzhen_data)
                         st.markdown("---")
                         # —— 卷九：大小遊軌運（含 dataframe，無法 HTML 化）——
                         _render_vol9_explanation(results["ttext"].get("卷九", {}))
+                        # —— 五陣置旗八陣圖（軍事戰略附屬，含 dataframe）——
+                        if _wuzhen_data:
+                            _render_wuzhen_bazhen_viz(_wuzhen_data)
 
-                # ── 運籌博弈分析區塊 ──────────────────────────────────────
-                if st.session_state.get("game_theory_toggle_switch"):
+                # ── 運籌博弈分析區塊（主頁固定顯示）──────────────────────────────
+                if st.session_state.get("game_theory_toggle_switch", True):
                     with st.spinner(t("game_theory_computing")):
                         try:
                             gt = TaiyiGame(results["ttext"])
@@ -4330,7 +4321,6 @@ if "chat_messages" not in st.session_state:
     st.session_state.chat_messages = []
 
 st.markdown("---")
-st.markdown(f"### {t('chat_header')}")
 
 # Clear chat button
 if st.button(t("chat_clear"), key="clear_chat_btn"):

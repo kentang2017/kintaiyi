@@ -275,7 +275,7 @@ def render_hex_detail_card(
     *,
     t,
 ) -> str:
-    """渲染單個卦象的詳細解讀卡片（左上角卦符 + 象曰 + 總述）。"""
+    """渲染單個卦象的詳細解讀卡片（左上角卦符 + 卦象總述）。"""
     if not gua_name:
         return ""
 
@@ -285,20 +285,7 @@ def render_hex_detail_card(
     yao_name = _get_yao_name(gua_name, yao_idx) if yao_idx else ""
     ji_color = _JI_COLOR.get(yao_idx, "var(--text-muted)")
 
-    # 象曰
-    xiang_html = ""
-    if xiang and xiang.get("象曰"):
-        xiang_text = xiang["象曰"]
-        xiang_preview = xiang_text[:120] + ("…" if len(xiang_text) > 120 else "")
-        xiang_label = _esc(t("hex_xiang_yue"))
-        xiang_html = (
-            f'<div class="hex-detail-xiang">'
-            f'<span class="hex-detail-label">{xiang_label}</span>'
-            f'<p>{_esc(xiang_preview)}</p>'
-            f"</div>"
-        )
-
-    # 總述（折疊）
+    # 卦象總述（折疊）— 合併象曰與總述，避免重複顯示
     zongshu_html = ""
     if xiang and xiang.get("總述"):
         zongshu_html = (
@@ -327,7 +314,6 @@ def render_hex_detail_card(
     </div>
   </div>
   <div class="hex-detail-body">
-    {xiang_html}
     {zongshu_html}
   </div>
 </article>"""

@@ -569,7 +569,7 @@ def _life_palace_lines(
 
 def _fill_planet_ring(sectors: dict[str, dict], layer: int, ring: list[tuple[str, list[str]]]) -> None:
     for i, (branch, planets) in enumerate(ring):
-        title = "、".join(planets) if planets else branch
+        title = f"{branch}·{'、'.join(planets)}" if planets else branch
         sectors[f"layer{layer}:{i}"] = _sector_entry(title, _planet_ring_lines(branch, planets))
 
 
