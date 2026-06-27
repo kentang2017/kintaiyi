@@ -265,38 +265,51 @@ html.grok-sb-collapsed [data-testid="stMainBlockContainer"],
 /* 手機版「完整參數」區塊優化 */
 @media (max-width: 768px) {{
     .chart-mobile-params {{
-        margin-top: 4px !important;
-        margin-bottom: 8px !important;
+        margin-top: 0 !important;     /* 改成 0 */
+        margin-bottom: 0 !important;
     }}
-
     .chart-mobile-params .streamlit-expanderHeader {{
-        padding: 6px 12px !important;
+        padding: 8px 12px !important;
         font-size: 0.9rem !important;
     }}
-
     .chart-mobile-params .streamlit-expanderContent {{
-        padding: 8px 12px 4px !important;
+        padding: 8px 12px 12px !important;   /* 增加底部一點呼吸感 */
     }}
-
     .chart-meta-detail-row-mobile {{
         margin-bottom: 4px !important;
         padding: 4px 0 !important;
     }}
-
     .chart-mobile-three-five {{
         margin-top: 8px !important;
     }}
-
     .chart-mobile-param-heading {{
         font-size: 0.85rem !important;
         margin-bottom: 4px !important;
     }}
-
     .chart-mobile-param-body {{
         font-size: 0.82rem !important;
         line-height: 1.4 !important;
     }}
+
+    /* 新增：徹底消除排盤與完整參數之間的間隙 */
+    div[data-testid="stVerticalBlock"] {{
+        gap: 0 !important;
+    }}
+    div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }}
+    div[data-testid="stVerticalBlock"]:has(> .chart-mobile-params) {{
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }}
+    div[data-testid="stVerticalBlock"]:has(iframe),
+    div[data-testid="stElementContainer"]:has(iframe) {{
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }}
 }}
+
 @media (min-width: 769px) {{
     [data-testid="stSidebar"][aria-expanded="true"]::after {{
         content: "" !important;
@@ -311,6 +324,7 @@ html.grok-sb-collapsed [data-testid="stMainBlockContainer"],
         background: transparent !important;
     }}
 }}
+
 [data-testid="stSidebar"],
 [data-testid="stSidebar"] [data-testid="stSidebarContent"] {{
     cursor: default !important;
@@ -366,7 +380,6 @@ html.grok-sb-collapsed [data-testid="stMainBlockContainer"],
 .grok-run-chart {{
     margin: 0.5rem 0 0.35rem 0;
 }}
-
 [data-testid="stSidebar"] h1,
 [data-testid="stSidebar"] h2,
 [data-testid="stSidebar"] h3 {{
