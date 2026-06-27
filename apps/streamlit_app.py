@@ -421,7 +421,7 @@ def _load_example_timeline_json() -> str:
 # --- i18n: Translation dictionaries ---
 TRANSLATIONS = {
     "zh": {
-        #"page_title": "堅太乙-太乙神數排盤",
+        "page_title": "堅太乙-太乙神數排盤",
         "lang_label": "語言 Language",
         "sidebar_block_basic": "基本參數",
         "sidebar_block_method": "太乙計式",
