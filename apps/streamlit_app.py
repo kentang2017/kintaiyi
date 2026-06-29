@@ -1540,6 +1540,13 @@ def _build_chart_meta(
             if is_en
             else "此盤式不支援轉盤旋轉。"
         )
+    # ── 直符所在宮位的 sector key（用於初始化時自動開啟）──
+    _zhifu_branch = ttext.get("直符") or ""
+    _SIXTEEN_BRANCHES = ("巳", "午", "未", "坤", "申", "酉", "戌", "乾", "亥", "子", "丑", "艮", "寅", "卯", "辰", "巽")
+    _zhifu_sector_key = ""
+    if isinstance(_zhifu_branch, str) and _zhifu_branch in _SIXTEEN_BRANCHES:
+        _zhifu_sector_key = f"layer4:{_SIXTEEN_BRANCHES.index(_zhifu_branch)}"
+
     sector_panel = {
         "sectors": chart_view.get("sectors") or {},
         "geju": geju_markers,
@@ -1557,6 +1564,7 @@ def _build_chart_meta(
             str(i): config.num2gong(i) or ""
             for i in (1, 2, 3, 4, 6, 7, 8, 9)
         },
+        "zhifu_sector_key": _zhifu_sector_key,
     }
 
     return {
@@ -2479,6 +2487,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         const layer2Gongs = sectorPanelData.layer2_gongs || [];
         const gongByBranch = sectorPanelData.gong_by_branch || {};
         const gongNames = sectorPanelData.gong_names || {};
+        const zhifuSectorKey = sectorPanelData.zhifu_sector_key || "";
         const colorSyncLayers = chartLayout.sync_layers || ["layer3", "layer4", "layer5"];
         const syncRotateLayers = colorSyncLayers.slice();
         const syncRotateSet = new Set(syncRotateLayers);
@@ -3646,6 +3655,13 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         applyStyleMode();
         updateStyleButton();
         updateNoteButton();
+
+        // ── 預設開啟直符所在宮位的 sector panel ──
+        if (zhifuSectorKey && sectorLookup[zhifuSectorKey]) {
+            setTimeout(() => {
+                openSectorPanelByKey(zhifuSectorKey);
+            }, 300);
+        }
 
         if (window.ResizeObserver) {
             const observer = new ResizeObserver(() => queueFrameHeight());
