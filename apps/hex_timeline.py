@@ -400,7 +400,6 @@ def render_hex_timeline(results: dict, *, t) -> str:
             f'<div class="{cls}" data-offset="{i}">'
             f'<span class="liuri-date">{date_str}</span>'
             f'{sub_html}'
-            f'<span class="liuri-symbol">{_esc(gua_symbol)}</span>'
             f'<span class="liuri-name">{_esc(gua_name)}</span>'
             f'{lines_html}'
             f'<span class="liuri-yao" style="color: {ji_color};">{_esc(yao_name)}</span>'
