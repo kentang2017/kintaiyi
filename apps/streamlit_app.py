@@ -2006,10 +2006,9 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     #__CONTAINER_ID__ .taiyi-stage-frame {
         position: relative;
         /* Square frame: width must not exceed available height (parent viewport
-           minus topnav(38)+tabs(10)+toolbar(50)+card-padding(20)+margins(40) ~158px).
-           This keeps the entire chart visible without any scrollbar — the square
-           shrinks to fit. */
-        width: min(100%, var(--chart-max-width), calc(var(--parent-vh, 100vh) - 160px));
+           minus topnav+tabs+toolbar+card-padding ~180px). This keeps the entire
+           chart visible without any scrollbar — the square shrinks to fit. */
+        width: min(100%, var(--chart-max-width), calc(var(--parent-vh, 100vh) - 180px));
         aspect-ratio: 1 / 1;
         overflow: hidden;
         border-radius: 22px;
@@ -2575,10 +2574,15 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             try {
                 const vh = window.parent.innerHeight || 0;
                 if (vh > 0) {
-                    const topOffset = 100; // topnav (38px) + tabs + paddings + toolbar
+                    // topnav(38) + tabs(~36) + tab-content padding(~8) + page padding(~16) = ~98
+                    // Use 120 to be safe — any remainder is absorbed by chart shrink.
+                    const topOffset = 120;
                     const maxH = vh - topOffset;
                     if (height > maxH) {
                         height = maxH;
+                    }
+                    if (height < 200) {
+                        height = 200;
                     }
                 }
             } catch (e) { /* cross-origin: skip clamping */ }

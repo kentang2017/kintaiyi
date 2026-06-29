@@ -615,6 +615,13 @@ input:focus, textarea:focus,
     margin: 0.5rem 0 !important;
     overflow: hidden;
 }}
+/* Hide the Baseweb collapsable triangle icon to match classic-card look */
+.stExpander [data-testid="stExpander"] > div:first-child svg,
+.stExpander svg {{
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}}
 .stExpander summary {{
     color: var(--text-primary) !important;
     font-size: 0.88rem !important;
@@ -622,6 +629,9 @@ input:focus, textarea:focus,
     padding: 0.6rem 0.85rem !important;
     list-style: none;
     transition: background 0.15s ease;
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
 }}
 .stExpander summary:hover {{
     background: rgba(255, 255, 255, 0.04) !important;
@@ -632,7 +642,7 @@ input:focus, textarea:focus,
 .stExpander [data-testid="stExpanderDetails"] {{
     background: var(--bg-elevated) !important;
     border-top: 1px solid var(--border-subtle) !important;
-    color: var(--text-primary) !important;
+    color: var(--text-secondary) !important;
     padding: 0.6rem 0.85rem 0.8rem !important;
     font-size: 0.82rem !important;
     line-height: 1.65 !important;
@@ -896,10 +906,15 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
 }}
 /* ── 桌面版：排盤置中，首屏完整可見（無捲動） ── */
 @media (min-width: 900px) {{
+    .main .block-container,
+    [data-testid="stMainBlockContainer"] {{
+        padding-bottom: 0.1rem !important;
+    }}
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) iframe {{
+        max-width: 100% !important;
         width: 100% !important;
         /* 不限制 iframe 高度 — postMessage(setFrameHeight) 會 clamp 到
-           parent viewport - 100px，排盤 SVG 自適應縮小，無 scrollbar。 */
+           parent viewport - 120px，排盤 SVG 自適應縮小，無 scrollbar。 */
         min-height: 400px !important;
         margin-left: auto !important;
         margin-right: auto !important;
