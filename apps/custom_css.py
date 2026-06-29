@@ -881,8 +881,9 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) iframe {{
         max-width: 70% !important;
         width: 70% !important;
-        /* iframe 高度限制在 viewport 減去 topnav + tabs 後的剩餘空間 */
-        max-height: calc(100vh - 4.5rem) !important;
+        /* 不限制 iframe 高度 — 讓 postMessage 自動調整到內容實際高度，
+           排盤 SVG 已用 aspect-ratio:1/1 + width:100% 自適應縮小，
+           iframe 內容不超出邊界，故不產生 scrollbar。 */
         min-height: 400px !important;
         margin-left: auto !important;
         margin-right: auto !important;
@@ -1905,10 +1906,10 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
     margin-top: 0.5rem;
 }}
 .classic-card {{
-    background: rgba(255, 255, 255, 0.025);
+    background: var(--bg-elevated);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
-    margin-bottom: 0.5rem;
+    margin: 0.5rem 0;
     overflow: hidden;
 }}
 .classic-card-header {{
@@ -1928,8 +1929,8 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
     background: rgba(255, 255, 255, 0.04);
 }}
 .classic-card-title {{
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: 0.88rem;
+    font-weight: 500;
     color: var(--text-primary);
     white-space: nowrap;
 }}
@@ -1945,6 +1946,7 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
 .classic-card-body {{
     padding: 0.6rem 0.85rem 0.8rem;
     border-top: 1px solid var(--border-subtle);
+    background: var(--bg-elevated);
     font-size: 0.82rem;
     color: var(--text-secondary);
     line-height: 1.65;

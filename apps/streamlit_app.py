@@ -4309,7 +4309,6 @@ with tabs[0]:
                             _classic_html, _wuzhen_data = render_classic_reading(results, t=t)
                             if _classic_html:
                                 st.markdown(_classic_html, unsafe_allow_html=True)
-                            st.markdown("---")
                             # 大小遊軌運（可折疊）
                             with st.expander(t("guiyun_label"), expanded=False):
                                 _render_vol9_explanation(results["ttext"].get("卷九", {}))
@@ -4390,7 +4389,6 @@ with tabs[0]:
                             _classic_html, _wuzhen_data = render_classic_reading(results, t=t)
                             if _classic_html:
                                 st.markdown(_classic_html, unsafe_allow_html=True)
-                            st.markdown("---")
                             # 大小遊軌運（可折疊）
                             with st.expander(t("guiyun_label"), expanded=False):
                                 _render_vol9_explanation(results["ttext"].get("卷九", {}))
