@@ -4359,7 +4359,7 @@ with tabs[0]:
 
                     else:
                         # ── 桌面版：左排盤 + 右參數面板 雙欄佈局 ──
-                        chart_main_col, chart_side_col = st.columns([2.8, 0.5], gap="small")
+                        chart_main_col, chart_side_col = st.columns([1.8, 1.0], gap="small")
                         with chart_main_col:
                             render_chart_stage_open(
                                 print_meta=build_chart_print_meta(results, t=t),
@@ -4370,9 +4370,8 @@ with tabs[0]:
                             else:
                                 render_svg1(results["genchart2"], int(start_pt2), chart_meta)
                         with chart_side_col:
-                            # 右側資訊面板用 expander 收合，減少垂直佔用
-                            with st.expander(t("chart_meta_detail"), expanded=False):
-                                render_chart_side_panel(chart_meta, results, t=t)
+                            # 右側資訊面板，預設展開
+                            render_chart_side_panel(chart_meta, results, t=t)
 
                         # —— 流日卦時間軸 ——
                         _hex_html = render_hex_timeline(results, t=t)

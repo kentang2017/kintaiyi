@@ -876,19 +876,19 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
     margin-left: auto;
     margin-right: auto;
 }}
-/* ── 桌面版：排盤縮小30%，首屏完整可見（無捲動） ── */
+/* ── 桌面版：排盤縮小45%，首屏完整可見（無捲動） ── */
 @media (min-width: 900px) {{
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) iframe {{
-        max-width: 70% !important;
-        width: 70% !important;
+        max-width: 55% !important;
+        width: 55% !important;
         /* iframe 高度限制在 viewport 減去 topnav + tabs 後的剩餘空間 */
         max-height: calc(100vh - 4.5rem) !important;
-        min-height: 400px !important;
+        min-height: 350px !important;
         margin-left: auto !important;
         margin-right: auto !important;
     }}
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
-        max-width: 70%;
+        max-width: 55%;
         margin-left: auto;
         margin-right: auto;
     }}
