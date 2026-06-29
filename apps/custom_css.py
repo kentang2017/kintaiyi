@@ -140,6 +140,37 @@ html, body, .stApp {{
     color: var(--text-secondary);
     margin: 0;
 }}
+/* ── SIDEBAR BRAND (replaces top navbar) ─────────────────────────────── */
+.grok-sidebar-brand {{
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.1rem 0.1rem 0.6rem 0.1rem;
+    margin-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border-subtle);
+}}
+.grok-sidebar-brand-logo {{
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #2a2a2a, #0a0a0a);
+    border: 1px solid var(--border-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}}
+.grok-sidebar-brand-title {{
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.02em;
+    margin: 0;
+    line-height: 1.2;
+}}
 /* ── MAIN CONTENT (responsive to sidebar state) ─────────────────────── */
 [data-testid="stAppViewContainer"] {{
     width: 100% !important;
@@ -217,6 +248,10 @@ html.grok-sb-collapsed [data-testid="stMainBlockContainer"],
         max-width: var(--sidebar-collapsed-width) !important;
         flex: 0 0 var(--sidebar-collapsed-width) !important;
         overflow: hidden !important;
+        /* Streamlit 1.58 applies transform: translateX(-300px) via emotion class
+           when collapsed, sliding the sidebar off-screen. Override so the
+           collapsed strip stays visible at the left edge. */
+        transform: none !important;
     }}
     [data-testid="stSidebar"][aria-expanded="false"] ~ [data-testid="stMain"],
     [data-testid="stSidebar"][aria-expanded="false"] ~ section.main {{
@@ -235,15 +270,56 @@ html.grok-sb-collapsed [data-testid="stMainBlockContainer"],
     opacity: 1 !important;
     pointer-events: auto !important;
 }}
+/* Collapsed sidebar: keep stSidebarContent visible so the expand button
+   (stSidebarCollapseButton inside stSidebarHeader) remains clickable.
+   Hide only the user content area. */
 [data-testid="stSidebar"][aria-expanded="false"] [data-testid="stSidebarContent"] {{
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    overflow: visible !important;
+}}
+/* Hide user content when collapsed */
+[data-testid="stSidebar"][aria-expanded="false"] [data-testid="stSidebarUserContent"] {{
     display: none !important;
-    visibility: hidden !important;
-    width: 0 !important;
-    min-width: 0 !important;
-    max-width: 0 !important;
-    opacity: 0 !important;
-    overflow: hidden !important;
-    pointer-events: none !important;
+}}
+/* Center the expand button in the collapsed sidebar strip */
+[data-testid="stSidebar"][aria-expanded="false"] [data-testid="stSidebarHeader"] {{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    height: 100% !important;
+    min-height: 2.5rem !important;
+}}
+[data-testid="stSidebar"][aria-expanded="false"] [data-testid="stLogoSpacer"] {{
+    display: none !important;
+}}
+/* ── COLLAPSE BUTTON: visible on desktop (Streamlit 1.58 hides it by default) ── */
+/* Streamlit 1.58 sets visibility:hidden on stSidebarCollapseButton, only showing
+   it at max-width:576px. Override so desktop users can collapse the sidebar. */
+@media (min-width: 577px) {{
+    [data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarCollapseButton"] {{
+        visibility: visible !important;
+    }}
+    [data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarCollapseButton"] button {{
+        visibility: visible !important;
+        cursor: pointer !important;
+    }}
+}}
+/* Style the expand button to be visible in the narrow strip */
+[data-testid="stSidebar"][aria-expanded="false"] [data-testid="stSidebarCollapseButton"] {{
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}}
+[data-testid="stSidebar"][aria-expanded="false"] [data-testid="stSidebarCollapseButton"] button {{
+    cursor: pointer !important;
 }}
 /* CURSOR FIX — hide only resize handle, keep stSidebarContent visible */
 [data-testid="stSidebar"] > div:not([data-testid="stSidebarContent"]),
@@ -1998,18 +2074,21 @@ def get_sidebar_cursor_fix_html() -> str:
 
 
 def get_top_nav_html(lang: str = "zh") -> str:
-    """Sticky top navigation bar (Grok-style)."""
+    """Top navigation bar — disabled (brand moved to sidebar top)."""
+    return ""
+
+
+def get_sidebar_brand_html(lang: str = "zh") -> str:
+    """Brand block rendered at the top of the sidebar."""
     if lang == "en":
         brand = "Kin Taiyi-Taiyi Divine Number Chart"
     else:
         brand = "堅太乙-太乙神數排盤"
     return f"""
-<nav class="grok-topnav" aria-label="Main navigation">
-  <div class="grok-topnav-brand">
-    <div class="grok-topnav-logo" aria-hidden="true">乙</div>
-    <p class="grok-topnav-title">{brand}</p>
-  </div>
-</nav>
+<div class="grok-sidebar-brand">
+  <div class="grok-sidebar-brand-logo" aria-hidden="true">乙</div>
+  <p class="grok-sidebar-brand-title">{brand}</p>
+</div>
 """
 
 

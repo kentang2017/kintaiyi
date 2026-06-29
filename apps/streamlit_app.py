@@ -99,7 +99,7 @@ from kintaiyi.cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CE
 from kintaiyi.openai_client import OpenAIClient, DEFAULT_MODEL as DEFAULT_OPENAI_MODEL, TokenQuotaExceededError as OpenAITokenQuotaExceededError
 from kintaiyi.openai_compatible_client import OpenAICompatibleClient, TokenQuotaExceededError as CompatibleTokenQuotaExceededError
 from kintaiyi.game_theory import TaiyiGame, 主方策略列 as _gt_主方策略列, 客方策略列 as _gt_客方策略列
-from custom_css import get_custom_css, get_sidebar_cursor_fix_html, get_top_nav_html
+from custom_css import get_custom_css, get_sidebar_cursor_fix_html, get_top_nav_html, get_sidebar_brand_html
 from sidebar_ui import render_grok_sidebar
 from chart_layout import (
     build_chart_print_meta,
@@ -3841,7 +3841,7 @@ st.markdown(get_custom_css(), unsafe_allow_html=True)
 BASE_URL_KINTAIYI = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/master/'
 BASE_URL_KINLIUREN = 'https://raw.githubusercontent.com/kentang2017/kinliuren/master/'
 
-# Grok-style top nav (disabled — empty HTML, no logo/title)
+# Grok-style top nav (disabled — brand moved to sidebar top)
 _nav_html = get_top_nav_html(st.session_state.get("lang", "zh"))
 if _nav_html:
     st.markdown(_nav_html, unsafe_allow_html=True)
@@ -3859,6 +3859,7 @@ _MODELS = {
     "QWEN_MODEL_DESCRIPTIONS": QWEN_MODEL_DESCRIPTIONS,
 }
 with st.sidebar:
+    st.markdown(get_sidebar_brand_html(st.session_state.get("lang", "zh")), unsafe_allow_html=True)
     _sb = render_grok_sidebar(
         t=t, to=to,
         load_system_prompts=load_system_prompts,
