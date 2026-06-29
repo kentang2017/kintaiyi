@@ -706,6 +706,11 @@ input:focus, textarea:focus,
 }}
 .chart-side-hero .chart-meta-gz-row {{
     margin-bottom: 0.45rem;
+    width: 15% !important;
+    min-width: 170px !important;
+    max-width: 220px !important;
+    flex: 0 0 15% !important;
+    box-sizing: border-box;
 }}
 .chart-meta-detail-row {{
     display: flex;
