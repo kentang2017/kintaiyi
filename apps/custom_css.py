@@ -876,13 +876,14 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
     margin-left: auto;
     margin-right: auto;
 }}
-/* ── 桌面版：排盤 iframe 寬度放寬，完整顯示 ── */
+/* ── 桌面版：排盤 iframe 最大化（填滿左欄） ── */
 @media (min-width: 900px) {{
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) iframe {{
-        max-width: min(80vw, 800px) !important;
+        max-width: 100% !important;
+        width: 100% !important;
     }}
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
-        max-width: min(80vw, 800px);
+        max-width: 100%;
     }}
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
         padding: 0.5rem 0.5rem 0.25rem;
@@ -896,9 +897,16 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
     gap: 0.65rem;
     padding-top: 0.35rem;
 }}
-/* 側邊面板現在在排盤下方全寬顯示（不再 sticky，不再限桌面） */
-.chart-summary-desktop {{
-    display: flex;
+@media (min-width: 900px) {{
+    .chart-side-panel {{
+        position: sticky;
+        top: 4.5rem;
+    }}
+}}
+@media (max-width: 899px) {{
+    .chart-summary-desktop {{
+        display: none !important;
+    }}
 }}
 .grok-card-v2 {{
     background: rgba(255, 255, 255, 0.03);
