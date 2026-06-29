@@ -2005,7 +2005,11 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     }
     #__CONTAINER_ID__ .taiyi-stage-frame {
         position: relative;
-        width: min(100%, var(--chart-max-width));
+        /* Square frame: width must not exceed available height (parent viewport
+           minus topnav(38)+tabs(10)+toolbar(50)+card-padding(20)+margins(40) ~158px).
+           This keeps the entire chart visible without any scrollbar — the square
+           shrinks to fit. */
+        width: min(100%, var(--chart-max-width), calc(var(--parent-vh, 100vh) - 160px));
         aspect-ratio: 1 / 1;
         overflow: hidden;
         border-radius: 22px;
@@ -2473,6 +2477,15 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         const svg = root.querySelector(".taiyi-svg-root");
         if (!svg) return;
 
+        // Inject parent viewport height so the chart square can shrink to fit
+        // the visible area — no scrollbar needed.
+        try {
+            const pvh = window.parent.innerHeight || window.innerHeight || 0;
+            if (pvh > 0) {
+                root.style.setProperty("--parent-vh", pvh + "px");
+            }
+        } catch (e) { /* cross-origin */ }
+
         const interactive = "__INTERACTIVE__" === "true";
         const ui = __UI_JSON__;
         const highlightTerms = __HIGHLIGHTS_JSON__;
@@ -2557,6 +2570,18 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             if (height <= 0) {
                 return;
             }
+            // Clamp to parent viewport so the iframe never exceeds the visible area
+            // — no scrollbar, chart always fully visible without scrolling.
+            try {
+                const vh = window.parent.innerHeight || 0;
+                if (vh > 0) {
+                    const topOffset = 100; // topnav (38px) + tabs + paddings + toolbar
+                    const maxH = vh - topOffset;
+                    if (height > maxH) {
+                        height = maxH;
+                    }
+                }
+            } catch (e) { /* cross-origin: skip clamping */ }
             if (Math.abs(height - lastReportedHeight) < 2) {
                 return;
             }
