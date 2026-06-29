@@ -47,6 +47,39 @@ from kintaiyi.chart_view import (
 
 import cn2an
 from cn2an import an2cn
+
+# ── Mobile detection via streamlit-screen-stats ─────────────────────────
+try:
+    from streamlit_screen_stats import screen_stats as _screen_stats
+except Exception:
+    _screen_stats = None
+
+
+def _get_screen_width() -> int:
+    """Return the client screen width in pixels (fallback 1024)."""
+    if _screen_stats is not None:
+        try:
+            stats = _screen_stats()
+            if isinstance(stats, dict):
+                return int(stats.get("screen_width", 1024))
+        except Exception:
+            pass
+    return 1024
+
+
+def _is_mobile() -> bool:
+    """True when the client viewport is below 768 px wide."""
+    return _get_screen_width() < 768
+
+
+# 十二地支時辰對照
+_ZHI_HOURS = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
+
+
+def _hour_to_zhi(hour: int) -> str:
+    """Convert 24h hour to 地支時辰 name (子=23-1, 丑=1-3, ...)."""
+    _idx = ((hour + 1) // 2) % 12
+    return _ZHI_HOURS[_idx]
 from kintaiyi.guiyun_display import (
     chong_gua_row,
     inner_outer_rows,
@@ -447,6 +480,7 @@ TRANSLATIONS = {
         "date_bc_hint": "",
         "time_label": "時間",
         "run_chart_btn": "立即排盤",
+        "rerun_chart_btn": "重新排盤",
         "chart_params_stale_hint": "側欄日期已變更，請按「立即排盤」更新。",
         "chart_summary": "干支曆",
         "chart_meta_detail": "完整參數",
@@ -757,6 +791,7 @@ TRANSLATIONS = {
         "date_bc_hint": "",
         "time_label": "Time",
         "run_chart_btn": "Run Chart",
+        "rerun_chart_btn": "Re-run Chart",
         "chart_params_stale_hint": "Sidebar date changed — click Run Chart to refresh.",
         "chart_summary": "Stem-Branch",
         "chart_meta_detail": "Full parameters",
@@ -3675,11 +3710,11 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         .replace("__EXPORT_CSS__", json.dumps(export_css, ensure_ascii=False))
         .replace("__EXPORT_CSS_BY_MODE__", json.dumps(export_css_bundle, ensure_ascii=False))
     )
-    # st.iframe replaces deprecated st.components.v1.html (removed after 2026-06-01).
-    # st.iframe with height="content" auto-sizes to the iframe's content height,
-    # which works with the postMessage setFrameHeight protocol in the template JS.
+    # st.iframe with srcdoc= renders inline HTML (replaces deprecated st.components.v1.html).
+    # height is the initial iframe height; the template JS uses postMessage
+    # to auto-resize the iframe to its content height.
     _initial_height = max(900, abs(num) + 200)
-    st.iframe(html_content, height=_initial_height, width="stretch")
+    st.iframe(srcdoc=html_content, height=_initial_height, width="stretch", scrolling=True)
 
 
 def render_svg(svg, num, chart_meta):
@@ -3720,7 +3755,7 @@ def timeline(data, height=800):
             timeline = new TL.Timeline('timeline-embed', {source_param}, additionalOptions);
         </script>
     '''
-    st.iframe(htmlcode, height=height, width="stretch")
+    st.iframe(srcdoc=htmlcode, height=height, width="stretch", scrolling=True)
 
 @contextmanager
 def st_capture(output_func):
@@ -3749,11 +3784,11 @@ st.set_page_config(
 )
 # Inject Grok theme CSS on every run.
 # st.markdown(unsafe_allow_html=True) injects raw <style> without DOMPurify
-# sanitization (unlike st.html in 1.58). Re-injecting every run guarantees
-# the <style> block survives reruns (date change, sidebar toggle, etc.).
+# sanitization. Re-injecting every run guarantees the <style> block survives
+# reruns (date change, sidebar toggle, etc.).
 st.markdown(get_custom_css(), unsafe_allow_html=True)
 # Sidebar cursor fix is now pure CSS — no JS injection needed.
-# Previous st.html(..., unsafe_allow_javascript=True) caused React error #185
+# Previous st.iframe(..., unsafe_allow_javascript=True) caused React error #185
 # because each rerun created a new iframe with a MutationObserver that
 # triggered cascading DOM mutations.
 # 定義基礎 URL
@@ -4190,6 +4225,7 @@ with tabs[0]:
                         st.title(t("history_records"))
                         st.markdown(results["ch"])
                 else:
+                    _mobile = _is_mobile()
                     try:
                         start_pt2 = results["genchart2"][results["genchart2"].index('''viewBox="''')+22:].split(" ")[1]
                         chart_meta = _resolve_chart_meta(
@@ -4199,6 +4235,117 @@ with tabs[0]:
                             show_guxu_overlay=show_guxu_overlay,
                             show_wuxing_color=show_wuxing_color,
                         )
+                    except (ValueError, IndexError) as e:
+                        st.error(f"Failed to parse SVG viewBox: {str(e)}")
+                        start_pt2 = 0
+                        chart_meta = {}
+
+                    # ── 動態 expander 標題：已選參數摘要 ──
+                    _ty_obj = results["ty"]
+                    _method_name = (config.ty_method(results["tn"]) or "") + (results["ttext"].get("太乙計", "") or "")
+                    _bureau_name = results["ttext"].get("局式", {}).get("年", "") or results.get("kook", {}).get("文", "")
+                    _zhi_hour = _hour_to_zhi(_ty_obj.hour)
+                    _params_title = (
+                        f"已選參數：{_ty_obj.year}年{_ty_obj.month}月{_ty_obj.day}日 "
+                        f"{_zhi_hour}時，{_method_name}，{_bureau_name}"
+                    )
+
+                    if _mobile:
+                        # ── 手機版：排盤結果置頂 + 重新排盤按鈕 + 參數收合 ──
+                        # 1. 頂部醒目「重新排盤」按鈕
+                        st.markdown('<div class="mobile-run-top">', unsafe_allow_html=True)
+                        if st.button(t("rerun_chart_btn"), type="primary",
+                                     use_container_width=True, key="mobile_rerun_top"):
+                            st.session_state.chart_results = None
+                            st.session_state.chart_input_key = None
+                            st.rerun()
+                        st.markdown('</div>', unsafe_allow_html=True)
+
+                        # 2. 已選參數收合 expander
+                        with st.expander(_params_title, expanded=False):
+                            render_chart_mobile_params(chart_meta, results, t=t)
+
+                        # 3. 排盤結果（SVG 局式）— 最大視覺權重
+                        render_chart_stage_open(
+                            print_meta=build_chart_print_meta(results, t=t),
+                        )
+                        render_chart_explanation_seam()
+                        if rotation == "轉動":
+                            render_svg(results["genchart2"], int(start_pt2), chart_meta)
+                        else:
+                            render_svg1(results["genchart2"], int(start_pt2), chart_meta)
+
+                        # 4. 流日卦時間軸
+                        _hex_html = render_hex_timeline(results, t=t)
+                        if _hex_html:
+                            st.markdown(_hex_html, unsafe_allow_html=True)
+                        # 5. 統運入卦時間軸 + 運勢卡片
+                        _yun_html = render_yun_section(results, t=t)
+                        if _yun_html:
+                            st.markdown(_yun_html, unsafe_allow_html=True)
+
+                        # 6. 解釋區（巢狀 expander）
+                        st.markdown(
+                            '<span class="chart-explanation-anchor" aria-hidden="true"></span>',
+                            unsafe_allow_html=True,
+                        )
+                        with st.expander(t("explanation")):
+                            _classic_html, _wuzhen_data = render_classic_reading(results, t=t)
+                            if _classic_html:
+                                st.markdown(_classic_html, unsafe_allow_html=True)
+                            st.markdown("---")
+                            # 大小遊軌運（可折疊）
+                            with st.expander(t("guiyun_label"), expanded=False):
+                                _render_vol9_explanation(results["ttext"].get("卷九", {}))
+                            # 軍事戰略（內含五陣八陣）
+                            _mil = results["ttext"].get("軍事戰略") or {}
+                            _mil_app = results["ttext"].get("軍事應用") or {}
+                            if _mil or _mil_app or _wuzhen_data:
+                                with st.expander(t("junshi_label"), expanded=False):
+                                    if _wuzhen_data:
+                                        _render_wuzhen_bazhen_viz(_wuzhen_data)
+                            # 運籌博弈分析（可折疊）
+                            if st.session_state.get("game_theory_toggle_switch", True):
+                                with st.expander(t("game_theory_header"), expanded=False):
+                                    with st.spinner(t("game_theory_computing")):
+                                        try:
+                                            gt = TaiyiGame(results["ttext"])
+                                            gt_report = gt.分析報告()
+                                        except Exception as gt_err:
+                                            st.error(f"博弈分析錯誤：{gt_err}")
+                                            gt_report = None
+                                    if gt_report:
+                                        st.markdown(f"**古法推主客相闗：** {gt_report['古法推主客相闗']}")
+                                        st.markdown(f"**{t('game_theory_winrate')}：** {gt_report['主方勝率判斷']}")
+                                        st.markdown(f"**{t('game_theory_value')}：** `{gt_report['博弈均衡值']}`")
+                                        st.markdown(f"##### {t('game_theory_payoff')}")
+                                        payoff_df = pd.DataFrame(
+                                            gt_report["支付矩陣"],
+                                            index=_gt_主方策略列,
+                                            columns=_gt_客方策略列,
+                                        ).round(2)
+                                        st.dataframe(payoff_df)
+                                        col_h, col_a = st.columns(2)
+                                        with col_h:
+                                            st.markdown(f"**{t('game_theory_home_strategy')}**")
+                                            home_df = pd.DataFrame(
+                                                {"策略": _gt_主方策略列, "概率": gt_report["主方均衡策略"]}
+                                            )
+                                            st.dataframe(home_df, hide_index=True)
+                                        with col_a:
+                                            st.markdown(f"**{t('game_theory_away_strategy')}**")
+                                            away_df = pd.DataFrame(
+                                                {"策略": _gt_客方策略列, "概率": gt_report["客方均衡策略"]}
+                                            )
+                                            st.dataframe(away_df, hide_index=True)
+                                        lp = gt_report["LP最大勝率"]
+                                        st.markdown(f"##### {t('game_theory_lp')}")
+                                        st.info(lp["建議文字"])
+                                        st.markdown(f"**主方最優純策略：** {gt_report['主方最優純策略']}")
+                                        st.markdown(f"**客方最優純策略：** {gt_report['客方最優純策略']}")
+
+                    else:
+                        # ── 桌面版：維持原有雙欄佈局 ──
                         chart_main_col, chart_side_col = st.columns([1.65, 0.85], gap="large")
                         with chart_main_col:
                             render_chart_stage_open(
@@ -4212,74 +4359,78 @@ with tabs[0]:
                             render_chart_mobile_params(chart_meta, results, t=t)
                         with chart_side_col:
                             render_chart_side_panel(chart_meta, results, t=t)
-                    except (ValueError, IndexError) as e:
-                        st.error(f"Failed to parse SVG viewBox: {str(e)}")
-                    # —— 流日卦時間軸 ——
-                    _hex_html = render_hex_timeline(results, t=t)
-                    if _hex_html:
-                        st.markdown(_hex_html, unsafe_allow_html=True)
-                    # —— 統運入卦時間軸 + 運勢卡片 ——
-                    _yun_html = render_yun_section(results, t=t)
-                    if _yun_html:
-                        st.markdown(_yun_html, unsafe_allow_html=True)
-                    st.markdown(
-                        '<span class="chart-explanation-anchor" aria-hidden="true"></span>',
-                        unsafe_allow_html=True,
-                    )
-                    with st.expander(t("explanation")):
-                        # —— 古典解讀卡片群（全部整合，無重複）——
-                        _classic_html, _wuzhen_data = render_classic_reading(results, t=t)
-                        if _classic_html:
-                            st.markdown(_classic_html, unsafe_allow_html=True)
-                        st.markdown("---")
-                        # —— 卷九：大小遊軌運（含 dataframe，無法 HTML 化）——
-                        _render_vol9_explanation(results["ttext"].get("卷九", {}))
-                        # —— 五陣置旗八陣圖（軍事戰略附屬，含 dataframe）——
-                        if _wuzhen_data:
-                            _render_wuzhen_bazhen_viz(_wuzhen_data)
 
-                # ── 運籌博弈分析區塊（主頁固定顯示）──────────────────────────────
-                if st.session_state.get("game_theory_toggle_switch", True):
-                    with st.spinner(t("game_theory_computing")):
-                        try:
-                            gt = TaiyiGame(results["ttext"])
-                            gt_report = gt.分析報告()
-                        except Exception as gt_err:
-                            st.error(f"博弈分析錯誤：{gt_err}")
-                            gt_report = None
-                    if gt_report:
-                        with st.expander(t("game_theory_header"), expanded=True):
-                            st.markdown(f"**古法推主客相闗：** {gt_report['古法推主客相闗']}")
-                            st.markdown(f"**{t('game_theory_winrate')}：** {gt_report['主方勝率判斷']}")
-                            st.markdown(f"**{t('game_theory_value')}：** `{gt_report['博弈均衡值']}`")
+                        # —— 流日卦時間軸 ——
+                        _hex_html = render_hex_timeline(results, t=t)
+                        if _hex_html:
+                            st.markdown(_hex_html, unsafe_allow_html=True)
+                        # —— 統運入卦時間軸 + 運勢卡片 ——
+                        _yun_html = render_yun_section(results, t=t)
+                        if _yun_html:
+                            st.markdown(_yun_html, unsafe_allow_html=True)
+                        st.markdown(
+                            '<span class="chart-explanation-anchor" aria-hidden="true"></span>',
+                            unsafe_allow_html=True,
+                        )
+                        with st.expander(t("explanation")):
+                            # —— 古典解讀卡片群（全部整合，無重複）——
+                            _classic_html, _wuzhen_data = render_classic_reading(results, t=t)
+                            if _classic_html:
+                                st.markdown(_classic_html, unsafe_allow_html=True)
+                            st.markdown("---")
+                            # 大小遊軌運（可折疊）
+                            with st.expander(t("guiyun_label"), expanded=False):
+                                _render_vol9_explanation(results["ttext"].get("卷九", {}))
+                            # 軍事戰略（內含五陣八陣）
+                            _mil = results["ttext"].get("軍事戰略") or {}
+                            _mil_app = results["ttext"].get("軍事應用") or {}
+                            if _mil or _mil_app or _wuzhen_data:
+                                with st.expander(t("junshi_label"), expanded=False):
+                                    if _wuzhen_data:
+                                        _render_wuzhen_bazhen_viz(_wuzhen_data)
 
-                            st.markdown(f"##### {t('game_theory_payoff')}")
-                            payoff_df = pd.DataFrame(
-                                gt_report["支付矩陣"],
-                                index=_gt_主方策略列,
-                                columns=_gt_客方策略列,
-                            ).round(2)
-                            st.dataframe(payoff_df)
+                        # ── 運籌博弈分析區塊（桌面版獨立 expander）──────────────────────────────
+                        if st.session_state.get("game_theory_toggle_switch", True):
+                            with st.spinner(t("game_theory_computing")):
+                                try:
+                                    gt = TaiyiGame(results["ttext"])
+                                    gt_report = gt.分析報告()
+                                except Exception as gt_err:
+                                    st.error(f"博弈分析錯誤：{gt_err}")
+                                    gt_report = None
+                            if gt_report:
+                                with st.expander(t("game_theory_header"), expanded=True):
+                                    st.markdown(f"**古法推主客相闗：** {gt_report['古法推主客相闗']}")
+                                    st.markdown(f"**{t('game_theory_winrate')}：** {gt_report['主方勝率判斷']}")
+                                    st.markdown(f"**{t('game_theory_value')}：** `{gt_report['博弈均衡值']}`")
 
-                            col_h, col_a = st.columns(2)
-                            with col_h:
-                                st.markdown(f"**{t('game_theory_home_strategy')}**")
-                                home_df = pd.DataFrame(
-                                    {"策略": _gt_主方策略列, "概率": gt_report["主方均衡策略"]}
-                                )
-                                st.dataframe(home_df, hide_index=True)
-                            with col_a:
-                                st.markdown(f"**{t('game_theory_away_strategy')}**")
-                                away_df = pd.DataFrame(
-                                    {"策略": _gt_客方策略列, "概率": gt_report["客方均衡策略"]}
-                                )
-                                st.dataframe(away_df, hide_index=True)
+                                    st.markdown(f"##### {t('game_theory_payoff')}")
+                                    payoff_df = pd.DataFrame(
+                                        gt_report["支付矩陣"],
+                                        index=_gt_主方策略列,
+                                        columns=_gt_客方策略列,
+                                    ).round(2)
+                                    st.dataframe(payoff_df)
 
-                            lp = gt_report["LP最大勝率"]
-                            st.markdown(f"##### {t('game_theory_lp')}")
-                            st.info(lp["建議文字"])
-                            st.markdown(f"**主方最優純策略：** {gt_report['主方最優純策略']}")
-                            st.markdown(f"**客方最優純策略：** {gt_report['客方最優純策略']}")
+                                    col_h, col_a = st.columns(2)
+                                    with col_h:
+                                        st.markdown(f"**{t('game_theory_home_strategy')}**")
+                                        home_df = pd.DataFrame(
+                                            {"策略": _gt_主方策略列, "概率": gt_report["主方均衡策略"]}
+                                        )
+                                        st.dataframe(home_df, hide_index=True)
+                                    with col_a:
+                                        st.markdown(f"**{t('game_theory_away_strategy')}**")
+                                        away_df = pd.DataFrame(
+                                            {"策略": _gt_客方策略列, "概率": gt_report["客方均衡策略"]}
+                                        )
+                                        st.dataframe(away_df, hide_index=True)
+
+                                    lp = gt_report["LP最大勝率"]
+                                    st.markdown(f"##### {t('game_theory_lp')}")
+                                    st.info(lp["建議文字"])
+                                    st.markdown(f"**主方最優純策略：** {gt_report['主方最優純策略']}")
+                                    st.markdown(f"**客方最優純策略：** {gt_report['客方最優純策略']}")
 
     except Exception as e:
         st.error(t("gen_error").format(str(e)))

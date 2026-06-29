@@ -264,6 +264,55 @@ html.grok-sb-collapsed [data-testid="stMainBlockContainer"],
 /* Transparent shield over sidebar/main boundary — blocks col-resize hover zone */
 /* 手機版「完整參數」區塊優化 */
 @media (max-width: 768px) {{
+    /* ── 重新排盤按鈕：醒目、大點擊區 ── */
+    .mobile-run-top {{
+        margin: 0 0 0.4rem 0 !important;
+        padding: 0 !important;
+    }}
+    .mobile-run-top button {{
+        font-weight: 700 !important;
+        font-size: 1.05rem !important;
+        padding: 0.6rem 1rem !important;
+        min-height: 3rem !important;
+    }}
+
+    /* ── chart-stage-marker：最小 padding/margin ── */
+    .chart-stage-marker {{
+        padding: 0 !important;
+        margin: 0 0 0.2rem 0 !important;
+    }}
+    div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
+        margin-bottom: 0.2rem !important;
+        padding: 2px 2px 0 !important;
+    }}
+    /* 緊鄰 chart-stage-marker 的下一個 block：消除上方 margin */
+    div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) + div[data-testid="stVerticalBlock"] {{
+        margin-top: 0 !important;
+    }}
+
+    /* ── iframe 容器：零下 margin ── */
+    div[data-testid="stVerticalBlock"]:has(iframe),
+    div[data-testid="stElementContainer"]:has(iframe) {{
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
+        padding: 0 !important;
+    }}
+    iframe {{
+        margin-bottom: 0 !important;
+    }}
+
+    /* ── chart-mobile-params + chart-explanation-anchor：貼緊 ── */
+    div[data-testid="stVerticalBlock"]:has(> .chart-mobile-params),
+    div[data-testid="stVerticalBlock"]:has(> .chart-explanation-anchor) {{
+        margin-top: 0 !important;
+        margin-bottom: 0.2rem !important;
+    }}
+    div[data-testid="stVerticalBlock"]:has(> .chart-mobile-params) [data-testid="stExpander"],
+    div[data-testid="stVerticalBlock"]:has(> .chart-explanation-anchor) [data-testid="stExpander"] {{
+        margin-top: 0 !important;
+        margin-bottom: 0.2rem !important;
+    }}
+
     .chart-mobile-params {{
         margin-top: 0 !important;     /* 改成 0 */
         margin-bottom: 0 !important;
@@ -608,6 +657,13 @@ input:focus, textarea:focus,
 @media (min-width: 900px) {{
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-mobile-meta) {{
         display: none !important;
+    }}
+    /* ── 桌面版緊湊化：減少水平 block gap + 限制 iframe 高度 ── */
+    div[data-testid="stHorizontalBlock"]:has(.chart-stage-marker) {{
+        gap: 0.75rem !important;
+    }}
+    div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) iframe {{
+        max-height: calc(100vh - 12rem) !important;
     }}
 }}
 .chart-meta-gz-row {{
