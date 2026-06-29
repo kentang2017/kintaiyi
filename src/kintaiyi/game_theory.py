@@ -19,6 +19,8 @@ from __future__ import annotations
 
 from typing import Any
 
+import numpy as np
+
 # ---------------------------------------------------------------------------
 # 常數定義
 # ---------------------------------------------------------------------------
@@ -501,11 +503,11 @@ class TaiyiGame:
             「八門值事」等古法關鍵欄位。
         """
         self._pan = pan_result
-        self.支付矩陣: list[list[float]] = self._建構支付矩陣()
+        self.支付矩陣: np.ndarray = np.array(self._建構支付矩陣(), dtype=float)
         game_val, 主策略, 客策略 = self._求Nash均衡()
         self.博弈均衡值: float = game_val
-        self.主方均衡策略: list[float] = 主策略
-        self.客方均衡策略: list[float] = 客策略
+        self.主方均衡策略: np.ndarray = np.array(主策略, dtype=float)
+        self.客方均衡策略: np.ndarray = np.array(客策略, dtype=float)
 
     # ------------------------------------------------------------------
     # 私有方法：支付矩陣建構
@@ -1016,7 +1018,7 @@ class TaiyiGame:
         return {
             "主方策略列": 主方策略列,
             "客方策略列": 客方策略列,
-            "支付矩陣": [row[:] for row in self.支付矩陣],
+            "支付矩陣": [list(row) for row in self.支付矩陣],
             "主方均衡策略": [round(float(p), 4) for p in self.主方均衡策略],
             "客方均衡策略": [round(float(p), 4) for p in self.客方均衡策略],
             "博弈均衡值": round(self.博弈均衡值, 4),

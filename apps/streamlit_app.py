@@ -3712,9 +3712,9 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     )
     # st.iframe with inline HTML (replaces deprecated st.components.v1.html).
     # Passing an HTML string as the first positional arg (src) makes Streamlit
-    # auto-detect it as srcdoc content. scrolling=True enables iframe scroll.
+    # auto-detect it as srcdoc content.
     _initial_height = max(900, abs(num) + 200)
-    st.iframe(html_content, height=_initial_height, width="stretch", scrolling=True)
+    st.iframe(html_content, height=_initial_height, width="stretch")
 
 
 def render_svg(svg, num, chart_meta):
@@ -3755,7 +3755,7 @@ def timeline(data, height=800):
             timeline = new TL.Timeline('timeline-embed', {source_param}, additionalOptions);
         </script>
     '''
-    st.iframe(htmlcode, height=height, width="stretch", scrolling=True)
+    st.iframe(htmlcode, height=height, width="stretch")
 
 @contextmanager
 def st_capture(output_func):
