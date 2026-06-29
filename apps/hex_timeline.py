@@ -153,30 +153,48 @@ def _get_yao_name(gua_name: str, yao_idx: int) -> str:
     return (_YAO_NAMES_YANG if bits[i] else _YAO_NAMES_YIN)[i]
 
 
-def _compute_day_gua(year: int, month: int, day: int) -> tuple[str, str, int]:
-    """計算指定日期的日卦。
+def _compute_gua(year: int, month: int, day: int, hour: int, minute: int,
+                 scale: str) -> tuple[str, str, int]:
+    """計算指定時間尺度的卦。
 
+    scale: 'year' | 'month' | 'day' | 'hour' | 'minute'
     Returns (gua_name, gua_symbol, gua_num)
     """
     from kintaiyi.kintaiyi import Taiyi
-    ty = Taiyi(year, month, day, 12, 0)
-    num, gua_str = ty.day_gua()
+    ty = Taiyi(year, month, day, hour, minute)
+    method = {
+        "year": ty.year_gua,
+        "month": ty.month_gua,
+        "day": ty.day_gua,
+        "hour": ty.hour_gua,
+        "minute": ty.minute_gua,
+    }[scale]
+    num, gua_str = method()
     name, symbol = _parse_gua_str(gua_str or "")
     return (name, symbol, num)
 
 
-def _compute_day_yao(year: int, month: int, day: int) -> int:
-    """計算指定日期的動爻（直事爻）。
+def _compute_yao(year: int, month: int, day: int, hour: int, minute: int,
+                scale: str) -> int:
+    """計算指定時間尺度的動爻（直事爻）。
 
-    日卦的動爻依日干支序數推算。
+    每個尺度依其對應干支在六十甲子中的序數 % 6 + 1。
     """
     from kintaiyi.kintaiyi import Taiyi
-    ty = Taiyi(year, month, day, 12, 0)
-    # day_gua 的動爻：依日干支在六十甲子中的序數 % 6
-    gz = config.gangzhi(year, month, day, 12, 0)
-    day_gz = gz[2] if len(gz) > 2 else ""
-    day_num = dict(zip(config.jiazi(), range(1, 61))).get(day_gz, 1)
-    return ((day_num - 1) % 6) + 1
+    ty = Taiyi(year, month, day, hour, minute)
+    gz_idx = {"year": 0, "month": 1, "day": 2, "hour": 3, "minute": 4}[scale]
+    gz = ty._get_gangzhi()
+    gz_str = gz[gz_idx] if len(gz) > gz_idx else ""
+    gz_num = dict(zip(config.jiazi(), range(1, 61))).get(gz_str, 1)
+    return ((gz_num - 1) % 6) + 1
+
+
+# ── 向後相容（舊 API）──
+def _compute_day_gua(year: int, month: int, day: int) -> tuple[str, str, int]:
+    return _compute_gua(year, month, day, 12, 0, "day")
+
+def _compute_day_yao(year: int, month: int, day: int) -> int:
+    return _compute_yao(year, month, day, 12, 0, "day")
 
 
 def _get_gua_xiang(gua_name: str) -> dict | None:
@@ -187,11 +205,116 @@ def _get_gua_xiang(gua_name: str) -> dict | None:
 
 # ── 主入口 ────────────────────────────────────────────
 
-def render_hex_timeline(results: dict, *, t) -> str:
-    """渲染流日卦時間軸（橫向卡片推移），點選卡片切換詳細解讀。
+def _generate_time_steps(ty, scale: str) -> list[dict]:
+    """根據計式尺度生成時間步階列表。
 
-    顯示當日 + 未來 14 天的日卦，選中日期高亮，動爻著色。
-    點選某日卡片 → 下方詳細解讀切換為該日。
+    每個元素是 {year, month, day, hour, minute, label, sub_label}。
+    """
+    import datetime as _dt
+
+    y, mo, d, h, mi = ty.year, ty.month, ty.day, ty.hour, ty.minute
+    steps = []
+
+    if scale == "year":
+        for i in range(12):
+            ny = y + i
+            try:
+                nd = _dt.date(ny, mo, d)
+            except ValueError:
+                # 處理 2/29 等 — 取該月最後一天
+                if mo == 2 and d == 29:
+                    nd = _dt.date(ny, 2, 28)
+                else:
+                    nd = _dt.date(ny, mo, 1)
+            steps.append({
+                "year": ny, "month": mo, "day": nd.day,
+                "hour": h, "minute": mi,
+                "label": str(ny), "sub_label": "",
+            })
+
+    elif scale == "month":
+        cur_y, cur_m = y, mo
+        for i in range(12):
+            ny, nm = cur_y, cur_m
+            # 推進 i 個月
+            total = (cur_y * 12 + (cur_m - 1)) + i
+            ny, nm = total // 12, (total % 12) + 1
+            try:
+                nd = _dt.date(ny, nm, min(d, 28))
+            except ValueError:
+                nd = _dt.date(ny, nm, 1)
+            steps.append({
+                "year": ny, "month": nm, "day": nd.day,
+                "hour": h, "minute": mi,
+                "label": f"{ny}/{nm}", "sub_label": "",
+            })
+
+    elif scale == "day":
+        base = _safe_date(y, mo, d)
+        for i in range(15):
+            d2 = base + timedelta(days=i)
+            wk_labels = ("一", "二", "三", "四", "五", "六", "日")
+            steps.append({
+                "year": d2.year, "month": d2.month, "day": d2.day,
+                "hour": h, "minute": mi,
+                "label": f"{d2.month}/{d2.day}",
+                "sub_label": wk_labels[d2.weekday()],
+            })
+
+    elif scale == "hour":
+        for i in range(12):
+            # 用 datetime 算出未來小時
+            base_dt = _dt.datetime(y, mo, d, h, mi)
+            fut = base_dt + _dt.timedelta(hours=i)
+            zhi_labels = ("子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥")
+            zhi_idx = (fut.hour + 1) % 12  # 23時→子, 1時→丑...
+            steps.append({
+                "year": fut.year, "month": fut.month, "day": fut.day,
+                "hour": fut.hour, "minute": mi,
+                "label": f"{fut.hour:02d}:00",
+                "sub_label": zhi_labels[zhi_idx] + "時",
+            })
+
+    elif scale == "minute":
+        for i in range(10):
+            base_dt = _dt.datetime(y, mo, d, h, mi)
+            fut = base_dt + _dt.timedelta(minutes=i)
+            steps.append({
+                "year": fut.year, "month": fut.month, "day": fut.day,
+                "hour": fut.hour, "minute": fut.minute,
+                "label": f"{fut.hour:02d}:{fut.minute:02d}",
+                "sub_label": "",
+            })
+
+    return steps
+
+
+# ── 計式 → 尺度對應 ──
+_STYLE_SCALE = {
+    0: "year",    # 年計太乙
+    1: "month",   # 月計太乙
+    2: "day",     # 日計太乙
+    3: "hour",    # 時計太乙
+    4: "minute",  # 分計太乙
+}
+
+_SCALE_LAYER = {
+    "year": "year",
+    "month": "month",
+    "day": "day",
+    "hour": "hour",
+    "minute": "minute",
+}
+
+
+def render_hex_timeline(results: dict, *, t) -> str:
+    """渲染流卦時間軸（橫向卡片推移），依太乙計式決定尺度。
+
+    時計太乙 → 流時卦（未來12小時，每1小時）
+    分計太乙 → 流分卦（未來10分鐘，每1分鐘）
+    日計太乙 → 流日卦（未來15日，每1日）
+    月計太乙 → 流月卦（未來12月，每1月）
+    年計太乙 → 流年卦（未來12年，每1年）
     """
     import streamlit as st
 
@@ -199,36 +322,63 @@ def render_hex_timeline(results: dict, *, t) -> str:
     if ty is None:
         return ""
 
-    base_date = _safe_date(ty.year, ty.month, ty.day)
-    num_days = 15  # 當日 + 14 天
+    style = results.get("style", 3)
+    scale = _STYLE_SCALE.get(style, "day")
 
-    # 初始化選中日期
+    # 太乙命法不顯示流卦時間軸
+    if style in (5, 6):
+        return ""
+
+    steps = _generate_time_steps(ty, scale)
+    num = len(steps)
+
+    # 初始化選中
     sel_key = "liuri_selected_offset"
     if st.session_state.get(sel_key) is None:
         st.session_state[sel_key] = 0
 
-    # 讀取 query param 更新選中（舊版相容）— 讀完立即清除
+    # 讀取 query param 更新選中
     qp = st.query_params
     if "liuri_offset" in qp:
         try:
             new_offset = int(qp["liuri_offset"])
-            if 0 <= new_offset < num_days:
+            if 0 <= new_offset < num:
                 st.session_state[sel_key] = new_offset
         except (ValueError, TypeError):
             pass
         del st.query_params["liuri_offset"]
 
-    # ── 時間軸卡片帶（純 HTML，不含 JS）──
+    # ── i18n key 對應 ──
+    label_key = {
+        "year": "liunian_label",
+        "month": "liuyue_label",
+        "day": "liuri_label",
+        "hour": "liushi_label",
+        "minute": "liufen_label",
+    }[scale]
+    hex_label_key = {
+        "year": "year_hex",
+        "month": "month_hex",
+        "day": "day_hex",
+        "hour": "hour_hex",
+        "minute": "minute_hex",
+    }[scale]
+
+    # ── 時間軸卡片帶 ──
     cards_html: list[str] = []
-    for i in range(num_days):
-        d = base_date + timedelta(days=i)
-        gua_name, gua_symbol, _ = _compute_day_gua(d.year, d.month, d.day)
+    for i, step in enumerate(steps):
+        gua_name, gua_symbol, _ = _compute_gua(
+            step["year"], step["month"], step["day"],
+            step["hour"], step["minute"], scale,
+        )
         if not gua_name:
             continue
-        yao_idx = _compute_day_yao(d.year, d.month, d.day)
+        yao_idx = _compute_yao(
+            step["year"], step["month"], step["day"],
+            step["hour"], step["minute"], scale,
+        )
         yao_name = _get_yao_name(gua_name, yao_idx)
         is_selected = (i == st.session_state[sel_key])
-        is_weekend = d.weekday() >= 5
 
         cls = "liuri-card"
         if is_selected:
@@ -237,22 +387,19 @@ def render_hex_timeline(results: dict, *, t) -> str:
         bits = _gua_line_bits(gua_name)
         lines_html = _render_mini_lines(bits, yao_idx, is_selected)
 
-        date_str = f"{d.month}/{d.day}"
-        weekday_labels = ("一", "二", "三", "四", "五", "六", "日")
-        weekday = weekday_labels[d.weekday()]
+        date_str = step["label"]
+        sub_label = step.get("sub_label", "")
         ji_color = _JI_COLOR.get(yao_idx, "var(--text-muted)")
-        weekend_cls = " liuri-weekend" if is_weekend else ""
-        aria_label = f"{date_str} {weekday} {_esc(gua_name)} {_esc(yao_name)}"
+        aria_label = f"{date_str} {sub_label} {_esc(gua_name)} {_esc(yao_name)}".strip()
 
-        # Wrap each card in an anchor so clicking sets ?liuri_offset=N,
-        # which Streamlit reads on rerun to switch the selected day.
-        # This replaces the 15 st.button widgets that showed as white bars.
+        sub_html = f'<span class="liuri-weekday">{_esc(sub_label)}</span>' if sub_label else ""
+
         cards_html.append(
             f'<a class="liuri-card-link" href="?liuri_offset={i}" '
             f'aria-label="{aria_label}">'
             f'<div class="{cls}" data-offset="{i}">'
             f'<span class="liuri-date">{date_str}</span>'
-            f'<span class="liuri-weekday{weekend_cls}">{weekday}</span>'
+            f'{sub_html}'
             f'<span class="liuri-symbol">{_esc(gua_symbol)}</span>'
             f'<span class="liuri-name">{_esc(gua_name)}</span>'
             f'{lines_html}'
@@ -262,17 +409,26 @@ def render_hex_timeline(results: dict, *, t) -> str:
 
     inner = "".join(cards_html)
 
-    # ── 詳細解讀卡片（依選中日期）──
-    sel_offset = st.session_state[sel_key]
-    sel_date = base_date + timedelta(days=sel_offset)
-    sel_name, sel_symbol, _ = _compute_day_gua(sel_date.year, sel_date.month, sel_date.day)
-    sel_yao = _compute_day_yao(sel_date.year, sel_date.month, sel_date.day)
-    detail_html = render_hex_detail_card(sel_name, sel_symbol, "day", t("day_hex"), sel_yao, t=t)
+    # ── 詳細解讀卡片 ──
+    sel_offset = min(st.session_state[sel_key], num - 1)
+    sel_step = steps[sel_offset]
+    sel_name, sel_symbol, _ = _compute_gua(
+        sel_step["year"], sel_step["month"], sel_step["day"],
+        sel_step["hour"], sel_step["minute"], scale,
+    )
+    sel_yao = _compute_yao(
+        sel_step["year"], sel_step["month"], sel_step["day"],
+        sel_step["hour"], sel_step["minute"], scale,
+    )
+    detail_html = render_hex_detail_card(
+        sel_name, sel_symbol, _SCALE_LAYER[scale],
+        t(hex_label_key), sel_yao, t=t,
+    )
 
     section_html = f"""
 <section class="liuri-section">
   <div class="liuri-header">
-    <span class="liuri-label">{_esc(t("liuri_label"))}</span>
+    <span class="liuri-label">{_esc(t(label_key))}</span>
     <span class="liuri-scroll-hint">{_esc(t("liuri_scroll_hint"))}</span>
   </div>
   <div class="liuri-track">
@@ -317,6 +473,18 @@ def render_hex_detail_card(
             f"</details>"
         )
 
+    # 動爻辭（折疊）— 顯示選中爻的觀象全文
+    yao_ci_html = ""
+    if xiang and yao_idx and xiang.get("爻觀象"):
+        yao_text = xiang["爻觀象"].get(yao_idx, "")
+        if yao_text:
+            yao_ci_html = (
+                f'<details class="hex-detail-zongshu" open>'
+                f'<summary>{_esc(t("hex_yao_ci"))} · {_esc(yao_name)}</summary>'
+                f'<p>{_esc(yao_text)}</p>'
+                f"</details>"
+            )
+
     # 動爻標示
     yao_html = ""
     if yao_name:
@@ -336,6 +504,7 @@ def render_hex_detail_card(
     </div>
   </div>
   <div class="hex-detail-body">
+    {yao_ci_html}
     {zongshu_html}
   </div>
 </article>"""
