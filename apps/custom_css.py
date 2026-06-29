@@ -39,7 +39,7 @@ def get_custom_css() -> str:
     /* Fixed sidebar — must match SIDEBAR_WIDTH_PX */
     --sidebar-width: {w}px;
     --sidebar-collapsed-width: 2.875rem;
-    --topnav-height: 52px;
+    --topnav-height: 38px;
     --font-sans:     'Inter', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
     --radius-sm:     8px;
     --radius-md:     12px;
@@ -101,8 +101,8 @@ html, body, .stApp {{
     justify-content: space-between;
     gap: 1rem;
     min-height: var(--topnav-height);
-    padding: 0.65rem 1.25rem;
-    margin: -1rem -1rem 1rem -1rem;
+    padding: 0.35rem 1rem;
+    margin: -1rem -1rem 0.3rem -1rem;
     background: rgba(10, 10, 10, 0.92);
     border-bottom: 1px solid var(--border-subtle);
     backdrop-filter: blur(12px);
@@ -154,8 +154,8 @@ section.main {{
 }}
 .main .block-container,
 [data-testid="stMainBlockContainer"] {{
-    padding-top: 0.5rem !important;
-    padding-bottom: 2rem !important;
+    padding-top: 0.15rem !important;
+    padding-bottom: 1rem !important;
     width: 100% !important;
     transition: max-width 0.2s ease, padding 0.2s ease;
 }}
@@ -876,18 +876,32 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
     margin-left: auto;
     margin-right: auto;
 }}
-/* ── 桌面版：排盤 iframe 最大化（填滿左欄） ── */
+/* ── 桌面版：排盤 iframe 最大化（填滿左欄，首屏可見） ── */
 @media (min-width: 900px) {{
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) iframe {{
         max-width: 100% !important;
         width: 100% !important;
+        /* 限制 iframe 高度不超過 viewport，避免捲動 */
+        max-height: calc(100vh - 5.5rem) !important;
     }}
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
         max-width: 100%;
     }}
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
-        padding: 0.5rem 0.5rem 0.25rem;
-        margin-bottom: 0.15rem;
+        padding: 0.2rem 0.2rem 0.1rem;
+        margin-bottom: 0.1rem;
+    }}
+    /* 桌面版 tabs 上方無額外間距 */
+    div[data-testid="stTabs"] {{
+        margin-top: 0 !important;
+    }}
+    /* 隱藏 Streamlit 預設 header padding */
+    [data-testid="stHeader"] {{
+        min-height: 0 !important;
+        height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        visibility: hidden !important;
     }}
 }}
 
