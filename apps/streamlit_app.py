@@ -4449,81 +4449,11 @@ with tabs[0]:
 with tabs[1]:
     st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "docs/instruction.md"))
 
-# 太乙局數史例（動態生成）
+# 太乙局數史例
 with tabs[2]:
-    # ── 經典史例資料（年月日時 → 年計模式）──
-    _HISTORY_EXAMPLES = [
-        {"year": -771, "month": 1, "day": 15, "hour": 0, "minute": 0,
-         "title": "周幽王十一年（BC771）太乙在八宮",
-         "desc": "《太乙淘金歌》載：太乙在八宮，大炅為天目，主算得二十五，八門社塞。是歲穆公使百里溪伐鄭，秦兵大敗。"},
-        {"year": 1282, "month": 1, "day": 15, "hour": 0, "minute": 0,
-         "title": "元至元十九年（1282）張康論盗兵之亂",
-         "desc": "《元史‧張康傳》：歲壬午，太一理艮宮，主大將客、參將囚，直符治事，正屬燕分。明年春，京城當有盜兵。"},
-        {"year": 1283, "month": 1, "day": 15, "hour": 0, "minute": 0,
-         "title": "元至元二十年（1283）張康論伐日本",
-         "desc": "《元史‧張康傳》：帝欲徵日本，命康以太一推之，康奏曰：「今年太一無算，舉兵不利。」從之。"},
-        {"year": -685, "month": 1, "day": 15, "hour": 0, "minute": 0,
-         "title": "齊襄公十一年（BC685）公子小白入齊",
-         "desc": "齊公子無知弒襄公代立，公子糌奔魯，小白奔莒。後齊人殺無知，小白入，是為桓公。"},
-        {"year": 2026, "month": 6, "day": 29, "hour": 9, "minute": 30,
-         "title": "當前排盤（2026年6月29日巳時）",
-         "desc": "以當前日期時間為例的年計排盤演示。"},
-    ]
-
-    # 年計模式：style=0, tn=0（太乙統宗）
-    _HIST_STYLE = 0
-    _HIST_TN = 0
-    _HIST_SEX = "男"
-    _HIST_TC = 0
-
-    for _ex in _HISTORY_EXAMPLES:
-        st.markdown(f"#### {_ex['title']}")
-        st.caption(_ex["desc"])
-
-        try:
-            _hist_results = gen_results(
-                _ex["year"], _ex["month"], _ex["day"],
-                _ex["hour"], _ex["minute"],
-                _HIST_STYLE, _HIST_TN, _HIST_SEX, _HIST_TC,
-            )
-            if _hist_results:
-                # 顯示干支曆 + 局數
-                _gz = _hist_results.get("gz", "")
-                _kook = _hist_results.get("kook", {})
-                _bureau = _hist_results.get("ttext", {}).get("局式", {}).get("年", "") or _kook.get("文", "")
-                st.markdown(f"**干支曆：** {_gz}")
-                st.markdown(f"**局數：** {_bureau}　**主/客/定：** {_hist_results.get('homecal','—')} / {_hist_results.get('awaycal','—')} / {_hist_results.get('setcal','—')}")
-
-                # 動態生成 SVG 排盤
-                _genchart = _hist_results.get("genchart2", "")
-                if _genchart:
-                    try:
-                        _start = _genchart[_genchart.index('viewBox="')+22:].split(" ")[1]
-                    except (ValueError, IndexError):
-                        _start = 0
-                    _hist_meta = _resolve_chart_meta(
-                        _hist_results,
-                        is_life_chart=False,
-                        show_geju_markers=True,
-                        show_guxu_overlay=True,
-                        show_wuxing_color=True,
-                    )
-                    render_svg1(_genchart, int(_start), _hist_meta)
-
-                # 顯示太乙應期斷語
-                _ts = _hist_results.get("ts", "")
-                if _ts:
-                    st.markdown(f"**太乙應期斷語：** {_ts[:80]}")
-
-                # 顯示史事記載
-                _ch = _hist_results.get("ch", "")
-                if _ch:
-                    with st.expander(t("history_records"), expanded=False):
-                        st.markdown(_ch)
-        except Exception as _hist_err:
-            st.error(f"史例排盤錯誤：{_hist_err}")
-
-        st.markdown("---")
+    timeline(_load_example_timeline_json(), height=600)
+    with st.expander(t("list_label")):
+        st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "docs/example.md"))
 
 # 災害統計
 with tabs[3]:
