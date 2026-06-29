@@ -3728,9 +3728,9 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     # st.iframe with inline HTML (replaces deprecated st.components.v1.html).
     # Passing an HTML string as the first positional arg (src) makes Streamlit
     # auto-detect it as srcdoc content.
-    # Initial height set large enough to display the full chart;
+    # Initial height kept compact for desktop first-screen visibility;
     # the template JS uses postMessage to auto-resize to exact content height.
-    _initial_height = max(900, abs(num) + 300)
+    _initial_height = max(600, abs(num) + 80)
     st.iframe(html_content, height=_initial_height, width="stretch")
 
 
@@ -4359,7 +4359,7 @@ with tabs[0]:
 
                     else:
                         # ── 桌面版：左排盤 + 右參數面板 雙欄佈局 ──
-                        chart_main_col, chart_side_col = st.columns([1.65, 0.85], gap="large")
+                        chart_main_col, chart_side_col = st.columns([2.8, 0.5], gap="small")
                         with chart_main_col:
                             render_chart_stage_open(
                                 print_meta=build_chart_print_meta(results, t=t),
@@ -4369,9 +4369,10 @@ with tabs[0]:
                                 render_svg(results["genchart2"], int(start_pt2), chart_meta)
                             else:
                                 render_svg1(results["genchart2"], int(start_pt2), chart_meta)
-                            render_chart_mobile_params(chart_meta, results, t=t)
                         with chart_side_col:
-                            render_chart_side_panel(chart_meta, results, t=t)
+                            # 右側資訊面板用 expander 收合，減少垂直佔用
+                            with st.expander(t("chart_meta_detail"), expanded=False):
+                                render_chart_side_panel(chart_meta, results, t=t)
 
                         # —— 流日卦時間軸 ——
                         _hex_html = render_hex_timeline(results, t=t)
