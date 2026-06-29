@@ -3675,9 +3675,11 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         .replace("__EXPORT_CSS__", json.dumps(export_css, ensure_ascii=False))
         .replace("__EXPORT_CSS_BY_MODE__", json.dumps(export_css_bundle, ensure_ascii=False))
     )
-    # st.components.v1.html with fixed height — st.iframe has auto-sizing issues on desktop.
+    # st.iframe replaces deprecated st.components.v1.html (removed after 2026-06-01).
+    # st.iframe with height="content" auto-sizes to the iframe's content height,
+    # which works with the postMessage setFrameHeight protocol in the template JS.
     _initial_height = max(900, abs(num) + 200)
-    st.components.v1.html(html_content, height=_initial_height)
+    st.iframe(html_content, height=_initial_height, width="stretch")
 
 
 def render_svg(svg, num, chart_meta):
@@ -3718,7 +3720,7 @@ def timeline(data, height=800):
             timeline = new TL.Timeline('timeline-embed', {source_param}, additionalOptions);
         </script>
     '''
-    st.components.v1.html(htmlcode, height=height)
+    st.iframe(htmlcode, height=height, width="stretch")
 
 @contextmanager
 def st_capture(output_func):
