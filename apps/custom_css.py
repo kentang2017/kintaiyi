@@ -615,13 +615,6 @@ input:focus, textarea:focus,
     margin: 0.5rem 0 !important;
     overflow: hidden;
 }}
-/* Hide the Baseweb collapsable triangle icon to match classic-card look */
-.stExpander [data-testid="stExpander"] > div:first-child svg,
-.stExpander svg {{
-    display: none !important;
-    width: 0 !important;
-    height: 0 !important;
-}}
 .stExpander summary {{
     color: var(--text-primary) !important;
     font-size: 0.88rem !important;
@@ -629,9 +622,6 @@ input:focus, textarea:focus,
     padding: 0.6rem 0.85rem !important;
     list-style: none;
     transition: background 0.15s ease;
-    display: flex;
-    align-items: baseline;
-    gap: 0.6rem;
 }}
 .stExpander summary:hover {{
     background: rgba(255, 255, 255, 0.04) !important;
@@ -1946,12 +1936,23 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
 .classic-card-header {{
     display: flex;
     align-items: baseline;
-    justify-content: space-between;
     gap: 0.6rem;
     padding: 0.6rem 0.85rem;
     cursor: pointer;
     list-style: none;
     transition: background 0.15s ease;
+}}
+/* ">" indicator before the title — matches st.expander triangle */
+.classic-card-header::before {{
+    content: "▶";
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    transition: transform 0.15s ease;
+    display: inline-block;
+    margin-right: 0.1rem;
+}}
+.classic-card[open] .classic-card-header::before {{
+    transform: rotate(90deg);
 }}
 .classic-card-header::-webkit-details-marker {{
     display: none;
@@ -1966,13 +1967,7 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
     white-space: nowrap;
 }}
 .classic-card-preview {{
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-align: right;
-    flex: 1;
+    display: none;
 }}
 .classic-card-body {{
     padding: 0.6rem 0.85rem 0.8rem;
