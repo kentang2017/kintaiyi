@@ -3728,9 +3728,9 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     # st.iframe with inline HTML (replaces deprecated st.components.v1.html).
     # Passing an HTML string as the first positional arg (src) makes Streamlit
     # auto-detect it as srcdoc content.
-    # Initial height is kept moderate; the template JS uses postMessage
-    # to auto-resize the iframe to its actual content height.
-    _initial_height = max(600, abs(num) + 120)
+    # Initial height set large enough to display the full chart;
+    # the template JS uses postMessage to auto-resize to exact content height.
+    _initial_height = max(900, abs(num) + 300)
     st.iframe(html_content, height=_initial_height, width="stretch")
 
 

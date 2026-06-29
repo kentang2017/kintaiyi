@@ -876,6 +876,19 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
     margin-left: auto;
     margin-right: auto;
 }}
+/* ── 桌面版：排盤 iframe 寬度放寬，完整顯示 ── */
+@media (min-width: 900px) {{
+    div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) iframe {{
+        max-width: min(80vw, 800px) !important;
+    }}
+    div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
+        max-width: min(80vw, 800px);
+    }}
+    div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
+        padding: 0.5rem 0.5rem 0.25rem;
+        margin-bottom: 0.15rem;
+    }}
+}}
 
 /* ── CHART SIDE PANEL / CARD V2 ──────────────────────────────────────── */
 .chart-side-panel {{
