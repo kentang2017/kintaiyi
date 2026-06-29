@@ -659,10 +659,6 @@ input:focus, textarea:focus,
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-mobile-meta) {{
         display: none !important;
     }}
-    /* ── 桌面版緊湊化：減少水平 block gap ── */
-    div[data-testid="stHorizontalBlock"]:has(.chart-stage-marker) {{
-        gap: 0.75rem !important;
-    }}
 }}
 .chart-meta-gz-row {{
     display: flex;
@@ -887,19 +883,9 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
     gap: 0.65rem;
     padding-top: 0.35rem;
 }}
-@media (min-width: 900px) {{
-    .chart-side-panel {{
-        position: sticky;
-        top: 4.5rem;
-    }}
-}}
-@media (max-width: 899px) {{
-    .chart-summary-desktop {{
-        display: none !important;
-    }}
-    div[data-testid="stHorizontalBlock"]:has(.chart-summary-desktop) > div:has(.chart-summary-desktop) {{
-        display: none !important;
-    }}
+/* 側邊面板現在在排盤下方全寬顯示（不再 sticky，不再限桌面） */
+.chart-summary-desktop {{
+    display: flex;
 }}
 .grok-card-v2 {{
     background: rgba(255, 255, 255, 0.03);

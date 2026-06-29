@@ -4358,20 +4358,19 @@ with tabs[0]:
                                         st.markdown(f"**客方最優純策略：** {gt_report['客方最優純策略']}")
 
                     else:
-                        # ── 桌面版：維持原有雙欄佈局 ──
-                        chart_main_col, chart_side_col = st.columns([1.65, 0.85], gap="large")
-                        with chart_main_col:
-                            render_chart_stage_open(
-                                print_meta=build_chart_print_meta(results, t=t),
-                            )
-                            render_chart_explanation_seam()
-                            if rotation == "轉動":
-                                render_svg(results["genchart2"], int(start_pt2), chart_meta)
-                            else:
-                                render_svg1(results["genchart2"], int(start_pt2), chart_meta)
-                            render_chart_mobile_params(chart_meta, results, t=t)
-                        with chart_side_col:
-                            render_chart_side_panel(chart_meta, results, t=t)
+                        # ── 桌面版：排盤置頂，參數面板移至排盤下方 ──
+                        render_chart_stage_open(
+                            print_meta=build_chart_print_meta(results, t=t),
+                        )
+                        render_chart_explanation_seam()
+                        if rotation == "轉動":
+                            render_svg(results["genchart2"], int(start_pt2), chart_meta)
+                        else:
+                            render_svg1(results["genchart2"], int(start_pt2), chart_meta)
+
+                        # ── 右側參數面板移至排盤之後 ──
+                        render_chart_side_panel(chart_meta, results, t=t)
+                        render_chart_mobile_params(chart_meta, results, t=t)
 
                         # —— 流日卦時間軸 ——
                         _hex_html = render_hex_timeline(results, t=t)
