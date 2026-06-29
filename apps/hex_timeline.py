@@ -319,11 +319,13 @@ def render_hex_detail_card(
 </article>"""
 
 
-def render_classic_reading(results: dict, *, t) -> tuple[str, dict | None]:
+def render_classic_reading(results: dict, *, t) -> tuple[str, dict | None, str]:
     """渲染古典解讀卡片群 — 全部整合，無重複。
 
-    Returns (html, wuzhen_data) — wuzhen_data 為五陣置旗 dict，需由調用者以
-    _render_wuzhen_bazhen_viz 渲染（因含 st.dataframe 無法 HTML 化）。
+    Returns (html, wuzhen_data, mil_text):
+      - html: classic-card HTML string (不含軍事戰略，軍事戰略改為 st.expander 由調用者渲染)
+      - wuzhen_data: 五陣置旗 dict，由調用者以 _render_wuzhen_bazhen_viz 渲染
+      - mil_text: 軍事戰略摘要文字，由調用者在軍事戰略 expander 內顯示
 
     卡片分類：
       1. 太乙秘書 — 古典斷語
@@ -555,9 +557,9 @@ def render_classic_reading(results: dict, *, t) -> tuple[str, dict | None]:
             f"太陰黑旗{_sq.get('太陰黑旗', '—')}、"
             f"害氣赤旗{_sq.get('害氣赤旗', '—')}（{_sq.get('會合', '')}）"
         )
+    _mil_text = ""
     if mil_parts:
-        mil_text = "\n\n".join(mil_parts)
-        parts.append(_classic_card(t("junshi_label"), "", mil_text))
+        _mil_text = "\n\n".join(mil_parts)
 
     # ── 8. 災變分野（卷十一 + 卷八，合併）──
     disaster_parts = []
@@ -649,10 +651,10 @@ def render_classic_reading(results: dict, *, t) -> tuple[str, dict | None]:
     _wuzhen_data = (ttext.get("軍事應用", {}) or {}).get("五陣置旗")
 
     if not parts:
-        return ("", _wuzhen_data)
+        return ("", _wuzhen_data, _mil_text)
 
     inner = "\n".join(parts)
-    return (f'<div class="classic-reading-section">{inner}</div>', _wuzhen_data)
+    return (f'<div class="classic-reading-section">{inner}</div>', _wuzhen_data, _mil_text)
 
 
 # ── 內部渲染函數 ────────────────────────────────────────

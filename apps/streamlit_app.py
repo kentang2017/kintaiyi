@@ -744,7 +744,7 @@ TRANSLATIONS = {
         "chat_clear": "🗑️ 清除對話",
         # 博弈論
         "game_theory_toggle": "🎯 啟用運籌博弈分析（Nash 均衡）",
-        "game_theory_header": "⚔️ 運籌博弈分析（太乙古法 × Nash 均衡）",
+        "game_theory_header": "運籌博弈分析",
         "game_theory_payoff": "零和支付矩陣（主方視角）",
         "game_theory_home_strategy": "主方最優混合策略",
         "game_theory_away_strategy": "客方最優混合策略",
@@ -1055,7 +1055,7 @@ TRANSLATIONS = {
         "chat_clear": "🗑️ Clear Chat",
         # Game Theory
         "game_theory_toggle": "🎯 Enable Game Theory Analysis (Nash Equilibrium)",
-        "game_theory_header": "⚔️ Operations Research & Game Theory Analysis",
+        "game_theory_header": "Operations Research & Game Theory Analysis",
         "game_theory_payoff": "Zero-Sum Payoff Matrix (Home Perspective)",
         "game_theory_home_strategy": "Home Optimal Mixed Strategy",
         "game_theory_away_strategy": "Away Optimal Mixed Strategy",
@@ -3755,7 +3755,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     # auto-detect it as srcdoc content.
     # Initial height kept compact for desktop first-screen visibility;
     # the template JS uses postMessage to auto-resize to exact content height.
-    _initial_height = max(600, abs(num) + 80)
+    _initial_height = 500
     st.iframe(html_content, height=_initial_height, width="stretch")
 
 
@@ -4331,16 +4331,19 @@ with tabs[0]:
                             unsafe_allow_html=True,
                         )
                         with st.expander(t("explanation")):
-                            _classic_html, _wuzhen_data = render_classic_reading(results, t=t)
+                            _classic_html, _wuzhen_data, _mil_text = render_classic_reading(results, t=t)
                             if _classic_html:
                                 st.markdown(_classic_html, unsafe_allow_html=True)
                             # 大小遊軌運（可折疊）
                             with st.expander(t("guiyun_label"), expanded=False):
                                 _render_vol9_explanation(results["ttext"].get("卷九", {}))
-                            # 五陣八陣 dataframe（軍事戰略文字已在古典解讀卡片中顯示）
-                            if _wuzhen_data:
-                                with st.expander(t("wuzhen_bazhen_viz"), expanded=False):
-                                    _render_wuzhen_bazhen_viz(_wuzhen_data)
+                            # 軍事戰略（含五陣八陣）
+                            if _mil_text or _wuzhen_data:
+                                with st.expander(t("junshi_label"), expanded=False):
+                                    if _mil_text:
+                                        st.markdown(_mil_text)
+                                    if _wuzhen_data:
+                                        _render_wuzhen_bazhen_viz(_wuzhen_data)
                             # 運籌博弈分析（可折疊）
                             if st.session_state.get("game_theory_toggle_switch", True):
                                 with st.expander(t("game_theory_header"), expanded=False):
@@ -4383,7 +4386,7 @@ with tabs[0]:
 
                     else:
                         # ── 桌面版：左排盤 + 右參數面板 雙欄佈局 ──
-                        chart_main_col, chart_side_col = st.columns([1.8, 1.0], gap="small")
+                        chart_main_col, chart_side_col = st.columns([5.8, 2.1], gap="small")
                         with chart_main_col:
                             render_chart_stage_open(
                                 print_meta=build_chart_print_meta(results, t=t),
@@ -4411,16 +4414,19 @@ with tabs[0]:
                         )
                         with st.expander(t("explanation")):
                             # —— 古典解讀卡片群（全部整合，無重複）——
-                            _classic_html, _wuzhen_data = render_classic_reading(results, t=t)
+                            _classic_html, _wuzhen_data, _mil_text = render_classic_reading(results, t=t)
                             if _classic_html:
                                 st.markdown(_classic_html, unsafe_allow_html=True)
                             # 大小遊軌運（可折疊）
                             with st.expander(t("guiyun_label"), expanded=False):
                                 _render_vol9_explanation(results["ttext"].get("卷九", {}))
-                            # 五陣八陣 dataframe（軍事戰略文字已在古典解讀卡片中顯示）
-                            if _wuzhen_data:
-                                with st.expander(t("wuzhen_bazhen_viz"), expanded=False):
-                                    _render_wuzhen_bazhen_viz(_wuzhen_data)
+                            # 軍事戰略（含五陣八陣）
+                            if _mil_text or _wuzhen_data:
+                                with st.expander(t("junshi_label"), expanded=False):
+                                    if _mil_text:
+                                        st.markdown(_mil_text)
+                                    if _wuzhen_data:
+                                        _render_wuzhen_bazhen_viz(_wuzhen_data)
                             # 運籌博弈分析（在解釋 expander 內，可折疊）
                             if st.session_state.get("game_theory_toggle_switch", True):
                                 with st.expander(t("game_theory_header"), expanded=False):

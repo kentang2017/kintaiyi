@@ -613,16 +613,29 @@ input:focus, textarea:focus,
     border: 1px solid var(--border-subtle) !important;
     border-radius: var(--radius-md) !important;
     margin: 0.5rem 0 !important;
+    overflow: hidden;
 }}
 .stExpander summary {{
     color: var(--text-primary) !important;
     font-size: 0.88rem !important;
     font-weight: 500 !important;
+    padding: 0.6rem 0.85rem !important;
+    list-style: none;
+    transition: background 0.15s ease;
+}}
+.stExpander summary:hover {{
+    background: rgba(255, 255, 255, 0.04) !important;
+}}
+.stExpander summary::-webkit-details-marker {{
+    display: none;
 }}
 .stExpander [data-testid="stExpanderDetails"] {{
     background: var(--bg-elevated) !important;
     border-top: 1px solid var(--border-subtle) !important;
     color: var(--text-primary) !important;
+    padding: 0.6rem 0.85rem 0.8rem !important;
+    font-size: 0.82rem !important;
+    line-height: 1.65 !important;
 }}
 
 /* ── CARDS / METRICS ────────────────────────────────────────────────── */
@@ -881,20 +894,18 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
     margin-left: auto;
     margin-right: auto;
 }}
-/* ── 桌面版：排盤縮小30%，首屏完整可見（無捲動） ── */
+/* ── 桌面版：排盤置中，首屏完整可見（無捲動） ── */
 @media (min-width: 900px) {{
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) iframe {{
-        max-width: 70% !important;
-        width: 70% !important;
-        /* 不限制 iframe 高度 — 讓 postMessage 自動調整到內容實際高度，
-           排盤 SVG 已用 aspect-ratio:1/1 + width:100% 自適應縮小，
-           iframe 內容不超出邊界，故不產生 scrollbar。 */
+        width: 100% !important;
+        /* 不限制 iframe 高度 — postMessage(setFrameHeight) 會 clamp 到
+           parent viewport - 100px，排盤 SVG 自適應縮小，無 scrollbar。 */
         min-height: 400px !important;
         margin-left: auto !important;
         margin-right: auto !important;
     }}
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
-        max-width: 70%;
+        max-width: 100%;
         margin-left: auto;
         margin-right: auto;
     }}
