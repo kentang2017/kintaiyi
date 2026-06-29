@@ -4335,58 +4335,9 @@ with tabs[0]:
                             unsafe_allow_html=True,
                         )
                         with st.expander(t("explanation")):
-                            _classic_html, _wuzhen_data, _mil_text = render_classic_reading(results, t=t)
+                            _classic_html = render_classic_reading(results, t=t)
                             if _classic_html:
                                 st.markdown(_classic_html, unsafe_allow_html=True)
-                            # 大小遊軌運（可折疊）
-                            with st.expander(t("guiyun_label"), expanded=False):
-                                _render_vol9_explanation(results["ttext"].get("卷九", {}))
-                            # 軍事戰略（含五陣八陣）
-                            if _mil_text or _wuzhen_data:
-                                with st.expander(t("junshi_label"), expanded=False):
-                                    if _mil_text:
-                                        st.markdown(_mil_text)
-                                    if _wuzhen_data:
-                                        _render_wuzhen_bazhen_viz(_wuzhen_data)
-                            # 運籌博弈分析（可折疊）
-                            if st.session_state.get("game_theory_toggle_switch", True):
-                                with st.expander(t("game_theory_header"), expanded=False):
-                                    with st.spinner(t("game_theory_computing")):
-                                        try:
-                                            gt = TaiyiGame(results["ttext"])
-                                            gt_report = gt.分析報告()
-                                        except Exception as gt_err:
-                                            st.error(f"博弈分析錯誤：{gt_err}")
-                                            gt_report = None
-                                    if gt_report:
-                                        st.markdown(f"**古法推主客相闗：** {gt_report['古法推主客相闗']}")
-                                        st.markdown(f"**{t('game_theory_winrate')}：** {gt_report['主方勝率判斷']}")
-                                        st.markdown(f"**{t('game_theory_value')}：** `{gt_report['博弈均衡值']}`")
-                                        st.markdown(f"##### {t('game_theory_payoff')}")
-                                        payoff_df = pd.DataFrame(
-                                            gt_report["支付矩陣"],
-                                            index=_gt_主方策略列,
-                                            columns=_gt_客方策略列,
-                                        ).round(2)
-                                        st.dataframe(payoff_df)
-                                        col_h, col_a = st.columns(2)
-                                        with col_h:
-                                            st.markdown(f"**{t('game_theory_home_strategy')}**")
-                                            home_df = pd.DataFrame(
-                                                {"策略": _gt_主方策略列, "概率": gt_report["主方均衡策略"]}
-                                            )
-                                            st.dataframe(home_df, hide_index=True)
-                                        with col_a:
-                                            st.markdown(f"**{t('game_theory_away_strategy')}**")
-                                            away_df = pd.DataFrame(
-                                                {"策略": _gt_客方策略列, "概率": gt_report["客方均衡策略"]}
-                                            )
-                                            st.dataframe(away_df, hide_index=True)
-                                        lp = gt_report["LP最大勝率"]
-                                        st.markdown(f"##### {t('game_theory_lp')}")
-                                        st.info(lp["建議文字"])
-                                        st.markdown(f"**主方最優純策略：** {gt_report['主方最優純策略']}")
-                                        st.markdown(f"**客方最優純策略：** {gt_report['客方最優純策略']}")
 
                     else:
                         # ── 桌面版：左排盤 + 右參數面板 雙欄佈局 ──
@@ -4418,61 +4369,9 @@ with tabs[0]:
                         )
                         with st.expander(t("explanation")):
                             # —— 古典解讀卡片群（全部整合，無重複）——
-                            _classic_html, _wuzhen_data, _mil_text = render_classic_reading(results, t=t)
+                            _classic_html = render_classic_reading(results, t=t)
                             if _classic_html:
                                 st.markdown(_classic_html, unsafe_allow_html=True)
-                            # 大小遊軌運（可折疊）
-                            with st.expander(t("guiyun_label"), expanded=False):
-                                _render_vol9_explanation(results["ttext"].get("卷九", {}))
-                            # 軍事戰略（含五陣八陣）
-                            if _mil_text or _wuzhen_data:
-                                with st.expander(t("junshi_label"), expanded=False):
-                                    if _mil_text:
-                                        st.markdown(_mil_text)
-                                    if _wuzhen_data:
-                                        _render_wuzhen_bazhen_viz(_wuzhen_data)
-                            # 運籌博弈分析（在解釋 expander 內，可折疊）
-                            if st.session_state.get("game_theory_toggle_switch", True):
-                                with st.expander(t("game_theory_header"), expanded=False):
-                                    with st.spinner(t("game_theory_computing")):
-                                        try:
-                                            gt = TaiyiGame(results["ttext"])
-                                            gt_report = gt.分析報告()
-                                        except Exception as gt_err:
-                                            st.error(f"博弈分析錯誤：{gt_err}")
-                                            gt_report = None
-                                    if gt_report:
-                                        st.markdown(f"**古法推主客相闗：** {gt_report['古法推主客相闗']}")
-                                        st.markdown(f"**{t('game_theory_winrate')}：** {gt_report['主方勝率判斷']}")
-                                        st.markdown(f"**{t('game_theory_value')}：** `{gt_report['博弈均衡值']}`")
-
-                                        st.markdown(f"##### {t('game_theory_payoff')}")
-                                        payoff_df = pd.DataFrame(
-                                            gt_report["支付矩陣"],
-                                            index=_gt_主方策略列,
-                                            columns=_gt_客方策略列,
-                                        ).round(2)
-                                        st.dataframe(payoff_df)
-
-                                        col_h, col_a = st.columns(2)
-                                        with col_h:
-                                            st.markdown(f"**{t('game_theory_home_strategy')}**")
-                                            home_df = pd.DataFrame(
-                                                {"策略": _gt_主方策略列, "概率": gt_report["主方均衡策略"]}
-                                            )
-                                            st.dataframe(home_df, hide_index=True)
-                                        with col_a:
-                                            st.markdown(f"**{t('game_theory_away_strategy')}**")
-                                            away_df = pd.DataFrame(
-                                                {"策略": _gt_客方策略列, "概率": gt_report["客方均衡策略"]}
-                                            )
-                                            st.dataframe(away_df, hide_index=True)
-
-                                        lp = gt_report["LP最大勝率"]
-                                        st.markdown(f"##### {t('game_theory_lp')}")
-                                        st.info(lp["建議文字"])
-                                        st.markdown(f"**主方最優純策略：** {gt_report['主方最優純策略']}")
-                                        st.markdown(f"**客方最優純策略：** {gt_report['客方最優純策略']}")
 
     except Exception as e:
         st.error(t("gen_error").format(str(e)))

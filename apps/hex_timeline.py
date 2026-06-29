@@ -11,9 +11,31 @@ from datetime import date, timedelta
 from html import escape as _esc
 
 from kintaiyi import config
+from kintaiyi.guiyun_display import chong_gua_row, inner_outer_rows, limit_rows
+from kintaiyi.junshi_display import (
+    wuzhen_bazhen_svg,
+    wuzhen_reference_rows,
+    wuzhen_table_rows,
+)
+from kintaiyi.game_theory import TaiyiGame, 主方策略列 as _gt_主方策略列, 客方策略列 as _gt_客方策略列
 
 # ── 負數年份（公元前）日期支援 ─────────────────────────────
 import sxtwl as _sxtwl
+
+
+def _html_table(rows: list[dict], *, headers: list[str] | None = None) -> str:
+    """從 dict list 生成 HTML 表格。"""
+    if not rows:
+        return ""
+    keys = headers or list(rows[0].keys())
+    def _cell(v: str) -> str:
+        s = str(v) if v is not None else "—"
+        return _esc(s)
+    head = "".join(f"<th>{_esc(k)}</th>" for k in keys)
+    body = ""
+    for r in rows:
+        body += "<tr>" + "".join(f"<td>{_cell(r.get(k, ''))}</td>" for k in keys) + "</tr>"
+    return f'<table class="classic-grid-table"><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table>'
 
 
 class _SafeDate:
@@ -319,13 +341,11 @@ def render_hex_detail_card(
 </article>"""
 
 
-def render_classic_reading(results: dict, *, t) -> tuple[str, dict | None, str]:
-    """渲染古典解讀卡片群 — 全部整合，無重複。
+def render_classic_reading(results: dict, *, t) -> str:
+    """渲染古典解讀卡片群 — 全部整合（含大小遊軌運、軍事戰略、運籌博弈分析），無重複。
 
-    Returns (html, wuzhen_data, mil_text):
-      - html: classic-card HTML string (不含軍事戰略，軍事戰略改為 st.expander 由調用者渲染)
-      - wuzhen_data: 五陣置旗 dict，由調用者以 _render_wuzhen_bazhen_viz 渲染
-      - mil_text: 軍事戰略摘要文字，由調用者在軍事戰略 expander 內顯示
+    Returns:
+      - html: classic-card HTML string（包含所有解釋內容）
 
     卡片分類：
       1. 太乙秘書 — 古典斷語
@@ -334,10 +354,12 @@ def render_classic_reading(results: dict, *, t) -> tuple[str, dict | None, str]:
       4. 格局釋義 — 卷四釋格局
       5. 神將所主 — 卷二/七 天目、九宮、八門、天乙地乙等
       6. 星曜分佈 — 卷六 太乙九星、文昌九星、卷十 九宮貴神、十六宮
-      7. 軍事戰略 — 卷五 + 卷十五 + 卷十七（合併）
+      7. 軍事戰略 — 卷五 + 卷十五 + 卷十七 + 五陣八陣圖（合併）
       8. 災變分野 — 卷十一 飛符四殺 + 卷八 分野疆界（合併）
       9. 運氣音律 — 卷三 五運六氣 + 五音之數 + 卷十 天目合會 + 卷十八 十精雲氣（合併）
-     10. 行限推論 — 陽九百六 + 大小遊軌運
+     10. 行限推論 — 陽九百六
+     11. 大小遊軌運 — 卷九 軌運入卦、重卦策數、限數
+     12. 運籌博弈分析 — Nash 均衡 + 線性規劃
     """
     parts: list[str] = []
     ttext = results.get("ttext") or {}
@@ -557,9 +579,33 @@ def render_classic_reading(results: dict, *, t) -> tuple[str, dict | None, str]:
             f"太陰黑旗{_sq.get('太陰黑旗', '—')}、"
             f"害氣赤旗{_sq.get('害氣赤旗', '—')}（{_sq.get('會合', '')}）"
         )
+    # 軍事戰略卡片（含五陣八陣圖）
     _mil_text = ""
     if mil_parts:
         _mil_text = "\n\n".join(mil_parts)
+    _wuzhen_data = (ttext.get("軍事應用", {}) or {}).get("五陣置旗")
+    if _mil_text or _wuzhen_data:
+        _mil_body_parts = []
+        if _mil_text:
+            _mil_body_parts.append(_esc(_mil_text).replace("\n", "<br>"))
+        if _wuzhen_data:
+            _mil_body_parts.append(f'<div class="classic-sub-label">{_esc(t("five_formations"))}</div>')
+            _mil_body_parts.append(_html_table(wuzhen_table_rows(_wuzhen_data)))
+            _mil_body_parts.append(f'<div class="classic-sub-label">{_esc(t("wuzhen_reference"))}</div>')
+            _mil_body_parts.append(_html_table(wuzhen_reference_rows()))
+            _bazhen_svg = wuzhen_bazhen_svg(
+                _wuzhen_data,
+                title_five=t("five_formations_short"),
+                title_eight=t("eight_formations_short"),
+                title_chubing=t("chubing_xiang_title"),
+                center_label=t("bazhen_center"),
+                home_label=t("side_home"),
+                away_label=t("side_away"),
+            )
+            _mil_body_parts.append(_bazhen_svg)
+        parts.append(_classic_card(
+            t("junshi_label"), "", "\n".join(_mil_body_parts), is_html_body=True,
+        ))
 
     # ── 8. 災變分野（卷十一 + 卷八，合併）──
     disaster_parts = []
@@ -647,14 +693,124 @@ def render_classic_reading(results: dict, *, t) -> tuple[str, dict | None, str]:
         limit_text = f"{t('yang_nine')}\n{yjxx}\n\n{t('bai_liu')}\n{blxx}"
         parts.append(_classic_card(t("xingxian_label"), "", limit_text))
 
-    # 取出五陣置旗數據（由調用者渲染 dataframe）
-    _wuzhen_data = (ttext.get("軍事應用", {}) or {}).get("五陣置旗")
+    # ── 11. 大小遊軌運（卷九）──
+    _v9 = ttext.get("卷九", {})
+    if _v9:
+        _dy9 = _v9.get("大遊軌運") or {}
+        _xy9 = _v9.get("小遊軌運") or {}
+        _gy_parts = []
+        if _dy9 or _xy9:
+            _gy_parts.append(
+                f"{t('guiyun')}"
+                f"大遊{_dy9.get('重卦', '—')}{_dy9.get('內爻名', '')}"
+                f"（{_dy9.get('內卦', '')}/{_dy9.get('外卦', '')}·策{_dy9.get('總策', '—')}）；"
+                f"小遊{_xy9.get('重卦', '—')}{_xy9.get('內爻名', '')}"
+                f"（策{_xy9.get('總策', '—')}）；"
+                f"落宮{_v9.get('大遊落宮', '—')}/{_v9.get('小遊落宮', '—')}"
+            )
+            _line9 = []
+            if _v9.get("大遊入宮年數") is not None:
+                _line9.append(f"{t('guiyun_palace_years')}{_v9['大遊入宮年數']}年")
+            if _v9.get("行宮卦異"):
+                _line9.append(t("guiyun_gong_diff"))
+            _yj9 = _v9.get("陽九限數") or {}
+            _bl9 = _v9.get("百六限數") or {}
+            if _yj9:
+                _line9.append(f"{t('yangjiu_xian')}入限{_yj9.get('入限年數', '—')}年")
+            if _bl9:
+                _line9.append(f"{t('bailiu_xian')}入限{_bl9.get('入限年數', '—')}年")
+            if _v9.get("歲計陽九支") or _v9.get("歲計百六支"):
+                _line9.append(
+                    f"歲計陽九{_v9.get('歲計陽九支', '—')}／百六{_v9.get('歲計百六支', '—')}"
+                )
+            if _line9:
+                _gy_parts.append("；".join(_line9))
+        _xz9 = _v9.get("小遊行爻災祥") or {}
+        if _xz9.get("斷語"):
+            _gy_parts.append(
+                f"{t('guiyun_xingyao')}"
+                f"{_xz9.get('重卦', '')}{_xz9.get('爻名', '')}·{_xz9.get('納甲', '')}·"
+                f"{_xz9.get('天干分野', '')}{_xz9.get('地支分野', '')}；"
+                f"{_xz9['斷語']}"
+            )
+        # 詳情表格
+        _detail_parts = []
+        if _dy9 or _xy9:
+            _detail_parts.append(f'<div class="classic-sub-label">{_esc(t("guiyun_chong"))}</div>')
+            _detail_parts.append(_html_table([
+                chong_gua_row(_dy9, scope="大遊"),
+                chong_gua_row(_xy9, scope="小遊"),
+            ]))
+            _detail_parts.append(f'<div class="classic-sub-label">{_esc(t("guiyun_inner_outer"))}·大遊</div>')
+            _detail_parts.append(_html_table(inner_outer_rows(_v9.get("大遊內卦"), _v9.get("大遊外卦"), scope="大遊")))
+            _detail_parts.append(f'<div class="classic-sub-label">{_esc(t("guiyun_inner_outer"))}·小遊</div>')
+            _detail_parts.append(_html_table(inner_outer_rows(_v9.get("小遊內卦"), _v9.get("小遊外卦"), scope="小遊")))
+        _limits9 = limit_rows(_v9)
+        if _limits9:
+            _detail_parts.append(f'<div class="classic-sub-label">{_esc(t("guiyun_limits"))}</div>')
+            _detail_parts.append(_html_table(_limits9))
+        _ce9 = _v9.get("四象之策") or []
+        if _ce9:
+            _detail_parts.append(f'<div class="classic-sub-label">{_esc(t("guiyun_ce_ref"))}</div>')
+            _detail_parts.append(_html_table([dict(r) for r in _ce9]))
+        for _key9 in ("大遊軌運", "小遊軌運"):
+            _yj9t = _v9.get(_key9, {})
+            if _yj9t.get("要訣"):
+                _detail_parts.append(f'<div class="classic-caption">{_esc(_yj9t["要訣"])}</div>')
+        if _v9.get("要訣"):
+            _detail_parts.append(f'<div class="classic-caption">{_esc(_v9["要訣"])}</div>')
+        if _gy_parts:
+            _gy_text = "\n\n".join(_gy_parts)
+            if _detail_parts:
+                _gy_text += "\n" + "\n".join(_detail_parts)
+            parts.append(_classic_card(t("guiyun_label"), "", _gy_text, is_html_body=True))
+
+    # ── 12. 運籌博弈分析（Nash 均衡 + 線性規劃）──
+    _gt_report = results.get("運籌博弈分析")
+    if _gt_report is None:
+        try:
+            _gt_report = TaiyiGame(ttext).分析報告()
+        except Exception:
+            _gt_report = None
+    if _gt_report:
+        _gt_parts = []
+        _gt_parts.append(f"**古法推主客相闗：** {_esc(_gt_report.get('古法推主客相闗', '—'))}")
+        _gt_parts.append(f"**{t('game_theory_winrate')}：** {_esc(_gt_report.get('主方勝率判斷', '—'))}")
+        _gt_parts.append(f"**{t('game_theory_value')}：** `{_gt_report.get('博弈均衡值', '—')}`")
+        _gt_parts.append(f"##### {t('game_theory_payoff')}")
+        _payoff_rows = []
+        _h_strats = _gt_主方策略列
+        _a_strats = _gt_客方策略列
+        _payoff = _gt_report.get("支付矩陣", [])
+        for _hi, _hname in enumerate(_h_strats):
+            _row = {"策略": _hname}
+            for _ai, _aname in enumerate(_a_strats):
+                _row[_aname] = round(_payoff[_hi][_ai], 2) if _hi < len(_payoff) and _ai < len(_payoff[_hi]) else "—"
+            _payoff_rows.append(_row)
+        _gt_parts.append(_html_table(_payoff_rows))
+        _gt_parts.append(f"**{t('game_theory_home_strategy')}**")
+        _home_rows = [{"策略": _h, "概率": _p} for _h, _p in zip(_h_strats, _gt_report.get("主方均衡策略", []))]
+        _gt_parts.append(_html_table(_home_rows))
+        _gt_parts.append(f"**{t('game_theory_away_strategy')}**")
+        _away_rows = [{"策略": _a, "概率": _p} for _a, _p in zip(_a_strats, _gt_report.get("客方均衡策略", []))]
+        _gt_parts.append(_html_table(_away_rows))
+        _lp = _gt_report.get("LP最大勝率", {})
+        if _lp:
+            _gt_parts.append(f"##### {t('game_theory_lp')}")
+            _gt_parts.append(f'<div class="classic-info-box">{_esc(_lp.get("建議文字", ""))}</div>')
+        _gt_parts.append(f"**主方最優純策略：** {_esc(_gt_report.get('主方最優純策略', '—'))}")
+        _gt_parts.append(f"**客方最優純策略：** {_esc(_gt_report.get('客方最優純策略', '—'))}")
+        # 將 markdown 風格轉為 HTML
+        _gt_body = "\n".join(_gt_parts)
+        _gt_body = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", _gt_body)
+        _gt_body = re.sub(r"##### (.+)", r"<h5>\1</h5>", _gt_body)
+        parts.append(_classic_card(t("game_theory_header"), "", _gt_body, is_html_body=True))
 
     if not parts:
-        return ("", _wuzhen_data, _mil_text)
+        return ""
 
     inner = "\n".join(parts)
-    return (f'<div class="classic-reading-section">{inner}</div>', _wuzhen_data, _mil_text)
+    return f'<div class="classic-reading-section">{inner}</div>'
 
 
 # ── 內部渲染函數 ────────────────────────────────────────
