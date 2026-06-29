@@ -262,17 +262,39 @@ def _generate_time_steps(ty, scale: str) -> list[dict]:
             })
 
     elif scale == "hour":
+        # 流時卦：按時辰（每2小時為一辰），同一時辰同一卦
+        zhi_labels = ("子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥")
+        # 時辰對應的小時：子=23(前一日)或0, 丑=1,2, 寅=3,4, ...
+        # 用當前時辰起算，往後推12個時辰
+        base_dt = _dt.datetime(y, mo, d, h, mi)
+        # 計算當前時間所在時辰的起始小時
+        cur_zhi_idx = (h + 1) // 2 % 12  # 0=子, 1=丑...
+        # 當前時辰的代表性小時（取該時辰的第二個小時，即奇數小時）
+        # 子時跨日：23:00-00:59，代表小時取23（但如果h=0則取0）
         for i in range(12):
-            # 用 datetime 算出未來小時
-            base_dt = _dt.datetime(y, mo, d, h, mi)
-            fut = base_dt + _dt.timedelta(hours=i)
-            zhi_labels = ("子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥")
-            zhi_idx = (fut.hour + 1) % 12  # 23時→子, 1時→丑...
+            zhi_idx = (cur_zhi_idx + i) % 12
+            # 該時辰的代表小時：丑=1, 寅=3, 卯=5, 辰=7, 巳=9, 午=11, 未=13, 申=15, 酉=17, 戌=19, 亥=21, 子=23
+            rep_hour = zhi_idx * 2 - 1
+            if rep_hour < 0:
+                rep_hour = 23
+            # 從 base_dt 推算 i 個時辰後的 datetime
+            fut = base_dt + _dt.timedelta(hours=i * 2)
+            # 用 fut 的日期 + rep_hour 來計算卦
+            gua_hour = rep_hour
+            # 如果時辰跨日（子時），需要調整日期
+            fut_for_gua = fut
+            if zhi_idx == 0 and fut.hour < 12:
+                # 子時在當日00:xx，gangzhi會自動處理
+                gua_hour = 0
+            elif zhi_idx == 0:
+                gua_hour = 23
+                # 23時屬於當日，gangzhi會處理
+                fut_for_gua = fut
             steps.append({
-                "year": fut.year, "month": fut.month, "day": fut.day,
-                "hour": fut.hour, "minute": mi,
-                "label": f"{fut.hour:02d}:00",
-                "sub_label": zhi_labels[zhi_idx] + "時",
+                "year": fut_for_gua.year, "month": fut_for_gua.month, "day": fut_for_gua.day,
+                "hour": gua_hour, "minute": mi,
+                "label": zhi_labels[zhi_idx] + "時",
+                "sub_label": f"{gua_hour:02d}:00",
             })
 
     elif scale == "minute":
