@@ -266,8 +266,8 @@ html.grok-sb-collapsed [data-testid="stMainBlockContainer"],
 @media (max-width: 768px) {{
     /* ── 重新排盤按鈕：醒目、大點擊區 ── */
     .mobile-run-top {{
-        margin: 0 0 0.4rem 0 !important;
-        padding: 0 !important;
+        margin: 0 !important;
+        padding: 0 0 0.2rem 0 !important;
     }}
     .mobile-run-top button {{
         font-weight: 700 !important;
@@ -276,13 +276,14 @@ html.grok-sb-collapsed [data-testid="stMainBlockContainer"],
         min-height: 3rem !important;
     }}
 
-    /* ── chart-stage-marker：最小 padding/margin ── */
+    /* ── chart-stage-marker：零 margin/padding ── */
     .chart-stage-marker {{
         padding: 0 !important;
-        margin: 0 0 0.2rem 0 !important;
+        margin: 0 !important;
     }}
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
-        margin-bottom: 0.2rem !important;
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
         padding: 2px 2px 0 !important;
     }}
     /* 緊鄰 chart-stage-marker 的下一個 block：消除上方 margin */
@@ -301,16 +302,16 @@ html.grok-sb-collapsed [data-testid="stMainBlockContainer"],
         margin-bottom: 0 !important;
     }}
 
-    /* ── chart-mobile-params + chart-explanation-anchor：貼緊 ── */
+    /* ── chart-mobile-params + chart-explanation-anchor：貼緊（零間隙） ── */
     div[data-testid="stVerticalBlock"]:has(> .chart-mobile-params),
     div[data-testid="stVerticalBlock"]:has(> .chart-explanation-anchor) {{
         margin-top: 0 !important;
-        margin-bottom: 0.2rem !important;
+        margin-bottom: 0 !important;
     }}
     div[data-testid="stVerticalBlock"]:has(> .chart-mobile-params) [data-testid="stExpander"],
     div[data-testid="stVerticalBlock"]:has(> .chart-explanation-anchor) [data-testid="stExpander"] {{
         margin-top: 0 !important;
-        margin-bottom: 0.2rem !important;
+        margin-bottom: 0 !important;
     }}
 
     .chart-mobile-params {{
@@ -658,12 +659,9 @@ input:focus, textarea:focus,
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-mobile-meta) {{
         display: none !important;
     }}
-    /* ── 桌面版緊湊化：減少水平 block gap + 限制 iframe 高度 ── */
+    /* ── 桌面版緊湊化：減少水平 block gap ── */
     div[data-testid="stHorizontalBlock"]:has(.chart-stage-marker) {{
         gap: 0.75rem !important;
-    }}
-    div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) iframe {{
-        max-height: calc(100vh - 12rem) !important;
     }}
 }}
 .chart-meta-gz-row {{

@@ -310,8 +310,13 @@ def render_chart_mobile_params(
     results: dict,
     *,
     t,
+    expander_title: str | None = None,
 ) -> None:
-    """Mobile-only collapsible full parameters below chart (優化版：更緊湊、減少空隙)."""
+    """Mobile-only collapsible full parameters below chart (優化版：更緊湊、減少空隙).
+
+    If expander_title is provided, uses it as the expander header;
+    otherwise falls back to t('chart_meta_detail').
+    """
     chips = chart_meta.get("chips") or []
     three_five = ((results.get("three_door") or "") + (results.get("five_generals") or "")).strip()
     epoch = ((results.get("ttext") or {}).get("紀元", "") or "").strip()
@@ -330,7 +335,8 @@ def render_chart_mobile_params(
         unsafe_allow_html=True,
     )
 
-    with st.expander(t("chart_meta_detail"), expanded=False):
+    _title = expander_title or t("chart_meta_detail")
+    with st.expander(_title, expanded=False):
         # 參數區（手機版建議單欄，更緊湊）
         if param_rows:
             for label, value in param_rows:
