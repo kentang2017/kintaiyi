@@ -423,6 +423,8 @@ def gen_chart(first_layer, second_layer, sixth_layer, sevenstars, sanqi=None, tr
     ]
 
     for layer_idx, divs in enumerate(num_divisions):
+        if layer_idx == 0:
+            continue   # 跳過中心層的 sector，避免 degenerate arc 產生白線
         layer = draw.Group(id=f'layer{layer_idx+1}')
         for div in range(divs):
             start = (360 / divs) * div + rotation_angle
@@ -474,7 +476,11 @@ def gen_chart_life(
     ]
 
     for layer_idx, divs in enumerate(num_divisions):
+        if layer_idx == 0:
+            continue   # 跳過中心層的 sector，避免 degenerate arc 產生白線
         layer = draw.Group(id=f'layer{layer_idx + 1}')
+        if layer_idx == 0:
+            continue   # 跳過中心層的 sector，避免 degenerate arc 產生白線
         for div in range(divs):
             start = (360 / divs) * div + rotation_angle
             end   = (360 / divs) * (div + 1) + rotation_angle
@@ -547,6 +553,8 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer, seven_stars, s
     ]
 
     for layer_idx, divs in enumerate(num_divisions):
+        if layer_idx == 0:
+            continue   # 跳過中心層的 sector，避免 degenerate arc 產生白線
         layer = draw.Group(id=f'layer{layer_idx+1}')
         for div in range(divs):
             start = (360 / divs) * div + rotation_angle
@@ -602,6 +610,8 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
         cumulative.append(cumulative[-1] + deg)
 
     for layer_idx, divs in enumerate(num_divisions):
+        if layer_idx == 0:
+            continue   # 跳過中心層的 sector，避免 degenerate arc 產生白線
         layer = draw.Group(id=f'layer{layer_idx+1}')
         for div in range(divs):
             if layer_idx == 5:   # 28 宿
