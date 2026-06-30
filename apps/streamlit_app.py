@@ -1816,9 +1816,7 @@ def _chart_export_css_bundle(glow_id: str) -> dict[str, str]:
     {scope} #layer5 path, {scope} #layer5 polygon, {scope} #layer5 rect {{
         fill: rgba(31, 49, 78, 0.82) !important;
     }}
-    {scope} #layer6 path, {scope} #layer6 polygon, {scope} #layer6 rect {{
-        fill: rgba(17, 39, 56, 0.84) !important;
-    }}
+    /* layer6 = 二十八宿，保留 chart.py CONSTELLATION_COLORS 內嵌填色，不覆蓋 */
     {scope} #layer7 path, {scope} #layer7 polygon, {scope} #layer7 rect {{
         fill: rgba(8, 22, 40, 0.95) !important;
     }}
@@ -2140,12 +2138,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer5 path,
     #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer5 polygon,
     #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer5 rect { fill: rgba(31, 49, 78, 0.82) !important; }
-    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer6 path,
-    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer6 polygon,
-    #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer6 rect,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer6 path,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer6 polygon,
-    #__CONTAINER_ID__[data-style-mode="dense"] .taiyi-svg-root #layer6 rect { fill: rgba(17, 39, 56, 0.84) !important; }
+    /* layer6 = 二十八宿，保留 chart.py CONSTELLATION_COLORS 內嵌填色，不覆蓋 */
     #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer7 path,
     #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer7 polygon,
     #__CONTAINER_ID__[data-style-mode="traditional"] .taiyi-svg-root #layer7 rect,
