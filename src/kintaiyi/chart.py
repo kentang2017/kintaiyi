@@ -424,30 +424,6 @@ def gen_chart(first_layer, second_layer, sixth_layer, sevenstars, sanqi=None, tr
 
     for layer_idx, divs in enumerate(num_divisions):
         layer = draw.Group(id=f'layer{layer_idx+1}')
-        if layer_idx == 0:
-            # 中心層：divs=1 會產生 360° degenerate arc（起點終點幾乎重合），
-            # 部分瀏覽器會把它渲染成橫跨圓心的直線。改用 draw.Circle 畫實心圓 + 文字標籤。
-            inner = inner_radius + layer_idx * layer_gap
-            outer = inner_radius + (layer_idx + 1) * layer_gap
-            lid = f"layer{layer_idx + 1}"
-            center_g = draw.Group(id=f"{lid}-s0")
-            center_g.args["class"] = "taiyi-sector"
-            center_g.args["data-layer"] = lid
-            center_g.args["data-sector"] = "0"
-            center_g.args["data-role"] = "center"
-            center_g.args["data-tooltip-key"] = f"{lid}:0"
-            center_g.append(draw.Circle(0, 0, outer, fill="#141826", stroke="none"))
-            center_g.append(draw.Circle(0, 0, inner, fill="#0d1b2a", stroke="none"))
-            raw = data[0][0]
-            label_str = raw if isinstance(raw, str) else "\n".join(str(x) for x in raw)
-            center_g.append(
-                draw.Text(label_str, 8.5, 0, 0, center=1, fill="#e9cc88",
-                          font_family="serif", font_weight="bold")
-            )
-            layer.append(center_g)
-            d.append(layer)
-            continue
-
         for div in range(divs):
             start = (360 / divs) * div + rotation_angle
             end   = (360 / divs) * (div + 1) + rotation_angle
@@ -572,29 +548,6 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer, seven_stars, s
 
     for layer_idx, divs in enumerate(num_divisions):
         layer = draw.Group(id=f'layer{layer_idx+1}')
-        if layer_idx == 0:
-            # 中心層：divs=1 會產生 360° degenerate arc，改用 draw.Circle 避免白色直線。
-            inner = inner_radius + layer_idx * layer_gap
-            outer = inner_radius + (layer_idx + 1) * layer_gap
-            lid = f"layer{layer_idx + 1}"
-            center_g = draw.Group(id=f"{lid}-s0")
-            center_g.args["class"] = "taiyi-sector"
-            center_g.args["data-layer"] = lid
-            center_g.args["data-sector"] = "0"
-            center_g.args["data-role"] = "center"
-            center_g.args["data-tooltip-key"] = f"{lid}:0"
-            center_g.append(draw.Circle(0, 0, outer, fill="#141826", stroke="none"))
-            center_g.append(draw.Circle(0, 0, inner, fill="#0d1b2a", stroke="none"))
-            raw = data[0][0]
-            label_str = raw if isinstance(raw, str) else "\n".join(str(x) for x in raw)
-            center_g.append(
-                draw.Text(label_str, 8.5, 0, 0, center=1, fill="#e9cc88",
-                          font_family="serif", font_weight="bold")
-            )
-            layer.append(center_g)
-            d.append(layer)
-            continue
-
         for div in range(divs):
             start = (360 / divs) * div + rotation_angle
             end   = (360 / divs) * (div + 1) + rotation_angle
@@ -650,29 +603,6 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
 
     for layer_idx, divs in enumerate(num_divisions):
         layer = draw.Group(id=f'layer{layer_idx+1}')
-        if layer_idx == 0:
-            # 中心層：divs=1 會產生 360° degenerate arc，改用 draw.Circle 避免白色直線。
-            inner = inner_radius + layer_idx * layer_gap
-            outer = inner_radius + (layer_idx + 1) * layer_gap
-            lid = f"layer{layer_idx + 1}"
-            center_g = draw.Group(id=f"{lid}-s0")
-            center_g.args["class"] = "taiyi-sector"
-            center_g.args["data-layer"] = lid
-            center_g.args["data-sector"] = "0"
-            center_g.args["data-role"] = "center"
-            center_g.args["data-tooltip-key"] = f"{lid}:0"
-            center_g.append(draw.Circle(0, 0, outer, fill="#141826", stroke="none"))
-            center_g.append(draw.Circle(0, 0, inner, fill="#0d1b2a", stroke="none"))
-            raw = data[0][0]
-            label_str = raw if isinstance(raw, str) else "\n".join(str(x) for x in raw)
-            center_g.append(
-                draw.Text(label_str, 8.5, 0, 0, center=1, fill="#e9cc88",
-                          font_family="serif", font_weight="bold")
-            )
-            layer.append(center_g)
-            d.append(layer)
-            continue
-
         for div in range(divs):
             if layer_idx == 5:   # 28 宿
                 start = cumulative[div] + rotation_angle + rotate_28
@@ -731,7 +661,6 @@ if __name__ == "__main__":
     with open("test_life_third_layer.svg", "w", encoding="utf-8") as f:
         f.write(svg_life)
     print("已產生 test_life_third_layer.svg（第 3 層為地支，已上色）")
-
 
 
 
