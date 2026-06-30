@@ -1924,7 +1924,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         --ivory-soft: #e8dfc8;
         --jade: #4a9c6d;
         --line: rgba(212, 175, 55, 0.35);
-        --chart-max-width: 900px;
+        --chart-max-width: 1100px;
         --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
         margin: 0;
         padding: 0;
@@ -1935,7 +1935,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     #__CONTAINER_ID__ * { box-sizing: border-box; }
     #__CONTAINER_ID__ .taiyi-card {
         position: relative;
-        overflow: hidden;
+        overflow: visible;
         border: 1px solid rgba(212, 175, 55, 0.62);
         border-radius: 22px;
         padding: 10px;
@@ -2024,11 +2024,11 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     #__CONTAINER_ID__ .taiyi-stage-frame {
         position: relative;
         /* Square frame: width must not exceed available height (parent viewport
-           minus topnav+tabs+toolbar+card-padding ~180px). This keeps the entire
-           chart visible without any scrollbar — the square shrinks to fit. */
-        width: min(100%, var(--chart-max-width), calc(var(--parent-vh, 100vh) - 180px));
+           minus topnav+tabs+toolbar+card-padding+toolbar+margin ~280px). This keeps
+           the entire chart visible without any scrollbar — the square shrinks to fit. */
+        width: min(100%, var(--chart-max-width), calc(var(--parent-vh, 100vh) - 280px));
         aspect-ratio: 1 / 1;
-        overflow: hidden;
+        overflow: visible;
         border-radius: 22px;
         border: 1px solid rgba(212, 175, 55, 0.34);
         background:
@@ -2057,6 +2057,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         width: 100% !important;
         height: auto !important;
         max-width: 100%;
+        max-height: 920px;
         margin: 0 auto;
         overflow: visible;
         user-select: none;
@@ -2592,9 +2593,10 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             try {
                 const vh = window.parent.innerHeight || 0;
                 if (vh > 0) {
-                    // topnav(38) + tabs(~36) + tab-content padding(~8) + page padding(~16) = ~98
-                    // Use 120 to be safe — any remainder is absorbed by chart shrink.
-                    const topOffset = 120;
+                    // topnav(38) + tabs(~36) + tab-content padding(~8) + page padding(~16)
+                    // + card padding(20) + toolbar(~36) + safety margin(~56) = ~210
+                    // CSS square subtracts 280px; content = (vh-280)+56 = vh-224 < vh-210 ✓
+                    const topOffset = 210;
                     const maxH = vh - topOffset;
                     if (height > maxH) {
                         height = maxH;
@@ -3775,10 +3777,10 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     # st.iframe with inline HTML (replaces deprecated st.components.v1.html).
     # Passing an HTML string as the first positional arg (src) makes Streamlit
     # auto-detect it as srcdoc content.
-    # Initial height kept compact for desktop first-screen visibility;
-    # the template JS uses postMessage to auto-resize to exact content height.
-    _initial_height = 500
-    st.iframe(html_content, height=_initial_height, width="stretch")
+    # height="content" lets Streamlit auto-size the iframe to exact content
+    # height — no fixed height, no gap between chart and hex/yun timeline.
+    # The template JS postMessage setFrameHeight is kept as a fallback.
+    st.iframe(html_content, height="content", width="stretch")
 
 
 def render_svg(svg, num, chart_meta):
@@ -4360,7 +4362,7 @@ with tabs[0]:
 
                     else:
                         # ── 桌面版：左排盤 + 右參數面板 雙欄佈局 ──
-                        chart_main_col, chart_side_col = st.columns([5.8, 2.1], gap="small")
+                        chart_main_col, chart_side_col = st.columns([6.5, 1.8], gap="small")
                         with chart_main_col:
                             render_chart_stage_open(
                                 print_meta=build_chart_print_meta(results, t=t),

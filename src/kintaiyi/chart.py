@@ -202,9 +202,11 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
     eix = inner * math.cos(math.radians(end))
     eiy = inner * math.sin(math.radians(end))
 
-    # ---- 顏色邏輯（優先順序：第 2 層 > 第 3 層 > 16宮 > 28宿）----
+    # ---- 顏色邏輯（優先順序：中心透明 > 第 2 層 > 第 3 層 > 16宮 > 28宿）----
     fill = 'black'   # 預設
-    if is_second_layer:                     # 八門 → 五行
+    if layer_role == "center":              # 中心圓 → 透明（由 _add_ornament 背景圓負責填色）
+        fill = 'none'
+    elif is_second_layer:                   # 八門 → 五行
         row = _door_row_parts(raw_label)
         text = row[1] if row else _format_label(raw_label).replace("門", "")
         key = next((c for c in text if c in GATE_TO_BRANCH), None)
@@ -257,7 +259,9 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
     mid = (start + end) / 2
     tx = (inner + outer) / 2 * math.cos(math.radians(mid))
     ty = (inner + outer) / 2 * math.sin(math.radians(mid))
-    t = draw.Text(label_str, 7.5, tx, ty, center=1, fill=text_fill,
+    # 密集層（28宿等）自動縮小標籤
+    _label_size = 6.5 if (is_28_layer or sector_count >= 28) else (8.5 if sector_count <= 8 else 7.5)
+    t = draw.Text(label_str, _label_size, tx, ty, center=1, fill=text_fill,
                   font_family='sans-serif', font_weight='bold')
     sector_g.append(t)
     group.append(sector_g)
@@ -401,9 +405,9 @@ def _add_ornament(d, outer_r, jewels=16, sanqi=None, trigram_rotate=0.0, palace_
 
 # ====================  gen_chart  ====================
 def gen_chart(first_layer, second_layer, sixth_layer, sevenstars, sanqi=None, trigram_rotate=0.0):
-    d = draw.Drawing(500, 500, origin="center")
-    inner_radius = 13
-    layer_gap = 45
+    d = draw.Drawing(660, 660, origin="center")
+    inner_radius = 16
+    layer_gap = 55
     num_divisions = [1, 8, 16, 16, 12]
     rotation_angle = 248
 
@@ -436,9 +440,9 @@ def gen_chart(first_layer, second_layer, sixth_layer, sevenstars, sanqi=None, tr
                          sector_count=divs)
         d.append(layer)
 
-    _add_ornament(d, 13 + 5 * 45, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_SIXTEEN)
-    return d.as_svg().replace(
-        '''<path d="M-4.86988571440686,-12.053390109368236 L-21.72718241812291,-53.776663564873665 A58,58,0,0,1,-21.727182418122876,-53.77666356487368 L-4.869885714406852,-12.053390109368237 A13,13,0,0,0,-4.86988571440686,-12.053390109368236 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
+    _add_ornament(d, 16 + 5 * 55, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_SIXTEEN)
+    return d.as_svg()
+
 
 
 # ====================  gen_chart_life  ====================
@@ -453,9 +457,9 @@ def gen_chart_life(
     center_lines=None,
     branch_tags=None,
 ):
-    d = draw.Drawing(450, 450, origin="center")
-    inner_radius = 12
-    layer_gap = 35
+    d = draw.Drawing(560, 560, origin="center")
+    inner_radius = 15
+    layer_gap = 42
     num_divisions = [1, 12, 12, 12, 12]          # 第 3 層 = index 2
     rotation_angle = 248
     branch_tags = branch_tags or {}
@@ -517,16 +521,16 @@ def gen_chart_life(
                          sector_count=divs)
         d.append(layer)
 
-    _add_ornament(d, 12 + 5 * 35, jewels=12, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_TWELVE)
-    return d.as_svg().replace(
-        '''<path d="M-4.495279120990947,-11.126206254801447 L-17.606509890547876,-43.577641164639005 A47,47,0,0,1,-17.606509890547848,-43.57764116463901 L-4.49527912099094,-11.12620625480145 A12,12,0,0,0,-4.495279120990947,-11.126206254801447 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
+    _add_ornament(d, 15 + 5 * 42, jewels=12, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_TWELVE)
+    return d.as_svg()
+
 
 
 # ====================  gen_chart_day  ====================
 def gen_chart_day(first_layer, second_layer, golden, sixth_layer, seven_stars, sanqi=None, trigram_rotate=0.0):
-    d = draw.Drawing(500, 500, origin="center")
-    inner_radius = 3
-    layer_gap = 31.5
+    d = draw.Drawing(660, 660, origin="center")
+    inner_radius = 5
+    layer_gap = 38
     num_divisions = [1, 8, 8, 16, 16, 12]          # 第 3 層 = index 2
     rotation_angle = 248
 
@@ -561,9 +565,9 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer, seven_stars, s
                          sector_count=divs)
         d.append(layer)
 
-    _add_ornament(d, 3 + 6 * 31.5, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_SIXTEEN)
-    return d.as_svg().replace(
-        '''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
+    _add_ornament(d, 5 + 6 * 38, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_SIXTEEN)
+    return d.as_svg()
+
 
 
 # ====================  gen_chart_hour（支援 rotate_28） ====================
@@ -574,9 +578,9 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
                正數 → 逆時針（擰後）
                負數 → 順時針（擰前）
     """
-    d = draw.Drawing(500, 500, origin="center")
-    inner_radius = 3
-    layer_gap = 31.5
+    d = draw.Drawing(720, 720, origin="center")
+    inner_radius = 5
+    layer_gap = 38
     num_divisions = [1, 8, 16, 16, 16, 28, 12]   # 第 3 層 = index 2
     rotation_angle = 248
 
@@ -622,9 +626,8 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
                          sector_count=divs)
         d.append(layer)
 
-    _add_ornament(d, 3 + 7 * 31.5, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_SIXTEEN)
-    return d.as_svg().replace(
-        '''<path d="M-1.1238197802477368,-2.781551563700362 L-12.923927472848973,-31.987842982554163 A34.5,34.5,0,0,1,-12.923927472848954,-31.98784298255417 L-1.123819780247735,-2.7815515637003627 A3.0,3.0,0,0,0,-1.1238197802477368,-2.781551563700362 Z" stroke="white" stroke-width="1.8" fill="black" />''', "")
+    _add_ornament(d, 5 + 7 * 38, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_SIXTEEN)
+    return d.as_svg()
 
 
 # ====================  完整測試範例 ====================

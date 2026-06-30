@@ -856,8 +856,8 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
     align-items: center;
     background: radial-gradient(ellipse 78% 58% at 50% 42%, rgba(255, 255, 255, 0.035), transparent 72%);
     border-radius: var(--radius-lg);
-    padding: 0.5rem 0.5rem 1.25rem;
-    margin-bottom: 0.25rem;
+    padding: 0.5rem 0.5rem 0;
+    margin-bottom: 0;
 }}
 @media (max-width: 899px) {{
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
@@ -960,13 +960,13 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
     }}
 }}
 div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) iframe {{
-    max-width: min(92vw, 640px) !important;
+    max-width: 100% !important;
     margin-left: auto !important;
     margin-right: auto !important;
     display: block;
 }}
 div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
-    max-width: min(92vw, 640px);
+    max-width: 100%;
     margin-left: auto;
     margin-right: auto;
 }}
@@ -979,9 +979,6 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) iframe {{
         max-width: 100% !important;
         width: 100% !important;
-        /* 不限制 iframe 高度 — postMessage(setFrameHeight) 會 clamp 到
-           parent viewport - 120px，排盤 SVG 自適應縮小，無 scrollbar。 */
-        min-height: 400px !important;
         margin-left: auto !important;
         margin-right: auto !important;
     }}
@@ -993,10 +990,11 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
         padding: 0.1rem 0.1rem 0 !important;
         margin-bottom: 0 !important;
+        overflow: visible !important;
     }}
-    /* tabs 避開右上角 Streamlit icon 按鈕 */
+    /* tabs 緊貼 topnav，無間距（桌面版不需要避開 icon）*/
     div[data-testid="stTabs"] {{
-        margin-top: 1.8rem !important;
+        margin-top: 0 !important;
         gap: 0 !important;
     }}
     /* tab 內容區上方無 padding */
@@ -1015,6 +1013,11 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
     div[data-testid="stHorizontalBlock"]:has(.chart-stage-marker) {{
         gap: 0.25rem !important;
         margin-bottom: 0 !important;
+    }}
+    /* Timeline blocks flush against chart — zero gap */
+    div[data-testid="stHorizontalBlock"]:has(.chart-stage-marker) + div[data-testid="stVerticalBlock"] {{
+        margin-top: 0 !important;
+        padding-top: 0 !important;
     }}
     /* seam anchor 零高度 */
     .taiyi-chart-seam-anchor {{
@@ -1149,7 +1152,7 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
-    margin-bottom: 0.65rem;
+    margin: 0 0 0.35rem 0;
 }}
 .yun-timeline-header {{
     display: flex;
@@ -1666,6 +1669,10 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
         padding-left: 0.5rem !important;
         padding-right: 0.5rem !important;
     }}
+    /* tabs 避開右上角 Streamlit icon 按鈕 */
+    div[data-testid="stTabs"] {{
+        margin-top: 1.8rem !important;
+    }}
     /* Mobile: sidebar overlay when open only */
     [data-testid="stSidebar"][aria-expanded="true"] {{
         width: min(100vw, var(--sidebar-width)) !important;
@@ -1692,15 +1699,15 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
     }}
     /* Reduce vertical spacing between sequential Streamlit elements */
     div[data-testid="stVerticalBlock"] {{
-        gap: 0.4rem !important;
+        gap: 0 !important;
     }}
     /* yun section + cards: tighter spacing */
     .yun-section {{
-        margin: 0.25rem 0 !important;
+        margin: 0 !important;
     }}
     .yun-timeline-container {{
         padding: 0.5rem 0.6rem 0.45rem !important;
-        margin-bottom: 0.35rem !important;
+        margin: 0 !important;
     }}
     .yun-card {{
         margin-bottom: 0.35rem !important;
@@ -1762,7 +1769,8 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
 
 /* ── 流日卦時間軸 (LIURI) ──────────────────────────────────── */
 .liuri-section {{
-    margin: 0.35rem 0 0.5rem;
+    margin: 0 !important;
+    padding-top: 0.2rem;
 }}
 /* Anchor wrapper around each liuri card — makes the card clickable
    without st.button.  Strip default link styling. */

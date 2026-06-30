@@ -1354,9 +1354,9 @@ def _guxu_arrow_radii(chart_style: int, *, is_life: bool) -> tuple[float, float]
     if is_life or chart_style in (5, 6):
         return 6.0, 28.0
     if chart_style in (0, 1):
-        inner_base, gap = 13.0, 45.0
+        inner_base, gap = 16.0, 55.0
     else:
-        inner_base, gap = 3.0, 31.5
+        inner_base, gap = 5.0, 38.0
     r0 = inner_base + 2.0
     ring_inner = inner_base + gap
     ring_outer = inner_base + 2 * gap
@@ -1730,8 +1730,8 @@ def build_palace_state_overlay_svg(life_pan: dict | None, *, is_life: bool = Tru
 
     import math
 
-    inner_radius = 12
-    layer_gap = 35
+    inner_radius = 15
+    layer_gap = 42
     layer_idx = 2
     inner = inner_radius + layer_idx * layer_gap
     outer = inner_radius + (layer_idx + 1) * layer_gap
