@@ -1895,9 +1895,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                     __SVG_MARKUP__
                 </div>
                 <div class="taiyi-toolbar" aria-label="chart tools">
-                    <button type="button" class="taiyi-btn" data-action="toggle-style">__STYLE_BUTTON__</button>
                     <button type="button" class="taiyi-btn taiyi-btn-optional" data-action="toggle-geju-follow" hidden>__TOGGLE_GEJU_FOLLOW__</button>
-                    <button type="button" class="taiyi-btn" data-action="reset">__RESET__</button>
                     <button type="button" class="taiyi-btn" data-action="add-note">__ADD_NOTE__</button>
                     <button type="button" class="taiyi-btn" data-action="download-png">__DOWNLOAD_PNG__</button>
                 </div>
@@ -3744,8 +3742,6 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         if (interactive) setupRotations();
 
         [
-            ["reset", resetView],
-            ["toggle-style", toggleStyleMode],
             ["add-note", addNote],
             ["download-png", downloadPng],
         ].forEach(([action, handler]) => {
@@ -3811,9 +3807,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         .replace("__INTERACTIVE__", "true" if interactive else "false")
         .replace("__INITIAL_STYLE_MODE__", html_escape(initial_style_mode))
         .replace("__WUXING_COLOR__", json.dumps(bool(chart_meta.get("wuxing_color"))))
-        .replace("__STYLE_BUTTON__", html_escape(ui["toggle_style_dense"]))
         .replace("__TOGGLE_GEJU_FOLLOW__", html_escape(ui["toggle_geju_fixed"]))
-        .replace("__RESET__", html_escape(ui["reset"]))
         .replace("__ADD_NOTE__", html_escape(ui["add_note"]))
         .replace("__DOWNLOAD_PNG__", html_escape(ui["download_png"]))
         .replace("__SVG_MARKUP__", svg_markup)
