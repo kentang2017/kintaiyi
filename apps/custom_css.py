@@ -994,9 +994,9 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
         padding: 0.1rem 0.1rem 0 !important;
         margin-bottom: 0 !important;
     }}
-    /* tabs 緊貼 topnav，無間距 */
+    /* tabs 避開右上角 Streamlit icon 按鈕 */
     div[data-testid="stTabs"] {{
-        margin-top: 0 !important;
+        margin-top: 1.8rem !important;
         gap: 0 !important;
     }}
     /* tab 內容區上方無 padding */
