@@ -1564,6 +1564,9 @@ def _build_chart_meta(
     _zhifu_sector_key = ""
     if isinstance(_zhifu_branch, str) and _zhifu_branch in _SIXTEEN_BRANCHES:
         _zhifu_sector_key = f"layer4:{_SIXTEEN_BRANCHES.index(_zhifu_branch)}"
+    elif _zhifu_branch == "中":
+        # 直符落中宮 → 預設開啟中宮 sector panel (layer1:0)
+        _zhifu_sector_key = "layer1:0"
 
     sector_panel = {
         "sectors": chart_view.get("sectors") or {},
@@ -2583,8 +2586,40 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         let heightFramePending = false;
         const noteStorageKey = "taiyi-chart-note:" + (exportMeta.storageKey || "__CONTAINER_ID__");
 
+        // ── React #185 guard: suppress height messages during parent resize ──
+        // When the mobile sidebar opens/closes, the parent viewport width changes
+        // continuously over ~300ms. Each ResizeObserver callback can trigger a
+        // postMessage → Streamlit setState → iframe re-render → another resize.
+        // We completely suppress height messages during the transition and send
+        // exactly ONE final message after the parent stops resizing.
+        let parentResizing = false;
+        let parentResizeEndTimer = null;
+
+        function setParentResizing() {
+            parentResizing = true;
+            if (parentResizeEndTimer) clearTimeout(parentResizeEndTimer);
+            parentResizeEndTimer = setTimeout(() => {
+                parentResizing = false;
+                parentResizeEndTimer = null;
+                // Send exactly one height update after the transition settles
+                lastReportedHeight = 0; // force send even if delta < 2px
+                queueFrameHeight();
+            }, 350);
+        }
+
+        // Detect parent resize (sidebar toggle) via parent window listener
+        try {
+            if (window.parent) {
+                window.parent.addEventListener("resize", setParentResizing);
+            }
+        } catch (e) { /* cross-origin */ }
+
         function setFrameHeight() {
             heightFramePending = false;
+            // React #185 guard: skip ALL height messages while parent is resizing
+            if (parentResizing) {
+                return;
+            }
             const rectHeight = root.getBoundingClientRect ? root.getBoundingClientRect().height : 0;
             const offsetHeight = root.offsetHeight || 0;
             const scrollHeight = root.scrollHeight || 0;
@@ -2598,9 +2633,6 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             try {
                 const vh = window.parent.innerHeight || 0;
                 if (vh > 0) {
-                    // topnav(38) + tabs(~36) + tab-content padding(~8) + page padding(~16)
-                    // + card padding(20) + toolbar(~36) + safety margin(~56) = ~210
-                    // CSS square subtracts 280px; content = (vh-280)+56 = vh-224 < vh-210 ✓
                     const topOffset = 210;
                     const maxH = vh - topOffset;
                     if (height > maxH) {
@@ -2612,8 +2644,7 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                 }
             } catch (e) { /* cross-origin: skip clamping */ }
             // Suppress duplicate messages: only post when height actually changed
-            // by more than 2px. This prevents setState storms during sidebar
-            // open/close transitions on mobile (React error #185).
+            // by more than 2px. This prevents setState storms (React error #185).
             if (Math.abs(height - lastReportedHeight) < 2) {
                 return;
             }
@@ -2626,17 +2657,15 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             } catch (e) { /* cross-origin: silent */ }
         }
 
-        // Debounce height updates to prevent React #185 during sidebar transitions.
-        // ResizeObserver can fire dozens of times per second during CSS transitions;
-        // batching into a single rAF + 150ms debounce prevents setState storms.
+        // Debounce height updates: rAF + 150ms settle timer.
+        // During sidebar transitions, parentResizing flag suppresses all messages;
+        // after transition ends, exactly one queueFrameHeight fires.
         let heightDebounceTimer = null;
         function queueFrameHeight() {
             if (heightFramePending) return;
-            // Fast path: rAF for initial load and user interactions
             heightFramePending = true;
             requestAnimationFrame(() => {
                 setFrameHeight();
-                // Debounce residual resize events for 150ms to catch transition tail
                 if (heightDebounceTimer) clearTimeout(heightDebounceTimer);
                 heightDebounceTimer = setTimeout(() => {
                     heightFramePending = false;
@@ -3744,22 +3773,17 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             observer.observe(root);
             observer.observe(svg);
         }
-        // Listen for parent viewport resize (sidebar toggle changes available width)
-        // and update --parent-vh so the chart square recalculates correctly.
+        // Update --parent-vh after sidebar transition settles.
+        // The parent resize listener (setParentResizing) already suppresses
+        // height messages during the transition and sends one final update.
+        // Here we only update the CSS variable so the chart square recalculates.
         try {
-            const updateParentVh = () => {
-                const vh = window.parent.innerHeight || window.innerHeight || 0;
-                if (vh > 0) {
-                    root.style.setProperty("--parent-vh", vh + "px");
-                }
-                queueFrameHeight();
-            };
-            // Debounce parent resize events
-            let parentResizeTimer = null;
             if (window.parent) {
                 window.parent.addEventListener("resize", () => {
-                    if (parentResizeTimer) clearTimeout(parentResizeTimer);
-                    parentResizeTimer = setTimeout(updateParentVh, 200);
+                    const vh = window.parent.innerHeight || window.innerHeight || 0;
+                    if (vh > 0) {
+                        root.style.setProperty("--parent-vh", vh + "px");
+                    }
                 });
             }
         } catch (e) { /* cross-origin: skip parent listener */ }

@@ -461,9 +461,9 @@ def _door_lines(door: str, ttext: dict) -> list[str]:
 
 def _center_lines(ttext: dict) -> list[str]:
     lines = []
-    ty = ttext.get("太乙")
-    if ty is not None:
-        lines.append(f"太乙落{config.num2gong(ty)}宮")
+    ty_gong = ttext.get("太乙落宮")
+    if ty_gong is not None:
+        lines.append(f"太乙落{config.num2gong(ty_gong)}宮")
     wc = ttext.get("文昌")
     if isinstance(wc, list) and wc:
         lines.append(f"天目文昌·{wc[0]}")
@@ -660,9 +660,9 @@ def build_chart_view_model(
     if style in (5, 6):
         acc_style = 3
 
-    ty_val = ttext.get("太乙")
+    ty_gong = ttext.get("太乙落宮")
     sectors["layer1:0"] = _sector_entry(
-        f"太乙·{config.num2gong(ty_val)}" if ty_val else "中宮",
+        f"太乙·{config.num2gong(ty_gong)}" if ty_gong is not None else "中宮",
         _center_lines(ttext),
     )
 
