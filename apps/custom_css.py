@@ -352,15 +352,15 @@ html.grok-sb-collapsed [data-testid="stMainBlockContainer"],
         min-height: 3rem !important;
     }}
 
-    /* ── chart-stage-marker：零 margin/padding ── */
+    /* ── chart-stage-marker：手機版需要上方呼吸空間 ── */
     .chart-stage-marker {{
         padding: 0 !important;
         margin: 0 !important;
     }}
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
         margin-bottom: 0 !important;
-        margin-top: 0 !important;
-        padding: 2px 2px 0 !important;
+        margin-top: 0.4rem !important;
+        padding: 0.5rem 0.5rem 0 !important;
     }}
     /* 緊鄰 chart-stage-marker 的下一個 block：消除上方 margin */
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) + div[data-testid="stVerticalBlock"] {{
@@ -862,8 +862,9 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
 @media (max-width: 899px) {{
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
         border: 1px solid var(--border-subtle);
-        padding: 2px 2px 0 !important;
+        padding: 0.5rem 0.5rem 0 !important;
         margin-bottom: 0 !important;
+        margin-top: 0.3rem !important;
     }}
     /* Kill all extra vertical space around the chart iframe */
     div[data-testid="stVerticalBlock"]:has(iframe) {{
@@ -925,8 +926,8 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
         position: static;
         width: 100%;
         max-width: 100%;
-        margin: 0 0 0.2rem 0;
-        padding: 0;
+        margin: 0 0 0.6rem 0 !important;
+        padding: 0 0 0.3rem 0 !important;
     }}
     .chart-mobile-params-anchor {{
         display: none !important;
@@ -938,7 +939,7 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
         white-space: pre-wrap;
         word-break: break-word;
         margin: 0;
-        padding: 0.3rem 0.4rem;
+        padding: 0.45rem 0.55rem 0.4rem;
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid var(--border-subtle);
         border-radius: var(--radius-sm);

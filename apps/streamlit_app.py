@@ -2429,9 +2429,12 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         #__CONTAINER_ID__ { padding-top: 0; padding-bottom: 0; }
         #__CONTAINER_ID__ .taiyi-card {
             border-radius: 18px;
-            padding: 3px;
+            padding: 6px;
         }
         #__CONTAINER_ID__ .taiyi-card::before { inset: 6px; }
+        #__CONTAINER_ID__ .taiyi-stage {
+            padding-top: 4px;
+        }
         #__CONTAINER_ID__ .taiyi-btn {
             width: 100%;
             text-align: center;
@@ -2440,6 +2443,8 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             grid-template-columns: repeat(2, minmax(0, 1fr));
             justify-content: stretch;
             align-self: stretch;
+            margin-top: 10px;
+            margin-bottom: 4px;
         }
         #__CONTAINER_ID__ .taiyi-stage-frame {
             width: 100%;
