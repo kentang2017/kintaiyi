@@ -854,14 +854,16 @@ input:focus, textarea:focus,
 div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
     position: relative;
     align-items: center;
-    background: radial-gradient(ellipse 78% 58% at 50% 42%, rgba(255, 255, 255, 0.035), transparent 72%);
-    border-radius: var(--radius-lg);
+    background: transparent;
+    border: none;
+    border-radius: 0;
     padding: 0.5rem 0.5rem 0;
     margin-bottom: 0;
 }}
 @media (max-width: 899px) {{
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
-        border: 1px solid var(--border-subtle);
+        border: none !important;
+        background: transparent !important;
         padding: 0.6rem 0.5rem 0 !important;
         margin-bottom: 0 !important;
         margin-top: 0.8rem !important;
