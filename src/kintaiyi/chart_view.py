@@ -1005,16 +1005,18 @@ def _eight_gong_ring_layout(chart_style: int, *, is_life: bool) -> dict | None:
     if is_life or chart_style in (5, 6):
         return None
     if chart_style in (0, 1):
+        # gen_chart: inner_radius=16, layer_gap=55, layer2 = idx=1
         return {
             "layer_idx": 1,
-            "inner_radius": 13.0,
-            "layer_gap": 45.0,
+            "inner_radius": 16.0,
+            "layer_gap": 55.0,
             "sector_count": 8,
         }
+    # gen_chart_day / gen_chart_hour: inner_radius=5, layer_gap=38
     return {
         "layer_idx": 1,
-        "inner_radius": 3.0,
-        "layer_gap": 31.5,
+        "inner_radius": 5.0,
+        "layer_gap": 38.0,
         "sector_count": 8,
     }
 
@@ -1199,25 +1201,28 @@ def _outer_ring_layout(chart_style: int, *, is_life: bool) -> dict:
             "branch_order": _TWELVE_BRANCHES,
         }
     if chart_style in (0, 1):
+        # gen_chart: inner_radius=16, layer_gap=55, planet ring = layer 5 (idx=4)
         return {
             "layer_idx": 4,
-            "inner_radius": 13.0,
-            "layer_gap": 45.0,
+            "inner_radius": 16.0,
+            "layer_gap": 55.0,
             "sector_count": 12,
             "branch_order": _PLANET_RING_BRANCHES,
         }
     if chart_style == 2:
+        # gen_chart_day: inner_radius=5, layer_gap=38, planet ring = layer 6 (idx=5)
         return {
             "layer_idx": 5,
-            "inner_radius": 3.0,
-            "layer_gap": 31.5,
+            "inner_radius": 5.0,
+            "layer_gap": 38.0,
             "sector_count": 12,
             "branch_order": _PLANET_RING_BRANCHES,
         }
+    # gen_chart_hour: inner_radius=5, layer_gap=38, planet ring = layer 7 (idx=6)
     return {
         "layer_idx": 6,
-        "inner_radius": 3.0,
-        "layer_gap": 31.5,
+        "inner_radius": 5.0,
+        "layer_gap": 38.0,
         "sector_count": 12,
         "branch_order": _PLANET_RING_BRANCHES,
     }
@@ -1365,25 +1370,33 @@ def _guxu_arrow_radii(chart_style: int, *, is_life: bool) -> tuple[float, float]
 
 
 def _guxu_sync_layer_layouts(chart_style: int, *, is_life: bool) -> list[dict]:
-    """第 3／4／5 層扇區幾何（與 gen_chart / gen_chart_day / gen_chart_hour 一致）。"""
+    """第 3／4／5 層扇區幾何（與 gen_chart / gen_chart_day / gen_chart_hour 一致）。
+
+    內徑與層間距必須與 chart.py 中的 gen_chart* 函數完全一致，
+    否則孤虛粗框會偏離正確的環位置。
+    """
     if is_life or chart_style in (5, 6):
         return []
     if chart_style in (0, 1):
-        inner_base, gap = 13.0, 45.0
+        # gen_chart: inner_radius=16, layer_gap=55, num_divisions=[1,8,16,16,12]
+        inner_base, gap = 16.0, 55.0
         specs: dict[int, tuple[int, tuple[str, ...]]] = {
             3: (16, _SIXTEEN_BRANCHES),
             4: (16, _SIXTEEN_BRANCHES),
             5: (12, _PLANET_RING_BRANCHES),
         }
     else:
-        inner_base, gap = 3.0, 31.5
+        # gen_chart_day / gen_chart_hour: inner_radius=5, layer_gap=38
+        inner_base, gap = 5.0, 38.0
         if chart_style == 2:
+            # gen_chart_day: num_divisions=[1,8,8,16,16,12]
             specs = {
                 3: (8, _SIXTEEN_BRANCHES),
                 4: (16, _SIXTEEN_BRANCHES),
                 5: (16, _SIXTEEN_BRANCHES),
             }
         else:
+            # gen_chart_hour: num_divisions=[1,8,16,16,16,28,12]
             specs = {
                 3: (16, _SIXTEEN_BRANCHES),
                 4: (16, _SIXTEEN_BRANCHES),
