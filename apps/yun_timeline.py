@@ -114,9 +114,6 @@ def render_yun_section(
     # 當前運勢卡片
     parts.append(_render_current_card(rugua, huofu, t=t))
 
-    # 折疊子卡片
-    parts.append(_render_sub_cards(v12, v13, v14, rugua, t=t))
-
     # 歷史對照（簡要）
     parts.append(_render_history_compare(query_year, t=t))
 

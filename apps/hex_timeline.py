@@ -797,6 +797,9 @@ def render_classic_reading(results: dict, *, t) -> str:
             t("junshi_label"), "", "\n".join(_mil_body_parts), is_html_body=True,
         ))
 
+    # ── 7b. 統運子卡片（流年直卦、變卦納甲、卦象觀象、行支編年、災厄首尾、統運延伸）──
+    parts.append(_render_tongyun_subcards(ttext, results, t=t))
+
     # ── 8. 災變分野（卷十一 + 卷八，合併）──
     disaster_parts = []
     _v11 = ttext.get("卷十一", {})
@@ -1001,6 +1004,165 @@ def render_classic_reading(results: dict, *, t) -> str:
 
     inner = "\n".join(parts)
     return f'<div class="classic-reading-section">{inner}</div>'
+
+
+# ── 統運子卡片（流年直卦 etc.）─────────────────────────
+
+_JI_LABEL_KEYS = {
+    0: "liunian_zhigua",
+    1: "liuyue_zhigua",
+    2: "liuri_zhigua",
+    3: "liushi_zhigua",
+    4: "liufen_zhigua",
+}
+
+
+def _render_tongyun_subcards(ttext: dict, results: dict, *, t) -> str:
+    """渲染統運子卡片：流年直卦、變卦納甲、卦象觀象、行支編年、災厄首尾、統運延伸。
+
+    流年直卦標題按太乙計式動態調整：年計→流年直卦、月計→流月直卦、以此類推。
+    """
+    v12 = ttext.get("卷十二") or {}
+    v13 = ttext.get("卷十三") or {}
+    v14 = ttext.get("卷十四") or {}
+
+    cards: list[str] = []
+
+    # ── 流年直卦（動態標題）──
+    ji_style = results.get("style", 0)
+    label_key = _JI_LABEL_KEYS.get(ji_style, "liunian_zhigua")
+    lz = v12.get("流年直卦") or {}
+    if lz.get("直卦"):
+        gz = _esc(lz.get("干支", ""))
+        gua = _esc(lz.get("直卦", ""))
+        sym = _esc(lz.get("卦符", ""))
+        yao = _esc(lz.get("爻名", ""))
+        mff = _esc(lz.get("命爻法", ""))
+        yj = _esc(lz.get("要訣", ""))
+        _body = (
+            f"<p>{_esc(t('yun_ganzhi'))}：{gz}{_esc(t('yun_year_suffix'))}</p>"
+            f"<p>{_esc(t('yun_zhigua'))}：{gua} {sym} · {yao}{_esc(t('yun_yao_suffix'))}</p>"
+            f"<p>{_esc(t('yun_mff'))}：{mff}</p>"
+            f'<p class="classic-caption">{yj}</p>'
+        )
+        cards.append(_classic_card(
+            t(label_key), f"{gz} · {gua} {sym} · {yao}", _body, is_html_body=True,
+        ))
+
+    # ── 變卦納甲 ──
+    bg = v12.get("變卦納甲") or {}
+    if bg.get("變卦"):
+        ben = _esc(bg.get("本卦", ""))
+        bian = _esc(bg.get("變卦", ""))
+        dy = _esc(bg.get("爻名", ""))
+        nj = bg.get("納甲", {}) or {}
+        nj_str = _esc(nj.get("納甲", ""))
+        nw = _esc(nj.get("內外", ""))
+        bg8 = _esc(nj.get("八卦", ""))
+        fang = _esc(nj.get("方位", ""))
+        zhi_fy = _esc(nj.get("地支分野", ""))
+        gan_fy = _esc(nj.get("天干分野", ""))
+        _body = (
+            f"<p>{_esc(t('yun_ben_bian'))}：{ben} → {bian}（{_esc(t('yun_dong_yao'))}{dy}）</p>"
+            f"<p>{_esc(t('yun_najia'))}：{nj_str} · {nw} · {bg8}</p>"
+            f"<p>{_esc(t('yun_fangwei'))}：{fang}；{_esc(t('yun_fenye'))}：{zhi_fy}；{gan_fy}</p>"
+        )
+        cards.append(_classic_card(
+            t("bian_gua_najia"), f"{ben} → {bian}", _body, is_html_body=True,
+        ))
+
+    # ── 卦象觀象 ──
+    gx = v13.get("統運卦象") or {}
+    full = v13.get("卦象全文") or {}
+    if gx.get("卦"):
+        xiang = gx.get("象曰", "") or ""
+        xiang_preview = xiang[:36] + "…" if len(xiang) > 36 else xiang
+        yao_obs = gx.get("當前爻觀象", "")
+        yao_observations = full.get("爻觀象", {}) or {}
+        current_yao = gx.get("爻", 0)
+        yao_list_html = ""
+        for yi in sorted(yao_observations.keys()):
+            cls = "classic-yao-item"
+            if yi == current_yao:
+                cls += " classic-yao-current"
+            elif yi <= current_yao:
+                cls += " classic-yao-active"
+            yao_list_html += (
+                f'<div class="{cls}">'
+                f'<span class="classic-yao-idx">{yi}</span>'
+                f'<span class="classic-yao-text">{_esc(yao_observations[yi])}</span>'
+                f"</div>"
+            )
+        _yao_list_div = f'<div class="classic-yao-list">{yao_list_html}</div>' if yao_list_html else ""
+        _body = (
+            f"<p>{_esc(t('yun_xiang_yue'))}：{_esc(xiang)}</p>"
+            f'<p>▶ {_esc(t("yun_yao_guanxiang"))}（{_esc(gx.get("爻名", ""))}）：{_esc(yao_obs)}</p>'
+            f"{_yao_list_div}"
+        )
+        cards.append(_classic_card(
+            t("gua_xiang"), f'{_esc(gx.get("卦", ""))} · {_esc(xiang_preview)}', _body, is_html_body=True,
+        ))
+
+    # ── 行支編年 ──
+    hz = (v14.get("行支編年") or {}) if v14 else {}
+    exact = hz.get("當年例", []) if hz else []
+    tip14 = v14.get("要訣", "") if v14 else ""
+    if exact:
+        e = exact[0]
+        _body = (
+            f'<p>{_esc(e.get("紀年", ""))}（{e.get("年", "—")}）</p>'
+            f'<p>{_esc(e.get("運", ""))}·{_esc(e.get("卦", ""))}{_esc(e.get("爻", ""))}</p>'
+            f'<p>{_esc(e.get("摘要", ""))}</p>'
+        )
+        cards.append(_classic_card(
+            t("hangzhi_biannian"),
+            f'{_esc(e.get("紀年", ""))} · {_esc(e.get("卦", ""))}{_esc(e.get("爻", ""))}',
+            _body, is_html_body=True,
+        ))
+    elif tip14:
+        _body = f"<p>{_esc(tip14)}</p>"
+        cards.append(_classic_card(
+            t("hangzhi_biannian"), f"{_esc(tip14[:24])}…", _body, is_html_body=True,
+        ))
+
+    # ── 災厄首尾 ──
+    sw = v12.get("災厄首尾") or {}
+    if sw.get("是否首尾") or sw.get("首尾標記"):
+        flags = "、".join(sw.get("首尾標記", []) or [])
+        if flags:
+            _body = (
+                f'<p>{_esc(sw.get("斷語", ""))}</p>'
+                f'<p class="classic-caption">{_esc(sw.get("要訣", ""))}</p>'
+            )
+            cards.append(_classic_card(t("shouwei"), _esc(flags), _body, is_html_body=True))
+
+    # ── 統運延伸（觀象期十二月直事）──
+    gqx = v12.get("觀象期") or {}
+    months = gqx.get("十二月直事") or []
+    if months:
+        month_items = []
+        for m in months:
+            is_first_half = m.get("階段") == "本卦"
+            cls = "classic-month-item" + (" classic-month-ben" if is_first_half else " classic-month-bian")
+            month_items.append(
+                f'<span class="{cls}">'
+                f'<span class="classic-month-seq">{m.get("月序", "")}</span>'
+                f'<span class="classic-month-gua">{_esc(m.get("卦", ""))}</span>'
+                f'<span class="classic-month-yao">{_esc(m.get("爻名", ""))}</span>'
+                f"</span>"
+            )
+        month_inner = "\n".join(month_items)
+        _body = (
+            f'<p class="classic-caption">{_esc(gqx.get("要訣", ""))}</p>'
+            f'<div class="classic-month-grid">{month_inner}</div>'
+        )
+        cards.append(_classic_card(
+            t("tongyun_extended"),
+            f'{_esc(gqx.get("本卦", ""))} / {_esc(gqx.get("變卦", ""))}',
+            _body, is_html_body=True,
+        ))
+
+    return "\n".join(cards)
 
 
 # ── 內部渲染函數 ────────────────────────────────────────
