@@ -3599,11 +3599,11 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                 canvas.height = canvasSize;
                 const context = canvas.getContext("2d");
 
-                context.fillStyle = "#0d1b2a";
+                context.fillStyle = "#0a0a0a";
                 context.fillRect(0, 0, canvas.width, canvas.height);
                 const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
                 gradient.addColorStop(0, "rgba(212, 175, 55, 0.18)");
-                gradient.addColorStop(0.35, "rgba(13, 27, 42, 0.02)");
+                gradient.addColorStop(0.35, "rgba(10, 10, 10, 0.02)");
                 gradient.addColorStop(1, "rgba(196, 30, 58, 0.14)");
                 context.fillStyle = gradient;
                 context.fillRect(0, 0, canvas.width, canvas.height);
@@ -3621,8 +3621,6 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                 context.strokeStyle = "rgba(212, 175, 55, 0.62)";
                 context.lineWidth = 2 * scale;
                 context.strokeRect(24 * scale, 24 * scale, canvas.width - 48 * scale, canvas.height - 48 * scale);
-                context.strokeStyle = "rgba(212, 175, 55, 0.22)";
-                context.strokeRect(40 * scale, 40 * scale, canvas.width - 80 * scale, canvas.height - 80 * scale);
 
                 const sidePadding = 64 * scale;
                 const summaryWidth = canvas.width - sidePadding * 2;
