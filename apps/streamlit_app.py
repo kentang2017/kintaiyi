@@ -1937,53 +1937,31 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     #__CONTAINER_ID__ .taiyi-card {
         position: relative;
         overflow: visible;
-        border: 1px solid rgba(212, 175, 55, 0.62);
-        border-radius: 22px;
-        padding: 10px;
-        background:
-            radial-gradient(circle at 12% 16%, rgba(212, 175, 55, 0.13), transparent 30%),
-            radial-gradient(circle at 88% 12%, rgba(196, 30, 58, 0.12), transparent 24%),
-            linear-gradient(180deg, rgba(18, 33, 52, 0.98), rgba(10, 22, 40, 0.98));
-        box-shadow: var(--shadow);
+        border: none;
+        border-radius: 0;
+        padding: 0;
+        background: transparent;
+        box-shadow: none;
         isolation: isolate;
     }
     #__CONTAINER_ID__ .taiyi-card::before,
     #__CONTAINER_ID__ .taiyi-card::after {
-        content: "";
-        position: absolute;
-        inset: 10px;
-        border-radius: 18px;
-        pointer-events: none;
-    }
-    /* 美學調整區 */
-    #__CONTAINER_ID__ .taiyi-card::before {
-        border: 1px solid rgba(212, 175, 55, 0.25);
-        background:
-            radial-gradient(circle at 10% 20%, rgba(245, 240, 225, 0.08) 0 1px, transparent 1.5px),
-            radial-gradient(circle at 82% 24%, rgba(245, 240, 225, 0.08) 0 1px, transparent 1.5px),
-            radial-gradient(circle at 26% 86%, rgba(245, 240, 225, 0.06) 0 1px, transparent 1.5px),
-            radial-gradient(circle at 76% 78%, rgba(212, 175, 55, 0.08) 0 1px, transparent 1.5px);
-        background-size: 160px 160px, 200px 200px, 180px 180px, 220px 220px;
-        opacity: 0.9;
-    }
-    #__CONTAINER_ID__ .taiyi-card::after {
-        inset: 3px;
-        border: 1px solid rgba(212, 175, 55, 0.12);
+        content: none;
     }
     #__CONTAINER_ID__ .taiyi-toolbar {
         position: relative;
         z-index: 2;
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
         width: min(100%, var(--chart-max-width));
         justify-content: center;
         align-items: center;
-        margin-top: 6px;
-        padding: 0 4px 0;
+        margin-top: 8px;
+        padding: 0;
     }
     #__CONTAINER_ID__ .taiyi-toolbar.has-geju-follow {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        justify-content: center;
     }
     #__CONTAINER_ID__ .taiyi-btn {
         appearance: none;
@@ -1994,12 +1972,12 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         font-family: inherit;
         font-size: 0.76rem;
         line-height: 1;
-        padding: 9px 12px;
+        padding: 9px 16px;
         cursor: pointer;
         transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, color 180ms ease;
         box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
         white-space: nowrap;
-        width: 100%;
+        width: auto;
         min-width: 0;
         backdrop-filter: blur(8px);
     }
@@ -2024,32 +2002,19 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     }
     #__CONTAINER_ID__ .taiyi-stage-frame {
         position: relative;
-        /* Square frame: width must not exceed available height (parent viewport
-           minus topnav+tabs+toolbar+card-padding+toolbar+margin ~280px). This keeps
-           the entire chart visible without any scrollbar — the square shrinks to fit. */
         width: min(100%, var(--chart-max-width), calc(var(--parent-vh, 100vh) - 280px));
         aspect-ratio: 1 / 1;
         overflow: visible;
-        border-radius: 22px;
-        border: 1px solid rgba(212, 175, 55, 0.34);
-        background:
-            radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.09), transparent 42%),
-            radial-gradient(circle at 52% 49%, rgba(245, 240, 225, 0.07), transparent 58%),
-            linear-gradient(180deg, rgba(9, 21, 37, 0.98), rgba(5, 13, 23, 1));
-        padding: clamp(14px, 3vw, 26px);
+        border-radius: 0;
+        border: none;
+        background: transparent;
+        padding: 0;
         display: flex;
         align-items: center;
         justify-content: center;
     }
     #__CONTAINER_ID__ .taiyi-svg-backdrop {
-        position: absolute;
-        inset: 10px;
-        border-radius: 18px;
-        pointer-events: none;
-        background:
-            radial-gradient(circle at center, rgba(212, 175, 55, 0.06) 0, transparent 46%),
-            radial-gradient(circle at 28% 24%, rgba(245, 240, 225, 0.045), transparent 18%),
-            radial-gradient(circle at 72% 74%, rgba(245, 240, 225, 0.04), transparent 16%);
+        display: none;
     }
     #__CONTAINER_ID__ .taiyi-svg-root {
         position: relative;
@@ -2423,33 +2388,32 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
     /* Responsive 調整區 */
     @container (max-width: 860px) {
         #__CONTAINER_ID__ .taiyi-stage-frame {
-            padding: clamp(12px, 2.6vw, 18px);
+            padding: 0;
         }
     }
     @media (max-width: 768px) {
         #__CONTAINER_ID__ { padding-top: 0; padding-bottom: 0; }
         #__CONTAINER_ID__ .taiyi-card {
-            border-radius: 18px;
-            padding: 6px;
+            border-radius: 0;
+            padding: 0;
         }
-        #__CONTAINER_ID__ .taiyi-card::before { inset: 6px; }
+        #__CONTAINER_ID__ .taiyi-card::before { inset: 0; }
         #__CONTAINER_ID__ .taiyi-stage {
-            padding-top: 4px;
+            padding-top: 0;
         }
         #__CONTAINER_ID__ .taiyi-btn {
-            width: 100%;
+            width: auto;
             text-align: center;
         }
         #__CONTAINER_ID__ .taiyi-toolbar {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            justify-content: stretch;
-            align-self: stretch;
-            margin-top: 10px;
+            justify-content: center;
+            align-self: center;
+            margin-top: 8px;
             margin-bottom: 4px;
         }
         #__CONTAINER_ID__ .taiyi-stage-frame {
             width: 100%;
-            padding: 3px;
+            padding: 0;
         }
         #__CONTAINER_ID__ .taiyi-svg-root {
             max-width: 100%;
