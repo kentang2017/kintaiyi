@@ -1770,8 +1770,7 @@ def _chart_export_css_bundle(glow_id: str) -> dict[str, str]:
     scope = ".taiyi-svg-root"
     shell = f"""
     {scope} {{
-        background: radial-gradient(circle at 50% 44%, #1c2540 0%, #11172b 58%, #090c18 100%);
-        border-radius: 50%;
+        background: transparent !important;
     }}
     {scope} path, {scope} polygon, {scope} rect, {scope} circle, {scope} ellipse {{
         stroke: #d7bd6f !important;
@@ -1780,7 +1779,7 @@ def _chart_export_css_bundle(glow_id: str) -> dict[str, str]:
     }}
     {scope} circle.taiyi-chart-bg {{
         stroke: none !important;
-        fill: #141826 !important;
+        fill: transparent !important;
     }}
     {scope} circle.taiyi-ornament-ring {{
         stroke: rgba(199, 154, 78, 0.5) !important;
