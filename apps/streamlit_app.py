@@ -2611,20 +2611,38 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
                     }
                 }
             } catch (e) { /* cross-origin: skip clamping */ }
+            // Suppress duplicate messages: only post when height actually changed
+            // by more than 2px. This prevents setState storms during sidebar
+            // open/close transitions on mobile (React error #185).
             if (Math.abs(height - lastReportedHeight) < 2) {
                 return;
             }
             lastReportedHeight = height;
-            window.parent.postMessage(
-                { isStreamlitMessage: true, type: "streamlit:setFrameHeight", height: height },
-                "*"
-            );
+            try {
+                window.parent.postMessage(
+                    { isStreamlitMessage: true, type: "streamlit:setFrameHeight", height: height },
+                    "*"
+                );
+            } catch (e) { /* cross-origin: silent */ }
         }
 
+        // Debounce height updates to prevent React #185 during sidebar transitions.
+        // ResizeObserver can fire dozens of times per second during CSS transitions;
+        // batching into a single rAF + 150ms debounce prevents setState storms.
+        let heightDebounceTimer = null;
         function queueFrameHeight() {
             if (heightFramePending) return;
+            // Fast path: rAF for initial load and user interactions
             heightFramePending = true;
-            requestAnimationFrame(setFrameHeight);
+            requestAnimationFrame(() => {
+                setFrameHeight();
+                // Debounce residual resize events for 150ms to catch transition tail
+                if (heightDebounceTimer) clearTimeout(heightDebounceTimer);
+                heightDebounceTimer = setTimeout(() => {
+                    heightFramePending = false;
+                    setFrameHeight();
+                }, 150);
+            });
         }
 
         function cleanText(value) {
@@ -3717,11 +3735,34 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             }, 300);
         }
 
+        // ResizeObserver: use debounced queue instead of firing on every observation.
+        // During sidebar open/close on mobile, the observer fires dozens of times
+        // in rapid succession — the debounce in queueFrameHeight prevents each
+        // firing from sending a separate postMessage to Streamlit (React #185).
         if (window.ResizeObserver) {
             const observer = new ResizeObserver(() => queueFrameHeight());
             observer.observe(root);
             observer.observe(svg);
         }
+        // Listen for parent viewport resize (sidebar toggle changes available width)
+        // and update --parent-vh so the chart square recalculates correctly.
+        try {
+            const updateParentVh = () => {
+                const vh = window.parent.innerHeight || window.innerHeight || 0;
+                if (vh > 0) {
+                    root.style.setProperty("--parent-vh", vh + "px");
+                }
+                queueFrameHeight();
+            };
+            // Debounce parent resize events
+            let parentResizeTimer = null;
+            if (window.parent) {
+                window.parent.addEventListener("resize", () => {
+                    if (parentResizeTimer) clearTimeout(parentResizeTimer);
+                    parentResizeTimer = setTimeout(updateParentVh, 200);
+                });
+            }
+        } catch (e) { /* cross-origin: skip parent listener */ }
         window.addEventListener("load", queueFrameHeight, { once: true });
         setTimeout(queueFrameHeight, 80);
         setTimeout(queueFrameHeight, 260);

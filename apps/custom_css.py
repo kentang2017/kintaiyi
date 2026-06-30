@@ -359,19 +359,19 @@ html.grok-sb-collapsed [data-testid="stMainBlockContainer"],
     }}
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
         margin-bottom: 0 !important;
-        margin-top: 0.4rem !important;
-        padding: 0.5rem 0.5rem 0 !important;
+        margin-top: 1rem !important;
+        padding: 0.6rem 0.5rem 0 !important;
     }}
     /* 緊鄰 chart-stage-marker 的下一個 block：消除上方 margin */
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) + div[data-testid="stVerticalBlock"] {{
         margin-top: 0 !important;
     }}
 
-    /* ── iframe 容器：零下 margin ── */
+    /* ── iframe 容器：保留上方 0.5rem 間距讓資訊框與圓盤分離 ── */
     div[data-testid="stVerticalBlock"]:has(iframe),
     div[data-testid="stElementContainer"]:has(iframe) {{
         margin-bottom: 0 !important;
-        margin-top: 0 !important;
+        margin-top: 0.5rem !important;
         padding: 0 !important;
     }}
     iframe {{
@@ -862,20 +862,20 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
 @media (max-width: 899px) {{
     div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
         border: 1px solid var(--border-subtle);
-        padding: 0.5rem 0.5rem 0 !important;
+        padding: 0.6rem 0.5rem 0 !important;
         margin-bottom: 0 !important;
-        margin-top: 0.3rem !important;
+        margin-top: 0.8rem !important;
     }}
-    /* Kill all extra vertical space around the chart iframe */
+    /* iframe 容器：保留上方 0.5rem 讓資訊框與圓盤分離 */
     div[data-testid="stVerticalBlock"]:has(iframe) {{
-        margin-top: 0 !important;
+        margin-top: 0.5rem !important;
         margin-bottom: 0 !important;
         padding: 0 !important;
         gap: 0 !important;
     }}
     div[data-testid="stElementContainer"]:has(iframe) {{
         margin-bottom: 0 !important;
-        margin-top: 0 !important;
+        margin-top: 0.5rem !important;
         padding: 0 !important;
     }}
     .stHtml {{
