@@ -109,6 +109,8 @@ from chart_layout import (
 )
 from hex_timeline import render_hex_timeline, render_classic_reading
 from yun_timeline import render_yun_section
+from history_timeline import render_history_timeline, format_year_label
+from history_examples import HISTORY_EVENTS
 
 # 5=太乙命法(魔改·分計落宮)  6=太乙命法(時計落宮)
 LIFE_CHART_STYLES = frozenset({5, 6})
@@ -443,13 +445,6 @@ def _render_changelog_html_cached(md_text: str) -> str:
     return render_changelog_html(md_text)
 
 
-@st.cache_data(show_spinner=False)
-def _load_example_timeline_json() -> str:
-    path = os.path.join(_REPO_ROOT, "assets", "example.json")
-    with open(path, encoding="utf-8-sig") as f:
-        return f.read()
-
-
 # --- i18n: Translation dictionaries ---
 TRANSLATIONS = {
     "zh": {
@@ -574,6 +569,13 @@ TRANSLATIONS = {
         "tab_updates": "🆕更新日誌",
         "tab_guide": "🚀看盤要領",
         "tab_links": "🔗連結",
+        # 局數史例（動態歷史時間軸）
+        "history_timeline_title": "局數史例",
+        "history_timeline_hint": "點選節點檢視該年即時排盤",
+        "history_select_hint": "👆 請點選上方時間軸節點，檢視該年份的太乙即時排盤。",
+        "history_source_label": "積年法",
+        "history_kook_hint_label": "史載局數",
+        "history_year_label": "西元年",
         # Main content
         "explanation": "解釋",
         "taiyi_life_title": "《太乙命法》︰",
@@ -894,6 +896,13 @@ TRANSLATIONS = {
         "tab_updates": "🆕 Update Log",
         "tab_guide": "🚀 Chart Guide",
         "tab_links": "🔗 Links",
+        # Historical Examples (dynamic timeline)
+        "history_timeline_title": "Historical Examples",
+        "history_timeline_hint": "Click a node to reveal that year's live chart",
+        "history_select_hint": "👆 Click a node on the timeline above to view that year's live Taiyi chart.",
+        "history_source_label": "Accumulation Method",
+        "history_kook_hint_label": "Recorded Bureau",
+        "history_year_label": "Year",
         # Main content
         "explanation": "Explanation",
         "taiyi_life_title": "Taiyi Life Method:",
@@ -3825,28 +3834,6 @@ def render_chart_explanation_seam():
     )
 
 
-def timeline(data, height=800):
-    """渲染時間線組件"""
-    if isinstance(data, str):
-        data = json.loads(data)
-    json_text = json.dumps(data)
-    source_param = 'timeline_json'
-    source_block = f'var {source_param} = {json_text};'
-    cdn_path = 'https://cdn.knightlab.com/libs/timeline3/latest'
-    css_block = f'<link title="timeline-styles" rel="stylesheet" href="{cdn_path}/css/timeline.css">'
-    js_block = f'<script src="{cdn_path}/js/timeline.js"></script>'
-    htmlcode = f'''
-        {css_block}
-        {js_block}
-        <div id='timeline-embed' style="width: 95%; height: {height}px; margin: 1px;"></div>
-        <script type="text/javascript">
-            var additionalOptions = {{ start_at_end: false, is_embed: true, default_bg_color: {{r:14, g:17, b:23}} }};
-            {source_block}
-            timeline = new TL.Timeline('timeline-embed', {source_param}, additionalOptions);
-        </script>
-    '''
-    st.iframe(htmlcode, height=height, width="stretch")
-
 @contextmanager
 def st_capture(output_func):
     """捕獲 stdout 並將其傳遞給指定的輸出函數"""
@@ -4109,6 +4096,62 @@ def _resolve_chart_meta(
     st.session_state.chart_meta = meta
     st.session_state.chart_meta_key = meta_key
     return meta
+
+
+@st.cache_data(show_spinner=False)
+def _gen_history_chart_results(year: int, acc_years: int) -> dict:
+    """按需生成「年計太乙」歷史盤（僅依年份 + 積年法決定，可安全快取）。
+
+    月/日/時固定取年中（6月15日午時），避免元旦附近農曆換年造成的
+    局數邊界誤差（多數古籍記載之局數以農曆整年為準）。
+    """
+    return gen_results(year, 6, 15, 12, 0, style=0, tn=acc_years, sex_o="男", tc=0)
+
+
+def _render_history_chart_section(event: dict) -> None:
+    """渲染單一歷史事件的事件卡 + 即時排盤（唯讀展示，不含拖曳/匯出工具）。"""
+    year = int(event.get("year", 0))
+    acc_years = int(event.get("acc_years", 0))
+    try:
+        results = _gen_history_chart_results(year, acc_years)
+    except Exception as e:  # noqa: BLE001 - 歷史盤生成失敗時降級為錯誤提示，不中斷整頁
+        st.error(t("gen_error").format(str(e)))
+        return
+
+    acc_label = to({0: "太乙統宗", 1: "太乙金鏡", 2: "太乙淘金歌", 3: "太乙局"}.get(acc_years, "太乙統宗"))
+    kook_wen = results.get("kook", {}).get("文", "—")
+    kook_hint = event.get("kook_hint")
+
+    meta_html = (
+        f'<span>{html_escape(t("history_source_label"))}：{html_escape(acc_label)}</span>'
+        f'<span>{html_escape(kook_wen)}</span>'
+    )
+    if kook_hint:
+        meta_html += f'<span>{html_escape(t("history_kook_hint_label"))}：{html_escape(str(kook_hint))}局</span>'
+
+    st.markdown(
+        f'<div class="history-event-card">'
+        f'<span class="history-event-card-year">{html_escape(format_year_label(year))}年</span>'
+        f'<p class="history-event-card-headline">{html_escape(event.get("headline", ""))}</p>'
+        f'<p class="history-event-card-text">{html_escape(event.get("text", ""))}</p>'
+        f'<div class="history-event-card-meta">{meta_html}</div>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+    chart_meta = _build_chart_meta(
+        results,
+        is_life_chart=False,
+        show_geju_markers=False,
+        show_guxu_overlay=False,
+        wuxing_color=show_wuxing_color,
+    )
+    render_chart_stage_open(
+        print_meta=build_chart_print_meta(results, t=t, is_life_chart=False),
+    )
+    render_chart_explanation_seam()
+    render_svg1(results["genchart2"], results["kook_num"], chart_meta)
+    render_chart_mobile_params(chart_meta, results, t=t)
 
 
 # 創建標籤頁
@@ -4427,7 +4470,15 @@ with tabs[1]:
 
 # 太乙局數史例
 with tabs[2]:
-    timeline(_load_example_timeline_json(), height=600)
+    selected_idx = render_history_timeline(HISTORY_EVENTS, t=t)
+    render_chart_explanation_seam()
+    if selected_idx is not None:
+        _render_history_chart_section(HISTORY_EVENTS[selected_idx])
+    else:
+        st.markdown(
+            f'<div class="history-select-hint">{html_escape(t("history_select_hint"))}</div>',
+            unsafe_allow_html=True,
+        )
     with st.expander(t("list_label")):
         st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "docs/example.md"))
 

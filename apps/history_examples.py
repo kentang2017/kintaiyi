@@ -14,7 +14,6 @@
 
 from __future__ import annotations
 
-
 HISTORY_EVENTS: list[dict] = [
     {
         "year": -202,
