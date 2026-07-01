@@ -2108,6 +2108,181 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) .taiyi-shell {{
 .classic-card[open] .classic-card-header {{
     border-bottom: 1px solid var(--border-subtle);
 }}
+
+/* ── 局數史例：歷史節點時間軸 ─────────────────────────────── */
+.history-timeline-title {{
+    display: flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+    margin: 0.2rem 0 0.7rem;
+}}
+.history-timeline-title-icon {{
+    font-size: 1.1rem;
+}}
+.history-timeline-title-text {{
+    font-size: 1.02rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.02em;
+}}
+.history-timeline-title-hint {{
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}}
+.history-timeline-wrap {{
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 4px 6px 10px;
+    margin-bottom: 1rem;
+}}
+/* 節點列：強制單行橫向捲動，讓 62 個歷史節點可左右滑動瀏覽 */
+div[data-testid="stHorizontalBlock"]:has(.history-timeline-marker) {{
+    position: relative;
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 10px !important;
+    padding: 28px 10px 6px !important;
+    scrollbar-width: thin;
+}}
+div[data-testid="stHorizontalBlock"]:has(.history-timeline-marker)::-webkit-scrollbar {{
+    height: 6px;
+}}
+div[data-testid="stHorizontalBlock"]:has(.history-timeline-marker)::-webkit-scrollbar-thumb {{
+    background: rgba(212, 175, 55, 0.35);
+    border-radius: 3px;
+}}
+/* 貫穿節點列的金色主軸線 */
+div[data-testid="stHorizontalBlock"]:has(.history-timeline-marker)::before {{
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    top: 20px;
+    height: 2px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(212, 175, 55, 0.55) 8%,
+        rgba(212, 175, 55, 0.55) 92%,
+        transparent
+    );
+    pointer-events: none;
+}}
+div[data-testid="stHorizontalBlock"]:has(.history-timeline-marker) > div[data-testid="column"],
+div[data-testid="stHorizontalBlock"]:has(.history-timeline-marker) > div[data-testid="stColumn"] {{
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 84px;
+}}
+.history-timeline-marker {{
+    position: absolute;
+    top: -22px;
+    left: 0;
+    width: 1px;
+    height: 1px;
+}}
+/* 節點按鈕本體：空心圓點 + 年份，選中時金色實心 + 光暈 */
+div[data-testid="stHorizontalBlock"]:has(.history-timeline-marker) .stButton > button {{
+    background: var(--bg-surface) !important;
+    border: 1.5px solid var(--border-strong) !important;
+    color: var(--text-secondary) !important;
+    border-radius: 999px !important;
+    font-size: 0.76rem !important;
+    font-weight: 500 !important;
+    padding: 0.32rem 0.7rem !important;
+    min-height: 0 !important;
+    line-height: 1.1 !important;
+    box-shadow: none !important;
+    transition: border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}}
+div[data-testid="stHorizontalBlock"]:has(.history-timeline-marker) .stButton > button:hover:not(:disabled) {{
+    border-color: rgba(212, 175, 55, 0.6) !important;
+    color: #f5f0e1 !important;
+}}
+div[data-testid="stHorizontalBlock"]:has(.history-timeline-marker) .stButton > button[kind="primary"],
+div[data-testid="stHorizontalBlock"]:has(.history-timeline-marker) .stButton > button[data-testid="baseButton-primary"] {{
+    background: #d4af37 !important;
+    border-color: #d4af37 !important;
+    color: #14110a !important;
+    font-weight: 700 !important;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.22), 0 0 12px rgba(212, 175, 55, 0.5) !important;
+}}
+div[data-testid="stHorizontalBlock"]:has(.history-timeline-marker) .stButton > button[kind="primary"]:hover:not(:disabled) {{
+    background: #c9a227 !important;
+    border-color: #c9a227 !important;
+    color: #14110a !important;
+}}
+
+/* ── 局數史例：展開排盤區（事件卡 + 盤面卡）───────────────── */
+.history-select-hint {{
+    background: var(--bg-surface);
+    border: 1px dashed var(--border-subtle);
+    border-radius: 12px;
+    padding: 1.1rem 1.2rem;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    text-align: center;
+}}
+.history-event-card {{
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid #c9a227;
+    border-radius: 12px;
+    padding: 0.95rem 1.1rem 1.05rem;
+    margin-bottom: 0.9rem;
+}}
+.history-event-card-year {{
+    display: inline-block;
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #d4af37;
+    background: rgba(212, 175, 55, 0.12);
+    border-radius: 6px;
+    padding: 0.12rem 0.55rem;
+    margin-bottom: 0.45rem;
+}}
+.history-event-card-headline {{
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 0.45rem;
+}}
+.history-event-card-text {{
+    font-size: 0.86rem;
+    line-height: 1.75;
+    color: var(--text-secondary);
+    margin: 0;
+}}
+.history-event-card-meta {{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.7rem;
+    margin-top: 0.65rem;
+    font-size: 0.76rem;
+    color: var(--text-muted);
+}}
+.history-event-card-meta span {{
+    background: var(--bg-hover);
+    border-radius: 6px;
+    padding: 0.15rem 0.5rem;
+}}
+@media (max-width: 640px) {{
+    div[data-testid="stHorizontalBlock"]:has(.history-timeline-marker) > div[data-testid="column"],
+    div[data-testid="stHorizontalBlock"]:has(.history-timeline-marker) > div[data-testid="stColumn"] {{
+        min-width: 70px;
+    }}
+    div[data-testid="stHorizontalBlock"]:has(.history-timeline-marker) .stButton > button {{
+        font-size: 0.7rem !important;
+        padding: 0.26rem 0.55rem !important;
+    }}
+    .history-event-card {{
+        padding: 0.8rem 0.9rem 0.9rem;
+    }}
+}}
 </style>
 """
 
