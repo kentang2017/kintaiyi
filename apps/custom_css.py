@@ -2283,6 +2283,168 @@ div[data-testid="stHorizontalBlock"]:has(.history-timeline-marker) .stButton > b
         padding: 0.8rem 0.9rem 0.9rem;
     }}
 }}
+
+/* ── 更新日誌：時間軸 + 卡片 ──────────────────────────────── */
+.changelog-container {{
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0.4rem 0 1.5rem;
+}}
+.changelog-header {{
+    text-align: center;
+    margin-bottom: 1.4rem;
+}}
+.changelog-header h2 {{
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #f5f0e1;
+    margin: 0 0 0.35rem;
+}}
+.changelog-ornament {{
+    color: #d4af37;
+    font-size: 0.8rem;
+    letter-spacing: 0.5em;
+    opacity: 0.75;
+}}
+.changelog-timeline {{
+    position: relative;
+    padding-left: 1.9rem;
+}}
+.changelog-timeline::before {{
+    content: "";
+    position: absolute;
+    top: 0.4rem;
+    bottom: 0.4rem;
+    left: 0.5rem;
+    width: 1px;
+    background: linear-gradient(
+        180deg,
+        rgba(212, 175, 55, 0.65),
+        rgba(212, 175, 55, 0.15) 85%,
+        transparent
+    );
+}}
+.changelog-entry {{
+    position: relative;
+    margin-bottom: 1.05rem;
+}}
+.changelog-entry:last-child {{
+    margin-bottom: 0;
+}}
+.changelog-dot {{
+    position: absolute;
+    top: 1.05rem;
+    left: -1.4rem;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--bg-base);
+    border: 2px solid rgba(212, 175, 55, 0.55);
+}}
+.changelog-entry.is-latest .changelog-dot {{
+    background: #d4af37;
+    border-color: #d4af37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2), 0 0 10px rgba(212, 175, 55, 0.55);
+}}
+.changelog-card {{
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid rgba(212, 175, 55, 0.45);
+    border-radius: 12px;
+    padding: 0.85rem 1.05rem 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}}
+.changelog-entry.is-latest .changelog-card {{
+    border-left-color: #d4af37;
+    box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.12), 0 10px 26px rgba(0, 0, 0, 0.28);
+}}
+.changelog-card:hover {{
+    border-color: rgba(212, 175, 55, 0.35);
+}}
+.changelog-card-head {{
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: 0.55rem;
+}}
+.changelog-date {{
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: #d4af37;
+    font-variant-numeric: tabular-nums;
+}}
+.changelog-badge {{
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+}}
+.changelog-badge-latest {{
+    background: rgba(212, 175, 55, 0.16);
+    color: #d4af37;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+}}
+.changelog-items {{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.42rem;
+}}
+.changelog-items li {{
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-size: 0.86rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}}
+.changelog-item-text {{
+    flex: 1;
+}}
+.changelog-tag {{
+    flex: 0 0 auto;
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 0.05rem 0.45rem;
+    border-radius: 6px;
+    white-space: nowrap;
+}}
+.changelog-tag-new {{
+    color: #4a9c6d;
+    background: rgba(74, 156, 109, 0.14);
+}}
+.changelog-tag-improve {{
+    color: #b8860b;
+    background: rgba(184, 134, 11, 0.14);
+}}
+.changelog-tag-fix {{
+    color: #c0706c;
+    background: rgba(192, 112, 108, 0.16);
+}}
+.changelog-tag-note {{
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.05);
+}}
+@media (max-width: 640px) {{
+    .changelog-timeline {{
+        padding-left: 1.5rem;
+    }}
+    .changelog-dot {{
+        left: -1.15rem;
+    }}
+    .changelog-card {{
+        padding: 0.7rem 0.85rem 0.8rem;
+    }}
+    .changelog-items li {{
+        flex-wrap: wrap;
+    }}
+}}
 </style>
 """
 
