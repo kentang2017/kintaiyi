@@ -387,6 +387,22 @@ def _render_zhao_you_songs(zhao_you: dict, *, preview: int = 6) -> None:
 import re
 
 
+# 更新項目分類關鍵字（依優先順序判斷：修復 > 新增 > 優化）
+_CHANGELOG_TAG_RULES: tuple[tuple[str, str, tuple[str, ...]], ...] = (
+    ("fix", "修復", ("修正", "修復", "修補", "更正", "bug", "Bug", "BUG")),
+    ("new", "新增", ("加入", "增加", "加上", "新增", "支援", "支持")),
+    ("improve", "優化", ("優化", "美化", "改進", "改善", "提升", "調整", "重構", "細化", "回復", "恢復")),
+)
+
+
+def _classify_changelog_item(text: str) -> tuple[str, str]:
+    """依關鍵字判斷更新項目類型，回傳 (css class, 標籤文字)。"""
+    for css_key, label, keywords in _CHANGELOG_TAG_RULES:
+        if any(kw in text for kw in keywords):
+            return css_key, label
+    return "note", "紀錄"
+
+
 def render_changelog_html(md_text: str) -> str:
     """Parse update.md markdown and return styled HTML for the changelog timeline."""
     lines = md_text.splitlines()
@@ -426,14 +442,28 @@ def render_changelog_html(md_text: str) -> str:
         '  </div>',
         '  <div class="changelog-timeline">',
     ]
-    for entry in entries:
-        html_parts.append('    <div class="changelog-entry">')
-        html_parts.append(f'      <div class="changelog-date">{entry["date"]}</div>')
+    for idx, entry in enumerate(entries):
+        latest_cls = ' is-latest' if idx == 0 else ''
+        html_parts.append(f'    <div class="changelog-entry{latest_cls}">')
+        html_parts.append('      <div class="changelog-dot" aria-hidden="true"></div>')
+        html_parts.append('      <div class="changelog-card">')
+        html_parts.append('        <div class="changelog-card-head">')
+        html_parts.append(f'          <span class="changelog-date">{html_escape(entry["date"])}</span>')
+        if idx == 0:
+            html_parts.append('          <span class="changelog-badge changelog-badge-latest">最新</span>')
+        html_parts.append('        </div>')
         if entry["items"]:
-            html_parts.append('      <ul class="changelog-items">')
+            html_parts.append('        <ul class="changelog-items">')
             for item in entry["items"]:
-                html_parts.append(f'        <li>{item}</li>')
-            html_parts.append('      </ul>')
+                css_key, label = _classify_changelog_item(item)
+                html_parts.append('          <li>')
+                html_parts.append(
+                    f'            <span class="changelog-tag changelog-tag-{css_key}">{label}</span>'
+                )
+                html_parts.append(f'            <span class="changelog-item-text">{html_escape(item)}</span>')
+                html_parts.append('          </li>')
+            html_parts.append('        </ul>')
+        html_parts.append('      </div>')
         html_parts.append('    </div>')
     html_parts.append('  </div>')
     html_parts.append('</div>')
