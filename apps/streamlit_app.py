@@ -112,6 +112,10 @@ from yun_timeline import render_yun_section
 from history_timeline import render_history_timeline, format_year_label
 from history_examples import HISTORY_EVENTS
 from tutorial_guide import render_tutorial_guide
+from disaster_stats import render_disaster_stats
+from instruction_guide import render_instruction_guide
+from guji_bibliography import render_guji_bibliography
+from links_page import render_links_page
 
 # 5=太乙命法(魔改·分計落宮)  6=太乙命法(時計落宮)
 LIFE_CHART_STYLES = frozenset({5, 6})
@@ -479,6 +483,26 @@ def _render_changelog_html_cached(md_text: str) -> str:
 @st.cache_data(show_spinner=False)
 def _render_tutorial_guide_html_cached(md_text: str) -> str:
     return render_tutorial_guide(md_text)
+
+
+@st.cache_data(show_spinner=False)
+def _render_disaster_stats_html_cached(md_text: str) -> str:
+    return render_disaster_stats(md_text)
+
+
+@st.cache_data(show_spinner=False)
+def _render_instruction_guide_html_cached(md_text: str) -> str:
+    return render_instruction_guide(md_text)
+
+
+@st.cache_data(show_spinner=False)
+def _render_guji_bibliography_html_cached(md_text: str) -> str:
+    return render_guji_bibliography(md_text)
+
+
+@st.cache_data(show_spinner=False)
+def _render_links_page_html_cached(md_text: str) -> str:
+    return render_links_page(md_text)
 
 
 # --- i18n: Translation dictionaries ---
@@ -4502,7 +4526,8 @@ with tabs[0]:
 
 # 使用說明
 with tabs[1]:
-    st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "docs/instruction.md"))
+    _instruction_md = get_file_content_as_string(BASE_URL_KINTAIYI, "docs/instruction.md")
+    st.markdown(_render_instruction_guide_html_cached(_instruction_md), unsafe_allow_html=True)
 
 # 太乙局數史例
 with tabs[2]:
@@ -4520,11 +4545,13 @@ with tabs[2]:
 
 # 災害統計
 with tabs[3]:
-    st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "docs/disaster.md"))
+    _disaster_md = get_file_content_as_string(BASE_URL_KINTAIYI, "docs/disaster.md")
+    st.markdown(_render_disaster_stats_html_cached(_disaster_md), unsafe_allow_html=True)
 
 # 古籍書目
 with tabs[4]:
-    st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "docs/guji.md"))
+    _guji_md = get_file_content_as_string(BASE_URL_KINTAIYI, "docs/guji.md")
+    st.markdown(_render_guji_bibliography_html_cached(_guji_md), unsafe_allow_html=True)
 
 # 更新日誌
 with tabs[5]:
@@ -4538,7 +4565,8 @@ with tabs[6]:
 
 # 連結
 with tabs[7]:
-    st.markdown(get_file_content_as_string(BASE_URL_KINLIUREN, "docs/contact.md"), unsafe_allow_html=True)
+    _links_md = get_file_content_as_string(BASE_URL_KINLIUREN, "docs/contact.md")
+    st.markdown(_render_links_page_html_cached(_links_md), unsafe_allow_html=True)
 
 # Note: global styling is now handled by custom_css.py (injected near the top of this file).
 

@@ -2630,6 +2630,399 @@ div[data-testid="stHorizontalBlock"]:has(.history-timeline-marker) .stButton > b
         grid-template-columns: 1fr;
     }}
 }}
+
+/* ── 災異統計：統計徽章 + 明細列表 ────────────────────────── */
+.disaster-guide-container {{
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0.4rem 0 1.5rem;
+}}
+.disaster-guide-header {{
+    text-align: center;
+    margin-bottom: 1.1rem;
+}}
+.disaster-guide-header h2 {{
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #f5f0e1;
+    margin: 0 0 0.35rem;
+}}
+.disaster-guide-ornament {{
+    color: #d4af37;
+    font-size: 0.8rem;
+    letter-spacing: 0.5em;
+    opacity: 0.75;
+    margin-bottom: 0.5rem;
+}}
+.disaster-guide-subtitle {{
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin: 0;
+}}
+.disaster-card.classic-card {{
+    margin: 0.55rem 0;
+}}
+.disaster-section-desc {{
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin: 0 0 0.7rem;
+    line-height: 1.6;
+}}
+.disaster-stat-row {{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 0.9rem;
+}}
+.disaster-stat-badge {{
+    flex: 1 1 120px;
+    text-align: center;
+    background: var(--bg-surface);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: var(--radius-md);
+    padding: 0.5rem 0.6rem;
+}}
+.disaster-stat-value {{
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #d4af37;
+    letter-spacing: 0.02em;
+}}
+.disaster-stat-label {{
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+}}
+.disaster-row-list {{
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}}
+.disaster-row {{
+    display: flex;
+    align-items: baseline;
+    gap: 0.65rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 0.7rem;
+}}
+.disaster-row-year {{
+    flex: 0 0 auto;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: #14110a;
+    background: #d4af37;
+    border-radius: 999px;
+    padding: 0.14rem 0.55rem;
+}}
+.disaster-row-body {{
+    flex: 1 1 auto;
+    min-width: 0;
+}}
+.disaster-row-place {{
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}}
+.disaster-row-meta {{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+}}
+.disaster-row-kook {{
+    color: #d4af37;
+}}
+.disaster-row-geju {{
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    margin-top: 0.2rem;
+}}
+.disaster-match-mark {{
+    color: #d4af37;
+    margin-left: 0.3rem;
+}}
+@media (max-width: 640px) {{
+    .disaster-stat-badge {{
+        flex: 1 1 100px;
+    }}
+    .disaster-row {{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+    }}
+}}
+
+/* ── 使用說明：分步指南卡片 ───────────────────────────────── */
+.instruction-guide-container {{
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0.4rem 0 1.5rem;
+}}
+.instruction-guide-header {{
+    text-align: center;
+    margin-bottom: 1.1rem;
+}}
+.instruction-guide-header h2 {{
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #f5f0e1;
+    margin: 0 0 0.35rem;
+}}
+.instruction-guide-ornament {{
+    color: #d4af37;
+    font-size: 0.8rem;
+    letter-spacing: 0.5em;
+    opacity: 0.75;
+    margin-bottom: 0.5rem;
+}}
+.instruction-guide-subtitle {{
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin: 0;
+}}
+.instruction-step-list {{
+    display: flex;
+    flex-direction: column;
+}}
+.instruction-step {{
+    position: relative;
+    display: flex;
+    gap: 0.85rem;
+    padding-bottom: 1.1rem;
+}}
+.instruction-step-line::before {{
+    content: "";
+    position: absolute;
+    left: 0.95rem;
+    top: 2rem;
+    bottom: 0;
+    width: 1px;
+    background: rgba(212, 175, 55, 0.3);
+}}
+.instruction-step-badge {{
+    flex: 0 0 auto;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.12);
+    border: 1px solid rgba(212, 175, 55, 0.5);
+    color: #d4af37;
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}}
+.instruction-step-body {{
+    flex: 1 1 auto;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 0.55rem 0.85rem;
+}}
+.instruction-step-text {{
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+}}
+
+/* ── 古籍書目：朝代分組書目卡片 ───────────────────────────── */
+.guji-guide-container {{
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0.4rem 0 1.5rem;
+}}
+.guji-guide-header {{
+    text-align: center;
+    margin-bottom: 1.1rem;
+}}
+.guji-guide-header h2 {{
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #f5f0e1;
+    margin: 0 0 0.35rem;
+}}
+.guji-guide-ornament {{
+    color: #d4af37;
+    font-size: 0.8rem;
+    letter-spacing: 0.5em;
+    opacity: 0.75;
+    margin-bottom: 0.5rem;
+}}
+.guji-guide-subtitle {{
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin: 0;
+}}
+.guji-toc {{
+    margin-bottom: 1.6rem;
+    padding-bottom: 1.1rem;
+    border-bottom: 1px solid var(--border-subtle);
+}}
+.guji-book-list {{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}}
+.guji-book-card {{
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid rgba(212, 175, 55, 0.45);
+    border-radius: var(--radius-sm);
+    padding: 0.55rem 0.8rem;
+}}
+.guji-book-head {{
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}}
+.guji-book-title {{
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #f5f0e1;
+}}
+.guji-book-author {{
+    font-size: 0.74rem;
+    color: #d4af37;
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 999px;
+    padding: 0.1rem 0.55rem;
+}}
+.guji-book-note {{
+    font-size: 0.78rem;
+    line-height: 1.65;
+    color: var(--text-muted);
+    margin-top: 0.3rem;
+}}
+.guji-link {{
+    color: #d4af37;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}}
+.guji-link:hover {{
+    color: #f5f0e1;
+}}
+@media (max-width: 640px) {{
+    .guji-toc {{
+        gap: 0.4rem;
+    }}
+}}
+
+/* ── 連結：同系列應用卡片 + 聯絡方式 ─────────────────────── */
+.links-guide-container {{
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0.4rem 0 1.5rem;
+}}
+.links-guide-header {{
+    text-align: center;
+    margin-bottom: 1.1rem;
+}}
+.links-guide-header h2 {{
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #f5f0e1;
+    margin: 0 0 0.35rem;
+}}
+.links-guide-ornament {{
+    color: #d4af37;
+    font-size: 0.8rem;
+    letter-spacing: 0.5em;
+    opacity: 0.75;
+    margin-bottom: 0.5rem;
+}}
+.links-guide-subtitle {{
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin: 0;
+}}
+.links-app-grid {{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.7rem;
+    margin-bottom: 1.3rem;
+}}
+.links-app-card {{
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 0.55rem 0.75rem;
+    text-decoration: none;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}}
+.links-app-card:hover {{
+    border-color: rgba(212, 175, 55, 0.6);
+    background: rgba(212, 175, 55, 0.08);
+}}
+.links-app-icon {{
+    flex: 0 0 auto;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+}}
+.links-app-info {{
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}}
+.links-app-title {{
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: #f5f0e1;
+}}
+.links-app-desc {{
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}}
+.links-contact-card.classic-card {{
+    margin-top: 0.4rem;
+}}
+.links-contact-list {{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}}
+.links-contact-list li {{
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-size: 0.83rem;
+    line-height: 1.65;
+    color: var(--text-secondary);
+}}
+.links-contact-icon {{
+    flex: 0 0 auto;
+}}
+.links-contact-image {{
+    max-width: 100%;
+    border-radius: var(--radius-md);
+    margin-top: 0.6rem;
+    border: 1px solid var(--border-subtle);
+}}
+@media (max-width: 640px) {{
+    .links-app-grid {{
+        grid-template-columns: 1fr;
+    }}
+}}
 </style>
 """
 
