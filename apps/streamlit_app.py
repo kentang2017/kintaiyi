@@ -2495,6 +2495,8 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             fire: { fill: "#A61E35", stroke: "#D9646E", text: "#F8E8E4" },
             earth: { fill: "#70543A", stroke: "#B59067", text: "#F5E8D5" },
             metal: { fill: "#C9A227", stroke: "#F0D57A", text: "#17120A" },
+            orange: { fill: "#B06A1E", stroke: "#D8974A", text: "#FFF3E0" },
+            silver: { fill: "#768498", stroke: "#A0AEBC", text: "#F0F0F5" },
             water: { fill: "#355C8C", stroke: "#7EA3D8", text: "#EEF5FF" },
         };
         const branchToElement = {
@@ -2514,9 +2516,9 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
             "角": "wood", "斗": "wood", "奎": "wood", "井": "wood",
             "尾": "fire", "室": "fire", "觜": "fire", "翼": "fire",
             "氐": "earth", "女": "earth", "胃": "earth", "柳": "earth",
-            "房": "earth", "虛": "earth", "昴": "earth", "星": "earth",
+            "房": "orange", "虛": "orange", "昴": "orange", "星": "orange",
             "亢": "metal", "牛": "metal", "婁": "metal", "鬼": "metal",
-            "心": "metal", "危": "metal", "畢": "metal", "張": "metal",
+            "心": "silver", "危": "silver", "畢": "silver", "張": "silver",
             "箕": "water", "壁": "water", "參": "water", "軫": "water",
         };
         const state = {
