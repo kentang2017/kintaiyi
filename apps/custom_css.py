@@ -2445,6 +2445,191 @@ div[data-testid="stHorizontalBlock"]:has(.history-timeline-marker) .stButton > b
         flex-wrap: wrap;
     }}
 }}
+
+/* ── 看盤要領：分組卡片式導覽頁 ─────────────────────────── */
+.tutorial-guide-container {{
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0.4rem 0 1.5rem;
+}}
+.tutorial-guide-header {{
+    text-align: center;
+    margin-bottom: 1.1rem;
+}}
+.tutorial-guide-header h2 {{
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #f5f0e1;
+    margin: 0 0 0.35rem;
+}}
+.tutorial-guide-ornament {{
+    color: #d4af37;
+    font-size: 0.8rem;
+    letter-spacing: 0.5em;
+    opacity: 0.75;
+    margin-bottom: 0.5rem;
+}}
+.tutorial-guide-subtitle {{
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin: 0;
+}}
+.tutorial-toc {{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 0 0 1.6rem;
+    padding-bottom: 1.1rem;
+    border-bottom: 1px solid var(--border-subtle);
+}}
+.tutorial-toc-pill {{
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 999px;
+    padding: 0.32rem 0.85rem;
+    text-decoration: none;
+    transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}}
+.tutorial-toc-pill:hover {{
+    color: #d4af37;
+    border-color: rgba(212, 175, 55, 0.5);
+    background: rgba(212, 175, 55, 0.08);
+}}
+.tutorial-group {{
+    margin-bottom: 1.9rem;
+    scroll-margin-top: 4.5rem;
+}}
+.tutorial-group:last-child {{
+    margin-bottom: 0.4rem;
+}}
+.tutorial-group-header {{
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+    background: linear-gradient(
+        90deg,
+        rgba(212, 175, 55, 0.09),
+        transparent 70%
+    );
+}}
+.tutorial-group-icon {{
+    font-size: 1.05rem;
+}}
+.tutorial-group-title {{
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: #d4af37;
+}}
+.tutorial-group-desc {{
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin: 0 0 0.7rem;
+    line-height: 1.6;
+}}
+/* 卡片沿用 .classic-card 底色/邊框，這裡只補強看盤要領頁專屬的間距與標題列 */
+.tutorial-card.classic-card {{
+    margin: 0.55rem 0;
+}}
+.tutorial-card .classic-card-header {{
+    gap: 0.5rem;
+}}
+.tutorial-prose p {{
+    margin: 0 0 0.65rem;
+    font-size: 0.85rem;
+    line-height: 1.75;
+    color: var(--text-secondary);
+}}
+.tutorial-prose p:last-child {{
+    margin-bottom: 0;
+}}
+.tutorial-pill-grid {{
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.55rem;
+}}
+.tutorial-pill {{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #f5f0e1;
+    background: rgba(212, 175, 55, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: var(--radius-md);
+    padding: 0.65rem 0.4rem;
+}}
+.tutorial-highlight-list {{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}}
+.tutorial-highlight-list li {{
+    display: flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    font-size: 0.85rem;
+    line-height: 1.65;
+    color: var(--text-secondary);
+}}
+.tutorial-list-mark {{
+    color: #d4af37;
+    flex: 0 0 auto;
+}}
+.tutorial-term-grid {{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+}}
+.tutorial-term-card {{
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid rgba(212, 175, 55, 0.45);
+    border-radius: var(--radius-sm);
+    padding: 0.55rem 0.75rem;
+}}
+.tutorial-term-name {{
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #d4af37;
+    margin-bottom: 0.2rem;
+}}
+.tutorial-term-desc {{
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}}
+@media (max-width: 640px) {{
+    .tutorial-toc {{
+        gap: 0.4rem;
+    }}
+    .tutorial-toc-pill {{
+        font-size: 0.72rem;
+        padding: 0.28rem 0.65rem;
+    }}
+    .tutorial-pill-grid {{
+        grid-template-columns: repeat(2, 1fr);
+    }}
+    .tutorial-term-grid {{
+        grid-template-columns: 1fr;
+    }}
+}}
 </style>
 """
 
