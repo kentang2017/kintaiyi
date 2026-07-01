@@ -2688,6 +2688,8 @@ def _render_taiyi_chart(svg: str, num: int, chart_meta: dict, interactive: bool)
         }
 
         function getSemanticPalette(label, groupId, index, sectorCount) {
+            // layer6 = 二十八宿：保留 chart.py CONSTELLATION_COLORS 內嵌填色，不覆蓋
+            if (groupId === "layer6") return null;
             const compact = compactText(label);
             const branch = getBranchFromLabel(compact);
             if (branch && branchToElement[branch]) {
