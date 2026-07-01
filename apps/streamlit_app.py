@@ -111,6 +111,7 @@ from hex_timeline import render_hex_timeline, render_classic_reading
 from yun_timeline import render_yun_section
 from history_timeline import render_history_timeline, format_year_label
 from history_examples import HISTORY_EVENTS
+from tutorial_guide import render_tutorial_guide
 
 # 5=太乙命法(魔改·分計落宮)  6=太乙命法(時計落宮)
 LIFE_CHART_STYLES = frozenset({5, 6})
@@ -473,6 +474,11 @@ def render_changelog_html(md_text: str) -> str:
 @st.cache_data(show_spinner=False)
 def _render_changelog_html_cached(md_text: str) -> str:
     return render_changelog_html(md_text)
+
+
+@st.cache_data(show_spinner=False)
+def _render_tutorial_guide_html_cached(md_text: str) -> str:
+    return render_tutorial_guide(md_text)
 
 
 # --- i18n: Translation dictionaries ---
@@ -4527,7 +4533,8 @@ with tabs[5]:
 
 # 看盤要領
 with tabs[6]:
-    st.markdown(get_file_content_as_string(BASE_URL_KINTAIYI, "docs/tutorial.md"), unsafe_allow_html=True)
+    _tutorial_md = get_file_content_as_string(BASE_URL_KINTAIYI, "docs/tutorial.md")
+    st.markdown(_render_tutorial_guide_html_cached(_tutorial_md), unsafe_allow_html=True)
 
 # 連結
 with tabs[7]:
