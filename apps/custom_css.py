@@ -911,17 +911,55 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
         margin-bottom: 0.25rem !important;
     }}
     .chart-mobile-param-heading {{
-        font-size: 0.72rem;
+        font-size: 0.82rem !important;
         font-weight: 600;
         color: var(--text-muted);
         margin: 0.5rem 0 0.25rem 0;
     }}
     .chart-mobile-param-body {{
-        font-size: 0.78rem;
+        font-size: 0.86rem !important;
         color: var(--text-muted);
         line-height: 1.5;
         margin: 0;
         word-break: break-word;
+    }}
+    /* ── 資訊欄／卡片群：手機版加大字體以提升可讀性 ── */
+    .chart-meta-pillar-label {{
+        font-size: 0.72rem !important;
+    }}
+    .chart-meta-pillar-value {{
+        font-size: 0.98rem !important;
+    }}
+    .chart-meta-secondary {{
+        font-size: 0.85rem !important;
+    }}
+    .chart-meta-detail-label {{
+        font-size: 0.8rem !important;
+    }}
+    .chart-meta-detail-value {{
+        font-size: 0.9rem !important;
+    }}
+    .grok-card-v2-title {{
+        font-size: 0.82rem !important;
+    }}
+    .grok-card-v2-value {{
+        font-size: 1.05rem !important;
+    }}
+    .grok-card-v2-lead {{
+        font-size: 0.88rem !important;
+    }}
+    .grok-card-v2-body,
+    .grok-card-v2-three-five .grok-card-v2-body {{
+        font-size: 0.88rem !important;
+    }}
+    .grok-card-v2-sub {{
+        font-size: 0.84rem !important;
+    }}
+    .grok-card-v2-badge {{
+        font-size: 0.8rem !important;
+    }}
+    .grok-card-v2-details {{
+        font-size: 0.84rem !important;
     }}
     .chart-stage-mobile-meta {{
         display: block;
@@ -935,7 +973,7 @@ div[data-testid="stVerticalBlock"]:has(> .chart-stage-marker) {{
         display: none !important;
     }}
     .chart-print-meta {{
-        font-size: 0.6rem;
+        font-size: 0.72rem !important;
         line-height: 1.42;
         color: var(--text-secondary);
         white-space: pre-wrap;
