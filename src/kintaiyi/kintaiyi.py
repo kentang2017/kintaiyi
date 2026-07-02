@@ -183,7 +183,15 @@ class Taiyi:
             diff_val_two = _days_between(self.year, self.month, self.day, self.hour, self.minute, 1900, 12, 21)
             config_num = 708011105 - {0: 0, 1: 10153917, 2: 10153917, 3: 0}.get(taiyi_acumyear)
             accday = config_num + diff_val_two
-            result = ((accday - 1) * 23) + (self.hour * 10500) + (self.minute + 1)
+            #result = ((accday - 1) * 23) + (self.hour * 10500) + (self.minute + 1)
+            base_result = ((accday - 1) * 23) + (self.hour * 10500) + (self.minute + 1)
+            gz = self._get_gangzhi()
+            minute_gz = gz[4]  # 分干支
+            jiazi_idx = dict(zip(self.jiazi_list, range(1, 61))).get(minute_gz, 1)
+            # 調整使 result % 60 == jiazi_idx （保持大數值穩定）
+            current_mod = base_result % 60
+            adjustment = (jiazi_idx - current_mod) % 60
+            result = base_result + adjustment
         else:
             result = None
 
