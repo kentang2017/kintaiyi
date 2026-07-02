@@ -163,10 +163,24 @@ class Taiyi:
             accyear = tn_c + lunar_year - 1 + (2 if lunar_year < 0 else 0)
             result = accyear * 12 + 2 + lunar_month
         elif ji_style == 2:  # 日計
-            diff_val = _days_between(self.year, self.month, self.day, self.hour, 0, 1900, 6, 19)
+            #diff_val = _days_between(self.year, self.month, self.day, self.hour, 0, 1900, 6, 19)
             #config_num = 708011105 - {0: 0, 1: 185, 2: 10153917, 3: 0}.get(taiyi_acumyear, 0)
+            #config_num = 708011105 - taiyi_acumyear - {0: 185, 1: 184, 2: 183, 3: 182}.get(taiyi_acumyear)
+            #result = config_num + diff_val if taiyi_acumyear != 3 else round((lunar_year - 423) * (235 / 19) * 29.5306 + lunar_day, 0)
+            diff_val = _days_between(self.year, self.month, self.day, self.hour, 0, 1900, 6, 19)
             config_num = 708011105 - taiyi_acumyear - {0: 185, 1: 184, 2: 183, 3: 182}.get(taiyi_acumyear)
-            result = config_num + diff_val if taiyi_acumyear != 3 else round((lunar_year - 423) * (235 / 19) * 29.5306 + lunar_day, 0)
+            base_result = config_num + diff_val if taiyi_acumyear != 3 else round((lunar_year - 423) * (235 / 19) * 29.5306 + lunar_day, 0)
+            
+            # === 新增修正：確保 %60 對應日干支位置 ===
+            if taiyi_acumyear == 0:  # 太乙統宗寶鑑（你目前主要用的 book=0）
+                gz = self._get_gangzhi()
+                day_gz = gz[2]  # 日干支
+                jiazi_idx = dict(zip(self.jiazi_list, range(1, 61))).get(day_gz, 1)
+                current_mod = base_result % 60
+                adjustment = (jiazi_idx - current_mod) % 60
+                result = base_result + adjustment
+            else:
+                result = base_result
         elif ji_style == 3:  # 時計
             diff_val_two = _days_between(self.year, self.month, self.day, self.hour, 0, 1900, 12, 21)
             config_num = 708011105 - {0: 0, 1: 10153917, 2: 10153917, 3: 0}.get(taiyi_acumyear)
