@@ -164,11 +164,12 @@ class Taiyi:
             result = accyear * 12 + 2 + lunar_month
         elif ji_style == 2:  # 日計
             diff_val = _days_between(self.year, self.month, self.day, self.hour, 0, 1900, 6, 19)
-            config_num = 708011105 - {0: 0, 1: 185, 2: 10153917, 3: 0}.get(taiyi_acumyear, 0)
+            #config_num = 708011105 - {0: 0, 1: 185, 2: 10153917, 3: 0}.get(taiyi_acumyear, 0)
+            config_num = 708011105 - taiyi_acumyear - {0: 185, 1: 184, 2: 183, 3: 182}.get(taiyi_acumyear)
             result = config_num + diff_val if taiyi_acumyear != 3 else round((lunar_year - 423) * (235 / 19) * 29.5306 + lunar_day, 0)
         elif ji_style == 3:  # 時計
             diff_val_two = _days_between(self.year, self.month, self.day, self.hour, 0, 1900, 12, 21)
-            config_num = 708011105 - {0: 0, 1: 10153917, 2: 10153917, 3: 0}.get(taiyi_acumyear, 0)
+            config_num = 708011105 - {0: 0, 1: 10153917, 2: 10153917, 3: 0}.get(taiyi_acumyear)
             accday = config_num + diff_val_two
             result = ((accday - 1) * 12) + (self.hour + 1) // 2 + (1 if taiyi_acumyear != 1 else -11)
             if taiyi_acumyear == 3:
@@ -180,7 +181,7 @@ class Taiyi:
                 result = zhi_num if tiangan == dgz_num else ((dgz_num - getfut) * 12) + zhi_num
         elif ji_style == 4:  # 分計
             diff_val_two = _days_between(self.year, self.month, self.day, self.hour, self.minute, 1900, 12, 21)
-            config_num = 708011105 - {0: 0, 1: 10153917, 2: 10153917, 3: 0}.get(taiyi_acumyear, 0)
+            config_num = 708011105 - {0: 0, 1: 10153917, 2: 10153917, 3: 0}.get(taiyi_acumyear)
             accday = config_num + diff_val_two
             result = ((accday - 1) * 23) + (self.hour * 10500) + (self.minute + 1)
         else:
