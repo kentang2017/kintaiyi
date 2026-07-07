@@ -1,0 +1,43 @@
+name: Upload IPA to App Store Connect
+
+"on":
+  workflow_dispatch:
+    inputs:
+      ipa_url:
+        description: 'Direct download URL of the IPA file (e.g. from a private release)'
+        required: true
+
+jobs:
+  upload:
+    runs-on: macos-latest
+    steps:
+      - name: Download IPA
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -L -H "Authorization: token $GH_TOKEN" -o app.ipa "${{ github.event.inputs.ipa_url }}"
+
+      - name: Setup API Key
+        env:
+          API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_P8 }}
+        run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          echo "$API_KEY_CONTENT" > ~/.appstoreconnect/private_keys/AuthKey_3J23G86C2J.p8
+
+      - name: Upload to App Store Connect
+        run: |
+          gem install fastlane --no-document
+          cat > api_key.json << 'EOF'
+          {
+            "key_id": "3J23G86C2J",
+            "issuer_id": "5a342169-4e29-49ba-b4e3-d463e68cace",
+            "key_filepath": "~/.appstoreconnect/private_keys/AuthKey_3J23G86C2J.p8",
+            "duration": 1200,
+            "in_house": false
+          }
+          EOF
+          ls -la app.ipa
+          fastlane pilot upload \
+            --ipa app.ipa \
+            --api_key_path api_key.json \
+            --skip_waiting_for_build_processing
