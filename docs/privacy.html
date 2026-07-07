@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>堅太乙 — 隱私政策 / Privacy Policy</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --card: #161b22;
+  --border: #30363d;
+  --text: #c9d1d9;
+  --text-muted: #8b949e;
+  --accent: #d4a04c;
+  --max-width: 820px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, "Segoe UI", "Noto Sans TC", "Noto Sans SC", "Noto Sans JP", "Noto Sans KR", "Noto Sans Thai", "Noto Sans", sans-serif;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+.container { max-width: var(--max-width); margin: 0 auto; padding: 20px 16px 60px; }
+.header { text-align: center; padding: 40px 0 28px; }
+.header h1 { font-size: 1.8rem; color: var(--accent); letter-spacing: 2px; }
+.header .app-name { font-size: 2.2rem; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+.header .updated { font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; }
+
+.lang-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 24px 0 36px;
+}
+.lang-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.82rem;
+  transition: all 0.2s;
+}
+.lang-btn:hover { border-color: var(--accent); color: var(--accent); }
+.lang-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 600; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 20px;
+  margin-bottom: 16px;
+}
+.card h2 { font-size: 1.1rem; color: var(--accent); margin-bottom: 12px; }
+.card p { font-size: 0.95rem; margin-bottom: 10px; }
+.card p:last-child { margin-bottom: 0; }
+.card .muted { color: var(--text-muted); }
+.contact-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.contact-row:last-child { border-bottom: none; }
+.contact-key { color: var(--text-muted); font-size: 0.9rem; }
+.contact-val { color: var(--accent); font-size: 0.9rem; }
+
+.lang-section { display: none; }
+.lang-section.active { display: block; }
+
+.footer {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+.footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <div class="app-name">堅太乙 · Kintaiyi</div>
+  <h1 id="page-title">隱私政策 / Privacy Policy</h1>
+  <div class="updated" id="updated-text">Last updated: July 2026</div>
+</div>
+
+<div class="lang-switcher">
+  <button class="lang-btn active" data-lang="zh-Hant">繁體</button>
+  <button class="lang-btn" data-lang="zh-Hans">簡體</button>
+  <button class="lang-btn" data-lang="en">English</button>
+  <button class="lang-btn" data-lang="ja">日本語</button>
+  <button class="lang-btn" data-lang="ko">한국어</button>
+  <button class="lang-btn" data-lang="th">ภาษาไทย</button>
+  <button class="lang-btn" data-lang="vi">Tiếng Việt</button>
+</div>
+
+<!-- ==================== 繁體中文 ==================== -->
+<div class="lang-section active" data-lang="zh-Hant">
+  <div class="card"><h2>簡介</h2><p>堅太乙（以下簡稱「本應用」）尊重並保護您的個人隱私。本政策說明本應用如何收集、使用和保護您的資料。</p><p>本應用為離線排盤工具，計算邏輯全部在您的裝置本地執行，不依賴任何遠端伺服器。</p></div>
+  <div class="card"><h2>資料收集</h2><p>本應用不收集任何個人身份資訊（PII），不要求註冊，不收集設備識別碼，不使用廣告追蹤（IDFA）。</p><p>您輸入的排盤日期、命法參數及儲存的排盤記錄僅保存在您的裝置本地，不會上傳至任何伺服器。</p><p>解除安裝本應用後，所有本地資料將一併清除。</p></div>
+  <div class="card"><h2>AI 分析功能（可選）</h2><p>本應用提供可選的 AI 分析功能。若您選擇使用，需自行配置 AI 服務的 API 金鑰和端點網址。</p><p>AI 分析請求將直接從您的裝置發送至您指定的 AI 服務（如 OpenAI），本應用開發者不經手也不儲存您的 API 金鑰或請求內容。</p></div>
+  <div class="card"><h2>資料儲存</h2><p>所有排盤記錄、設定偏好（主題、字體大小、語言等）均使用裝置本地儲存，不會同步至雲端。</p><p>排盤圖匯出功能會將圖片儲存至您的裝置相簿，需要您的相簿寫入權限。</p></div>
+  <div class="card"><h2>權限使用</h2><p>本應用僅請求以下權限：相簿寫入（用於儲存排盤圖）。不請求定位、通訊錄、麥克風、相機等敏感權限。</p><p>所有權限均可隨時在系統設定中撤銷。</p></div>
+  <div class="card"><h2>兒童隱私</h2><p>本應用不針對 13 歲以下兒童，不收集任何年齡層的個人資料。</p></div>
+  <div class="card"><h2>聯絡我們</h2><p>如對本隱私政策有任何疑問，請透過以下方式聯絡：</p>
+    <div class="contact-row"><span class="contact-key">電子郵件</span><span class="contact-val">kinyeah@gmail.com</span></div>
+  </div>
+</div>
+
+<!-- ==================== 簡體中文 ==================== -->
+<div class="lang-section" data-lang="zh-Hans">
+  <div class="card"><h2>简介</h2><p>坚太乙（以下简称「本应用」）尊重并保护您的个人隐私。本政策说明本应用如何收集、使用和保护您的资料。</p><p>本应用为离线排盘工具，计算逻辑全部在您的装置本地执行，不依赖任何远端服务器。</p></div>
+  <div class="card"><h2>资料收集</h2><p>本应用不收集任何个人身份资讯（PII），不要求注册，不收集设备识别码，不使用广告追踪（IDFA）。</p><p>您输入的排盘日期、命法参数及储存的排盘记录仅保存在您的装置本地，不会上传至任何服务器。</p><p>解除安装本应用后，所有本地资料将一并清除。</p></div>
+  <div class="card"><h2>AI 分析功能（可选）</h2><p>本应用提供可选的 AI 分析功能。若您选择使用，需自行配置 AI 服务的 API 金钥和端点网址。</p><p>AI 分析请求将直接从您的装置发送至您指定的 AI 服务（如 OpenAI），本应用开发者不经手也不储存您的 API 金钥或请求内容。</p></div>
+  <div class="card"><h2>资料储存</h2><p>所有排盘记录、设定偏好（主题、字体大小、语言等）均使用装置本地储存，不会同步至云端。</p><p>排盘图汇出功能会将图片储存至您的装置相簿，需要您的相簿写入权限。</p></div>
+  <div class="card"><h2>权限使用</h2><p>本应用仅请求以下权限：相簿写入（用于储存排盘图）。不请求定位、通讯录、麦克风、相机等敏感权限。</p><p>所有权限均可随时在系统设定中撤销。</p></div>
+  <div class="card"><h2>儿童隐私</h2><p>本应用不针对 13 岁以下儿童，不收集任何年龄层的个人资料。</p></div>
+  <div class="card"><h2>联络我们</h2><p>如对本隐私政策有任何疑问，请透过以下方式联络：</p>
+    <div class="contact-row"><span class="contact-key">电子邮件</span><span class="contact-val">kinyeah@gmail.com</span></div>
+  </div>
+</div>
+
+<!-- ==================== English ==================== -->
+<div class="lang-section" data-lang="en">
+  <div class="card"><h2>Introduction</h2><p>Kintaiyi (the "App") respects and protects your personal privacy. This policy explains how the App collects, uses, and protects your data.</p><p>The App is an offline charting tool. All calculation logic runs locally on your device and does not rely on any remote server.</p></div>
+  <div class="card"><h2>Data Collection</h2><p>The App does not collect any personally identifiable information (PII), does not require registration, does not collect device identifiers, and does not use advertising tracking (IDFA).</p><p>The chart dates, life-plate parameters, and saved chart records you enter are stored only on your device and are never uploaded to any server.</p><p>Uninstalling the App will remove all local data.</p></div>
+  <div class="card"><h2>AI Analysis (Optional)</h2><p>The App offers an optional AI analysis feature. If you choose to use it, you must configure your own AI service API key and endpoint URL.</p><p>AI analysis requests are sent directly from your device to your specified AI service (e.g., OpenAI). The App developer does not handle or store your API key or request content.</p></div>
+  <div class="card"><h2>Data Storage</h2><p>All chart records, preferences (theme, font size, language, etc.) use device-local storage and are never synced to the cloud.</p><p>The chart image export feature saves images to your device photo album, which requires photo library write permission.</p></div>
+  <div class="card"><h2>Permissions</h2><p>The App only requests the following permission: photo library write (for saving chart images). It does not request location, contacts, microphone, camera, or other sensitive permissions.</p><p>All permissions can be revoked at any time in system settings.</p></div>
+  <div class="card"><h2>Children's Privacy</h2><p>The App is not directed at children under 13 and does not collect personal data from any age group.</p></div>
+  <div class="card"><h2>Contact Us</h2><p>If you have any questions about this privacy policy, please contact us at:</p>
+    <div class="contact-row"><span class="contact-key">Email</span><span class="contact-val">kinyeah@gmail.com</span></div>
+  </div>
+</div>
+
+<!-- ==================== 日本語 ==================== -->
+<div class="lang-section" data-lang="ja">
+  <div class="card"><h2>はじめに</h2><p>堅太乙（以下「本アプリ」）は、お客様のプライバシーを尊重し保護します。本ポリシーは、本アプリがデータをどのように収集、使用、保護するかを説明します。</p><p>本アプリはオフライン排盤ツールです。全計算処理は端末上でローカルに実行され、リモートサーバーに依存しません。</p></div>
+  <div class="card"><h2>データ収集</h2><p>本アプリは個人識別情報（PII）を収集せず、登録を要求せず、デバイス識別子を収集せず、広告トラッキング（IDFA）を使用しません。</p><p>お客様が入力した排盤日付、命法パラメータ、保存された排盤記録は端末のローカルにのみ保存され、いかなるサーバーにもアップロードされません。</p><p>本アプリをアンインストールすると、すべてのローカルデータが削除されます。</p></div>
+  <div class="card"><h2>AI分析機能（オプション）</h2><p>本アプリはオプションでAI分析機能を提供します。使用する場合、お客様自身でAIサービスのAPIキーとエンドポイントURLを設定する必要があります。</p><p>AI分析リクエストは、お客様の端末から指定したAIサービス（例：OpenAI）に直接送信されます。本アプリの開発者は、お客様のAPIキーやリクエスト内容を取り扱いまたは保存しません。</p></div>
+  <div class="card"><h2>データ保存</h2><p>すべての排盤記録、設定（テーマ、フォントサイズ、言語など）は端末のローカルストレージを使用し、クラウドに同期されません。</p><p>排盤図のエクスポート機能は、画像を端末のフォトアルバムに保存します。これにはフォトライブラリの書き込み権限が必要です。</p></div>
+  <div class="card"><h2>権限の使用</h2><p>本アプリが要求する権限は以下のみです：フォトライブラリ書き込み（排盤図の保存用）。位置情報、連絡先、マイク、カメラなどの機密権限は要求しません。</p><p>すべての権限は、システム設定でいつでも取り消すことができます。</p></div>
+  <div class="card"><h2>児童のプライバシー</h2><p>本アプリは13歳未満の児童を対象としておらず、いかなる年齢層の個人データも収集しません。</p></div>
+  <div class="card"><h2>お問い合わせ</h2><p>本プライバシーポリシーに関するご質問は、以下までお問い合わせください：</p>
+    <div class="contact-row"><span class="contact-key">メール</span><span class="contact-val">kinyeah@gmail.com</span></div>
+  </div>
+</div>
+
+<!-- ==================== 한국어 ==================== -->
+<div class="lang-section" data-lang="ko">
+  <div class="card"><h2>소개</h2><p>견태을（이하「본 앱」）은 사용자의 개인정치를 존중하고 보호합니다. 본 정책은 본 앱이 데이터를 어떻게 수집, 사용, 보호하는지 설명합니다.</p><p>본 앱은 오프라인 배반 도구입니다. 모든 계산 로직은 단말에서 로컬로 실행되며, 원격 서버에 의존하지 않습니다.</p></div>
+  <div class="card"><h2>데이터 수집</h2><p>본 앱은 개인 식별 정보（PII）를 수집하지 않으며, 가입을 요구하지 않으며, 기기 식별자를 수집하지 않으며, 광고 추적（IDFA）을 사용하지 않습니다.</p><p>사용자가 입력한 배반 날짜, 명법 파라미터 및 저장된 배반 기록은 단말 로컬에만 저장되며, 어떤 서버에도 업로드되지 않습니다.</p><p>본 앱을 제거하면 모든 로컬 데이터가 함께 삭제됩니다.</p></div>
+  <div class="card"><h2>AI 분석 기능（선택）</h2><p>본 앱은 선택적 AI 분석 기능을 제공합니다. 사용하려면 사용자가 직접 AI 서비스의 API 키와 엔드포인트 URL을 설정해야 합니다.</p><p>AI 분석 요청은 사용자의 단말에서 지정한 AI 서비스（예: OpenAI）로 직접 전송됩니다. 본 앱 개발자는 사용자의 API 키나 요청 내용을 취급하거나 저장하지 않습니다.</p></div>
+  <div class="card"><h2>데이터 저장</h2><p>모든 배반 기록, 설정（테마, 글꼴 크기, 언어 등）은 단말 로컬 저장소를 사용하며, 클라우드에 동기화되지 않습니다.</p><p>반도 내보내기 기능은 이미지를 단말 사진 앨범에 저장합니다. 이를 위해 사진 라이브러리 쓰기 권한이 필요합니다.</p></div>
+  <div class="card"><h2>권한 사용</h2><p>본 앱이 요청하는 권한은 다음뿐입니다: 사진 라이브러리 쓰기（반도 저장용）. 위치, 연락처, 마이크, 카메라 등의 민감한 권한은 요청하지 않습니다.</p><p>모든 권한은 시스템 설정에서 언제든지 취소할 수 있습니다.</p></div>
+  <div class="card"><h2>아동 프라이버시</h2><p>본 앱은 13세 미만 아동을 대상으로 하지 않으며, 모든 연령대의 개인 데이터를 수집하지 않습니다.</p></div>
+  <div class="card"><h2>문의하기</h2><p>본 프라이버시 정책에 관한 질문이 있으시면 아래로 연락해 주세요:</p>
+    <div class="contact-row"><span class="contact-key">이메일</span><span class="contact-val">kinyeah@gmail.com</span></div>
+  </div>
+</div>
+
+<!-- ==================== ภาษาไทย ==================== -->
+<div class="lang-section" data-lang="th">
+  <div class="card"><h2>บทนำ</h2><p>เจี้ยนไท่อี้（ต่อไปนี้เรียก「แอปนี้」）เคารพและปกป้องความเป็นส่วนตัวของคุณ นโยบายนี้อธิบายว่าแอปนี้เก็บ ใช้ และปกป้องข้อมูลของคุณอย่างไร</p><p>แอปนี้เป็นเครื่องมือจัดตารางแบบออฟไลน์ การคำนวณทั้งหมดทำงานบนเครื่องของคุณ ไม่พึ่งพาเซิร์ฟเวอร์ใด</p></div>
+  <div class="card"><h2>การเก็บข้อมูล</h2><p>แอปนี้ไม่เก็บข้อมูลที่สามารถระบุตัวตนได้（PII）ไม่ต้องลงทะเบียน ไม่เก็บหมายเลขอุปกรณ์ และไม่ใช้การติดตามโฆษณา（IDFA）</p><p>วันที่จัดตาราง พารามิเตอร์ชะตา และบันทึกที่คุณเก็บไว้ จะถูกเก็บในเครื่องของคุณเท่านั้น ไม่อัปโหลดไปยังเซิร์ฟเวอร์ใด</p><p>การถอนการติดตั้งแอปนี้จะลบข้อมูลในเครื่องทั้งหมด</p></div>
+  <div class="card"><h2>ฟังก์ชันวิเคราะห์ AI（ทางเลือก）</h2><p>แอปนี้มีฟังก์ชันวิเคราะห์ AI แบบทางเลือก หากเลือกใช้ คุณต้องตั้งค่า API Key และ URL ของบริการ AI ด้วยตนเอง</p><p>คำขอวิเคราะห์ AI จะถูกส่งจากเครื่องของคุณไปยังบริการ AI ที่คุณระบุโดยตรง（เช่น OpenAI）ผู้พัฒนาแอปไม่จัดการและไม่เก็บ API Key หรือเนื้อหาคำขอของคุณ</p></div>
+  <div class="card"><h2>การจัดเก็บข้อมูล</h2><p>บันทึกการจัดตารางและการตั้งค่าทั้งหมด（ธีม ขนาดตัวอักษร ภาษา ฯลฯ）ใช้พื้นที่เก็บข้อมูลในเครื่อง ไม่ซิงค์กับคลาวด์</p><p>ฟังก์ชันส่งออกภาพแผนจะบันทึกภาพไปยังอัลบั้มรูปภาพของเครื่อง ซึ่งต้องใช้สิทธิ์เขียนอัลบั้มรูปภาพ</p></div>
+  <div class="card"><h2>การใช้สิทธิ์</h2><p>แอปนี้ขอสิทธิ์เพียง: เขียนอัลบั้มรูปภาพ（เพื่อบันทึกภาพแผน）ไม่ขอสิทธิ์ตำแหน่ง สมุดรายชื่อ ไมโครโฟน กล้อง หรือสิทธิ์อ่อนไหวอื่น</p><p>สิทธิ์ทั้งหมดสามารถเพิกถอนได้ตลอดเวลาในการตั้งค่าระบบ</p></div>
+  <div class="card"><h2>ความเป็นส่วนตัวของเด็ก</h2><p>แอปนี้ไม่ได้มุ่งเน้นเด็กอายุต่ำกว่า 13 ปี และไม่เก็บข้อมูลส่วนบุคคลจากทุกช่วงอายุ</p></div>
+  <div class="card"><h2>ติดต่อเรา</h2><p>หากมีคำถามเกี่ยวกับนโยบายความเป็นส่วนตัวนี้ โปรดติดต่อ:</p>
+    <div class="contact-row"><span class="contact-key">อีเมล</span><span class="contact-val">kinyeah@gmail.com</span></div>
+  </div>
+</div>
+
+<!-- ==================== Tiếng Việt ==================== -->
+<div class="lang-section" data-lang="vi">
+  <div class="card"><h2>Giới thiệu</h2><p>Kiên Thái Ất（sau đây gọi「Ứng dụng」）tôn trọng và bảo vệ quyền riêng tư của bạn. Chính sách này giải thích cách Ứng dụng thu thập, sử dụng và bảo vệ dữ liệu của bạn.</p><p>Ứng dụng là công cụ xếp bàn ngoại tuyến. Toàn bộ logic tính toán chạy cục bộ trên thiết bị của bạn, không phụ thuộc máy chủ từ xa.</p></div>
+  <div class="card"><h2>Thu thập dữ liệu</h2><p>Ứng dụng không thu thập thông tin nhận dạng cá nhân（PII）, không yêu cầu đăng ký, không thu thập mã định danh thiết bị, không sử dụng theo dõi quảng cáo（IDFA）.</p><p>Ngày xếp bàn, tham số mệnh cung và bản ghi xếp bàn bạn nhập vào chỉ được lưu trên thiết bị, không bao giờ tải lên máy chủ nào.</p><p>Gỡ cài đặt Ứng dụng sẽ xóa toàn bộ dữ liệu cục bộ.</p></div>
+  <div class="card"><h2>Phân tích AI（Tùy chọn）</h2><p>Ứng dụng cung cấp tính năng phân tích AI tùy chọn. Nếu chọn sử dụng, bạn cần tự cấu hình API key và URL endpoint của dịch vụ AI.</p><p>Yêu cầu phân tích AI được gửi trực tiếp từ thiết bị của bạn đến dịch vụ AI bạn chỉ định（ví dụ: OpenAI）. Nhà phát triển Ứng dụng không xử lý hay lưu trữ API key hoặc nội dung yêu cầu của bạn.</p></div>
+  <div class="card"><h2>Lưu trữ dữ liệu</h2><p>Toàn bộ bản ghi xếp bàn, tùy chọn（giao diện, cỡ chữ, ngôn ngữ, v.v.）sử dụng bộ nhớ cục bộ của thiết bị, không đồng bộ lên đám mây.</p><p>Tính năng xuất hình bàn đồ lưu ảnh vào album ảnh thiết bị, yêu cầu quyền ghi thư viện ảnh.</p></div>
+  <div class="card"><h2>Quyền sử dụng</h2><p>Ứng dụng chỉ yêu cầu quyền: ghi thư viện ảnh（để lưu hình bàn đồ）. Không yêu cầu vị trí, danh bạ, micro, camera hay các quyền nhạy cảm khác.</p><p>Tất cả quyền có thể thu hồi bất cứ lúc nào trong cài đặt hệ thống.</p></div>
+  <div class="card"><h2>Quyền riêng tư của trẻ em</h2><p>Ứng dụng không hướng tới trẻ em dưới 13 tuổi và không thu thập dữ liệu cá nhân từ bất kỳ nhóm tuổi nào.</p></div>
+  <div class="card"><h2>Liên hệ</h2><p>Nếu bạn có câu hỏi về chính sách quyền riêng tư này, vui lòng liên hệ:</p>
+    <div class="contact-row"><span class="contact-key">Email</span><span class="contact-val">kinyeah@gmail.com</span></div>
+  </div>
+</div>
+
+<div class="footer">
+  <p>堅太乙 Kintaiyi — <a href="https://github.com/kentang2017/kintaiyi">GitHub</a></p>
+</div>
+
+</div>
+
+<script>
+(function() {
+  var btns = document.querySelectorAll('.lang-btn');
+  var sections = document.querySelectorAll('.lang-section');
+  var titleEl = document.getElementById('page-title');
+  var updatedEl = document.getElementById('updated-text');
+  var htmlEl = document.documentElement;
+
+  var titles = {
+    'zh-Hant': ['隱私政策', '最後更新：2026 年 7 月'],
+    'zh-Hans': ['隐私政策', '最后更新：2026 年 7 月'],
+    'en': ['Privacy Policy', 'Last updated: July 2026'],
+    'ja': ['プライバシーポリシー', '最終更新：2026年7月'],
+    'ko': ['프라이버시 정책', '최종 업데이트: 2026년 7월'],
+    'th': ['นโยบายความเป็นส่วนตัว', 'อัปเดตล่าสุด: กรกฎาคม 2026'],
+    'vi': ['Chính sách quyền riêng tư', 'Cập nhật: Tháng 7, 2026']
+  };
+
+  function switchLang(lang) {
+    btns.forEach(function(b) { b.classList.toggle('active', b.dataset.lang === lang); });
+    sections.forEach(function(s) { s.classList.toggle('active', s.dataset.lang === lang); });
+    var t = titles[lang] || titles['en'];
+    titleEl.textContent = t[0];
+    updatedEl.textContent = t[1];
+    htmlEl.lang = lang;
+    try { localStorage.setItem('kintaiyi-privacy-lang', lang); } catch(e) {}
+  }
+
+  btns.forEach(function(b) {
+    b.addEventListener('click', function() { switchLang(b.dataset.lang); });
+  });
+
+  var saved = null;
+  try { saved = localStorage.getItem('kintaiyi-privacy-lang'); } catch(e) {}
+  var browserLang = (navigator.language || 'en').toLowerCase();
+  var defaultLang = 'zh-Hant';
+  if (saved && titles[saved]) { defaultLang = saved; }
+  else {
+    if (browserLang.startsWith('zh-hant') || browserLang.startsWith('zh-tw') || browserLang.startsWith('zh-hk')) defaultLang = 'zh-Hant';
+    else if (browserLang.startsWith('zh')) defaultLang = 'zh-Hans';
+    else if (browserLang.startsWith('ja')) defaultLang = 'ja';
+    else if (browserLang.startsWith('ko')) defaultLang = 'ko';
+    else if (browserLang.startsWith('th')) defaultLang = 'th';
+    else if (browserLang.startsWith('vi')) defaultLang = 'vi';
+    else defaultLang = 'en';
+  }
+  switchLang(defaultLang);
+})();
+</script>
+</body>
+</html>
