@@ -281,7 +281,7 @@ class Taiyi:
             if config.multi_key_dict_get(jqmap, j_q) == "冬至":
                 a = config.multi_key_dict_get(
                     {tuple("申酉戌亥子丑"): "陽遁", tuple("寅卯辰巳午未"): "陰遁"}
-                    if gz[2][0] in "甲丙戊庚壬" else
+                    if gz[3][0] in "甲丙戊庚壬" else
                     {tuple("申酉戌亥子丑"): "陰遁", tuple("寅卯辰巳午未"): "陽遁"},
                     gz[3][1]
                 )
@@ -290,7 +290,7 @@ class Taiyi:
                     {tuple("申酉戌亥子丑"): "陰遁", tuple("寅卯辰巳午未"): "陽遁"}
                     if gz[2][0] in "甲丙戊庚壬" else
                     {tuple("申酉戌亥子丑"): "陽遁", tuple("寅卯辰巳午未"): "陰遁"},
-                    gz[3][1]
+                    gz[2][1]
                 )
             dun = a
 
