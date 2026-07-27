@@ -443,32 +443,19 @@ class Taiyi:
 
     def away_cal(self, ji_style, taiyi_acumyear):
         """客算"""
-        shiji = self.sf(ji_style, taiyi_acumyear)
-        sf_num = dict(zip(config.new_list(config.sixteen, "亥"), self.l_num)).get(shiji)
-        taiyi = self.ty(ji_style, taiyi_acumyear)
-        sf_jc = shiji in config.jc
-        ty_jc = taiyi in config.tyjc
-        sf_jc1 = shiji in config.jc1
-        sf_order = config.new_list(config.num, sf_num)
-
-        logic_map = {
-            (True, False, False): lambda: sum(sf_order[:sf_order.index(taiyi)]) + 1 if sf_jc == ty_jc else sum(sf_order[:config.jc.index(shiji) + 1]) + 1,
-            (False, False, True): lambda: sum(sf_order[taiyi - 2:]) if sf_jc == ty_jc and 5 < taiyi < 7 else sum(sf_order[:taiyi + 1]) if sf_jc == ty_jc and taiyi < 5 else sum(sf_order[:sf_order.index(taiyi)]),
-            (False, True, False): lambda: sum(sf_order[sf_order.index(taiyi):]) if sf_jc == ty_jc else sum(sf_order[:sf_order.index(config.tyjc[0])] if ty_jc else sf_order[:sf_order.index(taiyi)]),
-            (True, True, False): lambda: sum(sf_order[:sf_order.index(taiyi)]) + 1 if sf_jc == ty_jc else sum(sf_order[:taiyi]),
-            (False, True, True): lambda: sum(sf_order[:sf_order.index(taiyi)]),
-            (False, False, False): lambda: taiyi if sf_num == taiyi else sum(sf_order[:sf_order.index(taiyi)])
-        }
-        return logic_map.get((sf_jc, ty_jc, sf_jc1), lambda: taiyi)()
+        kook = self.kook(ji_style, taiyi_acumyear)
+        return config.find_cal(kook.get("文")[0], kook.get("數"))[1]
 
     def away_general(self, ji_style, taiyi_acumyear):
         """客大將"""
         kook = self.kook(ji_style, taiyi_acumyear)
         away_cal = config.find_cal(kook.get("文")[0], kook.get("數"))[1]
+        home_cal = config.find_cal(kook.get("文")[0], kook.get("數"))[0]
         return {
             away_cal == 1: 1,
             away_cal < 10: away_cal,
-            away_cal % 10 == 0: 5,
+            away_cal % 10 == 0 and home_cal !=25: 5,
+            away_cal % 10 == 0 and home_cal ==25: 1,
             10 < away_cal < 20: away_cal - 10,
             20 < away_cal < 30: away_cal - 20,
             30 < away_cal < 40: away_cal - 30
