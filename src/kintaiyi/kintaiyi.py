@@ -390,8 +390,8 @@ class Taiyi:
         start = config.new_list(config.gong1, hg)
         return config.new_list(config.gong1, wc)[len(start[:start.index(ts) + 1]) - 1]
 
-    def away_cal(self, ji_style, taiyi_acumyear):
-        """客算"""
+    def home_cal(self, ji_style, taiyi_acumyear):
+        """主算"""
         kook = self.kook(ji_style, taiyi_acumyear)
         return config.find_cal(kook.get("文")[0], kook.get("數"))[0]
         
