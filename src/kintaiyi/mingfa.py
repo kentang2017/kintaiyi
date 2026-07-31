@@ -345,6 +345,283 @@ def life_geju(taiyi, *, plate_ji: int = 4) -> dict:
     return taiyi.shi_geju(plate_ji, 0)
 
 
+# 卷二十「明掩擊迫格等入流年所在術」：各格局入流年斷語
+# 出處：《太乙統宗寶鑑》卷二十（OCR line 19604-19632）
+_LIUNIAN_GEJU_DUAN = {
+    "掩": {
+        "太歲逢": "父子離別，有奸私哭泣之事",
+        "陽九逢": "宅舍有驚怪死喪瘟疫之事",
+        "百六逢": "盜賊侵凌，或身囚獄",
+        "少者": "酒色猖狂悖道逆理",
+        "老者": "疾病卒亡",
+        "中年": "顛邪破蕩家業",
+        "小兒": "患瀉痢瘡毒膿血之災",
+        "陰人": "傷胎哭子，血崩氣疾",
+    },
+    "擊": {
+        "太歲逢": "宅舍驚怪風火盜賊及淫泆不正之事，悲泣瘟疫之災",
+        "三才無": "此年必卒中暴疾亡",
+        "數限逢": "居官退職，吏失其權，僧道還俗，庶人疾病",
+        "宮擊": "災緩",
+        "辰擊": "災急",
+    },
+    "迫": {
+        "太歲逢": "災禍併發",
+        "數限逢": "財帛破敗，六親喪離，勢若飄風而吹敗葉",
+        "少者": "狂淫失業",
+        "老者": "氣虛疾病",
+        "官吏": "失權柄，或犯囚禁而致刑罰",
+        "陰人": "須遭產厄",
+        "辰迫": "災急",
+        "宮迫": "災緩",
+    },
+    "格": {
+        "太歲逢": "多生厄難",
+        "身命逢": "災逼其身",
+        "限格行交戰": "二數並絕，三才無筭，必主刑徒配",
+        "老人": "為限終",
+    },
+    "關囚": {
+        "陽九逢絕陽": "顛邪失志",
+        "百六逢太歲": "喪妻害子及病瘟或宅舍驚怪，官府撓擾",
+        "五行剋戰": "風狂猝中及刑獄之災",
+        "陰人": "須防產崩墜血，不然則有瘡疾血濃之災",
+    },
+    "對": {
+        "太歲逢": "事宜止靜，不可動，為有憂驚怪異之事",
+        "百六限沖對": "更三才無筭，歲中卒死",
+        "陽九逢相對": "牢獄之災，及陰人小兒有自縊之禍",
+    },
+}
+
+
+def jibing_duan(taiyi, sex: str, *, plate_ji: int = 4) -> dict:
+    """卷二十「疾病斷語」：星曜同宮在身命日時之上主病。
+
+    出處：《太乙統宗寶鑑》卷二十（OCR line 19663-19665）。
+
+    經曰：
+    - 小遊與飛符同宮在身命日時之上，血疾癰疽心病之疾。
+    - 天乙與飛符同宮在身命日時之上，主肺勞嗽病之疾。
+    - 天乙與飛符始擊同宮在身命時日之上，主肺氣疾眼目病患之疾。
+    """
+    # 星曜同宮主病對照（卷二十）
+    _JIBING = {
+        frozenset({"小游", "飛符"}): "血疾癰疽心病之疾",
+        frozenset({"天乙", "飛符"}): "肺勞嗽病之疾",
+        frozenset({"天乙", "飛符", "始擊"}): "肺氣疾眼目病患之疾",
+    }
+
+    palaces = taiyi.gongs_discription_list(sex, plate_ji)
+    # 身命日時四宮的星曜集合
+    life_palaces = ("命宮", "身宮")
+    # 身宮可能不在 palaces 中，取十二宮全部
+    all_stars: dict[str, set[str]] = {}
+    for palace, tokens in palaces.items():
+        names = set()
+        for t in (tokens or []):
+            if not t or t == "空格":
+                continue
+            for n in ("主參", "客參", "主大", "客大", "始擊", "文昌", "計神", "小游",
+                       "君基", "臣基", "民基", "五福", "飛符", "四神", "天乙", "地乙"):
+                if n in t:
+                    names.add(n)
+        all_stars[palace] = names
+
+    # 檢查身命宮的星曜組合
+    ming_stars = all_stars.get("命宮", set())
+    # 身宮：透過 palace_map 取
+    palace_map = taiyi._twelve_palace_map(sex)
+    from .shiti_jinfu import _life_core  # noqa: PLC0415
+    shen_zhi = _life_core(taiyi, sex)["安身宮"]
+    shen_palace = palace_map.get(shen_zhi, "")
+    shen_stars = all_stars.get(shen_palace, set())
+
+    combined = ming_stars | shen_stars
+    hits = []
+    for star_set, duan in _JIBING.items():
+        if star_set <= combined:
+            hits.append({"星組": "、".join(sorted(star_set)), "斷語": duan})
+
+    return {
+        "疾病斷": hits or ["身命宮無主病之星曜同宮組合"],
+        "要訣": (
+            "；".join(f"{'、'.join(sorted(s))}同宮：{d}" for s, d in _JIBING.items() if s <= combined)
+            if hits else "身命宮星曜未觸發主病組合"
+        ),
+    }
+
+
+# 卷二十「十二宮見吉星/凶星總斷」
+# 出處：《太乙統宗寶鑑》卷二十（OCR line 19666-19703）
+_GONG_JIXIONG = {
+    "命宮": {
+        "吉": "見君基、五福、臣基、文昌、小遊、計神，主清顯之貴；民基主財帛錢穀親民之任；主大將主參將主兵權武職之貴任於近侍；客大將客參將主兵權武職之貴任於邊遠",
+        "凶": "",
+    },
+    "兄弟宮": {
+        "吉": "昆仲多得輔相之力",
+        "凶": "不得力",
+    },
+    "妻妾宮": {
+        "吉": "則不妨",
+        "凶": "有剋害，不然婚晚",
+    },
+    "子孫宮": {
+        "吉": "生貴子",
+        "凶": "先女後男，而見傷損；不庶出則過房",
+    },
+    "財帛宮": {
+        "吉": "財帛廣厚",
+        "凶": "平生財帛聚散，所聚者少，所散者多",
+    },
+    "田宅宮": {
+        "吉": "多承父母祖業，田宅之福",
+        "凶": "破祖離產而自創治",
+    },
+    "官祿宮": {
+        "吉": "祿位高顯",
+        "凶": "進退成敗多蹇",
+    },
+    "奴僕宮": {
+        "吉": "平生得奴僕之力",
+        "凶": "不得力",
+    },
+    "疾厄宮": {
+        "吉": "平生少疾厄",
+        "凶": "多病仍帶痼疾",
+    },
+    "福德宮": {
+        "吉": "五福三基文計等，平生福祿安享",
+        "凶": "勞苦，少得福力之助",
+    },
+    "相貌宮": {
+        "吉": "相貌威嚴雍容和緩，天資秀麗",
+        "凶": "形容醜陋瘦痺，帶破，不甚全美",
+    },
+    "父母宮": {
+        "吉": "父母完全，不致剋害；若會三基、五福、小遊、文昌、計神，多承父母之資蔭，得以顯達",
+        "凶": "幼失父母，而有妨害；犯天乙、地乙、飛符、四神凶星，必主剋害，庶出過房及有異母；值始擊者，主破祖孤立一世",
+    },
+}
+
+# 吉星 / 凶星分類（卷二十）
+_JIXING = frozenset({
+    "君基", "臣基", "民基", "五福", "文昌", "計神", "小游",
+    "主大", "客大", "主參", "客參",
+})
+_XIONGXING = frozenset({
+    "始擊", "飛符", "四神", "天乙", "地乙",
+})
+
+
+def gong_jixiong_zongduan(taiyi, sex: str, *, plate_ji: int = 4) -> dict:
+    """卷二十「十二宮見吉星/凶星總斷」：依各宮星曜吉凶定總斷。
+
+    出處：《太乙統宗寶鑑》卷二十（OCR line 19666-19703）。
+
+    每宮見吉星有吉斷、見凶星有凶斷，吉凶並見則吉凶參半。
+    """
+    palaces = taiyi.gongs_discription_list(sex, plate_ji)
+    result = {}
+    for palace, tokens in palaces.items():
+        # palaces 的 key 可能無「宮」字（如「疾厄」），補上「宮」字匹配
+        lookup_key = palace if palace.endswith("宮") else palace + "宮"
+        duan = _GONG_JIXIONG.get(lookup_key) or _GONG_JIXIONG.get(palace)
+        if not duan:
+            continue
+        stars = set()
+        for t in (tokens or []):
+            if not t or t == "空格":
+                continue
+            for n in _JIXING | _XIONGXING:
+                if n in t:
+                    stars.add(n)
+        has_ji = bool(stars & _JIXING)
+        has_xiong = bool(stars & _XIONGXING)
+        notes = []
+        if has_ji:
+            notes.append(duan["吉"])
+        if has_xiong:
+            notes.append(duan["凶"])
+        if not notes:
+            notes.append("空宮無星，取對宮論" if not stars else "星曜平和，吉凶不顯")
+        result[palace] = {
+            "星曜": sorted(stars) if stars else ["空格"],
+            "有吉星": has_ji,
+            "有凶星": has_xiong,
+            "總斷": "；".join(notes),
+        }
+    return {
+        "十二宮總斷": result,
+        "要訣": (
+            "；".join(f"{p}：{v['總斷'][:20]}" for p, v in result.items())
+            if result else "十二宮星曜未明"
+        ),
+    }
+
+
+def liunian_geju_duan(taiyi, sex: str, *, plate_ji: int = 4) -> dict:
+    """卷二十「明掩擊迫格等入流年所在術」：依命盤格局推流年斷語。
+
+    出處：《太乙統宗寶鑑》卷二十（OCR line 19604-19632）。
+
+    依命盤 shi_geju() 所推之掩/擊/迫/格/關囚/對等格局，
+    配合陽九百六限、太歲、三才無筭等，輸出各格局入流年之斷語。
+    """
+    geju = taiyi.shi_geju(plate_ji, 0)
+    yangjiu = config.yangjiu(taiyi.year, taiyi.month, taiyi.day)
+    baliu = config.baliu(taiyi.year, taiyi.month, taiyi.day)
+    san_cai = san_cai_wu_suan(taiyi, plate_ji=plate_ji)
+    san_cai_wu = san_cai.get("三才俱無", False)
+
+    result = {}
+    for key, duan in _LIUNIAN_GEJU_DUAN.items():
+        # 檢查命盤中是否有此格局
+        matched = False
+        if key == "關囚":
+            matched = any("關囚" in k or "囚" in k for k in geju)
+        else:
+            matched = any(key in k for k in geju)
+        if not matched:
+            continue
+        entry = {"格局": key, "斷語": []}
+        if "太歲逢" in duan:
+            entry["斷語"].append(f"太歲逢之：{duan['太歲逢']}")
+        if "陽九逢" in duan:
+            entry["斷語"].append(f"陽九數逢：{duan['陽九逢']}")
+        if "百六逢" in duan:
+            entry["斷語"].append(f"百六數逢：{duan['百六逢']}")
+        if san_cai_wu and "三才無" in duan:
+            entry["斷語"].append(f"三才無筭：{duan['三才無']}")
+        # 年齡段
+        age = _default_life_age(taiyi)
+        if age <= 15 and "少者" in duan:
+            entry["斷語"].append(f"少者逢之：{duan['少者']}")
+        elif age > 50 and "老者" in duan:
+            entry["斷語"].append(f"老者逢之：{duan['老者']}")
+        elif 15 < age <= 50 and "中年" in duan:
+            entry["斷語"].append(f"中年人逢之：{duan['中年']}")
+        if "小兒" in duan and age <= 10:
+            entry["斷語"].append(f"小兒逢之：{duan['小兒']}")
+        if sex == "女" and "陰人" in duan:
+            entry["斷語"].append(f"陰人逢之：{duan['陰人']}")
+        if "宮擊" in duan or "辰擊" in duan:
+            entry["斷語"].append(f"宮擊{duan.get('宮擊', '災緩')}，辰擊{duan.get('辰擊', '災急')}")
+        if "辰迫" in duan:
+            entry["斷語"].append(f"辰迫{duan['辰迫']}，宮迫{duan.get('宮迫', '災緩')}")
+        if not entry["斷語"]:
+            entry["斷語"].append(f"命盤有{key}格局，視太歲陽九百六限以定災祥")
+        result[key] = entry
+    return {
+        "流年格局斷": result,
+        "要訣": (
+            "；".join(f"{k}：{v['斷語'][0]}" for k, v in result.items() if v["斷語"])
+            if result else "命盤無掩擊迫格關囚對等格局入流年"
+        ),
+    }
+
+
 def bailiu_month_gua(taiyi, month: int | None = None) -> dict:
     """百六行月卦（卷二十）。"""
     month = month if month is not None else config.lunar_date_d(
@@ -681,6 +958,9 @@ def zonghe(
         "奇耦上和": qi_ou,
         "三才無筭": san_cai_wu_suan(taiyi, plate_ji=plate_ji),
         "命盤格局": life_geju(taiyi, plate_ji=plate_ji),
+        "流年格局斷": liunian_geju_duan(taiyi, sex, plate_ji=plate_ji),
+        "疾病斷語": jibing_duan(taiyi, sex, plate_ji=plate_ji),
+        "十二宮總斷": gong_jixiong_zongduan(taiyi, sex, plate_ji=plate_ji),
         "百六行月卦": month_gua,
         "百六行日卦": bailiu_day_gua(taiyi),
         "百六入卦限": bailiu_rugua_xian(taiyi, sex, age),
