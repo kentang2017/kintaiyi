@@ -7,6 +7,7 @@ import datetime as _dt
 
 from . import config
 from . import taiyi_life_dict
+from . import guiyun
 from .mingfa_songs import (
     SAN_XIAN_DUAN,
     STAR_WANG_ZHI,
@@ -961,6 +962,7 @@ def zonghe(
         "流年格局斷": liunian_geju_duan(taiyi, sex, plate_ji=plate_ji),
         "疾病斷語": jibing_duan(taiyi, sex, plate_ji=plate_ji),
         "十二宮總斷": gong_jixiong_zongduan(taiyi, sex, plate_ji=plate_ji),
+        "諸宮空亡": guiyun.gong_kongwang_duan(taiyi, sex, plate_ji=plate_ji),
         "百六行月卦": month_gua,
         "百六行日卦": bailiu_day_gua(taiyi),
         "百六入卦限": bailiu_rugua_xian(taiyi, sex, age),

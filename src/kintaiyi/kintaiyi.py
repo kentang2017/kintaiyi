@@ -14,10 +14,11 @@ import itertools
 import datetime
 from datetime import date
 from cn2an import an2cn, cn2an
-from .taiyidict import tengan_shiji, su_dist
+from .taiyidict import tengan_shiji, su_dist, shiji_ershiba_she
 from . import kinliuren
 from . import config
 from . import chart
+from . import guiyun
 from . import jieqi
 from . import taiyi_life_dict
 from .jieqi import jieqi_name
@@ -1213,6 +1214,15 @@ class Taiyi:
         ))
 
     def souqi_num(self):
+        """受氣數：生日時干支納音生成之數加天地數五十五，以六十除之（卷二十）。
+
+        出處：《太乙統宗寶鑑》卷二十「明命法行百六之限術」（OCR line 19747-19772）。
+
+        天一生水地六成之得七（壬癸亥子納音水），地二生火天七成之得九（丙丁巳午納音火），
+        天三生木地八成之得十一（甲乙寅卯納音木），地四生金天九成之得十三（庚辛申酉納音金），
+        天五生土地十成之得十五（戊己辰戌丑未納音土）。
+        生日時干支納音生成之數相併，加天地之數五十有五，以六十除之，不盡為受氣限數。
+        """
         gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
         dg = config.gangzhi_to_num(gz[2][0])
         dz = config.gangzhi_to_num(gz[2][1])
@@ -1892,6 +1902,7 @@ class Taiyi:
                 "太歲值宿斷事": su_dist.get(self.year_chin()),
                 "始擊二十八宿":self.sf_num(ji_style, taiyi_acumyear),
                 "始擊值宿斷事":su_dist.get(self.sf_num(ji_style, taiyi_acumyear)),
+                "始擊加臨二十八舍所主":shiji_ershiba_she.get(self.sf_num(ji_style, taiyi_acumyear)),
                 "十天干歲始擊落宮預測": config.multi_key_dict_get (tengan_shiji, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[0][0]).get(config.Ganzhiwuxing(self.sf(ji_style, taiyi_acumyear))),
                 "八門值事":config.eight_door(self.accnum(ji_style, taiyi_acumyear)),
                 "八門分佈":self.geteightdoors(ji_style, taiyi_acumyear),
@@ -2069,6 +2080,22 @@ class Taiyi:
                     kingbase=self.kingbase(ji_style, taiyi_acumyear),
                     officerbase=self.officerbase(ji_style, taiyi_acumyear),
                     pplbase=self.pplbase(ji_style, taiyi_acumyear)),
+                # 《太乙統宗寶鑑》卷六：文昌變化/始擊變化所主
+                "文昌變化": config.wenchang_bianhua(
+                    _ty,
+                    self.skyeyes(ji_style, taiyi_acumyear),
+                    self.sf(ji_style, taiyi_acumyear),
+                    _geju),
+                "始擊變化": config.shiji_bianhua(
+                    _gz[0][0],
+                    config.Ganzhiwuxing(self.sf(ji_style, taiyi_acumyear))),
+                # 《太乙統宗寶鑑》卷九：陽九百六行限觀歷數、國政章易、歲中災發
+                "厄會行限": guiyun.ehui_xingxian(_gz[0][1], _gz[0]),
+                "國政章易": guiyun.guozheng_bianyi(_gz[0][1]),
+                "歲中災發": guiyun.suizhong_zaifa(
+                    _gz[0][1],
+                    self.hegod(ji_style),
+                    self.skyeyes(ji_style, taiyi_acumyear)),
                 }
         if enable_game_theory:
             # 此處以古法「推主客相闗法」及「七大兵法格局」為本，

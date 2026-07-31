@@ -738,18 +738,41 @@ def eightwind(taiyi_acumyear):
           return dict(zip(range(1,9), [2,3,4,6,7,8,9,1])).get(int(f % 9 ))
 #五福
 def wufu(taiyi_acumyear):
-    f = (taiyi_acumyear + 250) % 225 % 45
-    #f = int(self.accnum(ji_style, taiyi_acumyear) + 250) % 225 / 45
-    fv =  f % 5
-    if fv == None:
-        return dict(zip(range(1,6), list("13975"))).get(int(f/5))
-    if fv != None and fv !=0:
-        return fv
-    if fv == 0:
-        return 5
-    
-    
-#陽九
+    """五福太乙行宮（卷十「明五福太乙吉星所主術」）。
+
+    出處：《太乙統宗寶鑑》卷十（OCR line 2079-2081）。
+
+    五福以二百二十五年行五宮，自乾而艮、而巽而坤而中宮，乃復入乾。
+    每宮住四十五年，所至宮多降福。
+    回傳數字 1-9（宮位），向後相容原有呼叫端。
+    """
+    # 五福行宮順序：乾(1)→艮(3)→巽(9)→坤(7)→中(5)，每宮45年，五宮共225年一周
+    _WUFU_GONG_NUMS = (1, 3, 9, 7, 5)
+    rem = (taiyi_acumyear + 250) % 225
+    palace_idx = rem // 45  # 0=乾, 1=艮, 2=巽, 3=坤, 4=中
+    return _WUFU_GONG_NUMS[palace_idx % 5]
+
+
+def wufu_detail(taiyi_acumyear):
+    """五福太乙行宮詳細（含行宮循環、年數、滿宮與否）。
+
+    出處：《太乙統宗寶鑑》卷十（OCR line 2079-2081）。
+    """
+    _WUFU_PALACES = {1: "乾", 3: "艮", 9: "巽", 7: "坤", 5: "中"}
+    _WUFU_GONG_NUMS = (1, 3, 9, 7, 5)
+    rem = (taiyi_acumyear + 250) % 225
+    palace_idx = rem // 45
+    gong_num = _WUFU_GONG_NUMS[palace_idx % 5]
+    years_in = rem % 45 or 45
+    return {
+        "落宮": _WUFU_PALACES[gong_num],
+        "入宮年數": years_in,
+        "滿宮": years_in == 45,
+        "週期": 225,
+        "每宮年數": 45,
+        "行宮次序": "乾→艮→巽→坤→中→復入乾",
+        "要訣": "五福居宮四十五年，所至多降福",
+    }
 def yangjiu(year, month, day):
     year = lunar_date_d(year, month, day).get("年")
     getyj = (year + 12607)%4560%456 % 12
@@ -2694,7 +2717,15 @@ def guxu_sectors(ty, skyeyes):
 
 
 def ty_zhuzhu_ke(ty, three_doors):
-    """太乙內外助主客（卷五「明太乙內外助主客術」）。"""
+    """太乙內外助主客（卷五「明太乙居天內外天以助主客術」+「明太乙內外助主客術」）。
+
+    出處：《太乙統宗寶鑑》卷五（OCR line 249, 2729-2742）。
+
+    太乙在一八三四為地內，在九六七八為天外。
+    地內助主人，天外助客人。
+    太乙居陽宮而助主，居陰宮而助客。
+    以太陽為主氣，以陰主客氣。
+    """
     doors_ok = three_doors == "三門具。"
     if ty in _TY_INNER:
         zone = "地內"
@@ -2719,13 +2750,16 @@ def ty_zhuzhu_ke(ty, three_doors):
         helper = "主客未明"
         verdict = "太乙居中，主客勢均"
         caution = "須審三門五將與算長短"
+    # 陽宮助主、陰宮助客（卷九 OCR line 3108）
+    _YANG_GONG = frozenset({8, 3, 4, 9})
+    yin_yang_helper = "居陽宮助主" if ty in _YANG_GONG else "居陰宮助客"
     return {
         "太乙宮": num2gong(ty),
         "內外": zone,
         "所助": helper,
-        "三門": three_doors,
+        "陰陽助": yin_yang_helper,
         "斷語": verdict,
-        "用兵": caution,
+        "要訣": caution,
     }
 
 
@@ -2874,6 +2908,49 @@ def generals_wangzhuai(home_gen, home_vgen, away_gen, away_vgen, wangzhuai=None)
     return items
 
 
+def junguo_jinxiang(home_cal, year_zhi=None):
+    """卷五「明郡國進賢良之期術」（OCR line 2623-2645）。
+
+    出處：《太乙統宗寶鑑》卷五。
+
+    法曰：欲知郡國舉賢良道藝之士，須在歲計天地人三才算具之年。
+    若歲計遇十六以上之算為三才具，則宜舉；如算在十五以下，則不可舉。
+    雖三才算具，又須亥卯未三合之年乃可舉。
+    """
+    san_cai_ok = home_cal >= 16
+    sanhe_ok = year_zhi in ("亥", "卯", "未") if year_zhi else None
+    can_recommend = san_cai_ok and (sanhe_ok is None or sanhe_ok)
+    return {
+        "主算": home_cal,
+        "三才算具": san_cai_ok,
+        "三合年": sanhe_ok,
+        "可舉": can_recommend,
+        "斷語": (
+            "算具三才" if not san_cai_ok else
+            ("三才算具且亥卯未三合年，宜舉賢良" if sanhe_ok else
+             "三才算具但非亥卯未三合年，李淳風云亦可舉" if sanhe_ok is None else
+             "三才算具但非三合年，不可舉")
+        ),
+        "要訣": "歲計遇十六以上之算為三才具則宜舉，十五以下不可舉",
+    }
+
+
+def chushi_luedi():
+    """卷五「明人君出師略地術」（OCR line 2651-2660）。
+
+    出處：《太乙統宗寶鑑》卷五。
+
+    古者出兵：天子萬乘、諸侯千乘、大夫百乘。
+    甲士三十人，步卒七十二人。
+    """
+    return {
+        "天子": {"乘": 10000, "甲士": 30000, "步卒": 720000},
+        "諸侯": {"乘": 1000, "甲士": 3000, "步卒": 72000},
+        "大夫": {"乘": 100, "甲士": 300, "步卒": 7200},
+        "要訣": "國雖安忘戰必危；兵者不祥之器，不得已而用之",
+    }
+
+
 def junshi_zhanlue(ty, home_cal, away_cal, skyeyes, shiji, three_doors, five_gens,
                    home_gen, away_gen, home_vgen, away_vgen, gudan_text=None,
                    year_zhi=None, wangzhuai=None, ty_door=None):
@@ -2899,6 +2976,8 @@ def junshi_zhanlue(ty, home_cal, away_cal, skyeyes, shiji, three_doors, five_gen
             home_gen, away_gen, year_zhi, wangzhuai, ty_door),
         "諸將旺衰": generals_wangzhuai(
             home_gen, home_vgen, away_gen, away_vgen, wangzhuai),
+        "郡國進賢": junguo_jinxiang(home_cal, year_zhi),
+        "出師略地": chushi_luedi(),
     }
 
 
