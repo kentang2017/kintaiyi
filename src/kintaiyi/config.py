@@ -1816,7 +1816,170 @@ def jungshi_shengfu_pan(ty=None, home_cal=None, away_cal=None, wuyin_feng=None,
     return {"軍勢": items, "斷語": "；".join(items)}
 
 
+# ======================  太乙統宗寶鑑 卷六：文昌變化/始擊變化所主  ======================
+
+# 卷六「明文昌變化所主術」（OCR line 2888-2907）
+_WENCHANG_BIANHUA = {
+    "囚": "文昌犯太乙宮為囚，不利為主，君之災",
+    "易絕": "文昌在易絕之地，算數窮者，君之災",
+    "外宮迫": "文昌在太乙前一宮外宮迫，主臣下外謀",
+    "內宮迫": "文昌在太乙後一宮內宮迫，主臣下內亂",
+    "格對": "文昌與太乙相沖為格對，主臣下失禮，王綱格正有僭犯之意",
+    "二目相關": "文昌與始擊同宮為二目相關，旺相者勝；一八三七主勝，四九二六客勝",
+}
+
+# 文昌格對災變：太乙宮→天目宮→斷語
+_WENCHANG_GE_DUI = {
+    (1, 9): "太乙一宮天目九宮，格有變相輔之災",
+    (2, 8): "太乙二宮天目八宮，有變君父之災",
+    (6, 4): "太乙六宮天目四宮，有憂宰輔大將之災",
+    (7, 3): "太乙七宮天目三宮，有變君父之災",
+}
+
+# 卷六「明始擊變化所主術」（OCR line 2909-2974）
+# 始擊五行所主（按歲干分組，以本年納音論之）
+_SHIJI_WUXING_SUOZHU = {
+    ("甲乙", "火"): "南蠻兵動，夏旱大熱，民疾流亡，火災兵暴",
+    ("甲乙", "土"): "中宮兵動，臣下謀上，廢置將輔及興土工",
+    ("甲乙", "金"): "西戎兵起，東國敗，人民流亡",
+    ("甲乙", "水"): "北狄兵起，冬有和親，歲稔",
+    ("甲乙", "木"): "東夷兵起，船車爭興，歲豐",
+    ("丙丁", "木"): "東夷國人春冬有和親之事",
+    ("丙丁", "火"): "南蠻兵動，大旱民飢，疾疫兵革",
+    ("丙丁", "土"): "東夷兵起，中宮有變",
+    ("丙丁", "金"): "西戎兵起，金銅貴，重臣被誅",
+    ("丙丁", "水"): "北狄兵起，夏大水，民流亡",
+    ("戊己", "木"): "東夷兵起",
+    ("戊己", "火"): "南方有兵，蝗災，谷貴，大旱，民流亡",
+    ("戊己", "土"): "中宮憂，土工興，山崩地震",
+    ("戊己", "金"): "西戎兵起，北狄交事",
+    ("戊己", "水"): "正戊己火兵起，大臣受誅，夏旱冬多雨雪",
+    ("庚辛", "木"): "東夷兵起，民流移，及西戎兵動",
+    ("庚辛", "火"): "南蠻兵動，中國火災，必有掩襲不測之事，歲旱，金銅貴",
+    ("庚辛", "土"): "民豐樂，夏大水，鄰國興",
+    ("庚辛", "金"): "西戎兵起",
+    ("庚辛", "水"): "北狄兵起",
+    ("壬癸", "木"): "東國兵起，民疫",
+    ("壬癸", "火"): "南蠻多災，夏旱赤地千里，秋大水，冬霜雪",
+    ("壬癸", "土"): "中國有兵",
+    ("壬癸", "金"): "西戎獻寶，歲豐民安",
+    ("壬癸", "水"): "西北兵侵，冬大寒霜雪殺物",
+}
+
+
+def wenchang_bianhua(ty, skyeyes, shiji=None, geju=None):
+    """卷六「明文昌變化所主術」（OCR line 2888-2907）。
+
+    文昌六星為天之六府，屬主人之目，中宮鎮星之精。
+    其算皆從太乙宮前而止，不敢越犯。
+    """
+    wc_g = _chen_gong(skyeyes) if skyeyes else None
+    result = {"文昌落宮": skyeyes, "太乙宮": num2gong(ty) if ty else ""}
+    bianhua = []
+    # 囚：文昌與太乙同宮
+    if wc_g and wc_g == ty:
+        bianhua.append(("囚", _WENCHANG_BIANHUA["囚"]))
+    # 格對：文昌與太乙相沖
+    _OPP = {1: 9, 9: 1, 2: 8, 8: 2, 3: 7, 7: 3, 4: 6, 6: 4}
+    if wc_g and _OPP.get(ty) == wc_g:
+        bianhua.append(("格對", _WENCHANG_BIANHUA["格對"]))
+    # 二目相關：文昌與始擊同宮
+    sj_g = _chen_gong(shiji) if shiji else None
+    if wc_g and sj_g and wc_g == sj_g:
+        yang_gongs = {1, 8, 3, 7}
+        winner = "主勝" if wc_g in yang_gongs else "客勝"
+        bianhua.append(("二目相關", f"{_WENCHANG_BIANHUA['二目相關']}；{winner}"))
+    # 格對災變
+    ge = _WENCHANG_GE_DUI.get((ty, wc_g))
+    if ge:
+        bianhua.append(("格對災變", ge))
+    # 迫：前一宮/後一宮
+    _EIGHT = [1, 8, 3, 4, 9, 2, 7, 6]
+    if ty in _EIGHT and wc_g and wc_g != ty and wc_g != _OPP.get(ty):
+        idx_ty = _EIGHT.index(ty)
+        prev_g = _EIGHT[(idx_ty - 1) % 8]
+        next_g = _EIGHT[(idx_ty + 1) % 8]
+        if wc_g == next_g:
+            bianhua.append(("外宮迫", _WENCHANG_BIANHUA["外宮迫"]))
+        elif wc_g == prev_g:
+            bianhua.append(("內宮迫", _WENCHANG_BIANHUA["內宮迫"]))
+    result["變化"] = bianhua or [("平和", "文昌不在囚迫格對之位")]
+    return result
+
+
+def shiji_bianhua(year_gan, shiji_wuxing=None):
+    """卷六「明始擊變化所主術」（OCR line 2909-2974）。
+
+    始擊為熒惑之精，受火德正氣，屬客人之目。
+    依歲干分組及始擊五行論之。
+    """
+    gan_group = None
+    for pair in (("甲乙",), ("丙丁",), ("戊己",), ("庚辛",), ("壬癸",)):
+        if year_gan in pair[0]:
+            gan_group = pair[0]
+            break
+    if not gan_group or not shiji_wuxing:
+        return {"始擊五行": shiji_wuxing or "", "歲干": year_gan, "斷語": "依本年納音論之"}
+    duan = _SHIJI_WUXING_SUOZHU.get((gan_group, shiji_wuxing), "")
+    return {
+        "歲干": year_gan,
+        "干組": gan_group,
+        "始擊五行": shiji_wuxing,
+        "斷語": duan or f"{gan_group}年始擊屬{shiji_wuxing}，依分野推之",
+    }
+
+
 # ======================  太乙統宗寶鑑 卷十七：軍事占斷  ======================
+
+# 卷十七「明太乙出兵舉事用日之術」：天子一筭至庶民十筭對照表
+# 出處：《太乙統宗寶鑑》卷十七（OCR line 18932-18968）
+_BENSHI_YONGRI = {
+    1: ("天子即位", "龍升寶殿",
+        "天得一以清，地得一以寧，王侯得一以為天下主，故用一數"),
+    2: ("親王皇子", "定冊冠禮",
+        "取離明之象"),
+    3: ("冢宰卿相", "佐天子總百官理陰陽平邦國",
+        "古者立三孤、拜三師三公，亦此義"),
+    4: ("宗廟封冊", "安神主、追尊、拜命、六曹領百官",
+        "聖王文武畢集，思親立廟，四時薦享以申孝敬"),
+    5: ("后妃", "冊皇后妃",
+        "天數中于五為正宮之位，猶日月配天地"),
+    6: ("太子妃", "納淑妃配太子",
+        "地數正于六，臣下之義"),
+    7: ("大將軍", "授節鉞、封爵祿",
+        "七為大武之將，有兵變之象"),
+    8: ("偏將", "分臨治事",
+        "握機居中，八陣旋副之義"),
+    9: ("守牧大夫吏士", "治九州",
+        "應九州守牧之官"),
+    10: ("庶民百姓", "百事",
+        "取盈眾之義"),
+}
+
+
+def benshi_yongri(cal: int) -> dict:
+    """卷十七「明太乙出兵舉事用日之術」：依算數個位定所宜之人之事。
+
+    出處：《太乙統宗寶鑑》卷十七（OCR line 18932-18968）。
+
+    經曰：天子即位當用一筭，親王皇子當用二筭，冢宰卿相當用三筭，
+    奠享宗廟當用四筭，冊皇后妃當用五筭，納淑妃當用六筭，
+    拜大將軍當用七筭，立偏將當用八筭，守牧吏士當用九筭，
+    庶民百姓當用十筭。
+    算和將發而無關囚掩迫格擊對門具者，依筭而用。
+    """
+    d = cal % 10
+    if d == 0:
+        d = 10
+    role, event, principle = _BENSHI_YONGRI.get(d, ("", "", ""))
+    return {
+        "算數": cal,
+        "個位": d,
+        "所宜": role,
+        "事": event,
+        "要訣": principle,
+    }
+
 
 def chubing_yongshi(home_cal, away_cal, skyeyes_des, sf_mask, three_doors, five_gens, ty_door=None):
     """出兵舉事用日／用時（卷十七）"""
@@ -1841,9 +2004,14 @@ def chubing_yongshi(home_cal, away_cal, skyeyes_des, sf_mask, three_doors, five_
     h_ok, h_msg = _usable(home_cal, True)
     a_ok, a_msg = _usable(away_cal, False)
     return {
-        "主方": {"可用": h_ok, "斷語": h_msg},
-        "客方": {"可用": a_ok, "斷語": a_msg},
-        "要訣": "冬至用陽局之日時，夏至用陰局之日時；文昌不囚迫、始擊不掩擊、算和將發",
+        "主方": {"可用": h_ok, "斷語": h_msg, "用日": benshi_yongri(home_cal)},
+        "客方": {"可用": a_ok, "斷語": a_msg, "用日": benshi_yongri(away_cal)},
+        "用日對照": [
+            {"個位": k, "所宜": v[0], "事": v[1], "要訣": v[2]}
+            for k, v in _BENSHI_YONGRI.items()
+        ],
+        "要訣": "冬至用陽局之日時，夏至用陰局之日時；文昌不囚迫、始擊不掩擊、算和將發；"
+                "算和將發而無關囚掩迫格擊對門具者，依筭而用",
     }
 
 
@@ -2154,7 +2322,94 @@ def shiji_zhanshi(ty, skyeyes, skyeyes_des, three_doors, five_gens, home_cal, aw
     cal_harmony = (home_cal % 2 == away_cal % 2)
     if three_doors == "三門具。" != (five_gens == "五將發。"):
         items.append("算和而門不具，或門具而算不和，當以消息推之" if not cal_harmony else "算和門具將發，百事可為")
-    return {"諸事": items, "財事": _WX_STATE_MATTER.get(wx_state, "視旺相休囚以明")}
+    # 卷十七「呂申加歲月日時，視太陽陰主之方不可抵向」（OCR line 19101）
+    # 太陽＝天罡（太乙所在之辰），陰主＝天魁（太乙對宮之辰）
+    # 呂申＝寅，加歲月日時之支，視所臨方向不可抵向
+    lvshen_zhi = "寅"
+    taiyang_chen = None
+    yinzhu_chen = None
+    _EIGHT_ORDER = [1, 8, 3, 4, 9, 2, 7, 6]
+    _OPP = {1: 9, 9: 1, 8: 2, 2: 8, 3: 7, 7: 3, 4: 6, 6: 4}
+    if ty in _EIGHT_ORDER:
+        opp_ty = _OPP.get(ty)
+        taiyang_chen = num2gong(ty)
+        yinzhu_chen = num2gong(opp_ty) if opp_ty else ""
+    lvshen_warn = ""
+    if taiyang_chen and yinzhu_chen:
+        lvshen_warn = f"呂申加歲月日時，太陽（天罡）在{taiyang_chen}，陰主（天魁）在{yinzhu_chen}，不可抵向"
+
+    return {
+        "諸事": items,
+        "財事": _WX_STATE_MATTER.get(wx_state, "視旺相休囚以明"),
+        "呂申加臨": lvshen_warn or "太乙不在八宮，無太陽陰主之方",
+    }
+
+
+def zhanwang_xingren(ty, home_cal, away_cal, skyeyes, shiji, geju=None):
+    """占望行人及賊來與不來（卷十七 OCR line 19023-19036）。
+
+    出處：《太乙統宗寶鑑》卷十七「占望行人及賊來與不來」。
+
+    法曰：以主客所得之筭占之。
+    - 得本方之數為不來，對方之數為即來。
+    - 北方行人得三八為不來，得二七為來；
+    - 南方行人得二七為不來，得三八為來；
+    - 東方行人得四九為不來，得六一為來；
+    - 西方行人得六一為不來，得四九為來。
+    - 值掩迫者雖發未至，值關格者尚未發。
+    行人來期：以客算定日數，近一日、遠十日、遠百日。
+    """
+    # 方位配數：北=1/6, 南=2/7, 東=3/8, 西=4/9
+    _FANG_SHU = {
+        "北": {1, 6}, "南": {2, 7}, "東": {3, 8}, "西": {4, 9},
+    }
+    _FANG_OPP = {"北": "南", "南": "北", "東": "西", "西": "東"}
+
+    # 依客算數位定行人方位
+    away_d = away_cal % 10
+    if away_d == 0:
+        away_d = 10
+    lai_fang = ""
+    for fang, nums in _FANG_SHU.items():
+        if away_d in nums:
+            lai_fang = fang
+            break
+
+    # 來與不來：得本方數為不來，對方數為來
+    # 此處以客算所屬方位為「本方」，主算為參照
+    home_d = home_cal % 10
+    if home_d == 0:
+        home_d = 10
+    opp_fang = _FANG_OPP.get(lai_fang, "")
+    opp_nums = _FANG_SHU.get(opp_fang, set())
+    if home_d in opp_nums:
+        verdict = "來"
+        reason = f"主算{home_cal}屬{opp_fang}方，為客算對方之數，行人即來"
+    elif home_d in _FANG_SHU.get(lai_fang, set()):
+        verdict = "不來"
+        reason = f"主算{home_cal}屬{lai_fang}方，為客算本方之數，行人不來"
+    else:
+        verdict = "未定"
+        reason = f"主算{home_cal}與客算{away_cal}方位不配，當消息推之"
+
+    # 掩迫關格修正
+    if geju:
+        if any("掩" in k or "迫" in k for k in geju):
+            verdict = "雖發未至"
+            reason += "；值掩迫者雖發未至"
+        if any("關" in k or "格" in k for k in geju):
+            verdict = "尚未發"
+            reason += "；值關格者尚未發"
+
+    # 來期日數
+    lai_qi = f"客算{away_cal}，近一日、遠十日、遠百日"
+
+    return {
+        "來否": verdict,
+        "客算方位": lai_fang,
+        "斷語": reason,
+        "來期": lai_qi,
+    }
 
 
 def dibing_laifang(ty, away_cal, shiji, yinyang=None):
@@ -3375,6 +3630,7 @@ def junshi_zhanduan(ty, home_cal, away_cal, skyeyes, shiji, skyeyes_des,
         "時計諸事": shiji_zhanshi(
             ty, skyeyes, skyeyes_des, three_doors, five_gens,
             home_cal, away_cal, geju, sf_mask, sf_hit, wangzhuai),
+        "占望行人": zhanwang_xingren(ty, home_cal, away_cal, skyeyes, shiji, geju),
     }
 
 
