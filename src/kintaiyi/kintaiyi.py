@@ -34,6 +34,71 @@ with open(os.path.join(_BASE, "data", "stars_data.json"), encoding="utf-8") as _
 
 _STARS_KEYS = ["日　", "月　", "辰星", "太白", "熒惑", "歲星", "填星"]
 
+# --- 太乙命法：時計命法（及分計命法共用） ---------------------------------
+DI_ZHI: list[str] = list("子丑寅卯辰巳午未申酉戌亥")
+_ZHI_INDEX: dict[str, int] = {z: i for i, z in enumerate(DI_ZHI)}
+TWELVE_GONGS: list[str] = "命宮,兄弟,妻妾,子孫,財帛,田宅,官祿,奴僕,疾厄,福德,相貌,父母".split(",")
+_YANG_ZHI = frozenset(DI_ZHI[0::2])  # 子寅辰午申戌
+
+
+def _zhi_index(name: str, value: str) -> int:
+    """驗證並回傳地支索引，非法地支拋出 ValueError。"""
+    idx = _ZHI_INDEX.get(value)
+    if idx is None:
+        raise ValueError(f"{name}必須是有效地支，收到: {value!r}")
+    return idx
+
+
+def life_body_palaces(
+    year_branch: str,
+    month_branch: str,
+    day_branch: str,
+    hour_branch: str,
+    sex: str,
+) -> tuple[str, str, dict[str, str]]:
+    """太乙命法：以月建加臨年支，順/逆數至時支/日支，求命宮/身宮及十二宮排列。
+
+    演算法：
+      1. 地盤：以年支為起點，順自然地支序排列（子丑寅…亥）。
+      2. 天盤：以月支為起點，依陽男陰女順行、陰男陽女逆行的方向排列。
+      3. 命宮＝天盤中「時支」所臨之地盤位置；身宮＝天盤中「日支」所臨之地盤位置。
+      4. 自命宮起，依同一方向排出十二宮（命宮、兄弟…父母）。
+
+    回傳 (命宮地支, 身宮地支, {地支: 宮名})。
+    """
+    year_idx = _zhi_index("年支", year_branch)
+    month_idx = _zhi_index("月支", month_branch)
+    day_idx = _zhi_index("日支", day_branch)
+    hour_idx = _zhi_index("時支", hour_branch)
+    if sex not in ("男", "女"):
+        raise ValueError(f"性別必須是「男」或「女」，收到: {sex!r}")
+
+    yin_yang_yang = year_branch in _YANG_ZHI
+    # 陽男陰女順行，陰男陽女逆行
+    forward = (sex == "男") == yin_yang_yang
+    step = 1 if forward else -1
+
+    def solve(target_idx: int) -> int:
+        # 天盤位置 = 地盤起點(年支) + k；天盤標籤 = 月支 + k*step
+        # 求標籤 == target_idx 的 k
+        return ((target_idx - month_idx) * step) % 12
+
+    life_branch = DI_ZHI[(year_idx + solve(hour_idx)) % 12]
+    body_branch = DI_ZHI[(year_idx + solve(day_idx)) % 12]
+
+    life_idx = _ZHI_INDEX[life_branch]
+    palace_map = {
+        DI_ZHI[(life_idx + i * step) % 12]: TWELVE_GONGS[i] for i in range(12)
+    }
+    return life_branch, body_branch, palace_map
+
+
+def minute_to_virtual_branch(hour_branch: str, minute: int) -> str:
+    """分計命法（方式 B）：每 10 分鐘約走一辰，回傳虛擬時支。"""
+    idx = _zhi_index("時支", hour_branch)
+    offset = (minute // 10) % 12
+    return DI_ZHI[(idx + offset) % 12]
+
 
 def get_xiu_degrees(year):
     """二十八宿度數：使用預計算表 + 線性插值（取代 astropy FK5 歲差轉換）"""
@@ -1442,19 +1507,14 @@ class Taiyi:
             branch_tags=ann.get("branch_tags"),
         )
 
-    def _twelve_palace_map(self, sex):
-        """十二命宮地支→宮名（供命法排盤，避免 gen_life_gong_list 遞迴 taiyi_life）。"""
-        twelve_gongs = "命宮,兄弟,妻妾,子孫,財帛,田宅,官祿,奴僕,疾厄,福德,相貌,父母".split(",")
+    def _twelve_palace_map(self, sex, hour_branch: str | None = None):
+        """十二命宮地支→宮名（供命法排盤）。實作正確之「時計命法」：
+        月建加臨年支，順（陽男陰女）或逆（陰男陽女）數至時支即為命宮，
+        再依同一方向排出十二宮。"""
         gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
-        yz, mz = gz[0][1], gz[1][1]
-        yy = config.multi_key_dict_get({tuple(self.di_zhi[0::2]): "陽", tuple(self.di_zhi[1::2]): "陰"}, yz)
-        direction = config.multi_key_dict_get({("男陽", "女陰"): "順", ("男陰", "女陽"): "逆"}, sex + yy)
-        zhinum = dict(zip(self.di_zhi, range(1, 13)))
-        yz_arrange = dict(zip(range(1, 13), config.new_list(self.di_zhi, yz)))[zhinum[yz]]
-        mz_arrange = dict(zip(range(1, 13), config.new_list(self.di_zhi, yz_arrange)))[zhinum[mz]]
-        mz_arrange_r = dict(zip(range(1, 13), config.new_list(list(reversed(self.di_zhi)), yz_arrange)))[zhinum[mz]]
-        arrangelist = {"順": config.new_list(self.di_zhi, mz_arrange_r), "逆": config.new_list(self.di_zhi, mz_arrange)}.get(direction)
-        return dict(zip(arrangelist, twelve_gongs))
+        yz, mz, dz, hz = gz[0][1], gz[1][1], gz[2][1], gz[3][1]
+        _, _, palace_map = life_body_palaces(yz, mz, dz, hour_branch or hz, sex)
+        return palace_map
 
     def gen_life_gong_list(self, sex, plate_ji: int = 4):
         res = {"巳":" ", "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" "}
@@ -1590,7 +1650,7 @@ class Taiyi:
             text += f"【{key}】\n{value}\n\n"
         return text
     
-    def taiyi_life(self, sex, plate_ji: int = 4):
+    def taiyi_life(self, sex, plate_ji: int = 4, use_minute_for_life: bool = False):
         gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
         yz = gz[0][1]
         mz = gz[1][1]
@@ -1599,15 +1659,11 @@ class Taiyi:
         self.di_zhi = self.di_zhi
         skypan = dict(zip(config.new_list(self.di_zhi, mz), config.new_list(list(reversed(self.di_zhi)), hz)))
         yy = config.multi_key_dict_get({tuple(self.di_zhi[0::2]):"陽", tuple(self.di_zhi[1::2]):"陰"}, yz)
-        direction =  config.multi_key_dict_get({("男陽","女陰"):"順", ("男陰", "女陽"):"逆"}, sex+yy)
-        zhinum = dict(zip(self.di_zhi,range(1,13)))
-        palace_map = self._twelve_palace_map(sex)
+        # 分計命法（方式 B）：以虛擬時支（每 10 分鐘走一辰）定命身宮
+        life_hz = minute_to_virtual_branch(hz, self.minute) if (plate_ji == 4 and use_minute_for_life) else hz
+        life_branch, body_branch, palace_map = life_body_palaces(yz, mz, dz, life_hz, sex)
         arrangelist = list(palace_map.keys())
-        #身宮排法
-        mz1_arrange = dict(zip(range(1,13),config.new_list(self.di_zhi,mz)))[zhinum[mz]]
-        dz_arrange =  dict(zip(range(1,13),config.new_list(self.di_zhi,mz1_arrange)))[zhinum[dz]]
-        dz_arrange_r = dict(zip(range(1,13),config.new_list(list(reversed(self.di_zhi)),dz_arrange)))[zhinum[dz]]
-        d_arrangelist = {"順":config.new_list(self.di_zhi, dz_arrange_r), "逆":config.new_list(self.di_zhi, dz_arrange)}.get(direction)
+        d_arrangelist = [body_branch]
         #長生
         fly_lu = config.multi_key_dict_get({tuple(list("甲乙")):"亥", tuple(list("丙丁")):"寅", tuple(list("戊己")):"午", tuple(list("庚辛")):"巳",tuple(list("壬癸")):"申" }, gz[0][0])
         fly_horse = config.multi_key_dict_get({tuple(list("甲乙")):"亥", tuple(list("丙丁")):"寅", tuple(list("戊己")):"午", tuple(list("庚辛")):"巳",tuple(list("壬癸")):"申" }, gz[3][0])
