@@ -99,30 +99,21 @@ _COMBO_HINTS = {
 
 
 def _life_core(taiyi, sex: str) -> dict:
-    """命宮／身宮／十二宮排列（不觸發 taiyi_life 完整輸出）。"""
+    """命宮／身宮／十二宮排列（不觸發 taiyi_life 完整輸出）。
+
+    與 ``taiyi.taiyi_life`` / ``taiyi._twelve_palace_map`` 共用同一套「時計命法」
+    核心演算法（見 :func:`kintaiyi.kintaiyi.life_body_palaces`）：月建加臨年支，
+    陽男陰女順、陰男陽女逆，數至時支為命宮、日支為身宮。
+    """
+    from .kintaiyi import life_body_palaces  # noqa: PLC0415
+
     gz = config.gangzhi(taiyi.year, taiyi.month, taiyi.day, taiyi.hour, taiyi.minute)
-    yz, mz, dz = gz[0][1], gz[1][1], gz[2][1]
-    di_zhi = taiyi.di_zhi
-    yy = config.multi_key_dict_get(
-        {tuple(di_zhi[0::2]): "陽", tuple(di_zhi[1::2]): "陰"}, yz,
-    )
-    direction = config.multi_key_dict_get(
-        {("男陽", "女陰"): "順", ("男陰", "女陽"): "逆"}, sex + yy,
-    )
-    zhinum = dict(zip(di_zhi, range(1, 13)))
-    twelve_gongs = "命宮,兄弟,妻妾,子孫,財帛,田宅,官祿,奴僕,疾厄,福德,相貌,父母".split(",")
-    yz_arrange = dict(zip(range(1, 13), config.new_list(di_zhi, yz)))[zhinum[yz]]
-    mz_arrange = dict(zip(range(1, 13), config.new_list(di_zhi, yz_arrange)))[zhinum[mz]]
-    mz_arrange_r = dict(zip(range(1, 13), config.new_list(list(reversed(di_zhi)), yz_arrange)))[zhinum[mz]]
-    mz1_arrange = dict(zip(range(1, 13), config.new_list(di_zhi, mz)))[zhinum[mz]]
-    dz_arrange = dict(zip(range(1, 13), config.new_list(di_zhi, mz1_arrange)))[zhinum[dz]]
-    dz_arrange_r = dict(zip(range(1, 13), config.new_list(list(reversed(di_zhi)), dz_arrange)))[zhinum[dz]]
-    d_arrangelist = {"順": config.new_list(di_zhi, dz_arrange_r), "逆": config.new_list(di_zhi, dz_arrange)}.get(direction)
-    arrangelist = {"順": config.new_list(di_zhi, mz_arrange_r), "逆": config.new_list(di_zhi, mz_arrange)}.get(direction)
+    yz, mz, dz, hz = gz[0][1], gz[1][1], gz[2][1], gz[3][1]
+    ming_zhi, shen_zhi, palace_map = life_body_palaces(yz, mz, dz, hz, sex)
     return {
-        "安命宮": arrangelist[0],
-        "安身宮": d_arrangelist[0],
-        "十二命宮排列": dict(zip(arrangelist, twelve_gongs)),
+        "安命宮": ming_zhi,
+        "安身宮": shen_zhi,
+        "十二命宮排列": palace_map,
     }
 
 
