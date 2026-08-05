@@ -595,72 +595,25 @@ def _lon_to_xiu(lon, offset, width_by_name):
     return last, 1.0
 
 
-def _draw_planet_markers(
-    d,
-    planet_angles,
-    inner,
-    outer,
-    rotation_angle=248,
-    *,
-    xiu_order=None,
-    xiu_degrees=None,
-    rotate_28=0.0,
-    offset=155.0,
-):
-    """在七曜環上繪製行星單字標記。
+def _draw_planet_markers(d, planet_angles, inner, outer, rotation_angle=248, **_kwargs):
+    """在七曜環上繪製行星單字標記（黃道十二次／西占對齊）。
 
-    優先與廿八宿環共用座標系（xiu_order + xiu_degrees + rotate_28 + offset）：
-      黃道經度 → 入宿 → 盤面該宿扇區內插值角度
-    若未提供宿度資料，回退為黃道 30° 等分十二次（舊邏輯）。
+    黃道經度 → 30° 等分十二次 → 地支扇區內插值。
+    與廿八宿環（入宿系 + OFFSET）分開，避免歷史 OFFSET 校準拉歪現代西占對位。
 
     planet_angles: list of (short_label, ecliptic_longitude)
+    **_kwargs: 忽略舊版 xiu_order/offset 等參數，保持呼叫端相容。
     """
     mid_r = (inner + outer) / 2.0
-    use_xiu = (
-        xiu_order is not None
-        and xiu_degrees is not None
-        and len(xiu_order) == 28
-        and len(xiu_degrees) == 28
-    )
-
-    if use_xiu:
-        width_by_name = {str(n): float(w) for n, w in zip(xiu_order, xiu_degrees)}
-        # 確保順序宿皆有寬度（xiu_order 可能是太乙重排）
-        for n in _XIU_SEQ:
-            width_by_name.setdefault(n, 360.0 / 28.0)
-        # 盤面累積角（與 gen_chart_* 的 28 宿層一致）
-        cum = [0.0]
-        for w in xiu_degrees:
-            cum.append(cum[-1] + float(w))
-        order_index = {str(n): i for i, n in enumerate(xiu_order)}
-
-        for label, lon in planet_angles:
-            name, frac = _lon_to_xiu(lon, offset, width_by_name)
-            idx = order_index.get(name)
-            if idx is None:
-                continue
-            w = float(xiu_degrees[idx])
-            chart_angle = (rotation_angle + rotate_28 + cum[idx] + frac * w) % 360.0
-            rad = math.radians(chart_angle)
-            tx = mid_r * math.cos(rad)
-            ty = mid_r * math.sin(rad)
-            t = draw.Text(
-                label, 8, tx, ty, center=1, fill="#e8c44d",
-                font_family="sans-serif", font_weight="bold",
-            )
-            t.args["class"] = "taiyi-planet-marker"
-            t.args["data-xiu"] = name
-            d.append(t)
-        return
-
-    # —— 回退：黃道十二次等分 ——
+    # 黃道 0°=春分點：戌→酉→… 與太乙盤 BRANCH_ORDER_12 對應
     SIGN_TO_BRANCH = "戌酉申未午巳辰卯寅丑子亥"
     BRANCH_ORDER_12 = ["午", "未", "申", "酉", "戌", "亥", "子", "丑", "寅", "卯", "辰", "巳"]
     for label, lon in planet_angles:
-        branch_idx = int(float(lon) // 30) % 12
+        lon = float(lon) % 360.0
+        branch_idx = int(lon // 30) % 12
         branch = SIGN_TO_BRANCH[branch_idx]
         ring_idx = BRANCH_ORDER_12.index(branch)
-        exact_within = float(lon) % 30
+        exact_within = lon % 30
         chart_angle = (rotation_angle + ring_idx * 30 + exact_within) % 360
         rad = math.radians(chart_angle)
         tx = mid_r * math.cos(rad)
@@ -670,6 +623,7 @@ def _draw_planet_markers(
             font_family="sans-serif", font_weight="bold",
         )
         t.args["class"] = "taiyi-planet-marker"
+        t.args["data-branch"] = branch
         d.append(t)
 
 
@@ -741,7 +695,7 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer, twentyeight, s
         _draw_planet_markers(
             d, planet_angles, 5 + 6 * 38, 5 + 7 * 38,
             xiu_order=twentyeight, xiu_degrees=degrees,
-            rotate_28=rotate_28, offset=155.0,
+            rotate_28=rotate_28, offset=200.0,
         )
     return d.as_svg()
 
@@ -813,7 +767,7 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
         _draw_planet_markers(
             d, planet_angles, 5 + 6 * 38, 5 + 7 * 38,
             xiu_order=twentyeight, xiu_degrees=degrees,
-            rotate_28=rotate_28, offset=155.0,
+            rotate_28=rotate_28, offset=200.0,
         )
     return d.as_svg()
 

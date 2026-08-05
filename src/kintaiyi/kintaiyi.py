@@ -1518,20 +1518,23 @@ class Taiyi:
         return year_chin
 
     def _compute_rotate_28(self, ji_style=4, taiyi_acumyear=0):
-        """計算廿八宿環旋轉角度：以太陽黃道經度校準（offset=155）。
+        """計算廿八宿環旋轉角度：以太陽黃道經度校準（offset=200）。
 
         與七曜標記共用同一套 (lon - OFFSET) → 入宿 座標系，
         使日、月、五星在盤面上的宿位一致。
 
-        OFFSET=155：強制校準西曆 1151-11-13（紹興二十一年十月庚午）月入氐。
-        （原 200 為近現代歲星校準；改為 155 後歲星歷史點會偏離。）
+        校準基準：宋史天文志 —
+          太平興國八年(983)歲星入張、
+          至道三年(997)歲星入氐、
+          宣和元年(1119)歲星入牛。
+        七曜標記用黃道十二次（對齊西占）；廿八宿用本 OFFSET 入宿系（兩者刻意分開）。
 
         ji_style / taiyi_acumyear 須與繪盤時 twenty_eightstar() 參數一致。
         """
         _GONG_LIST = ['巳', '午', '未', '坤', '申', '酉', '戌', '乾',
                       '亥', '子', '丑', '艮', '寅', '卯', '辰', '巽']
         _XIU_LIST = list(config.su)
-        _OFFSET = 155.0
+        _OFFSET = 200.0
         _ROTATION_ANGLE = 248.0
         try:
             stars = find_stars(self.year, self.month, self.day, self.hour, self.minute)
