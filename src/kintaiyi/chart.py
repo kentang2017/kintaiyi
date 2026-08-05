@@ -216,8 +216,11 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
                  is_16_palace=False, is_28_layer=False,
                  is_second_layer=False, is_third_layer=False,
                  layer_id="", sector_idx=0, layer_role="",
-                 sector_count=0):
-    """共用繪製扇形 + 標籤（支援第 3 層）"""
+                 sector_count=0, hide_label=False):
+    """共用繪製扇形 + 標籤（支援第 3 層）
+
+    hide_label: 為 True 時不畫文字（例如已有精確七曜標記時，避免雙重重疊）
+    """
     # ---- 座標 ----
     sox = outer * math.cos(math.radians(start))
     soy = outer * math.sin(math.radians(start))
@@ -253,8 +256,12 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
     text_fill = TEXT_COLORS.get(fill, 'white')
     meta = _sector_meta(raw_label, layer_role)
 
-    # 七曜環只顯示單字，避免兩字星名在 30° 扇區重疊
-    if layer_role == "star12":
+    # 七曜環只顯示單字，避免兩字星名在 30° 扇區重疊。
+    # 若已有精確黃道標記（hide_label=True），扇區完全不畫字，避免雙重重疊。
+    if hide_label:
+        label_str = ""
+        compact_str = meta["compact"]
+    elif layer_role == "star12":
         label_str = _short_planet_label(raw_label)
         compact_str = label_str.replace("\n", "")
     elif layer_role == "door":
@@ -641,14 +648,18 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer, twentyeight, s
             outer = inner_radius + (layer_idx + 1) * layer_gap
 
             lid = f"layer{layer_idx + 1}"
+            role = _role_for("day", layer_idx)
+            # 已有精確黃道標記時，七曜扇區不再畫字，避免與 marker 雙重重疊
+            _hide = bool(planet_angles) and role == "star12"
             _draw_sector(layer, start, end, inner, outer, raw,
                          is_16_palace=(layer_idx == 3),
                          is_second_layer=(layer_idx == 1),
                          is_third_layer=(layer_idx == 2),
                          is_28_layer=(layer_idx == 5),
                          layer_id=lid, sector_idx=div,
-                         layer_role=_role_for("day", layer_idx),
-                         sector_count=divs)
+                         layer_role=role,
+                         sector_count=divs,
+                         hide_label=_hide)
         d.append(layer)
 
     _add_ornament(d, 5 + 7 * 38, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_SIXTEEN)
@@ -706,14 +717,17 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
             outer = inner_radius + (layer_idx + 1) * layer_gap
 
             lid = f"layer{layer_idx + 1}"
+            role = _role_for("hour", layer_idx)
+            _hide = bool(planet_angles) and role == "star12"
             _draw_sector(layer, start, end, inner, outer, raw,
                          is_16_palace=(layer_idx == 3),
                          is_second_layer=(layer_idx == 1),
                          is_third_layer=(layer_idx == 2),
                          is_28_layer=(layer_idx == 5),
                          layer_id=lid, sector_idx=div,
-                         layer_role=_role_for("hour", layer_idx),
-                         sector_count=divs)
+                         layer_role=role,
+                         sector_count=divs,
+                         hide_label=_hide)
         d.append(layer)
 
     _add_ornament(d, 5 + 7 * 38, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_SIXTEEN)
