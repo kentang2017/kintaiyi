@@ -595,26 +595,44 @@ def _lon_to_xiu(lon, offset, width_by_name):
     return last, 1.0
 
 
+# 二十八宿 → 十二次（與 kintaiyi 一致，對齊七政四餘）
+_XIU_TO_BRANCH_CHART = {
+    "角": "辰", "亢": "辰", "氐": "卯", "房": "卯", "心": "卯",
+    "尾": "寅", "箕": "寅", "斗": "丑", "牛": "丑",
+    "女": "子", "虛": "子", "危": "子", "室": "亥", "壁": "亥",
+    "奎": "戌", "婁": "戌", "胃": "酉", "昴": "酉", "畢": "酉",
+    "觜": "申", "參": "申", "井": "未", "鬼": "未",
+    "柳": "午", "星": "午", "張": "午", "翼": "巳", "軫": "巳",
+}
+_XIU_SEQ_CHART = list("角亢氐房心尾箕斗牛女虛危室壁奎婁胃昴畢觜參井鬼柳星張翼軫")
+
+
 def _draw_planet_markers(d, planet_angles, inner, outer, rotation_angle=248, **_kwargs):
-    """在七曜環上繪製行星單字標記（黃道十二次／西占對齊）。
+    """在七曜環上繪製行星單字標記（入宿→十二次，對齊七政四餘）。
 
-    黃道經度 → 30° 等分十二次 → 地支扇區內插值。
-    與廿八宿環（入宿系 + OFFSET）分開，避免歷史 OFFSET 校準拉歪現代西占對位。
-
-    planet_angles: list of (short_label, ecliptic_longitude)
-    **_kwargs: 忽略舊版 xiu_order/offset 等參數，保持呼叫端相容。
+    黃道經度 → (lon - OFFSET) 入宿 → 十二次地支 → 扇區中點。
     """
     mid_r = (inner + outer) / 2.0
-    # 黃道 0°=春分點：戌→酉→… 與太乙盤 BRANCH_ORDER_12 對應
-    SIGN_TO_BRANCH = "戌酉申未午巳辰卯寅丑子亥"
     BRANCH_ORDER_12 = ["午", "未", "申", "酉", "戌", "亥", "子", "丑", "寅", "卯", "辰", "巳"]
+    offset = float(_kwargs.get("offset", 200.0))
+    xiu_degrees = _kwargs.get("xiu_degrees")
+    if not xiu_degrees or len(xiu_degrees) != 28:
+        xiu_degrees = [360.0 / 28.0] * 28
+
     for label, lon in planet_angles:
         lon = float(lon) % 360.0
-        branch_idx = int(lon // 30) % 12
-        branch = SIGN_TO_BRANCH[branch_idx]
+        adj = (lon - offset) % 360.0
+        cum = 0.0
+        xiu = _XIU_SEQ_CHART[-1]
+        for name, w in zip(_XIU_SEQ_CHART, xiu_degrees):
+            w = float(w)
+            if cum <= adj < cum + w:
+                xiu = name
+                break
+            cum += w
+        branch = _XIU_TO_BRANCH_CHART.get(xiu, "午")
         ring_idx = BRANCH_ORDER_12.index(branch)
-        exact_within = lon % 30
-        chart_angle = (rotation_angle + ring_idx * 30 + exact_within) % 360
+        chart_angle = (rotation_angle + ring_idx * 30 + 15) % 360
         rad = math.radians(chart_angle)
         tx = mid_r * math.cos(rad)
         ty = mid_r * math.sin(rad)
@@ -624,6 +642,7 @@ def _draw_planet_markers(d, planet_angles, inner, outer, rotation_angle=248, **_
         )
         t.args["class"] = "taiyi-planet-marker"
         t.args["data-branch"] = branch
+        t.args["data-xiu"] = xiu
         d.append(t)
 
 

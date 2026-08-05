@@ -168,9 +168,51 @@ def _julian_day(year, month, day, hour=12.0):
     return int(365.25 * (y + 4716)) + int(30.6001 * (m + 1)) + d + B - 1524.5
 
 
-def _lon_to_branch(lon):
-    sign = int(_norm_deg(lon) // 30) % 12
-    return _SIGN_TO_BRANCH[sign]
+# 二十八宿 → 十二次地支（七政四餘／古宿制常用）
+_XIU_TO_BRANCH = {
+    "角": "辰", "亢": "辰",
+    "氐": "卯", "房": "卯", "心": "卯",
+    "尾": "寅", "箕": "寅",
+    "斗": "丑", "牛": "丑",
+    "女": "子", "虛": "子", "危": "子",
+    "室": "亥", "壁": "亥",
+    "奎": "戌", "婁": "戌",
+    "胃": "酉", "昴": "酉", "畢": "酉",
+    "觜": "申", "參": "申",
+    "井": "未", "鬼": "未",
+    "柳": "午", "星": "午", "張": "午",
+    "翼": "巳", "軫": "巳",
+}
+_XIU_SEQ_LIST = list("角亢氐房心尾箕斗牛女虛危室壁奎婁胃昴畢觜參井鬼柳星張翼軫")
+_XIU_OFFSET = 200.0  # 與 _compute_rotate_28 一致
+
+
+def _lon_to_xiu_name(lon, offset=None, degrees=None):
+    """黃道經度 → 二十八宿名（入宿）。"""
+    offset = _XIU_OFFSET if offset is None else float(offset)
+    if degrees is None or len(degrees) != 28:
+        degrees = [360.0 / 28.0] * 28
+    adj = (_norm_deg(lon) - offset) % 360.0
+    cum = 0.0
+    for name, w in zip(_XIU_SEQ_LIST, degrees):
+        w = float(w)
+        if cum <= adj < cum + w:
+            return name
+        cum += w
+    return _XIU_SEQ_LIST[-1]
+
+
+def _lon_to_branch(lon, year=None):
+    """黃道經度 → 地支。
+
+    七政四餘／古宿制：入宿後按十二次定支（與西占 30° 等分不同）。
+    """
+    try:
+        degrees = get_xiu_degrees(int(year)) if year is not None else None
+    except Exception:
+        degrees = None
+    xiu = _lon_to_xiu_name(lon, degrees=degrees)
+    return _XIU_TO_BRANCH.get(xiu, _SIGN_TO_BRANCH[int(_norm_deg(lon) // 30) % 12])
 
 
 def _sun_lon(T):
@@ -247,37 +289,23 @@ def _kepler_geo_lon(T, p):
 
 
 def _compute_stars(year, month, day, hour=12, minute=0):
-    """七曜落宮：Kepler 低精度黃道經度 → 十二地支（移植自 JS stars-ephemeris.js）。
-    用於 stars_data.json 表範圍外（<1500 或 >2100，含公元前）。"""
+    """七曜落宮：Kepler 黃道經度 → 入宿 → 十二次地支（對齊七政四餘／古宿制）。"""
     h = float(hour) + float(minute or 0) / 60.0
     jd = _julian_day(year, month, day, h if h == h else 12.0)
     T = (jd - 2451545.0) / 36525.0
     result = {}
-    result["日　"] = _lon_to_branch(_sun_lon(T))
-    result["月　"] = _lon_to_branch(_moon_lon(T))
+    result["日　"] = _lon_to_branch(_sun_lon(T), year)
+    result["月　"] = _lon_to_branch(_moon_lon(T), year)
     for name, p in _PLANET_ELEMENTS.items():
-        result[name] = _lon_to_branch(_kepler_geo_lon(T, p))
+        result[name] = _lon_to_branch(_kepler_geo_lon(T, p), year)
     return result
 
 
 def find_stars(year, month, day, hour, minute):
-    """七曜落宮：預計算表查詢（1500-2100），表外用 Kepler 低精度計算（含公元前）。"""
-    key = f"{year:04d}-{month:02d}-{day:02d}"
-    compact = _STARS_TABLE.get(key)
-    if compact is None:
-        # 回退到該月最近的可用日期
-        key = f"{year:04d}-{month:02d}-01"
-        compact = _STARS_TABLE.get(key)
-    if compact is None:
-        # 再回退：找該年最近的月份
-        for m in range(1, 13):
-            key = f"{year:04d}-{m:02d}-01"
-            compact = _STARS_TABLE.get(key)
-            if compact is not None:
-                break
-    if compact is not None:
-        return dict(zip(_STARS_KEYS, list(compact)))
-    # 表外（<1500 或 >2100，含公元前）：Kepler 低精度計算
+    """七曜落宮：一律用 Kepler + 入宿→十二次（與七政四餘一致）。
+
+    不再使用 stars_data.json 的熱帶 30° 等分表，避免與古宿制落支衝突。
+    """
     return _compute_stars(year, month, day, hour, minute)
 
 
