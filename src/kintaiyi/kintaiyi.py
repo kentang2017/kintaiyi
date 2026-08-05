@@ -119,9 +119,149 @@ def get_xiu_degrees(year):
     return [round(lo_vals[i] + (hi_vals[i] - lo_vals[i]) * frac, 2) for i in range(28)]
 
 
+import math as _math
+
+_SIGN_TO_BRANCH = "戌酉申未午巳辰卯寅丑子亥"
+
+_PLANET_ELEMENTS = {
+    "辰星": {"L0": 252.250906, "Ldot": 149474.0722491, "a": 0.387098,
+             "e0": 0.20563175, "edot": 0.000020407,
+             "i0": 7.004986, "idot": -0.0059516,
+             "O0": 48.330893, "Odot": -0.1254227,
+             "pi0": 77.456119, "pidot": 0.1588643},
+    "太白": {"L0": 181.979801, "Ldot": 58517.8156760, "a": 0.723330,
+             "e0": 0.00677188, "edot": -0.000047766,
+             "i0": 3.394662, "idot": -0.0008568,
+             "O0": 76.679920, "Odot": -0.2780134,
+             "pi0": 131.563703, "pidot": 0.0048746},
+    "熒惑": {"L0": 355.433275, "Ldot": 19140.2993313, "a": 1.523688,
+             "e0": 0.09340062, "edot": 0.000090484,
+             "i0": 1.849726, "idot": -0.0081477,
+             "O0": 49.558093, "Odot": -0.2950250,
+             "pi0": 336.060234, "pidot": 0.4439016},
+    "歲星": {"L0": 34.351519, "Ldot": 3034.9056606, "a": 5.202561,
+             "e0": 0.04849485, "edot": 0.000163180,
+             "i0": 1.303270, "idot": -0.0019872,
+             "O0": 100.464441, "Odot": 0.1766828,
+             "pi0": 14.331309, "pidot": 0.2155525},
+    "填星": {"L0": 50.077444, "Ldot": 1222.1138488, "a": 9.554747,
+             "e0": 0.05550862, "edot": -0.000346641,
+             "i0": 2.488878, "idot": -0.0037362,
+             "O0": 113.665524, "Odot": -0.2566649,
+             "pi0": 93.057237, "pidot": 0.5665496},
+}
+
+
+def _norm_deg(x):
+    return x % 360.0
+
+
+def _julian_day(year, month, day, hour=12.0):
+    y = int(year)
+    m = int(month)
+    d = float(day) + float(hour) / 24.0
+    if m <= 2:
+        y -= 1
+        m += 12
+    A = y // 100
+    B = 2 - A + A // 4
+    return int(365.25 * (y + 4716)) + int(30.6001 * (m + 1)) + d + B - 1524.5
+
+
+def _lon_to_branch(lon):
+    sign = int(_norm_deg(lon) // 30) % 12
+    return _SIGN_TO_BRANCH[sign]
+
+
+def _sun_lon(T):
+    L0 = 280.46646 + 36000.76983 * T + 0.0003032 * T * T
+    M = 357.52911 + 35999.05029 * T - 0.0001537 * T * T
+    Mr = _math.radians(M)
+    C = ((1.914602 - 0.004817 * T - 0.000014 * T * T) * _math.sin(Mr)
+         + (0.019993 - 0.000101 * T) * _math.sin(2 * Mr)
+         + 0.000289 * _math.sin(3 * Mr))
+    return _norm_deg(L0 + C)
+
+
+def _moon_lon(T):
+    d2r = _math.pi / 180.0
+    Lp = 218.3164477 + 481267.88123421 * T
+    D = 297.8501921 + 445267.1114034 * T
+    M = 357.5291092 + 35999.0502909 * T
+    Mp = 134.9633964 + 477198.8675055 * T
+    F = 93.272095 + 483202.0175233 * T
+    lon = (Lp
+           + 6.289 * _math.sin(Mp * d2r)
+           + 1.274 * _math.sin((2 * D - Mp) * d2r)
+           + 0.658 * _math.sin(2 * D * d2r)
+           + 0.214 * _math.sin(2 * Mp * d2r)
+           - 0.186 * _math.sin(M * d2r)
+           - 0.114 * _math.sin(2 * F * d2r)
+           + 0.059 * _math.sin((2 * D - 2 * Mp) * d2r)
+           + 0.057 * _math.sin((2 * D - M - Mp) * d2r)
+           + 0.053 * _math.sin((2 * D + Mp) * d2r)
+           + 0.046 * _math.sin((2 * D - M) * d2r)
+           + 0.041 * _math.sin((M - Mp) * d2r)
+           - 0.035 * _math.sin(D * d2r)
+           - 0.031 * _math.sin((M + Mp) * d2r))
+    return _norm_deg(lon)
+
+
+def _kepler_geo_lon(T, p):
+    d2r = _math.pi / 180.0
+    L = _norm_deg(p["L0"] + p["Ldot"] * T)
+    e = p["e0"] + p["edot"] * T
+    a = p["a"]
+    i = (p["i0"] + p["idot"] * T) * d2r
+    Om = (p["O0"] + p["Odot"] * T) * d2r
+    pi = _norm_deg(p["pi0"] + p["pidot"] * T) * d2r
+    w = pi - Om
+    M = _math.radians(L) - pi
+    E = M
+    for _ in range(8):
+        E = M + e * _math.sin(E)
+    xv = a * (_math.cos(E) - e)
+    yv = a * _math.sqrt(max(0, 1 - e * e)) * _math.sin(E)
+    v = _math.atan2(yv, xv)
+    r = _math.sqrt(xv * xv + yv * yv)
+    xh = r * (_math.cos(Om) * _math.cos(v + w) - _math.sin(Om) * _math.sin(v + w) * _math.cos(i))
+    yh = r * (_math.sin(Om) * _math.cos(v + w) + _math.cos(Om) * _math.sin(v + w) * _math.cos(i))
+
+    Le = _norm_deg(100.466449 + 36000.7698231 * T) * d2r
+    ee = 0.01670862 - 0.00004204 * T
+    pe = _norm_deg(102.937348 + 1.7195269 * T) * d2r
+    Me = Le - pe
+    Ee = Me
+    for _ in range(8):
+        Ee = Me + ee * _math.sin(Ee)
+    xE = _math.cos(Ee) - ee
+    yE = _math.sqrt(max(0, 1 - ee * ee)) * _math.sin(Ee)
+    re = _math.sqrt(xE * xE + yE * yE)
+    ve = _math.atan2(yE, xE)
+    xEarth = re * _math.cos(ve + pe)
+    yEarth = re * _math.sin(ve + pe)
+
+    xg = xh - xEarth
+    yg = yh - yEarth
+    return _norm_deg(_math.degrees(_math.atan2(yg, xg)))
+
+
+def _compute_stars(year, month, day, hour=12, minute=0):
+    """七曜落宮：Kepler 低精度黃道經度 → 十二地支（移植自 JS stars-ephemeris.js）。
+    用於 stars_data.json 表範圍外（<1500 或 >2100，含公元前）。"""
+    h = float(hour) + float(minute or 0) / 60.0
+    jd = _julian_day(year, month, day, h if h == h else 12.0)
+    T = (jd - 2451545.0) / 36525.0
+    result = {}
+    result["日　"] = _lon_to_branch(_sun_lon(T))
+    result["月　"] = _lon_to_branch(_moon_lon(T))
+    for name, p in _PLANET_ELEMENTS.items():
+        result[name] = _lon_to_branch(_kepler_geo_lon(T, p))
+    return result
+
+
 def find_stars(year, month, day, hour, minute):
-    """七曜落宮：使用預計算表查詢（取代 ephem 天體位置計算）。
-    1900年以後以每日精度查詢；1900年以前以每月精度查詢（月初值）。"""
+    """七曜落宮：預計算表查詢（1500-2100），表外用 Kepler 低精度計算（含公元前）。"""
     key = f"{year:04d}-{month:02d}-{day:02d}"
     compact = _STARS_TABLE.get(key)
     if compact is None:
@@ -135,9 +275,10 @@ def find_stars(year, month, day, hour, minute):
             compact = _STARS_TABLE.get(key)
             if compact is not None:
                 break
-    if compact is None:
-        return {}
-    return dict(zip(_STARS_KEYS, list(compact)))
+    if compact is not None:
+        return dict(zip(_STARS_KEYS, list(compact)))
+    # 表外（<1500 或 >2100，含公元前）：Kepler 低精度計算
+    return _compute_stars(year, month, day, hour, minute)
 
 
 def _days_between(year, month, day, hour, minute, ref_year, ref_month, ref_day):
