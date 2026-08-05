@@ -184,7 +184,7 @@ _XIU_TO_BRANCH = {
     "翼": "巳", "軫": "巳",
 }
 _XIU_SEQ_LIST = list("角亢氐房心尾箕斗牛女虛危室壁奎婁胃昴畢觜參井鬼柳星張翼軫")
-_XIU_OFFSET = 118.0  # 元祐元年月犯氐／畢折中；須與 chart.XIU_OFFSET 一致
+_XIU_OFFSET = 116.0  # 元祐元年月犯氐／畢折中；須與 chart.XIU_OFFSET 一致
 
 
 def _lon_to_xiu_name(lon, offset=None, degrees=None):
