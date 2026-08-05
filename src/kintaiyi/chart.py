@@ -579,7 +579,7 @@ def gen_chart_life(
 # 天文二十八宿順序（黃道經度 → 入宿查表用，與太乙盤面排列無關）
 _XIU_SEQ = list("角亢氐房心尾箕斗牛女虛危室壁奎婁胃昴畢觜參井鬼柳星張翼軫")
 # 入宿校準常數（元祐元年月犯氐／畢折中；呼叫端必須用此常數，勿寫死）
-XIU_OFFSET = 110.0
+XIU_OFFSET = 118.0
 
 
 def _lon_to_xiu(lon, offset, width_by_name):
