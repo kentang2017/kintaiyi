@@ -55,6 +55,20 @@ _SIXTEEN = "巳午未坤申酉戌乾亥子丑艮寅卯辰巽"
 _TWELVE = "巳午未申酉戌亥子丑寅卯辰"
 _PLANET_RING = "午未申酉戌亥子丑寅卯辰巳"
 
+# 七曜完整名 → 單字（扇區僅 30°，兩字會重疊）
+_PLANET_SHORT = {
+    "日　": "日", "日": "日",
+    "月　": "月", "月": "月",
+    "辰星": "辰",
+    "太白": "白",
+    "熒惑": "熒",
+    "歲星": "歲",
+    "填星": "填",
+    "月孛": "孛",
+    "羅睺": "羅",
+    "計都": "計",
+}
+
 
 def _label_parts(raw_label):
     if isinstance(raw_label, list):
@@ -63,6 +77,18 @@ def _label_parts(raw_label):
         return []
     s = str(raw_label).strip()
     return [s] if s else []
+
+
+def _short_planet_label(raw_label):
+    """七曜環專用：完整星名轉單字，多星以換行堆疊；空格回傳空字串。"""
+    parts = _label_parts(raw_label)
+    shorts = []
+    for p in parts:
+        key = p.replace("\u3000", "").strip()
+        if not key or key == " ":
+            continue
+        shorts.append(_PLANET_SHORT.get(key, key[:1]))
+    return "\n".join(shorts)
 
 
 def _compact_label(parts, layer_role, branch=""):
@@ -226,7 +252,17 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
 
     text_fill = TEXT_COLORS.get(fill, 'white')
     meta = _sector_meta(raw_label, layer_role)
-    label_str = meta["display"] if layer_role == "door" else meta["full"]
+
+    # 七曜環只顯示單字，避免兩字星名在 30° 扇區重疊
+    if layer_role == "star12":
+        label_str = _short_planet_label(raw_label)
+        compact_str = label_str.replace("\n", "")
+    elif layer_role == "door":
+        label_str = meta["display"]
+        compact_str = meta["compact"]
+    else:
+        label_str = meta["full"]
+        compact_str = meta["compact"]
 
     sector_g = draw.Group(id=f"{layer_id}-s{sector_idx}" if layer_id else None)
     sector_g.args["class"] = "taiyi-sector"
@@ -234,7 +270,7 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
         sector_g.args["data-layer"] = layer_id
         sector_g.args["data-sector"] = str(sector_idx)
         sector_g.args["data-role"] = layer_role or ""
-        sector_g.args["data-compact"] = meta["compact"]
+        sector_g.args["data-compact"] = compact_str
         sector_g.args["data-full"] = meta["full"]
         if meta["branch"]:
             sector_g.args["data-branch"] = meta["branch"]
@@ -259,11 +295,12 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
     mid = (start + end) / 2
     tx = (inner + outer) / 2 * math.cos(math.radians(mid))
     ty = (inner + outer) / 2 * math.sin(math.radians(mid))
-    # 密集層（28宿等）自動縮小標籤
-    _label_size = 6.5 if (is_28_layer or sector_count >= 28) else (8.5 if sector_count <= 8 else 7.5)
-    t = draw.Text(label_str, _label_size, tx, ty, center=1, fill=text_fill,
-                  font_family='sans-serif', font_weight='bold')
-    sector_g.append(t)
+    # 密集層（28宿等）自動縮小標籤；空字串不畫 Text，減少 SVG 節點
+    if label_str:
+        _label_size = 6.5 if (is_28_layer or sector_count >= 28) else (8.5 if sector_count <= 8 else 7.5)
+        t = draw.Text(label_str, _label_size, tx, ty, center=1, fill=text_fill,
+                      font_family='sans-serif', font_weight='bold')
+        sector_g.append(t)
     group.append(sector_g)
 
 
