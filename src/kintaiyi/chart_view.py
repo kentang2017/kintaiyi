@@ -717,7 +717,9 @@ def build_chart_view_model(
                     f"{trigram}·{star}",
                     _day_golden_lines(trigram, star, door, ttext),
                 )
-            _fill_planet_ring(sectors, 6, ring)
+            stars28 = ty_obj.twenty_eightstar(acc_style, tn)
+            _fill_star28_ring(sectors, 6, stars28, ttext)
+            _fill_planet_ring(sectors, 7, ring)
         elif style in (3, 4):
             for i, (branch, general, earth) in enumerate(_hour_general_ring(ty_obj)):
                 sectors[f"layer3:{i}"] = _sector_entry(
@@ -1210,9 +1212,9 @@ def _outer_ring_layout(chart_style: int, *, is_life: bool) -> dict:
             "branch_order": _PLANET_RING_BRANCHES,
         }
     if chart_style == 2:
-        # gen_chart_day: inner_radius=5, layer_gap=38, planet ring = layer 6 (idx=5)
+        # gen_chart_day: inner_radius=5, layer_gap=38, planet ring = layer 7 (idx=6)
         return {
-            "layer_idx": 5,
+            "layer_idx": 6,
             "inner_radius": 5.0,
             "layer_gap": 38.0,
             "sector_count": 12,
@@ -1389,7 +1391,7 @@ def _guxu_sync_layer_layouts(chart_style: int, *, is_life: bool) -> list[dict]:
         # gen_chart_day / gen_chart_hour: inner_radius=5, layer_gap=38
         inner_base, gap = 5.0, 38.0
         if chart_style == 2:
-            # gen_chart_day: num_divisions=[1,8,8,16,16,12]
+            # gen_chart_day: num_divisions=[1,8,8,16,16,28,12]
             specs = {
                 3: (8, _SIXTEEN_BRANCHES),
                 4: (16, _SIXTEEN_BRANCHES),
@@ -1671,7 +1673,8 @@ def sector_panel_layer_labels(*, is_life: bool = False, chart_style: int = 0) ->
             "layer3": "金函玉鏡",
             "layer4": "十六宮",
             "layer5": "六壬神將",
-            "layer6": "行星環",
+            "layer6": "二十八宿",
+            "layer7": "行星環",
         }
     if chart_style in (3, 4):
         return {
