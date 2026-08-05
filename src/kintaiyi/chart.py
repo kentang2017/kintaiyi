@@ -578,6 +578,8 @@ def gen_chart_life(
 
 # 天文二十八宿順序（黃道經度 → 入宿查表用，與太乙盤面排列無關）
 _XIU_SEQ = list("角亢氐房心尾箕斗牛女虛危室壁奎婁胃昴畢觜參井鬼柳星張翼軫")
+# 入宿校準常數（元祐元年月犯氐／畢折中；呼叫端必須用此常數，勿寫死）
+XIU_OFFSET = 120.0
 
 
 def _lon_to_xiu(lon, offset, width_by_name):
@@ -619,7 +621,7 @@ def _draw_planet_markers(d, planet_angles, inner, outer, rotation_angle=248, **_
     mid_r = (inner + outer) / 2.0
     ring_half = max(4.0, (outer - inner) / 2.0 - 2.0)
     BRANCH_ORDER_12 = ["午", "未", "申", "酉", "戌", "亥", "子", "丑", "寅", "卯", "辰", "巳"]
-    offset = float(_kwargs.get("offset", 120.0))
+    offset = float(_kwargs.get("offset", XIU_OFFSET))
     rotate_28 = float(_kwargs.get("rotate_28", 0.0))
     xiu_order = _kwargs.get("xiu_order")  # 盤面廿八宿順序（已 rearrange）
     xiu_degrees = _kwargs.get("xiu_degrees")  # 與 xiu_order 同序的度數
@@ -758,7 +760,7 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer, twentyeight, s
         _draw_planet_markers(
             d, planet_angles, 5 + 6 * 38, 5 + 7 * 38,
             xiu_order=twentyeight, xiu_degrees=degrees,
-            rotate_28=rotate_28, offset=200.0,
+            rotate_28=rotate_28, offset=XIU_OFFSET,
         )
     return d.as_svg()
 
@@ -830,7 +832,7 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
         _draw_planet_markers(
             d, planet_angles, 5 + 6 * 38, 5 + 7 * 38,
             xiu_order=twentyeight, xiu_degrees=degrees,
-            rotate_28=rotate_28, offset=200.0,
+            rotate_28=rotate_28, offset=XIU_OFFSET,
         )
     return d.as_svg()
 

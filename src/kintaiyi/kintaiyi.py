@@ -184,7 +184,7 @@ _XIU_TO_BRANCH = {
     "翼": "巳", "軫": "巳",
 }
 _XIU_SEQ_LIST = list("角亢氐房心尾箕斗牛女虛危室壁奎婁胃昴畢觜參井鬼柳星張翼軫")
-_XIU_OFFSET = 120.0  # 與 _compute_rotate_28 一致
+_XIU_OFFSET = 120.0  # 元祐元年月犯氐／畢折中；須與 chart.XIU_OFFSET 一致
 
 
 def _lon_to_xiu_name(lon, offset=None, degrees=None):
@@ -1551,12 +1551,12 @@ class Taiyi:
         use_moon=False（預設）：以太陽所在宿對準七曜環十二次地支中點。
         use_moon=True：以月球所在宿對準（日計太乙盤用，宋史月入氐校準）。
 
-        OFFSET=200 與入宿查表一致（宋史歲星入張／氐／牛、月入氐校準）。
+        OFFSET 與 _XIU_OFFSET／chart.XIU_OFFSET 一致（元祐元年月犯氐／畢折中）。
         ji_style / taiyi_acumyear 須與 twenty_eightstar() 相同。
         """
         _BRANCH_12 = ['午', '未', '申', '酉', '戌', '亥', '子', '丑', '寅', '卯', '辰', '巳']
         _XIU_LIST = list(config.su)
-        _OFFSET = 200.0
+        _OFFSET = _XIU_OFFSET  # 勿再寫死數字
         _ROTATION_ANGLE = 248.0
         try:
             h = float(self.hour) + float(self.minute or 0) / 60.0
