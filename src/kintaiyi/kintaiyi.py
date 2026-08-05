@@ -1546,28 +1546,22 @@ class Taiyi:
         return year_chin
 
     def _compute_rotate_28(self, ji_style=4, taiyi_acumyear=0):
-        """計算廿八宿環旋轉角度：以太陽黃道經度校準（offset=200）。
+        """計算廿八宿環旋轉角度：太陽所在宿對準七曜環十二次地支中點。
 
-        與七曜標記共用同一套 (lon - OFFSET) → 入宿 座標系，
-        使日、月、五星在盤面上的宿位一致。
+        對齊基準改為 12 格七曜環（每格 30°），不再對 16 宮中點，
+        使「日入某宿 → 該宿扇區中心 ≈ 日支扇區中心」。
 
-        校準基準：宋史天文志 —
-          太平興國八年(983)歲星入張、
-          至道三年(997)歲星入氐、
-          宣和元年(1119)歲星入牛。
-        七曜標記用黃道十二次（對齊西占）；廿八宿用本 OFFSET 入宿系（兩者刻意分開）。
-
-        ji_style / taiyi_acumyear 須與繪盤時 twenty_eightstar() 參數一致。
+        OFFSET=200 與入宿查表一致（宋史歲星入張／氐／牛校準）。
+        ji_style / taiyi_acumyear 須與 twenty_eightstar() 相同。
         """
-        _GONG_LIST = ['巳', '午', '未', '坤', '申', '酉', '戌', '乾',
-                      '亥', '子', '丑', '艮', '寅', '卯', '辰', '巽']
+        _BRANCH_12 = ['午', '未', '申', '酉', '戌', '亥', '子', '丑', '寅', '卯', '辰', '巳']
         _XIU_LIST = list(config.su)
         _OFFSET = 200.0
         _ROTATION_ANGLE = 248.0
         try:
             stars = find_stars(self.year, self.month, self.day, self.hour, self.minute)
             sun_branch = stars.get('日　')
-            if not sun_branch or sun_branch not in _GONG_LIST:
+            if not sun_branch or sun_branch not in _BRANCH_12:
                 return 0.0
             h = float(self.hour) + float(self.minute or 0) / 60.0
             jd = _julian_day(self.year, self.month, self.day, h if h == h else 12.0)
@@ -1584,9 +1578,9 @@ class Taiyi:
                 cum += deg
             if not sun_xiu:
                 return 0.0
-            sun_pidx = _GONG_LIST.index(sun_branch)
-            sun_palace_mid = (_ROTATION_ANGLE + sun_pidx * 22.5 + 11.25) % 360.0
-            # 與繪盤相同的宿序（不可寫死 ji_style=4）
+            # 七曜環 12 支中點（與 chart BRANCH_ORDER_12 / rotation_angle 一致）
+            sun_bidx = _BRANCH_12.index(sun_branch)
+            sun_branch_mid = (_ROTATION_ANGLE + sun_bidx * 30.0 + 15.0) % 360.0
             xiu_order = self.twenty_eightstar(ji_style, taiyi_acumyear)
             sun_xiu_idx = xiu_order.index(sun_xiu) if sun_xiu in xiu_order else -1
             if sun_xiu_idx < 0:
@@ -1595,7 +1589,7 @@ class Taiyi:
                 degrees[_XIU_LIST.index(xiu_order[k])] for k in range(sun_xiu_idx)
             )
             xiu_width = degrees[_XIU_LIST.index(sun_xiu)]
-            rotate_28 = (sun_palace_mid - _ROTATION_ANGLE - sum_before - xiu_width / 2.0) % 360.0
+            rotate_28 = (sun_branch_mid - _ROTATION_ANGLE - sum_before - xiu_width / 2.0) % 360.0
             if rotate_28 > 180.0:
                 rotate_28 -= 360.0
             return rotate_28
