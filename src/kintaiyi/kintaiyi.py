@@ -1555,7 +1555,7 @@ class Taiyi:
         """
         _BRANCH_12 = ['午', '未', '申', '酉', '戌', '亥', '子', '丑', '寅', '卯', '辰', '巳']
         _XIU_LIST = list(config.su)
-        _OFFSET = chart.XIU_OFFSET  # 勿再寫死數字
+        _OFFSET = chart.get_xiu_offset(self.year)  # 依年份微調
         _ROTATION_ANGLE = 248.0
         try:
             h = float(self.hour) + float(self.minute or 0) / 60.0
@@ -1715,7 +1715,7 @@ class Taiyi:
             ng = dict1[1]
             star_degrees = dict(zip(config.su, get_xiu_degrees(self.year)))
             new_degrees = [star_degrees.get(i) for i in self.twenty_eightstar(ji_style, taiyi_acumyear)]
-            return chart.gen_chart_day( list(sixteengongs.values())[-1] + [middle], self.geteightdoors_text2(ji_style, taiyi_acumyear), ng, list(sixteengongs.values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear), ss1[0], new_degrees, rotate_28=_rotate_28, sanqi=_sanqi, trigram_rotate=_trigram_rotate, planet_angles=_planet_angles)
+            return chart.gen_chart_day( list(sixteengongs.values())[-1] + [middle], self.geteightdoors_text2(ji_style, taiyi_acumyear), ng, list(sixteengongs.values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear), ss1[0], new_degrees, rotate_28=_rotate_28, sanqi=_sanqi, trigram_rotate=_trigram_rotate, planet_angles=_planet_angles, offset=chart.get_xiu_offset(self.year))
         if ji_style in [3,4]:
             #j_q = jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)
             #d = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]
@@ -1740,7 +1740,7 @@ class Taiyi:
             sg = [[list(res.values())[i], list(res1.values())[i] ] for i in range(0,len(list(res.values())))]
             star_degrees = dict(zip(config.su,get_xiu_degrees(self.year)))
             new_degrees = [star_degrees.get(i) for i in self.twenty_eightstar(ji_style, taiyi_acumyear)]
-            return chart.gen_chart_hour( list(sixteengongs.values())[-1]+[" "," "], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg,list(sixteengongs.values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear), ss1[0], new_degrees, rotate_28=_rotate_28, sanqi=_sanqi, trigram_rotate=_trigram_rotate, planet_angles=_planet_angles)
+            return chart.gen_chart_hour( list(sixteengongs.values())[-1]+[" "," "], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg,list(sixteengongs.values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear), ss1[0], new_degrees, rotate_28=_rotate_28, sanqi=_sanqi, trigram_rotate=_trigram_rotate, planet_angles=_planet_angles, offset=chart.get_xiu_offset(self.year))
 #太乙命法
     def gen_life_gong(self, sex, ji_style: int = 4):
         stars = find_stars(self.year, self.month, self.day, self.hour, self.minute)

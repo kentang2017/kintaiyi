@@ -49,7 +49,6 @@ def _get_branch_key(raw_label):
             return c
     return ''
 
-
 _PRIORITY_TOKENS = ("太乙", "文昌", "始擊", "主大", "客大", "合神", "計神", "天乙", "地乙", "直符")
 _SIXTEEN = "巳午未坤申酉戌乾亥子丑艮寅卯辰巽"
 _TWELVE = "巳午未申酉戌亥子丑寅卯辰"
@@ -69,7 +68,6 @@ _PLANET_SHORT = {
     "計都": "計",
 }
 
-
 def _label_parts(raw_label):
     if isinstance(raw_label, list):
         return [str(x).strip() for x in raw_label if str(x).strip()]
@@ -77,7 +75,6 @@ def _label_parts(raw_label):
         return []
     s = str(raw_label).strip()
     return [s] if s else []
-
 
 def _short_planet_label(raw_label):
     """七曜環專用：完整星名轉單字，多星以換行堆疊；空格回傳空字串。"""
@@ -89,7 +86,6 @@ def _short_planet_label(raw_label):
             continue
         shorts.append(_PLANET_SHORT.get(key, key[:1]))
     return "\n".join(shorts)
-
 
 def _compact_label(parts, layer_role, branch=""):
     if layer_role == "center":
@@ -117,7 +113,6 @@ def _compact_label(parts, layer_role, branch=""):
             return p[0]
     return branch[:1] if branch else ""
 
-
 def _door_row_parts(raw_label):
     """八門環列：[宮名, 門名(無門字), 旺衰九星, 貴神簡字, 貴神全名]。"""
     if not isinstance(raw_label, list) or len(raw_label) < 2:
@@ -133,7 +128,6 @@ def _door_row_parts(raw_label):
                 god_full = name
                 break
     return gong, door, wx_star, god_short, god_full
-
 
 def _sector_meta(raw_label, layer_role=""):
     parts = _label_parts(raw_label)
@@ -187,7 +181,6 @@ def _sector_meta(raw_label, layer_role=""):
         "role": layer_role,
     }
 
-
 def _role_for(chart_kind, layer_idx):
     roles = {
         "year": ["center", "door", "palace_template", "palace_content", "star12"],
@@ -196,7 +189,6 @@ def _role_for(chart_kind, layer_idx):
         "life": ["center", "life_palace", "branch", "palace_content", "star12"],
     }.get(chart_kind, [])
     return roles[layer_idx] if layer_idx < len(roles) else ""
-
 
 def _pos_branch(sector_idx, sector_count, layer_role="", raw_label=None):
     if sector_count == 16 and sector_idx < 16:
@@ -210,7 +202,6 @@ def _pos_branch(sector_idx, sector_count, layer_role="", raw_label=None):
         key = next((c for c in text if c in GATE_TO_BRANCH), None)
         return GATE_TO_BRANCH.get(key, "")
     return ""
-
 
 def _draw_sector(group, start, end, inner, outer, raw_label,
                  is_16_palace=False, is_28_layer=False,
@@ -310,7 +301,6 @@ def _draw_sector(group, start, end, inner, outer, raw_label,
         sector_g.append(t)
     group.append(sector_g)
 
-
 # ======================  古典美學裝飾  ======================
 # 依「美學主義者」視角，為排盤增添古典章法之美：外緣雙線金環、八方珠飾、
 # 中央太乙印記，皆為純粹附加之裝飾層，不改動原有宮位座標與 viewBox，
@@ -336,7 +326,6 @@ _SANQI_FLAG_CLASS = "taiyi-sanqi-flag"
 # 注意：此序須與 gen_chart 等函式之十六宮扇區資料順序一致（起巳，順行），
 # 否則三旗會落在錯誤宮位（舊序起子，導致青旗/黑旗誤落乾、赤旗誤落坤）。
 
-
 def _flag_angle(chen, palace_order=None):
     """地支／八卦宮在宮環上之角度（度）。
 
@@ -345,7 +334,6 @@ def _flag_angle(chen, palace_order=None):
     order = palace_order if palace_order is not None else _SIXTEEN
     idx = order.index(chen)
     return _ROTATION_ANGLE + (360.0 / len(order)) * (idx + 0.5)
-
 
 def _draw_flag(d, ang_deg, r_inner, r_outer, color, tang=0.0, flag_name=""):
     """繪一面旗：徑向旗桿 + 三角旗旆（tang 為切向偏移以避重疊）。"""
@@ -378,12 +366,10 @@ def _draw_flag(d, ang_deg, r_inner, r_outer, color, tang=0.0, flag_name=""):
     banner.args["class"] = f"{_SANQI_FLAG_CLASS} taiyi-sanqi-flag-banner{kind_class}"
     d.append(banner)
 
-
 def ornament_outer_radius(outer_r: float, view_half: float = 250.0) -> float:
     """外緣單線金環半徑（與 _add_ornament 一致，供 overlay 標記定位）。"""
     band = max(view_half - outer_r, 1.0)
     return outer_r + max(3.5, band * 0.45)
-
 
 def _add_ornament(d, outer_r, jewels=16, sanqi=None, trigram_rotate=0.0, palace_order=None):
     """古典美學裝飾層（純附加，不改動宮位座標與 viewBox）。
@@ -489,8 +475,6 @@ def gen_chart(first_layer, second_layer, sixth_layer, sevenstars, sanqi=None, tr
     _add_ornament(d, 16 + 5 * 55, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_SIXTEEN)
     return d.as_svg()
 
-
-
 # ====================  gen_chart_life  ====================
 def gen_chart_life(
     second_layer,
@@ -574,14 +558,77 @@ def gen_chart_life(
     _add_ornament(d, 15 + 5 * 42, jewels=12, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_TWELVE)
     return d.as_svg()
 
-
-
 # 天文二十八宿順序（黃道經度 → 入宿查表用，與太乙盤面排列無關）
 _XIU_SEQ = list("角亢氐房心尾箕斗牛女虛危室壁奎婁胃昴畢觜參井鬼柳星張翼軫")
-# 入宿校準常數（唯一設定點；kintaiyi 透過 chart.XIU_OFFSET 引用）
-# 元祐元年月犯氐／畢折中，可再微調 110～120
-XIU_OFFSET = 108.0
+# 入宿 OFFSET 校準（唯一設定點；kintaiyi 用 chart.get_xiu_offset(year)）
+#
+# 文獻來源：
+#   《宋史》卷53–54 天文志「月犯列舍」——元祐氐/畢、元符鬼（實測校準）
+#   《元史》卷48–49 天文志「月五星凌犯」——太陰犯氐/井/鬼/畢（歲差錨點）
+#   《明史》卷26 天文二——僅月掩犯五緯／五緯合聚，無太陰犯列舍（文獻備註）
+#   《清史天文志》稿本——月五星恆星凌犯相距（乾隆廿一年起：月犯畢/井/氐/鬼等）
+#   《南齊書》卷12 天文上·月犯列星——月犯氐/畢/井/心/南斗/房等（南齊，歲差錨點）
+#   《隋書》卷21 天文下·五代災變應——月犯心/東井/氐/畢（南北朝–隋，歲差錨點）
+#   《晉書》卷13 天文志「月五星犯列舍」——魏晉記錄（文獻參考）
+#   廿四史天文志通例：列宿為赤道古宿，與現代黃經有歲差
+#   參考：https://ctext.org/wiki.pl?if=gb&chapter=921921 （元史天文一）
+#         https://zh.wikisource.org/wiki/明史/卷26 （明史天文二）
+#         https://zh.wikisource.org/wiki/隋書/卷21 （隋書天文下）
+#         https://zh.wikisource.org/wiki/南齊書/卷12 （南齊書天文上）
+#
+# 方法：
+#   1) 有實測對準的年代用離散校準段（優先）
+#   2) 其餘年代以元祐 1086→115 為錨，按歲差 ~1.4°/百年外推
+#   3) 限制在 [90, 140]，避免極端
+#
+# 注意：
+#   - 低精度 Kepler 月公式在漢魏誤差可達數十度，故不用晉書逐條反推 OFFSET
+#   - 「犯月星」為昴附近星名，非「星」宿
+#   - 古宿不等寬；目前仍用等分近似，故同時代不同宿可能差 ±1 宿
 
+# 離散校準段：(起始年, 結束年, OFFSET, 說明)
+_XIU_OFFSET_CALIBRATIONS = [
+    # 南北朝／隋（《隋書》卷21 天文下·五代災變應）：月犯心/東井/氐/畢/南斗等
+    # Kepler 月公式在此時代誤差大，僅作歲差錨點，非逐條實測
+    (479, 618, 122.0, "南齊–隋：月犯氐/畢/井/心/南斗等（《南齊書》卷12、《隋書》卷21）；歲差錨點"),
+    (1080, 1095, 115.0, "元祐：月犯/入氐、犯畢（《宋史》卷54）"),
+    (1096, 1115, 100.0, "元符：月入犯鬼（《宋史》卷54）；建中靖國暫沿用"),
+    (1271, 1368, 112.0, "元：太陰犯氐/井/鬼/畢（《元史》卷48–49 天文志）"),
+    # 明史卷26 僅「月掩犯五緯／五緯掩犯」，無太陰犯列舍；用歲差錨點
+    (1368, 1643, 107.0, "明：無列舍記錄（《明史》卷26 天文二）；歲差外推錨點"),
+    # 清史天文志稿本（乾隆丙子前半卷起）有月五星恆星凌犯相距
+    # 乾隆二十一年見：月犯畢宿、井宿、氐宿、鬼宿、角宿、亢宿等
+    (1644, 1912, 105.5, "清：月犯畢/井/氐/鬼等（《清史天文志》稿本·乾隆廿一年起）"),
+]
+
+# 歲差外推錨點
+_XIU_OFFSET_ANCHOR_YEAR = 1086.0
+_XIU_OFFSET_ANCHOR_VALUE = 115.0
+_XIU_PRECESSION_PER_CENTURY = 1.40  # 度/百年（近似）
+
+def get_xiu_offset(year):
+    """依年份回傳入宿 OFFSET（度）。
+
+    優先命中離散校準段；否則以元祐錨點 + 歲差外推。
+    """
+    try:
+        y = float(year)
+    except (TypeError, ValueError):
+        return float(_XIU_OFFSET_ANCHOR_VALUE)
+
+    for y0, y1, off, _note in _XIU_OFFSET_CALIBRATIONS:
+        if y0 <= y <= y1:
+            return float(off)
+
+    # 歲差外推：越古 OFFSET 越大（角宿零點相對現代黃經的系統差）
+    off = (
+        _XIU_OFFSET_ANCHOR_VALUE
+        + _XIU_PRECESSION_PER_CENTURY * (_XIU_OFFSET_ANCHOR_YEAR - y) / 100.0
+    )
+    return max(90.0, min(140.0, float(off)))
+
+# 相容舊碼：無年份時的預設值（元祐）
+XIU_OFFSET = get_xiu_offset(1086)
 
 def _lon_to_xiu(lon, offset, width_by_name):
     """黃道經度 → (宿名, 宿內比例 0~1)。width_by_name: {宿名: 度數}"""
@@ -597,7 +644,6 @@ def _lon_to_xiu(lon, offset, width_by_name):
     last = _XIU_SEQ[-1]
     return last, 1.0
 
-
 # 二十八宿 → 十二次（與 kintaiyi 一致，對齊七政四餘）
 _XIU_TO_BRANCH_CHART = {
     "角": "辰", "亢": "辰", "氐": "卯", "房": "卯", "心": "卯",
@@ -608,7 +654,6 @@ _XIU_TO_BRANCH_CHART = {
     "柳": "午", "星": "午", "張": "午", "翼": "巳", "軫": "巳",
 }
 _XIU_SEQ_CHART = list("角亢氐房心尾箕斗牛女虛危室壁奎婁胃昴畢觜參井鬼柳星張翼軫")
-
 
 def _draw_planet_markers(d, planet_angles, inner, outer, rotation_angle=248, **_kwargs):
     """在七曜環上繪製行星單字標記，同宿／同角時自動散開避免重疊。
@@ -692,10 +737,9 @@ def _draw_planet_markers(d, planet_angles, inner, outer, rotation_angle=248, **_
             t.args["data-xiu"] = xiu
             d.append(t)
 
-
 # ====================  gen_chart_day  ====================
 def gen_chart_day(first_layer, second_layer, golden, sixth_layer, twentyeight, seven_stars,
-                  degrees=None, rotate_28=0, sanqi=None, trigram_rotate=0.0, planet_angles=None):
+                  degrees=None, rotate_28=0, sanqi=None, trigram_rotate=0.0, planet_angles=None, offset=None):
     """
     rotate_28: 28宿旋轉角度（度）
                正數 → 逆時針（擰後）
@@ -761,15 +805,13 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer, twentyeight, s
         _draw_planet_markers(
             d, planet_angles, 5 + 6 * 38, 5 + 7 * 38,
             xiu_order=twentyeight, xiu_degrees=degrees,
-            rotate_28=rotate_28, offset=XIU_OFFSET,
+            rotate_28=rotate_28, offset=(XIU_OFFSET if offset is None else float(offset)),
         )
     return d.as_svg()
 
-
-
 # ====================  gen_chart_hour（支援 rotate_28） ====================
 def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
-                   twentyeight, seven_stars, degrees, rotate_28=0, sanqi=None, trigram_rotate=0.0, planet_angles=None):
+                   twentyeight, seven_stars, degrees, rotate_28=0, sanqi=None, trigram_rotate=0.0, planet_angles=None, offset=None):
     """
     rotate_28: 28宿旋轉角度（度）
                正數 → 逆時針（擰後）
@@ -833,10 +875,9 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
         _draw_planet_markers(
             d, planet_angles, 5 + 6 * 38, 5 + 7 * 38,
             xiu_order=twentyeight, xiu_degrees=degrees,
-            rotate_28=rotate_28, offset=XIU_OFFSET,
+            rotate_28=rotate_28, offset=(XIU_OFFSET if offset is None else float(offset)),
         )
     return d.as_svg()
-
 
 # ====================  完整測試範例 ====================
 if __name__ == "__main__":
@@ -869,6 +910,4 @@ if __name__ == "__main__":
     with open("test_life_third_layer.svg", "w", encoding="utf-8") as f:
         f.write(svg_life)
     print("已產生 test_life_third_layer.svg（第 3 層為地支，已上色）")
-
-
 
