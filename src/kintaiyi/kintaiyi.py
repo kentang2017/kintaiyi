@@ -1517,44 +1517,52 @@ class Taiyi:
             year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
         return year_chin
 
-    def _compute_rotate_28(self):
-        """計算廿八宿環旋轉角度：以太陽黃道經度校準（offset=200, J2000 ecliptic）。
-        校準基準：宋史天文志 — 太平興國八年(983)歲星入張、至道三年(997)歲星入氐、宣和元年(1119)歲星入牛。"""
-        _GONG_LIST = ['巳','午','未','坤','申','酉','戌','乾','亥','子','丑','艮','寅','卯','辰','巽']
+    def _compute_rotate_28(self, ji_style=4, taiyi_acumyear=0):
+        """計算廿八宿環旋轉角度：以太陽黃道經度校準（offset=155）。
+
+        與七曜標記共用同一套 (lon - OFFSET) → 入宿 座標系，
+        使日、月、五星在盤面上的宿位一致。
+
+        OFFSET=155：強制校準西曆 1151-11-13（紹興二十一年十月庚午）月入氐。
+        （原 200 為近現代歲星校準；改為 155 後歲星歷史點會偏離。）
+
+        ji_style / taiyi_acumyear 須與繪盤時 twenty_eightstar() 參數一致。
+        """
+        _GONG_LIST = ['巳', '午', '未', '坤', '申', '酉', '戌', '乾',
+                      '亥', '子', '丑', '艮', '寅', '卯', '辰', '巽']
         _XIU_LIST = list(config.su)
-        _OFFSET = 200.0
+        _OFFSET = 155.0
         _ROTATION_ANGLE = 248.0
         try:
             stars = find_stars(self.year, self.month, self.day, self.hour, self.minute)
             sun_branch = stars.get('日　')
             if not sun_branch or sun_branch not in _GONG_LIST:
                 return 0.0
-            # Sun's ecliptic longitude from Kepler
             h = float(self.hour) + float(self.minute or 0) / 60.0
             jd = _julian_day(self.year, self.month, self.day, h if h == h else 12.0)
             T = (jd - 2451545.0) / 36525.0
             sun_lon = _sun_lon(T)
-            # Map to xiu
             degrees = get_xiu_degrees(self.year)
             adj = (sun_lon - _OFFSET) % 360.0
             cum = 0.0
             sun_xiu = None
-            for i, (name, deg) in enumerate(zip(_XIU_LIST, degrees)):
+            for name, deg in zip(_XIU_LIST, degrees):
                 if cum <= adj < cum + deg:
                     sun_xiu = name
                     break
                 cum += deg
             if not sun_xiu:
                 return 0.0
-            # Sun's palace angle
             sun_pidx = _GONG_LIST.index(sun_branch)
             sun_palace_mid = (_ROTATION_ANGLE + sun_pidx * 22.5 + 11.25) % 360.0
-            # Find Sun's xiu in twenty_eightstar order
-            xiu_order = self.twenty_eightstar(4, 0)
+            # 與繪盤相同的宿序（不可寫死 ji_style=4）
+            xiu_order = self.twenty_eightstar(ji_style, taiyi_acumyear)
             sun_xiu_idx = xiu_order.index(sun_xiu) if sun_xiu in xiu_order else -1
             if sun_xiu_idx < 0:
                 return 0.0
-            sum_before = sum(degrees[_XIU_LIST.index(xiu_order[k])] for k in range(sun_xiu_idx))
+            sum_before = sum(
+                degrees[_XIU_LIST.index(xiu_order[k])] for k in range(sun_xiu_idx)
+            )
             xiu_width = degrees[_XIU_LIST.index(sun_xiu)]
             rotate_28 = (sun_palace_mid - _ROTATION_ANGLE - sum_before - xiu_width / 2.0) % 360.0
             if rotate_28 > 180.0:
@@ -1649,7 +1657,8 @@ class Taiyi:
         _ty_idx = _eight_order.index(_ty_v) if _ty_v in _eight_order else 0
         _yun = self.kook(ji_style, taiyi_acumyear).get("文", ["陽"])[0]
         _trigram_rotate = _ty_idx * 45.0 + (180.0 if _yun == "陰" else 0.0)
-        _rotate_28 = self._compute_rotate_28()
+        # 宿序必須與 twenty_eightstar(ji_style, …) 一致，否則七曜/廿八宿錯位
+        _rotate_28 = self._compute_rotate_28(ji_style, taiyi_acumyear)
         _planet_angles = self._compute_planet_angles()
         if ji_style in [0,1]:
             return chart.gen_chart( list(sixteengongs.values())[-1], self.geteightdoors_text2(ji_style, taiyi_acumyear), list(sixteengongs.values())[:-1], ss1[0], sanqi=_sanqi, trigram_rotate=_trigram_rotate)
