@@ -533,7 +533,7 @@ def gen_chart_life(
 
 
 def _draw_planet_markers(d, planet_angles, inner, outer, rotation_angle=248):
-    """在七曜環上繪製行星單字標記（精確角度定位，自動避免重疊）。
+    """在七曜環上繪製行星單字標記（精確角度定位）。
     planet_angles: list of (short_label, ecliptic_longitude) tuples
     inner/outer: 環的內/外半徑
     rotation_angle: 環起始角度（與 gen_chart 一致 = 248）
@@ -541,50 +541,15 @@ def _draw_planet_markers(d, planet_angles, inner, outer, rotation_angle=248):
     SIGN_TO_BRANCH = "戌酉申未午巳辰卯寅丑子亥"
     BRANCH_ORDER_12 = ['午','未','申','酉','戌','亥','子','丑','寅','卯','辰','巳']
     mid_r = (inner + outer) / 2
-
-    # 背景環
-    bg = draw.Circle(0, 0, outer, fill='#0d1117', stroke='#3a4159', stroke_width=1)
-    bg.args['class'] = 'taiyi-planet-ring-bg'
-    d.append(bg)
-    bg2 = draw.Circle(0, 0, inner, fill='#0d1117', stroke='none')
-    bg2.args['class'] = 'taiyi-planet-ring-bg2'
-    d.append(bg2)
-
-    # 計算每顆行星的圖表角度
-    plotted = []  # (angle, label)
     for label, lon in planet_angles:
         branch_idx = int(lon // 30) % 12
         branch = SIGN_TO_BRANCH[branch_idx]
         ring_idx = BRANCH_ORDER_12.index(branch)
         exact_within = lon % 30
         chart_angle = (rotation_angle + ring_idx * 30 + exact_within) % 360
-        plotted.append((chart_angle, label))
-
-    # 依角度排序，檢查相鄰行星是否太近，若太近則徑向錯開
-    plotted.sort(key=lambda x: x[0])
-    n = len(plotted)
-    min_gap = 12.0  # 最小角度間距（度）
-    radii = [mid_r] * n
-    for i in range(n):
-        a_cur = plotted[i][0]
-        a_prev = plotted[(i - 1) % n][0]
-        gap = (a_cur - a_prev) % 360
-        if gap < min_gap:
-            # 與前一顆太近，往外移
-            radii[i] = mid_r + (outer - mid_r) * 0.7
-    # 二次檢查：若往外移後仍與後一顆太近，往內移
-    for i in range(n):
-        a_cur = plotted[i][0]
-        a_next = plotted[(i + 1) % n][0]
-        gap = (a_next - a_cur) % 360
-        if gap < min_gap and radii[i] == mid_r:
-            radii[i] = mid_r - (mid_r - inner) * 0.6
-
-    for i, (chart_angle, label) in enumerate(plotted):
-        r = radii[i]
         rad = math.radians(chart_angle)
-        tx = r * math.cos(rad)
-        ty = r * math.sin(rad)
+        tx = mid_r * math.cos(rad)
+        ty = mid_r * math.sin(rad)
         t = draw.Text(label, 8, tx, ty, center=1, fill='#e8c44d',
                       font_family='sans-serif', font_weight='bold')
         t.args['class'] = 'taiyi-planet-marker'
@@ -602,7 +567,7 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer, twentyeight, s
     d = draw.Drawing(660, 660, origin="center")
     inner_radius = 5
     layer_gap = 38
-    num_divisions = [1, 8, 8, 16, 16, 28]      # 七曜環改為精確標記，不再畫十二宮扇區
+    num_divisions = [1, 8, 8, 16, 16, 28, 12]      # 第 3 層 = index 2
     rotation_angle = 248
     degrees = degrees or [360 / 28] * 28
 
@@ -616,6 +581,7 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer, twentyeight, s
          ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
         sixth_layer,
         twentyeight,
+        seven_stars
     ]
 
     cumulative = [0]
@@ -666,7 +632,7 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
     d = draw.Drawing(720, 720, origin="center")
     inner_radius = 5
     layer_gap = 38
-    num_divisions = [1, 8, 16, 16, 16, 28]   # 七曜環改為精確標記，不再畫十二宮扇區
+    num_divisions = [1, 8, 16, 16, 16, 28, 12]   # 第 3 層 = index 2
     rotation_angle = 248
 
     data = [
@@ -679,6 +645,7 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
          ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
         sixth_layer,
         twentyeight,
+        seven_stars
     ]
 
     cumulative = [0]
@@ -749,7 +716,6 @@ if __name__ == "__main__":
     with open("test_life_third_layer.svg", "w", encoding="utf-8") as f:
         f.write(svg_life)
     print("已產生 test_life_third_layer.svg（第 3 層為地支，已上色）")
-
 
 
 
