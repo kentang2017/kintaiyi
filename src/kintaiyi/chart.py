@@ -532,9 +532,33 @@ def gen_chart_life(
 
 
 
+def _draw_planet_markers(d, planet_angles, inner, outer, rotation_angle=248):
+    """在七曜環上繪製行星單字標記（精確角度定位）。
+    planet_angles: list of (short_label, ecliptic_longitude) tuples
+    inner/outer: 環的內/外半徑
+    rotation_angle: 環起始角度（與 gen_chart 一致 = 248）
+    """
+    SIGN_TO_BRANCH = "戌酉申未午巳辰卯寅丑子亥"
+    BRANCH_ORDER_12 = ['午','未','申','酉','戌','亥','子','丑','寅','卯','辰','巳']
+    mid_r = (inner + outer) / 2
+    for label, lon in planet_angles:
+        branch_idx = int(lon // 30) % 12
+        branch = SIGN_TO_BRANCH[branch_idx]
+        ring_idx = BRANCH_ORDER_12.index(branch)
+        exact_within = lon % 30
+        chart_angle = (rotation_angle + ring_idx * 30 + exact_within) % 360
+        rad = math.radians(chart_angle)
+        tx = mid_r * math.cos(rad)
+        ty = mid_r * math.sin(rad)
+        t = draw.Text(label, 8, tx, ty, center=1, fill='#e8c44d',
+                      font_family='sans-serif', font_weight='bold')
+        t.args['class'] = 'taiyi-planet-marker'
+        d.append(t)
+
+
 # ====================  gen_chart_day  ====================
 def gen_chart_day(first_layer, second_layer, golden, sixth_layer, twentyeight, seven_stars,
-                  degrees=None, rotate_28=0, sanqi=None, trigram_rotate=0.0):
+                  degrees=None, rotate_28=0, sanqi=None, trigram_rotate=0.0, planet_angles=None):
     """
     rotate_28: 28宿旋轉角度（度）
                正數 → 逆時針（擰後）
@@ -591,13 +615,15 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer, twentyeight, s
         d.append(layer)
 
     _add_ornament(d, 5 + 7 * 38, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_SIXTEEN)
+    if planet_angles:
+        _draw_planet_markers(d, planet_angles, 5 + 6 * 38, 5 + 7 * 38)
     return d.as_svg()
 
 
 
 # ====================  gen_chart_hour（支援 rotate_28） ====================
 def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
-                   twentyeight, seven_stars, degrees, rotate_28=0, sanqi=None, trigram_rotate=0.0):
+                   twentyeight, seven_stars, degrees, rotate_28=0, sanqi=None, trigram_rotate=0.0, planet_angles=None):
     """
     rotate_28: 28宿旋轉角度（度）
                正數 → 逆時針（擰後）
@@ -654,6 +680,8 @@ def gen_chart_hour(first_layer, second_layer, skygeneral, sixth_layer,
         d.append(layer)
 
     _add_ornament(d, 5 + 7 * 38, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_SIXTEEN)
+    if planet_angles:
+        _draw_planet_markers(d, planet_angles, 5 + 6 * 38, 5 + 7 * 38)
     return d.as_svg()
 
 

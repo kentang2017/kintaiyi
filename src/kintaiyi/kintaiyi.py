@@ -1517,6 +1517,96 @@ class Taiyi:
             year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
         return year_chin
 
+    def _compute_rotate_28(self):
+        """計算廿八宿環旋轉角度：以太陽黃道經度校準（offset=200, J2000 ecliptic）。
+        校準基準：宋史天文志 — 太平興國八年(983)歲星入張、至道三年(997)歲星入氐、宣和元年(1119)歲星入牛。"""
+        _GONG_LIST = ['巳','午','未','坤','申','酉','戌','乾','亥','子','丑','艮','寅','卯','辰','巽']
+        _XIU_LIST = list(config.su)
+        _OFFSET = 200.0
+        _ROTATION_ANGLE = 248.0
+        try:
+            stars = find_stars(self.year, self.month, self.day, self.hour, self.minute)
+            sun_branch = stars.get('日　')
+            if not sun_branch or sun_branch not in _GONG_LIST:
+                return 0.0
+            # Sun's ecliptic longitude from Kepler
+            h = float(self.hour) + float(self.minute or 0) / 60.0
+            jd = _julian_day(self.year, self.month, self.day, h if h == h else 12.0)
+            T = (jd - 2451545.0) / 36525.0
+            sun_lon = _sun_lon(T)
+            # Map to xiu
+            degrees = get_xiu_degrees(self.year)
+            adj = (sun_lon - _OFFSET) % 360.0
+            cum = 0.0
+            sun_xiu = None
+            for i, (name, deg) in enumerate(zip(_XIU_LIST, degrees)):
+                if cum <= adj < cum + deg:
+                    sun_xiu = name
+                    break
+                cum += deg
+            if not sun_xiu:
+                return 0.0
+            # Sun's palace angle
+            sun_pidx = _GONG_LIST.index(sun_branch)
+            sun_palace_mid = (_ROTATION_ANGLE + sun_pidx * 22.5 + 11.25) % 360.0
+            # Find Sun's xiu in twenty_eightstar order
+            xiu_order = self.twenty_eightstar(4, 0)
+            sun_xiu_idx = xiu_order.index(sun_xiu) if sun_xiu in xiu_order else -1
+            if sun_xiu_idx < 0:
+                return 0.0
+            sum_before = sum(degrees[_XIU_LIST.index(xiu_order[k])] for k in range(sun_xiu_idx))
+            xiu_width = degrees[_XIU_LIST.index(sun_xiu)]
+            rotate_28 = (sun_palace_mid - _ROTATION_ANGLE - sum_before - xiu_width / 2.0) % 360.0
+            if rotate_28 > 180.0:
+                rotate_28 -= 360.0
+            return rotate_28
+        except Exception:
+            return 0.0
+
+    def _compute_planet_angles(self):
+        """計算七曜精確黃道經度，回傳 [(short_label, lon), ...] 供圖表標記。
+        優先使用 ephem（高精度），回退到 Kepler 低精度計算。"""
+        _SHORT = {'日　':'日', '月　':'月', '辰星':'辰', '太白':'白', '熒惑':'熒', '歲星':'歲', '填星':'填'}
+        try:
+            import ephem as _ephem
+            obs = _ephem.Observer()
+            y = self.year
+            m = self.month
+            d = self.day
+            h = float(self.hour) + float(self.minute or 0) / 60.0
+            obs.date = f'{y}/{m:02d}/{d:02d} {int(h):02d}:{int((h % 1) * 60):02d}:00'
+            obs.lat = '0'
+            obs.lon = '0'
+            _BODIES = {
+                '日　': _ephem.Sun(),
+                '月　': _ephem.Moon(),
+                '辰星': _ephem.Mercury(),
+                '太白': _ephem.Venus(),
+                '熒惑': _ephem.Mars(),
+                '歲星': _ephem.Jupiter(),
+                '填星': _ephem.Saturn(),
+            }
+            result = []
+            for name, body in _BODIES.items():
+                body.compute(obs)
+                lon = float(_ephem.Ecliptic(body).lon) * 180.0 / 3.14159265358979
+                result.append((_SHORT[name], lon))
+            return result
+        except Exception:
+            # Fallback: Kepler 低精度
+            try:
+                h = float(self.hour) + float(self.minute or 0) / 60.0
+                jd = _julian_day(self.year, self.month, self.day, h if h == h else 12.0)
+                T = (jd - 2451545.0) / 36525.0
+                result = []
+                result.append((_SHORT['日　'], _sun_lon(T)))
+                result.append((_SHORT['月　'], _moon_lon(T)))
+                for name, p in _PLANET_ELEMENTS.items():
+                    result.append((_SHORT[name], _kepler_geo_lon(T, p)))
+                return result
+            except Exception:
+                return []
+
     def gen_gong(self, ji_style, taiyi_acumyear, tenching): #有十精1, 無十精0
         res2 = { "午":" ", "未":" ", "申":" ", "酉":" ", "戌":" ", "亥":" ", "子":" ", "丑":" ","寅":" ", "卯":" ", "辰":" ", "巳":" "}
         stars = find_stars(self.year, self.month, self.day, self.hour, self.minute)
@@ -1559,6 +1649,8 @@ class Taiyi:
         _ty_idx = _eight_order.index(_ty_v) if _ty_v in _eight_order else 0
         _yun = self.kook(ji_style, taiyi_acumyear).get("文", ["陽"])[0]
         _trigram_rotate = _ty_idx * 45.0 + (180.0 if _yun == "陰" else 0.0)
+        _rotate_28 = self._compute_rotate_28()
+        _planet_angles = self._compute_planet_angles()
         if ji_style in [0,1]:
             return chart.gen_chart( list(sixteengongs.values())[-1], self.geteightdoors_text2(ji_style, taiyi_acumyear), list(sixteengongs.values())[:-1], ss1[0], sanqi=_sanqi, trigram_rotate=_trigram_rotate)
         if ji_style in [2]:
@@ -1567,7 +1659,7 @@ class Taiyi:
             ng = dict1[1]
             star_degrees = dict(zip(config.su, get_xiu_degrees(self.year)))
             new_degrees = [star_degrees.get(i) for i in self.twenty_eightstar(ji_style, taiyi_acumyear)]
-            return chart.gen_chart_day( list(sixteengongs.values())[-1] + [middle], self.geteightdoors_text2(ji_style, taiyi_acumyear), ng, list(sixteengongs.values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear), ss1[0], new_degrees, sanqi=_sanqi, trigram_rotate=_trigram_rotate)
+            return chart.gen_chart_day( list(sixteengongs.values())[-1] + [middle], self.geteightdoors_text2(ji_style, taiyi_acumyear), ng, list(sixteengongs.values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear), ss1[0], new_degrees, rotate_28=_rotate_28, sanqi=_sanqi, trigram_rotate=_trigram_rotate, planet_angles=_planet_angles)
         if ji_style in [3,4]:
             #j_q = jieqi.jq(self.year, self.month, self.day, self.hour, self.minute)
             #d = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]
@@ -1592,7 +1684,7 @@ class Taiyi:
             sg = [[list(res.values())[i], list(res1.values())[i] ] for i in range(0,len(list(res.values())))]
             star_degrees = dict(zip(config.su,get_xiu_degrees(self.year)))
             new_degrees = [star_degrees.get(i) for i in self.twenty_eightstar(ji_style, taiyi_acumyear)]
-            return chart.gen_chart_hour( list(sixteengongs.values())[-1]+[" "," "], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg,list(sixteengongs.values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear), ss1[0], new_degrees, sanqi=_sanqi, trigram_rotate=_trigram_rotate)
+            return chart.gen_chart_hour( list(sixteengongs.values())[-1]+[" "," "], self.geteightdoors_text2(ji_style, taiyi_acumyear), sg,list(sixteengongs.values())[:-1], self.twenty_eightstar(ji_style, taiyi_acumyear), ss1[0], new_degrees, rotate_28=_rotate_28, sanqi=_sanqi, trigram_rotate=_trigram_rotate, planet_angles=_planet_angles)
 #太乙命法
     def gen_life_gong(self, sex, ji_style: int = 4):
         stars = find_stars(self.year, self.month, self.day, self.hour, self.minute)
