@@ -1545,13 +1545,13 @@ class Taiyi:
             year_chin = chin_28_stars_code.get(get_year_chin_number) #年禽
         return year_chin
 
-    def _compute_rotate_28(self, ji_style=4, taiyi_acumyear=0):
-        """計算廿八宿環旋轉角度：太陽所在宿對準七曜環十二次地支中點。
+    def _compute_rotate_28(self, ji_style=4, taiyi_acumyear=0, use_moon=False):
+        """計算廿八宿環旋轉角度。
 
-        對齊基準改為 12 格七曜環（每格 30°），不再對 16 宮中點，
-        使「日入某宿 → 該宿扇區中心 ≈ 日支扇區中心」。
+        use_moon=False（預設）：以太陽所在宿對準七曜環十二次地支中點。
+        use_moon=True：以月球所在宿對準（日計太乙盤用，宋史月入氐校準）。
 
-        OFFSET=200 與入宿查表一致（宋史歲星入張／氐／牛校準）。
+        OFFSET=200 與入宿查表一致（宋史歲星入張／氐／牛、月入氐校準）。
         ji_style / taiyi_acumyear 須與 twenty_eightstar() 相同。
         """
         _BRANCH_12 = ['午', '未', '申', '酉', '戌', '亥', '子', '丑', '寅', '卯', '辰', '巳']
@@ -1559,37 +1559,60 @@ class Taiyi:
         _OFFSET = 200.0
         _ROTATION_ANGLE = 248.0
         try:
-            stars = find_stars(self.year, self.month, self.day, self.hour, self.minute)
-            sun_branch = stars.get('日　')
-            if not sun_branch or sun_branch not in _BRANCH_12:
-                return 0.0
             h = float(self.hour) + float(self.minute or 0) / 60.0
             jd = _julian_day(self.year, self.month, self.day, h if h == h else 12.0)
             T = (jd - 2451545.0) / 36525.0
-            sun_lon = _sun_lon(T)
+            if use_moon:
+                # 月球用 ephem（Kepler 月公式在千年跨度誤差達數十度）
+                try:
+                    import ephem as _eph
+                    _obs = _eph.Observer()
+                    _obs.date = f'{self.year}/{self.month:02d}/{self.day:02d} {int(h):02d}:{int((h%1)*60):02d}:00'
+                    _obs.lat = '0'; _obs.lon = '0'
+                    _moon = _eph.Moon()
+                    _moon.compute(_obs)
+                    ref_lon = float(_eph.Ecliptic(_moon).lon) * 180.0 / 3.14159265358979
+                except Exception:
+                    ref_lon = _moon_lon(T)
+                # branch 直接從 ephem 經度算（find_stars 的 Kepler 月branch 在古日期不準）
+                ref_branch = _BRANCH_12[(int(ref_lon // 30) % 12 - 4) % 12]
+                # 上式：SIGN_TO_BRANCH[branch_idx] 對應 _BRANCH_12 的 index
+                # SIGN_TO_BRANCH = 戌酉申未午巳辰卯寅丑子亥 (idx 0-11)
+                # _BRANCH_12     = 午未申酉戌亥子丑寅卯辰巳
+                # 需要從 SIGN_TO_BRANCH index 映射到 _BRANCH_12 index
+                _SIGN = "戌酉申未午巳辰卯寅丑子亥"
+                _bidx_in_sign = int(ref_lon // 30) % 12
+                _sign_branch = _SIGN[_bidx_in_sign]
+                ref_branch = _BRANCH_12[_BRANCH_12.index(_sign_branch)] if _sign_branch in _BRANCH_12 else _BRANCH_12[0]
+            else:
+                ref_lon = _sun_lon(T)
+                stars = find_stars(self.year, self.month, self.day, self.hour, self.minute)
+                ref_branch = stars.get('日　')
+            if not ref_branch or ref_branch not in _BRANCH_12:
+                return 0.0
             degrees = get_xiu_degrees(self.year)
-            adj = (sun_lon - _OFFSET) % 360.0
+            adj = (ref_lon - _OFFSET) % 360.0
             cum = 0.0
-            sun_xiu = None
+            ref_xiu = None
             for name, deg in zip(_XIU_LIST, degrees):
                 if cum <= adj < cum + deg:
-                    sun_xiu = name
+                    ref_xiu = name
                     break
                 cum += deg
-            if not sun_xiu:
+            if not ref_xiu:
                 return 0.0
-            # 七曜環 12 支中點（與 chart BRANCH_ORDER_12 / rotation_angle 一致）
-            sun_bidx = _BRANCH_12.index(sun_branch)
-            sun_branch_mid = (_ROTATION_ANGLE + sun_bidx * 30.0 + 15.0) % 360.0
+            # 七曜環精確角度（用實際經度在環內的偏移，非扇區中點）
+            ref_bidx = _BRANCH_12.index(ref_branch)
+            ref_branch_mid = (_ROTATION_ANGLE + ref_bidx * 30.0 + (ref_lon % 30.0)) % 360.0
             xiu_order = self.twenty_eightstar(ji_style, taiyi_acumyear)
-            sun_xiu_idx = xiu_order.index(sun_xiu) if sun_xiu in xiu_order else -1
-            if sun_xiu_idx < 0:
+            ref_xiu_idx = xiu_order.index(ref_xiu) if ref_xiu in xiu_order else -1
+            if ref_xiu_idx < 0:
                 return 0.0
             sum_before = sum(
-                degrees[_XIU_LIST.index(xiu_order[k])] for k in range(sun_xiu_idx)
+                degrees[_XIU_LIST.index(xiu_order[k])] for k in range(ref_xiu_idx)
             )
-            xiu_width = degrees[_XIU_LIST.index(sun_xiu)]
-            rotate_28 = (sun_branch_mid - _ROTATION_ANGLE - sum_before - xiu_width / 2.0) % 360.0
+            xiu_width = degrees[_XIU_LIST.index(ref_xiu)]
+            rotate_28 = (ref_branch_mid - _ROTATION_ANGLE - sum_before - xiu_width / 2.0) % 360.0
             if rotate_28 > 180.0:
                 rotate_28 -= 360.0
             return rotate_28
@@ -1682,8 +1705,8 @@ class Taiyi:
         _ty_idx = _eight_order.index(_ty_v) if _ty_v in _eight_order else 0
         _yun = self.kook(ji_style, taiyi_acumyear).get("文", ["陽"])[0]
         _trigram_rotate = _ty_idx * 45.0 + (180.0 if _yun == "陰" else 0.0)
-        # 宿序必須與 twenty_eightstar(ji_style, …) 一致，否則七曜/廿八宿錯位
-        _rotate_28 = self._compute_rotate_28(ji_style, taiyi_acumyear)
+        # 日計太乙(ji_style=2)以月球校準廿八宿環；其餘以太陽校準
+        _rotate_28 = self._compute_rotate_28(ji_style, taiyi_acumyear, use_moon=(ji_style == 2))
         _planet_angles = self._compute_planet_angles()
         if ji_style in [0,1]:
             return chart.gen_chart( list(sixteengongs.values())[-1], self.geteightdoors_text2(ji_style, taiyi_acumyear), list(sixteengongs.values())[:-1], ss1[0], sanqi=_sanqi, trigram_rotate=_trigram_rotate)
