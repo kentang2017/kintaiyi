@@ -165,7 +165,7 @@ def _sector_meta(raw_label, layer_role=""):
 def _role_for(chart_kind, layer_idx):
     roles = {
         "year": ["center", "door", "palace_template", "palace_content", "star12"],
-        "day": ["center", "door", "golden", "palace_template", "palace_content", "star12"],
+        "day": ["center", "door", "golden", "palace_template", "palace_content", "star28", "star12"],
         "hour": ["center", "door", "skygeneral", "palace_template", "palace_content", "star28", "star12"],
         "life": ["center", "life_palace", "branch", "palace_content", "star12"],
     }.get(chart_kind, [])
@@ -533,12 +533,19 @@ def gen_chart_life(
 
 
 # ====================  gen_chart_day  ====================
-def gen_chart_day(first_layer, second_layer, golden, sixth_layer, seven_stars, sanqi=None, trigram_rotate=0.0):
+def gen_chart_day(first_layer, second_layer, golden, sixth_layer, twentyeight, seven_stars,
+                  degrees=None, rotate_28=0, sanqi=None, trigram_rotate=0.0):
+    """
+    rotate_28: 28宿旋轉角度（度）
+               正數 → 逆時針（擰後）
+               負數 → 順時針（擰前）
+    """
     d = draw.Drawing(660, 660, origin="center")
     inner_radius = 5
     layer_gap = 38
-    num_divisions = [1, 8, 8, 16, 16, 12]          # 第 3 層 = index 2
+    num_divisions = [1, 8, 8, 16, 16, 28, 12]      # 第 3 層 = index 2
     rotation_angle = 248
+    degrees = degrees or [360 / 28] * 28
 
     data = [
         [first_layer],
@@ -548,17 +555,26 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer, seven_stars, s
          ['申','武德','晉'], ['酉','太簇','趙雍'], ['戌','陰主','魯'], ['乾','陰德','冀州'],
          ['亥','大義','衛'], ['子','地主','齊兗'], ['丑','陽德','吳'], ['艮','和德','青州'],
          ['寅','呂申','燕'], ['卯','高叢','徐州'], ['辰','太陽','鄭'], ['巽','大炅','揚州']],
-        sixth_layer, 
+        sixth_layer,
+        twentyeight,
         seven_stars
     ]
+
+    cumulative = [0]
+    for deg in degrees:
+        cumulative.append(cumulative[-1] + deg)
 
     for layer_idx, divs in enumerate(num_divisions):
         if layer_idx == 0:
             continue   # 跳過中心層的 sector，避免 degenerate arc 產生白線
         layer = draw.Group(id=f'layer{layer_idx+1}')
         for div in range(divs):
-            start = (360 / divs) * div + rotation_angle
-            end   = (360 / divs) * (div + 1) + rotation_angle
+            if layer_idx == 5:   # 28 宿
+                start = cumulative[div] + rotation_angle + rotate_28
+                end   = cumulative[div + 1] + rotation_angle + rotate_28
+            else:
+                start = (360 / divs) * div + rotation_angle
+                end   = (360 / divs) * (div + 1) + rotation_angle
             raw = data[layer_idx][div]
             inner = inner_radius + layer_idx * layer_gap
             outer = inner_radius + (layer_idx + 1) * layer_gap
@@ -568,12 +584,13 @@ def gen_chart_day(first_layer, second_layer, golden, sixth_layer, seven_stars, s
                          is_16_palace=(layer_idx == 3),
                          is_second_layer=(layer_idx == 1),
                          is_third_layer=(layer_idx == 2),
+                         is_28_layer=(layer_idx == 5),
                          layer_id=lid, sector_idx=div,
                          layer_role=_role_for("day", layer_idx),
                          sector_count=divs)
         d.append(layer)
 
-    _add_ornament(d, 5 + 6 * 38, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_SIXTEEN)
+    _add_ornament(d, 5 + 7 * 38, jewels=16, sanqi=sanqi, trigram_rotate=trigram_rotate, palace_order=_SIXTEEN)
     return d.as_svg()
 
 
