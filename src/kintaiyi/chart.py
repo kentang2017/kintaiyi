@@ -608,42 +608,86 @@ _XIU_SEQ_CHART = list("角亢氐房心尾箕斗牛女虛危室壁奎婁胃昴畢
 
 
 def _draw_planet_markers(d, planet_angles, inner, outer, rotation_angle=248, **_kwargs):
-    """在七曜環上繪製行星單字標記（入宿→十二次，對齊七政四餘）。
+    """在七曜環上繪製行星單字標記，同宿／同角時自動散開避免重疊。
 
-    黃道經度 → (lon - OFFSET) 入宿 → 十二次地支 → 扇區中點。
+    優先使用廿八宿座標系（xiu_order + xiu_degrees + rotate_28），
+    使標記落在實際宿扇區內；若無則回退十二次地支 30° 扇區。
+    多星同角時：徑向 + 小幅角度雙重散開，確保可辨識。
     """
+    from collections import defaultdict
+
     mid_r = (inner + outer) / 2.0
+    ring_half = max(4.0, (outer - inner) / 2.0 - 2.0)
     BRANCH_ORDER_12 = ["午", "未", "申", "酉", "戌", "亥", "子", "丑", "寅", "卯", "辰", "巳"]
     offset = float(_kwargs.get("offset", 200.0))
-    xiu_degrees = _kwargs.get("xiu_degrees")
-    if not xiu_degrees or len(xiu_degrees) != 28:
-        xiu_degrees = [360.0 / 28.0] * 28
+    rotate_28 = float(_kwargs.get("rotate_28", 0.0))
+    xiu_order = _kwargs.get("xiu_order")  # 盤面廿八宿順序（已 rearrange）
+    xiu_degrees = _kwargs.get("xiu_degrees")  # 與 xiu_order 同序的度數
 
+    # 宿名 → 度數（黃道經度入宿查表必須用天文順序）
+    if xiu_order and xiu_degrees and len(xiu_order) == 28 and len(xiu_degrees) == 28:
+        width_by_name = {str(n): float(w) for n, w in zip(xiu_order, xiu_degrees)}
+    else:
+        width_by_name = {n: 360.0 / 28.0 for n in _XIU_SEQ_CHART}
+        xiu_order = None
+        xiu_degrees = None
+
+    # 盤面累積角度（僅在有 xiu_order 時）
+    chart_cum = None
+    if xiu_order is not None:
+        chart_cum = [0.0]
+        for w in xiu_degrees:
+            chart_cum.append(chart_cum[-1] + float(w))
+
+    # 1) 先算出每顆星的基準角度與宿
+    placed = []  # (label, base_angle, xiu, branch)
     for label, lon in planet_angles:
         lon = float(lon) % 360.0
-        adj = (lon - offset) % 360.0
-        cum = 0.0
-        xiu = _XIU_SEQ_CHART[-1]
-        for name, w in zip(_XIU_SEQ_CHART, xiu_degrees):
-            w = float(w)
-            if cum <= adj < cum + w:
-                xiu = name
-                break
-            cum += w
+        xiu, frac = _lon_to_xiu(lon, offset, width_by_name)
         branch = _XIU_TO_BRANCH_CHART.get(xiu, "午")
-        ring_idx = BRANCH_ORDER_12.index(branch)
-        chart_angle = (rotation_angle + ring_idx * 30 + 15) % 360
-        rad = math.radians(chart_angle)
-        tx = mid_r * math.cos(rad)
-        ty = mid_r * math.sin(rad)
-        t = draw.Text(
-            label, 8, tx, ty, center=1, fill="#e8c44d",
-            font_family="sans-serif", font_weight="bold",
-        )
-        t.args["class"] = "taiyi-planet-marker"
-        t.args["data-branch"] = branch
-        t.args["data-xiu"] = xiu
-        d.append(t)
+
+        if chart_cum is not None and xiu in xiu_order:
+            idx = xiu_order.index(xiu)
+            # 落在該宿扇區內（用 frac，避免整宿中點全擠在一起）
+            base_angle = (
+                rotation_angle + rotate_28 + chart_cum[idx]
+                + float(xiu_degrees[idx]) * max(0.15, min(0.85, frac))
+            ) % 360.0
+        else:
+            ring_idx = BRANCH_ORDER_12.index(branch) if branch in BRANCH_ORDER_12 else 0
+            base_angle = (rotation_angle + ring_idx * 30 + 15) % 360.0
+
+        placed.append((str(label), base_angle, xiu, branch))
+
+    # 2) 按角度分組（±2° 視為同位置）
+    groups = defaultdict(list)
+    for item in placed:
+        key = round(item[1] / 2.0) * 2.0  # 2° 量化
+        groups[key].append(item)
+
+    # 3) 同組散開後繪製
+    for _key, group in groups.items():
+        n = len(group)
+        ang_step = 0.0 if n <= 1 else min(5.5, 16.0 / n)   # 角度散開
+        r_step = 0.0 if n <= 1 else min(6.5, ring_half * 0.9)  # 徑向散開
+
+        for i, (label, base_angle, xiu, branch) in enumerate(group):
+            offset_i = i - (n - 1) / 2.0
+            ang = (base_angle + offset_i * ang_step) % 360.0
+            r = mid_r + offset_i * r_step
+            fsize = 8 if n <= 2 else (7 if n <= 4 else 6)
+
+            rad = math.radians(ang)
+            tx = r * math.cos(rad)
+            ty = r * math.sin(rad)
+            t = draw.Text(
+                label, fsize, tx, ty, center=1, fill="#e8c44d",
+                font_family="sans-serif", font_weight="bold",
+            )
+            t.args["class"] = "taiyi-planet-marker"
+            t.args["data-branch"] = branch
+            t.args["data-xiu"] = xiu
+            d.append(t)
 
 
 # ====================  gen_chart_day  ====================
