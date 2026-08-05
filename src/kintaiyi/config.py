@@ -464,10 +464,8 @@ def gpan1(year, month, day, hour, minute):
 
 #換算干支
 def gangzhi(year, month, day, hour, minute):
-    if year == 0:
-        return ["無效"]
     if year < 0:
-        year = year + 1 
+        year = year + 1  # 公元前：天文年（-1 = 2 BCE → year=0 = 1 BCE）
     if hour == 23:
         d_year, d_month, d_day, d_hour = year, month, day + 1, 0
     else:
