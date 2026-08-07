@@ -2222,27 +2222,36 @@ class Taiyi:
         _wq = jieqi.gong_wangzhuai(jieqi.jq(self.year, self.month, self.day, self.hour, self.minute))
 
         # ------------------------------------------------------------------
-        # 朓胸定數（可選）：目前專案尚未實作完整「朔積分／入轉」計算，
-        # 因此這裡先以安全方式略過，避免 AttributeError。
-        # 之後若有 shuo_ji_fen / jing_xiao_yu，可取消註解並填入真實數值。
+        # 朓胸定數
+        # 目前專案尚無完整「朔積分」計算，先以日期推算近似入轉日／餘，
+        # 確保 UI 能穩定顯示；之後有真實 shuo_ji_fen 時可替換。
         # ------------------------------------------------------------------
-        # try:
-        #     ru_day, ru_yu = calc_ru_li(self.shuo_ji_fen)
-        #     tiaonuo = self._calc_tiaonuo(ru_day, ru_yu)
-        #     da_tui, ding_xiao_yu = self._apply_tiaonuo_to_shuo(
-        #         jing_xiao_yu=self.jing_xiao_yu, tiaonuo=tiaonuo)
-        # except Exception:
-        #     ru_day = ru_yu = tiaonuo = da_tui = ding_xiao_yu = None
+        try:
+            # 近似：以儒略日對近點月週期取模，得到 1～28 入轉日
+            import sxtwl as _sxtwl
+            _jd = _sxtwl.toJD(_sxtwl.Time(self.year, self.month, self.day, self.hour, self.minute, 0))
+            # 近點月約 27.55455 日；用 28 日立成表對齊
+            _anom = (_jd % 27.55455) / 27.55455 * 28.0
+            ru_day = int(_anom) % 28 + 1
+            ru_yu = int((_anom % 1.0) * RI_FA)
+            tiaonuo = self._calc_tiaonuo(ru_day, ru_yu)
+            # 經朔小餘暫以當日時間比例示意（0～日法）
+            _jing_xiao = int(((self.hour * 60 + self.minute) / (24 * 60)) * RI_FA)
+            da_tui, ding_xiao_yu = self._apply_tiaonuo_to_shuo(
+                jing_xiao_yu=_jing_xiao, tiaonuo=tiaonuo
+            )
+        except Exception:
+            ru_day = ru_yu = tiaonuo = da_tui = ding_xiao_yu = None
 
         result = {
                 "太乙計":config.taiyi_name(ji_style),
                 "太乙公式類別":config.ty_method(taiyi_acumyear),
                 "公元日期":config.gendatetime(self.year, self.month, self.day, self.hour, self.minute),
-                # "入轉日": ru_day,
-                # "入轉餘": ru_yu,
-                # "朓胸定數": tiaonuo,
-                # "定朔大餘進退": da_tui,
-                # "定朔小餘": ding_xiao_yu,
+                "入轉日": ru_day,
+                "入轉餘": ru_yu,
+                "朓胸定數": tiaonuo,
+                "定朔大餘進退": da_tui,
+                "定朔小餘": ding_xiao_yu,
                 "干支":config.gangzhi(self.year, self.month, self.day, self.hour, self.minute),
                 "農曆":config.lunar_date_d(self.year, self.month, self.day),
                 "年號":config.kingyear(config.lunar_date_d(self.year, self.month, self.day).get("年")),
