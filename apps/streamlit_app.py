@@ -308,7 +308,7 @@ def _display_ttext(results: dict) -> dict:
 
 
 def _render_tiaonuo_block(results: dict, t) -> None:
-    """顯示入轉／朓胸定數，並展開卷一中間組數。"""
+    """顯示入轉／朓胸定數（若 pan() 有回傳）。"""
     ttext = results.get("ttext") or {}
     ding = ttext.get("朓胸定數")
     if ding is None:
@@ -317,43 +317,12 @@ def _render_tiaonuo_block(results: dict, t) -> None:
     ru_yu = ttext.get("入轉餘", "—")
     ding_xiao = ttext.get("定朔小餘", "—")
     da_tui = ttext.get("定朔大餘進退", "—")
-    detail = ttext.get("朓胸明細") or {}
-
     st.markdown(f"**{t('tiaonuo_title')}**")
     c1, c2, c3, c4 = st.columns(4)
     c1.metric(t("tiaonuo_ru_day"), ru_day)
     c2.metric(t("tiaonuo_ru_yu"), ru_yu)
     c3.metric(t("tiaonuo_dingshu"), ding)
     c4.metric(t("tiaonuo_ding_xiao"), f"{ding_xiao} ({t('tiaonuo_da_tui')} {da_tui})")
-
-    # 卷一中間組數（損益率、朓胸積、特殊日初末數、計算過程）
-    if detail:
-        with st.expander(t("tiaonuo_detail_title"), expanded=False):
-            col_a, col_b, col_c = st.columns(3)
-            with col_a:
-                st.markdown(f"**{t('tiaonuo_gain_loss')}**")
-                st.code(str(detail.get("損益率", "—")))
-                st.markdown(f"**{t('tiaonuo_base')}**")
-                st.code(str(detail.get("朓胸積", "—")))
-            with col_b:
-                st.markdown(f"**{t('tiaonuo_delta')}**")
-                st.code(str(detail.get("中間delta", "—")))
-                st.markdown(f"**{t('tiaonuo_ri_fa')}**")
-                st.code(str(detail.get("日法", "—")))
-            with col_c:
-                is_sp = detail.get("是否特殊日")
-                st.markdown(f"**{t('tiaonuo_special')}**")
-                st.code("是" if is_sp else "否")
-                if is_sp:
-                    st.markdown(f"**初數 / 末數**")
-                    st.code(f"{detail.get('初數')} / {detail.get('末數')}")
-                    st.markdown(f"**初率 / 末率**")
-                    st.code(f"{detail.get('初率')} / {detail.get('末率')}")
-
-            if detail.get("平近點角") is not None:
-                st.caption(f"{t('tiaonuo_mean_anomaly')}：{detail.get('平近點角')}°")
-            if detail.get("計算說明"):
-                st.info(detail.get("計算說明"))
 
 
 def _render_tongyun_history_compare(query_year: int) -> None:
@@ -882,13 +851,6 @@ TRANSLATIONS = {
         "tiaonuo_dingshu": "朓胸定數",
         "tiaonuo_ding_xiao": "定朔小餘",
         "tiaonuo_da_tui": "大餘進退",
-        "tiaonuo_detail_title": "卷一演算組數（損益率／朓胸積／特殊日）",
-        "tiaonuo_gain_loss": "損益率",
-        "tiaonuo_base": "朓胸積",
-        "tiaonuo_delta": "中間delta",
-        "tiaonuo_ri_fa": "日法",
-        "tiaonuo_special": "是否特殊日",
-        "tiaonuo_mean_anomaly": "平近點角",
         "home_calc": "主筭",
         "away_calc": "客筭",
         "set_calc": "定筭",
@@ -1222,13 +1184,6 @@ TRANSLATIONS = {
         "tiaonuo_dingshu": "Tiao-Nuo Value",
         "tiaonuo_ding_xiao": "True New-Moon Remainder",
         "tiaonuo_da_tui": "Day Carry",
-        "tiaonuo_detail_title": "Vol.1 Intermediate Numbers (Gain/Loss · Base · Special Days)",
-        "tiaonuo_gain_loss": "Gain/Loss Rate",
-        "tiaonuo_base": "Tiao-Nuo Base",
-        "tiaonuo_delta": "Intermediate Δ",
-        "tiaonuo_ri_fa": "Day Factor",
-        "tiaonuo_special": "Special Day?",
-        "tiaonuo_mean_anomaly": "Mean Anomaly",
         "home_calc": "Home Calc",
         "away_calc": "Away Calc",
         "set_calc": "Set Calc",
