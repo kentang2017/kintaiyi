@@ -2220,26 +2220,29 @@ class Taiyi:
         _sf_hit = any(k.startswith("擊") for k in _geju)
         _sf_ge = "格(始擊)" in _geju
         _wq = jieqi.gong_wangzhuai(jieqi.jq(self.year, self.month, self.day, self.hour, self.minute))
-        # 1. 求入轉日與餘（可用 calc_ru_li 或你自己的入轉計算）
-        ru_day, ru_yu = calc_ru_li(self.shuo_ji_fen)   # 或你現有的入轉函式
-    
-        # 2. 求朓胸定數
-        tiaonuo = self._calc_tiaonuo(ru_day, ru_yu)
-    
-        # 3. 套用到經朔小餘
-        da_tui, ding_xiao_yu = self._apply_tiaonuo_to_shuo(
-            jing_xiao_yu=self.jing_xiao_yu,
-            tiaonuo=tiaonuo
-        )
+
+        # ------------------------------------------------------------------
+        # 朓胸定數（可選）：目前專案尚未實作完整「朔積分／入轉」計算，
+        # 因此這裡先以安全方式略過，避免 AttributeError。
+        # 之後若有 shuo_ji_fen / jing_xiao_yu，可取消註解並填入真實數值。
+        # ------------------------------------------------------------------
+        # try:
+        #     ru_day, ru_yu = calc_ru_li(self.shuo_ji_fen)
+        #     tiaonuo = self._calc_tiaonuo(ru_day, ru_yu)
+        #     da_tui, ding_xiao_yu = self._apply_tiaonuo_to_shuo(
+        #         jing_xiao_yu=self.jing_xiao_yu, tiaonuo=tiaonuo)
+        # except Exception:
+        #     ru_day = ru_yu = tiaonuo = da_tui = ding_xiao_yu = None
+
         result = {
                 "太乙計":config.taiyi_name(ji_style),
                 "太乙公式類別":config.ty_method(taiyi_acumyear),
                 "公元日期":config.gendatetime(self.year, self.month, self.day, self.hour, self.minute),
-                "入轉日": ru_day,
-                "入轉餘": ru_yu,
-                "朓胸定數": tiaonuo,
-                "定朔大餘進退": da_tui,
-                "定朔小餘": ding_xiao_yu,
+                # "入轉日": ru_day,
+                # "入轉餘": ru_yu,
+                # "朓胸定數": tiaonuo,
+                # "定朔大餘進退": da_tui,
+                # "定朔小餘": ding_xiao_yu,
                 "干支":config.gangzhi(self.year, self.month, self.day, self.hour, self.minute),
                 "農曆":config.lunar_date_d(self.year, self.month, self.day),
                 "年號":config.kingyear(config.lunar_date_d(self.year, self.month, self.day).get("年")),
