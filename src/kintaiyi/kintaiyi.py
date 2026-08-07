@@ -22,6 +22,13 @@ from . import guiyun
 from . import jieqi
 from . import taiyi_life_dict
 from .jieqi import jieqi_name
+from .tiaonuo import (
+    calc_tiaonuo_dingshu,
+    apply_tiaonuo,
+    calc_ru_li,
+    RI_FA,
+)
+
 
 _BASE = os.path.abspath(os.path.dirname(__file__))
 _SIGN_TO_BRANCH = dict(zip(range(12), "戌酉申未午巳辰卯寅丑子亥"))
@@ -39,6 +46,7 @@ DI_ZHI: list[str] = list("子丑寅卯辰巳午未申酉戌亥")
 _ZHI_INDEX: dict[str, int] = {z: i for i, z in enumerate(DI_ZHI)}
 TWELVE_GONGS: list[str] = "命宮,兄弟,妻妾,子孫,財帛,田宅,官祿,奴僕,疾厄,福德,相貌,父母".split(",")
 _YANG_ZHI = frozenset(DI_ZHI[0::2])  # 子寅辰午申戌
+
 
 
 def _zhi_index(name: str, value: str) -> int:
@@ -2175,6 +2183,18 @@ class Taiyi:
         if not results:
             results["無格局"] = "太乙無掩迫關囚擊格對提挾諸格局，主客清明"
         return results
+    
+    def _calc_tiaonuo(self, ru_zhuan_day: int, ru_zhuan_yu: int, ri_fa: int = RI_FA) -> int:
+        """
+        內部封裝，方便日後統一修改日法或加日誌
+        """
+        return calc_tiaonuo_dingshu(ru_zhuan_day, ru_zhuan_yu, ri_fa)
+
+    def _apply_tiaonuo_to_shuo(self, jing_xiao_yu: int, tiaonuo: int, ri_fa: int = RI_FA):
+        """
+        把朓胸定數套用到經朔小餘，回傳 (大餘進退, 定小餘)
+        """
+        return apply_tiaonuo(jing_xiao_yu, tiaonuo, ri_fa)
 
     def pan(self, ji_style, taiyi_acumyear, enable_game_theory: bool = False):
         """起盤詳細內容
@@ -2200,10 +2220,26 @@ class Taiyi:
         _sf_hit = any(k.startswith("擊") for k in _geju)
         _sf_ge = "格(始擊)" in _geju
         _wq = jieqi.gong_wangzhuai(jieqi.jq(self.year, self.month, self.day, self.hour, self.minute))
+        # 1. 求入轉日與餘（可用 calc_ru_li 或你自己的入轉計算）
+        ru_day, ru_yu = calc_ru_li(self.shuo_ji_fen)   # 或你現有的入轉函式
+    
+        # 2. 求朓胸定數
+        tiaonuo = self._calc_tiaonuo(ru_day, ru_yu)
+    
+        # 3. 套用到經朔小餘
+        da_tui, ding_xiao_yu = self._apply_tiaonuo_to_shuo(
+            jing_xiao_yu=self.jing_xiao_yu,
+            tiaonuo=tiaonuo
+        )
         result = {
                 "太乙計":config.taiyi_name(ji_style),
                 "太乙公式類別":config.ty_method(taiyi_acumyear),
                 "公元日期":config.gendatetime(self.year, self.month, self.day, self.hour, self.minute),
+                "入轉日": ru_day,
+                "入轉餘": ru_yu,
+                "朓胸定數": tiaonuo,
+                "定朔大餘進退": da_tui,
+                "定朔小餘": ding_xiao_yu,
                 "干支":config.gangzhi(self.year, self.month, self.day, self.hour, self.minute),
                 "農曆":config.lunar_date_d(self.year, self.month, self.day),
                 "年號":config.kingyear(config.lunar_date_d(self.year, self.month, self.day).get("年")),
