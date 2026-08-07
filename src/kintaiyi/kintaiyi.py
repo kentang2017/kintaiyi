@@ -3,6 +3,7 @@
 """
 Created on Sat Aug 27 18:11:44 2022
 @author: kentang
+Optimized for performance
 """
 import re
 import os
