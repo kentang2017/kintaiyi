@@ -308,21 +308,26 @@ def _display_ttext(results: dict) -> dict:
 
 
 def _render_tiaonuo_block(results: dict, t) -> None:
-    """顯示入轉／朓胸定數（若 pan() 有回傳）。"""
-    ttext = results.get("ttext") or {}
-    ding = ttext.get("朓胸定數")
-    if ding is None:
-        return
-    ru_day = ttext.get("入轉日", "—")
-    ru_yu = ttext.get("入轉餘", "—")
-    ding_xiao = ttext.get("定朔小餘", "—")
-    da_tui = ttext.get("定朔大餘進退", "—")
-    st.markdown(f"**{t('tiaonuo_title')}**")
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric(t("tiaonuo_ru_day"), ru_day)
-    c2.metric(t("tiaonuo_ru_yu"), ru_yu)
-    c3.metric(t("tiaonuo_dingshu"), ding)
-    c4.metric(t("tiaonuo_ding_xiao"), f"{ding_xiao} ({t('tiaonuo_da_tui')} {da_tui})")
+    """已改為在干支曆以「朓／朒」一行顯示，此處不再輸出數值區塊。"""
+    return
+
+
+def _tiao_nuo_state_label(ttext: dict | None) -> str | None:
+    """依朓胸定數正負回傳「朓」或「朒」；無法判斷時回傳 None。"""
+    if not ttext:
+        return None
+    v = ttext.get("朓胸定數")
+    if v is None:
+        return None
+    try:
+        n = int(v)
+    except (TypeError, ValueError):
+        return None
+    if n > 0:
+        return "朓"
+    if n < 0:
+        return "朒"
+    return "平"
 
 
 def _render_tongyun_history_compare(query_year: int) -> None:
@@ -1374,7 +1379,7 @@ def format_taiyi_results_for_prompt(results):
         f"紀元: {results['ttext'].get('紀元', '無')}",
         f"局式: {results['ttext'].get('局式', {}).get('年', '無')}",
         f"太乙計: {config.ty_method(results['tn'])}{results['ttext'].get('太乙計', '')}",
-        f"入轉日: {results['ttext'].get('入轉日', '無')}　入轉餘: {results['ttext'].get('入轉餘', '無')}　朓胸定數: {results['ttext'].get('朓胸定數', '無')}　定朔小餘: {results['ttext'].get('定朔小餘', '無')}",
+        f"月行: {_tiao_nuo_state_label(results.get('ttext') or {}) or '無'}",
         f"文: {results['kook'].get('文', '無')}",
         f"數: {results['kook_num']}",
         f"主筭: {results['homecal']}, 客筭: {results['awaycal']}, 定筭: {results['setcal']}",
@@ -1434,6 +1439,7 @@ def _chart_visual_text():
             "stem_branch": "Stem-Branch",
             "kook_number": "Bureau Number",
             "lunar": "Lunar",
+            "moon_state": "Moon",
             "yin_yang": "Yin/Yang",
             "calc_triplet": "Home / Away / Set",
             "life_style": "Life Type",
@@ -1474,6 +1480,7 @@ def _chart_visual_text():
         "stem_branch": "干支",
         "kook_number": "局數",
         "lunar": "農曆",
+        "moon_state": "月行",
         "yin_yang": "陰陽",
         "calc_triplet": "主 / 客 / 定",
         "life_style": "命式",
@@ -1531,6 +1538,10 @@ def _build_chart_meta(
         (ui["yin_yang"], f"{results.get('kook', {}).get('文', '—')} · {results.get('kook_num', '—')}"),
         (ui["calc_triplet"], f"{results.get('homecal', '—')} / {results.get('awaycal', '—')} / {results.get('setcal', '—')}"),
     ]
+    # 干支曆旁一行：朓（月行速）／朒（月行遲）
+    _moon_state = _tiao_nuo_state_label(results.get("ttext") or {})
+    if _moon_state:
+        info_chips.insert(4, (ui.get("moon_state", "月行"), _moon_state))
     if is_life_chart:
         info_chips.insert(1, (ui["life_style"], results.get("zhao", "—")))
     elif results.get("wuyuan"):
@@ -1575,16 +1586,10 @@ def _build_chart_meta(
             f"{method_name} - {results.get('kook', {}).get('文', '—')}"
             f"({results.get('ttext', {}).get('局式', {}).get('年', '—')})"
         )
-        _tn_ds = results.get("ttext", {}).get("朓胸定數")
-        _tn_part = (
-            f" | {t('tiaonuo_dingshu')}︰{_tn_ds}"
-            if _tn_ds is not None
-            else ""
-        )
         summary_line = (
             f"{t('five_yuan')}:{results.get('wuyuan', '')} | {t('epoch_label')}︰{results.get('ttext', {}).get('紀元', '')} | "
             f"{t('home_calc')}︰{results.get('homecal', '—')} {t('away_calc')}︰{results.get('awaycal', '—')} "
-            f"{t('set_calc')}︰{results.get('setcal', '—')}{_tn_part} |"
+            f"{t('set_calc')}︰{results.get('setcal', '—')} |"
         )
     export_title = (
         f"堅太乙{chart_style_label}排盤 Kintaiyi Chart"
@@ -1600,16 +1605,9 @@ def _build_chart_meta(
         export_lines.insert(2, f"{t('five_yuan')}：{results.get('wuyuan', '')} · {t('epoch_label')}︰{results.get('ttext', {}).get('紀元', '')}")
     else:
         export_lines.insert(2, f"{t('epoch_label')}︰{results.get('ttext', {}).get('紀元', '')}")
-    _tn = (results.get("ttext") or {}).get("朓胸定數")
-    if _tn is not None:
-        _tt = results.get("ttext") or {}
-        export_lines.append(
-            f"{t('tiaonuo_ru_day')}：{_tt.get('入轉日', '—')}　"
-            f"{t('tiaonuo_ru_yu')}：{_tt.get('入轉餘', '—')}　"
-            f"{t('tiaonuo_dingshu')}：{_tn}　"
-            f"{t('tiaonuo_ding_xiao')}：{_tt.get('定朔小餘', '—')} "
-            f"({t('tiaonuo_da_tui')} {_tt.get('定朔大餘進退', '—')})"
-        )
+    _moon_state = _tiao_nuo_state_label(results.get("ttext") or {})
+    if _moon_state:
+        export_lines.append(f"{ui.get('moon_state', '月行')}：{_moon_state}")
 
     chart_style = results.get("style", 6) if is_life_chart else results.get("style", 0)
     ttext = _display_ttext(results) if not is_life_chart else (results.get("ttext") or {})
@@ -4515,9 +4513,6 @@ with tabs[0]:
                         else:
                             render_svg1(results["genchart2"], int(start_pt2), chart_meta)
 
-                        # 朓胸定數（入轉中心差）
-                        _render_tiaonuo_block(results, t)
-
                         # 4. 流日卦時間軸
                         _hex_html = render_hex_timeline(results, t=t)
                         if _hex_html:
@@ -4552,9 +4547,6 @@ with tabs[0]:
                         with chart_side_col:
                             # 右側資訊面板，預設展開
                             render_chart_side_panel(chart_meta, results, t=t)
-
-                        # 朓胸定數（入轉中心差）
-                        _render_tiaonuo_block(results, t)
 
                         # —— 流日卦時間軸 ——
                         _hex_html = render_hex_timeline(results, t=t)
