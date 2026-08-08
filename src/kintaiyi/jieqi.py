@@ -117,39 +117,44 @@ def new_list(olist, o):
     a = olist.index(o)
     res1 = olist[a:] + olist[:a]
     return res1
-#%% 節氣計算
+
+#%% 節氣計算（已修正：精確比較當前時分）
 def get_jieqi_start_date(year, month, day, hour, minute):
-    day = sxtwl.fromSolar(year, month, day)
-    if day.hasJieQi():
-        jq_index = day.getJieQi()
-        jd = day.getJieQiJD()
+    """
+    回傳「當前時間所屬」節氣的開始時刻（精確到時分）。
+    若當天有節氣但當前時刻尚未到達，則回傳上一個節氣。
+    """
+    current_dt = datetime.datetime(year, month, day, hour, minute)
+    day_obj = fromSolar(year, month, day)
+
+    # 當天有節氣時，先判斷是否已過交節時刻
+    if day_obj.hasJieQi():
+        jq_index = day_obj.getJieQi()
+        jd = day_obj.getJieQiJD()
         t = sxtwl.JD2DD(jd)
-        return {
-            "年": t.Y,
-            "月": t.M,
-            "日": t.D,
-            "時": int(t.h),
-            "分": round(t.m),
-            "節氣": jqmc[jq_index-1],
-            "時間":_safe_datetime(t.Y, t.M, t.D, int(t.h), round(t.m))
-        }
-    else:
-        current_day = day
-        while True:
-            current_day = current_day.before(1)
-            if current_day.hasJieQi():
-                jq_index = current_day.getJieQi()
-                jd = current_day.getJieQiJD()
-                t = sxtwl.JD2DD(jd)
-                return {
-                    "年": t.Y,
-                    "月": t.M,
-                    "日": t.D,
-                    "時": int(t.h),
-                    "分": round(t.m),
-                    "節氣": jqmc[jq_index-1],
-                    "時間":_safe_datetime(t.Y, t.M, t.D, int(t.h), round(t.m))
-                }
+        jq_dt = datetime.datetime(t.Y, t.M, t.D, int(t.h), round(t.m))
+        if current_dt >= jq_dt:
+            return {
+                "年": t.Y, "月": t.M, "日": t.D,
+                "時": int(t.h), "分": round(t.m),
+                "節氣": jqmc[jq_index - 1],
+                "時間": jq_dt
+            }
+
+    # 往前找最近的一個已過去的節氣
+    current = day_obj
+    while True:
+        current = current.before(1)
+        if current.hasJieQi():
+            jq_index = current.getJieQi()
+            jd = current.getJieQiJD()
+            t = sxtwl.JD2DD(jd)
+            return {
+                "年": t.Y, "月": t.M, "日": t.D,
+                "時": int(t.h), "分": round(t.m),
+                "節氣": jqmc[jq_index - 1],
+                "時間": datetime.datetime(t.Y, t.M, t.D, int(t.h), round(t.m))
+            }
             
 def get_before_jieqi_start_date(year, month, day, hour, minute):
     day = sxtwl.fromSolar(year, month, day)
