@@ -11,11 +11,18 @@ import datetime
 from itertools import cycle, repeat
 import sxtwl
 from sxtwl import fromSolar
-from . import config
+#from . import config
+#import config
 
 jqmc = ['小寒', '大寒', '立春', '雨水', '驚蟄', '春分', '清明', '穀雨', '立夏', '小滿', '芒種', '夏至', '小暑', '大暑', '立秋', '處暑', '白露', '秋分', '寒露', '霜降', '立冬', '小雪', '大雪', '冬至']
 tian_gan = '甲乙丙丁戊己庚辛壬癸'
 di_zhi = '子丑寅卯辰巳午未申酉戌亥'
+
+# 月柱換月的「節」（非氣）。交節時刻之前仍屬上一個月支。
+_MONTH_START_JIEQI = frozenset({
+    '立春', '驚蟄', '清明', '立夏', '芒種', '小暑',
+    '立秋', '白露', '寒露', '立冬', '大雪', '小寒'
+})
 
 
 def _safe_datetime(year, month, day, hour=0, minute=0):
@@ -67,6 +74,36 @@ def _to_jd(dt):
         t = sxtwl.Time(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
         return sxtwl.toJD(t)
     return float(dt)
+
+
+def _precise_month_gz(year, month, day, hour, minute, fallback_mtg):
+    """
+    精確計算月干支：僅在「換月節」當日，且當前時刻尚未到達交節時刻時，
+    才回退至前一日的月柱。其他情況直接使用 sxtwl 的 fallback_mtg。
+    這樣可避免把整個交節日都當成新月柱的誤差
+   （例如 2026-09-07 16:30 在白露 22:40 之前，應為丙申月而非丁酉月）。
+    """
+    try:
+        orig = fromSolar(year, month, day)
+        if not orig.hasJieQi():
+            return fallback_mtg
+        jq_index = orig.getJieQi()
+        jq_name = jqmc[jq_index - 1] if jq_index > 0 else jqmc[23]
+        if jq_name not in _MONTH_START_JIEQI:
+            return fallback_mtg
+        t = sxtwl.JD2DD(orig.getJieQiJD())
+        jq_dt = _safe_datetime(t.Y, t.M, t.D, int(t.h), round(t.m))
+        curr_dt = _safe_datetime(year, month, day, hour, minute)
+        if curr_dt < jq_dt:
+            prev = orig.before(1)
+            return "{}{}".format(
+                tian_gan[prev.getMonthGZ().tg],
+                di_zhi[prev.getMonthGZ().dz]
+            )
+        return fallback_mtg
+    except Exception:
+        return fallback_mtg
+
 
 # sxtwl 節氣索引與 jqmc 名稱的對應表
 # sxtwl getJieQi() index 0 = 冬至 = jqmc[23]
@@ -309,7 +346,8 @@ def gangzhi1(year, month, day, hour, minute):
     if year < 1900:
         mTG1 = find_lunar_month(yTG).get(lunar_date_d(year, month, day).get("月"))
     else:
-        mTG1 = mTG
+        # 精確交節時刻判斷月柱（換月「節」當日，交節前仍用上月）
+        mTG1 = _precise_month_gz(year, month, day, hour, 0, mTG)
     hTG1 = find_lunar_hour(dTG).get(hTG[1])
     return [yTG, mTG1, dTG, hTG1]
 
@@ -332,7 +370,8 @@ def gangzhi(year, month, day, hour, minute):
     if year < 1900:
         mTG1 = find_lunar_month(yTG).get(lunar_date_d(year, month, day).get("月"))
     else:
-        mTG1 = mTG
+        # 精確交節時刻判斷月柱（例如 2026-09-07 16:30 在白露前 → 丙申月）
+        mTG1 = _precise_month_gz(year, month, day, hour, minute, mTG)
     hTG1 = find_lunar_hour(dTG).get(hTG[1])
     zi = gangzhi1(year, month, day, 0, 0)[3]
     if minute < 10 and minute >=0:
@@ -433,4 +472,19 @@ def gong_wangzhuai(j_q):
                         ('立冬','小雪','大雪'):'立冬',
                         ('冬至','小寒','大寒'):'冬至',
                         ('立春','雨水','驚蟄'):'立春'}
-    return dict(zip(config.new_list(wangzhuai_num, dict(zip(jieqi_name[0::3],wangzhuai_num )).get(config.multi_key_dict_get(wangzhuai_jieqi, j_q))), wangzhuai))
+    return dict(zip(new_list(wangzhuai_num, dict(zip(jieqi_name[0::3],wangzhuai_num )).get(multi_key_dict_get(wangzhuai_jieqi, j_q))), wangzhuai))
+
+if __name__ == '__main__':
+    year = 2026
+    month = 9
+    day = 7
+    hour = 16
+    minute = 30
+    print(f"{year}-{month}-{day} {hour}:{minute}")
+    print("gangzhi:", gangzhi(year, month, day, hour, minute))
+    print("jq:", jq(year, month, day, hour, minute))
+    print("jieqi start:", get_jieqi_start_date(year, month, day, hour, minute))
+
+    print("\n--- 交節後驗證 ---")
+    print("23:00 gangzhi:", gangzhi(2026, 9, 7, 16, 30))
+    print("23:00 jq:", jq(2026, 9, 7, 16, 30))
