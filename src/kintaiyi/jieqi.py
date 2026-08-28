@@ -75,6 +75,34 @@ def _to_jd(dt):
         return sxtwl.toJD(t)
     return float(dt)
 
+def find_jieqi_date(year, name):
+    """掃描指定年份，找出指定節氣（繁體名）的日期。
+    用 sxtwl 逐日掃描，對公元前日期正確。
+    返回 (y, m, d) 或 None"""
+    import calendar
+    days_in_year = 366 if calendar.isleap(year) else 365
+    for jd in range(1, days_in_year + 1):
+        try:
+            day = sxtwl.fromSolar(year, 1, 1).after(jd - 1)
+            if day.hasJieQi():
+                idx = day.getJieQi()
+                t = sxtwl.JD2DD(day.getJieQiJD())
+                if jqmc[idx - 1] == name:
+                    return (t.Y, t.M, t.D)
+        except Exception:
+            pass
+    return None
+
+def shichen_ju(year, month, day, hour):
+    """古籍時計局數：局數 = floor(二至後時辰數 / 60) + 1（每 60 時辰＝5 日一局）。
+    陰遁從夏至起算，陽遁從冬至起算。與前端 taiyi-jieqi.js 的 shichenJu 一致。
+    返回 {'dun': '陰遁'|'陽遁', 'ju': int, 'base': str} 或 None"""
+    xz = find_jieqi_date(year, '夏至')
+    dz = find_jieqi_date(year, '冬至')
+    dz_prev = find_jieqi_date(year - 1, '冬至')
+    ...
+    ju = int(shichen // 60) + 1
+    return {'dun': dun, 'ju': ju, 'base': ...}
 
 def _precise_month_gz(year, month, day, hour, minute, fallback_mtg):
     """
