@@ -11,7 +11,6 @@ import datetime
 from itertools import cycle, repeat
 import  sxtwl
 from sxtwl import fromSolar
-import ephem
 from ephem import Sun, Date, Ecliptic, Equatorial
 import config
 
