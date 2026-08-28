@@ -423,7 +423,7 @@ class Taiyi:
             #config_num = 708011105 - taiyi_acumyear - {0: 185, 1: 184, 2: 183, 3: 182}.get(taiyi_acumyear)
             #result = config_num + diff_val if taiyi_acumyear != 3 else round((lunar_year - 423) * (235 / 19) * 29.5306 + lunar_day, 0)
             diff_val = _days_between(self.year, self.month, self.day, self.hour, 0, 1900, 6, 19)
-            config_num = 708011105 - taiyi_acumyear - {0: 185, 1: 184, 2: 183, 3: 182}.get(taiyi_acumyear)
+            config_num = 708011105 - taiyi_acumyear - {0: 185, 1: 185, 2: 183, 3: 182}.get(taiyi_acumyear)
             base_result = config_num + diff_val if taiyi_acumyear != 3 else round((lunar_year - 423) * (235 / 19) * 29.5306 + lunar_day, 0)
             
             # === 新增修正：確保 %60 對應日干支位置 ===
