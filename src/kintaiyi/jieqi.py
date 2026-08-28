@@ -100,9 +100,24 @@ def shichen_ju(year, month, day, hour):
     xz = find_jieqi_date(year, '夏至')
     dz = find_jieqi_date(year, '冬至')
     dz_prev = find_jieqi_date(year - 1, '冬至')
-    ...
+    if not xz or not dz or not dz_prev:
+        return None
+    cur_jd = _to_jd(_safe_datetime(year, month, day, hour, 0))
+    xz_jd = _to_jd(_safe_datetime(xz[0], xz[1], xz[2], 0, 0))
+    dz_jd = _to_jd(_safe_datetime(dz[0], dz[1], dz[2], 0, 0))
+    dz_prev_jd = _to_jd(_safe_datetime(dz_prev[0], dz_prev[1], dz_prev[2], 0, 0))
+    if cur_jd >= xz_jd and cur_jd < dz_jd:
+        base, dun = xz, '陰遁'
+    elif cur_jd >= dz_prev_jd and cur_jd < xz_jd:
+        base, dun = dz_prev, '陽遁'
+    else:
+        base, dun = dz, '陽遁'
+    base_jd = _to_jd(_safe_datetime(base[0], base[1], base[2], 0, 0))
+    days = cur_jd - base_jd
+    hour_num = (hour + 1) // 2
+    shichen = days * 12 + hour_num
     ju = int(shichen // 60) + 1
-    return {'dun': dun, 'ju': ju, 'base': ...}
+    return {'dun': dun, 'ju': ju, 'base': f"{base[0]}-{base[1]}-{base[2]}"}
 
 def _precise_month_gz(year, month, day, hour, minute, fallback_mtg):
     """
