@@ -383,7 +383,17 @@ class Taiyi:
     def skyeyes(self, ji_style, taiyi_acumyear):
         """文昌(天目)"""
         kook = self.kook(ji_style, taiyi_acumyear)
-        return dict(zip(range(1, 73), config.skyeyes_dict.get(kook.get("文")[0]))).get(kook.get("數"))
+        dun = kook.get("文")[0]
+        num = kook.get("數")
+        # 金鏡盤式（taiyi_acumyear=1）日計：古籍《太乙金鏡式經》line55
+        # 「置積月，以元法七十二去之；不盡，以天目周法十八去之；又不盡，命起武德，順行十六神，
+        #  遇陰德大武，重留一算外，即天目所在也。」
+        # 天目以 積日 % 72 % 18 定位（SKYEYES_DICT 為 18 周期表），非 mod72 定位。
+        if ji_style == 2 and taiyi_acumyear == 1:
+            jiri = self.accnum(2, taiyi_acumyear)
+            idx = jiri % 72 % 18
+            return config.skyeyes_dict.get(dun)[idx]
+        return dict(zip(range(1, 73), config.skyeyes_dict.get(dun))).get(num)
 
     def hegod(self, ji_style):
         """合神"""
@@ -519,6 +529,14 @@ class Taiyi:
         hz = config.new_list(alljq, "夏至")[:12]
         jqmap = {tuple(dz): "冬至", tuple(hz): "夏至"}
         k = self.accnum(ji_style, taiyi_acumyear) % 72 or 72
+
+        # 金鏡盤式（taiyi_acumyear=1）時計：局數改用古籍「二至後時辰數÷60」推法
+        # 古籍《太乙金鏡式經》「五日六十時一移局格」：每 60 時辰（5 日）一局
+        # 陰遁從夏至起、陽遁從冬至起。時辰干支仍由積時%60 決定，兩者分離。
+        if ji_style == 3 and taiyi_acumyear == 1:
+            sj = jieqi.shichen_ju(self.year, self.month, self.day, self.hour)
+            if sj:
+                k = sj['ju']
         three_year = {0: "理天", 1: "理地", 2: "理人"}.get({i: v for i, v in zip(range(1, 73), [0, 1, 2] * 24)}.get(k))
         dun = "陽遁" if ji_style in (0, 1, 5, 2) else {"夏至": "陰遁", "冬至": "陽遁"}.get(config.multi_key_dict_get(jqmap, j_q))
         if ji_style == 4:
