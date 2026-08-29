@@ -440,7 +440,7 @@ class Taiyi:
             diff_val_two = _days_between(self.year, self.month, self.day, self.hour, 0, 1900, 12, 21)
             config_num = 708011105 - {0: 0, 1: 10153917, 2: 10153917, 3: 0}.get(taiyi_acumyear)
             accday = config_num + diff_val_two
-            result = ((accday - 1) * 12) + (self.hour + 1) // 2 + (1 if taiyi_acumyear != 1 else -11)
+            result = ((accday - 1) * 12) + (self.hour + 1) // 2 + (1 if taiyi_acumyear != 1 else 13)
             if taiyi_acumyear == 3:
                 tiangan = dict(zip([tuple(self.jiazi_list[i:i+6]) for i in range(0, 60, 6)], self.jiazi_list[0::6]))
                 dgz = self._get_gangzhi()[2]
@@ -530,13 +530,12 @@ class Taiyi:
         jqmap = {tuple(dz): "冬至", tuple(hz): "夏至"}
         k = self.accnum(ji_style, taiyi_acumyear) % 72 or 72
 
-        # 金鏡盤式（taiyi_acumyear=1）時計：局數改用古籍「二至後時辰數÷60」推法
-        # 古籍《太乙金鏡式經》「五日六十時一移局格」：每 60 時辰（5 日）一局
-        # 陰遁從夏至起、陽遁從冬至起。時辰干支仍由積時%60 決定，兩者分離。
+        # 金鏡盤式（taiyi_acumyear=1）時計：局數由積時數%60 決定，局數 = (積時%60) - 30
+        # 隨時辰跳轉：每時辰 +1 局。陰遁時局數 = (積時%60) - 30（%60=56→26局、57→27局、58→28局）
         if ji_style == 3 and taiyi_acumyear == 1:
-            sj = jieqi.shichen_ju(self.year, self.month, self.day, self.hour)
-            if sj:
-                k = sj['ju']
+            k = self.accnum(3, 1) % 60 - 30
+            if k < 0:
+                k += 60
         three_year = {0: "理天", 1: "理地", 2: "理人"}.get({i: v for i, v in zip(range(1, 73), [0, 1, 2] * 24)}.get(k))
         dun = "陽遁" if ji_style in (0, 1, 5, 2) else {"夏至": "陰遁", "冬至": "陽遁"}.get(config.multi_key_dict_get(jqmap, j_q))
         if ji_style == 4:
@@ -598,6 +597,11 @@ class Taiyi:
 
     def ty(self, ji_style, taiyi_acumyear):
         """求太乙所在"""
+        # 金鏡盤式（taiyi_acumyear=1）時計：太乙落宮改用古籍《太乙金鏡式經》「三時一移」推法
+        if ji_style == 3 and taiyi_acumyear == 1:
+            sj = jieqi.taiyi_shichen_gong(self.year, self.month, self.day, self.hour)
+            if sj:
+                return sj['gong']
         arrangement = [x for x in range(10) for _ in range(3)]
         arrangement_r = list(reversed(arrangement))
         yy_dict = {
@@ -609,7 +613,8 @@ class Taiyi:
 
     def ty_gong(self, ji_style, taiyi_acumyear):
         """太乙落宮"""
-        return dict(zip(range(1, 73), config.taiyi_pai)).get(self.kook(ji_style, taiyi_acumyear).get("數"))
+        # 與前端一致：由 ty() 洛書數轉宮名，金鏡時計「三時一移」時宮名同步跳轉
+        return config.num2gong(self.ty(ji_style, taiyi_acumyear))
 
     def twenty_eightstar(self, ji_style, taiyi_acumyear):
         """二十八宿"""

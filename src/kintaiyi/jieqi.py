@@ -119,6 +119,32 @@ def shichen_ju(year, month, day, hour):
     ju = int(shichen // 60) + 1
     return {'dun': dun, 'ju': ju, 'base': f"{base[0]}-{base[1]}-{base[2]}"}
 
+# 古籍《太乙金鏡式經》時計太乙落宮（三時一移）
+# 「陽遁命起一宮，順八宮，不游中五；陰遁命起九宮，逆行八宮，三時一移，不游中五。」
+_YANG_GONG_ORDER = [1, 2, 3, 4, 6, 7, 8, 9]
+_YIN_GONG_ORDER = [9, 8, 7, 6, 4, 3, 2, 1]
+
+
+def taiyi_shichen_gong(year, month, day, hour):
+    """古籍時計太乙落宮（三時一移）。返回 {'dun','gong','shichen','ru_gong'} 或 None"""
+    sj = shichen_ju(year, month, day, hour)
+    if not sj:
+        return None
+    dun = sj['dun']
+    by, bm, bd = map(int, sj['base'].split('-'))
+    cur_jd = _to_jd(_safe_datetime(year, month, day, hour, 0))
+    base_jd = _to_jd(_safe_datetime(by, bm, bd, 0, 0))
+    days = int(cur_jd - base_jd)
+    hour_num = (hour + 1) // 2
+    shichen = days * 12 + hour_num  # 二至後時實
+    rem = shichen % 24
+    gong_idx = rem // 3
+    ru_gong = rem % 3
+    order = _YANG_GONG_ORDER if dun == '陽遁' else _YIN_GONG_ORDER
+    gong = order[gong_idx % 8]
+    return {'dun': dun, 'gong': gong, 'shichen': shichen, 'ru_gong': ru_gong}
+
+
 def _precise_month_gz(year, month, day, hour, minute, fallback_mtg):
     """
     精確計算月干支：僅在「換月節」當日，且當前時刻尚未到達交節時刻時，
