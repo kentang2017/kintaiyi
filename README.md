@@ -356,7 +356,7 @@ ruff format src/
 
 <div align="center">
 
-![微信公眾號](https://raw.githubusercontent.com/kentang2017/kinliuren/refs/heads/master/pic/%E5%9C%96%E7%89%87_20260316084147.jpg)
+![微信公眾號](https://raw.githubusercontent.com/kentang2017/kinliuren/refs/heads/master/pic/%E5%9C%96%E7%89%87_20260316084148.jpg)
 
 </div>
 
